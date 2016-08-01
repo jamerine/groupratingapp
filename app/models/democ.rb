@@ -1,6 +1,7 @@
 class Democ < ActiveRecord::Base
 require 'activerecord-import'
 require 'open-uri'
+  self.table_name = "flat_file_democ"
 
   def self.import_file(url)
     Democ.transaction do
@@ -9,7 +10,6 @@ require 'open-uri'
         democs << Democ.new(single_rec: row)
       end
       Democ.import democs
-      # It's good idea to explicitly close your tempfiles
     end
   end
 end
