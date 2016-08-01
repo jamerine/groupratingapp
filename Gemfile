@@ -31,6 +31,8 @@ gem 'carrierwave'
 # Use for AWS
  gem 'fog-aws'
 
+gem 'activerecord-import'
+
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 
