@@ -5,7 +5,7 @@ class DemocsController < ApplicationController
   end
 
   def import
-    Democ.import_file(params[:file])
+    Democ.import_file("https://s3.amazonaws.com/grouprating/flat_files/DEMOCFILE")
     redirect_to root_url, notice: "Democs imported."
   end
 end
