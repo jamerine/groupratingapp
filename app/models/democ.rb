@@ -1,10 +1,11 @@
 class Democ < ActiveRecord::Base
-  require 'csv'
 
-  def self.import(file)
-    CSV.foreach(file.path) do |row|
-      Democ.create!(single_rec: row)
-    end
+
+  def self.import_file(file)
+      democs = []
+      IO.foreach(file.path) do |row|
+        democs << Democ.new(single_rec: row)
+      end
+      Democ.import democs
   end
-
 end
