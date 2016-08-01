@@ -8,8 +8,7 @@
 
 <div>
 <h3>Import a CSV File</h3>
-  <%= form_tag import_democs_path, multipart: true do %>
-    <%= file_field_tag :file %>
+  <%= form_tag import_democs_path do %>
     <%= submit_tag "Import CSV" %>
   <% end %>
 </div>
