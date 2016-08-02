@@ -6,9 +6,9 @@ class DemocDetailRecordsController < ApplicationController
 
   def parse
     DemocDetailRecord.parse_table
-    redirect_to root_url, notice: "Democ parsed."
+    redirect_to root_url, notice: "Step 2 Completed: Democs parsed into Democ Detail Records. Process Completed."
   end
 
-  
+
 
 end
