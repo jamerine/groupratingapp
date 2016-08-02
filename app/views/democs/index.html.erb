@@ -1,14 +1,37 @@
 <%= flash[:notice] %>
 
 <p>
-  Total Democ Single_rec = <%= @democs_count %>
+  File Location on AWS=  <a href="https://s3.amazonaws.com/grouprating/flat_files/DEMOCFILE">Democ FIle</a>
 </p>
-
-
-
+<% if (@democ_count == 0) && (@democ_detail_records_count == 0) %>
 <div>
-<h3>Import a CSV File</h3>
+<h3>Import a DEMOC file from Amazon S3</h3>
   <%= form_tag import_democs_path do %>
-    <%= submit_tag "Import CSV" %>
+    <%= submit_tag "Import DEMOC" %>
   <% end %>
 </div>
+<% elsif (@democ_detail_records_count == 0) %>
+<div>
+  <h3>Process a DEMOC file from Database</h3>
+    <%= form_tag parse_democ_detail_records_path do %>
+      <%= submit_tag "Parse DEMOC" %>
+    <% end %>
+</div>
+<% else %>
+  <div>
+    <h3>Clear out DEMOC Single_rec and DEMOC Detail Recordsfrom Database</h3>
+      <%= form_tag democs_path, method: :delete do %>
+        <%= submit_tag "Delete Records" %>
+        <% end %>
+
+
+
+  </div>
+<% end %>
+<p>
+  Total Democ Single_rec = <%= @democ_count %>
+</p>
+
+<p>
+  Total Democ Detail Records = <%= @democ_detail_records_count %>
+</p>
