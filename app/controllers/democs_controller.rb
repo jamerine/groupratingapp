@@ -8,7 +8,7 @@ class DemocsController < ApplicationController
 
   def import
     Democ.import_file("https://s3.amazonaws.com/grouprating/flat_files/DEMOCFILE")
-    redirect_to root_url, notice: "Democs imported."
+    redirect_to root_url, notice: "Step 1 Completed: Democs imported. Now parse data."
   end
 
   def destroy
@@ -16,6 +16,6 @@ class DemocsController < ApplicationController
     @democs = Democ.all
     @democ_detail_records.delete_all
     @democs.delete_all
-    redirect_to root_url
+    redirect_to root_url, notice: "Democ and Democ Detail Records are deleted."
   end
 end
