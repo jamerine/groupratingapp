@@ -2,7 +2,14 @@ Rails.application.routes.draw do
 
   resources :democs do
       collection { post :import }
+      collection { delete :destroy}
     end
+
+  resources :democ_detail_records do
+      collection { post :parse }
+
+  end
+
 
   root 'democs#index'
 
