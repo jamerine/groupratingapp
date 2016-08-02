@@ -1,0 +1,2 @@
+module DemocDetailRecordsHelper
+end
