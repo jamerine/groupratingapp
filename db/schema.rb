@@ -68,9 +68,7 @@ ActiveRecord::Schema.define(version: 20160802135624) do
   end
 
   create_table "democs", force: :cascade do |t|
-    t.string   "single_rec"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.string "single_rec"
   end
 
 end
