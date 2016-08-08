@@ -58,7 +58,7 @@ development:
   database: groupratingapp_development
   pool: 5
   username: groupratingapp
-  password: password1
+  password: <%= ENV['GROUPRATINGAPP_DATABASE_PASSWORD'] %>
 
 test:
   adapter: postgresql
@@ -66,7 +66,7 @@ test:
   database: groupratingapp_test
   pool: 5
   username: groupratingapp
-  password: password1
+  password: <%= ENV['GROUPRATINGAPP_DATABASE_PASSWORD'] %>
 
 # As with config/secrets.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is
