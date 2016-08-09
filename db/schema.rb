@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160802135624) do
+ActiveRecord::Schema.define(version: 20160808140800) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -68,6 +68,30 @@ ActiveRecord::Schema.define(version: 20160802135624) do
   end
 
   create_table "democs", force: :cascade do |t|
+    t.string "single_rec"
+  end
+
+  create_table "mrcls", force: :cascade do |t|
+    t.string "single_rec"
+  end
+
+  create_table "mremps", force: :cascade do |t|
+    t.string "single_rec"
+  end
+
+  create_table "pcombs", force: :cascade do |t|
+    t.string "single_rec"
+  end
+
+  create_table "phmgns", force: :cascade do |t|
+    t.string "single_rec"
+  end
+
+  create_table "sc220s", force: :cascade do |t|
+    t.string "single_rec"
+  end
+
+  create_table "sc230s", force: :cascade do |t|
     t.string "single_rec"
   end
 

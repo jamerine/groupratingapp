@@ -3,27 +3,31 @@
 <p>
   File Location on AWS=  <a href="https://s3.amazonaws.com/grouprating/flat_files/DEMOCFILE">Democ File</a>
 </p>
-<% if (@democ_count == 0) && (@democ_detail_records_count == 0) %>
 <div>
 <h3>Import a DEMOC file from Amazon S3</h3>
-  <%= form_tag import_democs_path do %>
-    <%= submit_tag "Import DEMOC" %>
+  <%= form_tag import_welcome_index_path do %>
+    <%= submit_tag "Import All BWC Flat Files" %>
   <% end %>
 </div>
-<% else (@democ_detail_records_count == 0) %>
+
 <div>
-  <h3>Process a DEMOC file from Database</h3>
+  <h3>Process a file from Database</h3>
     <%= form_tag parse_democ_detail_records_path do %>
       <%= submit_tag "Parse DEMOC" %>
     <% end %>
+
+    <%= form_tag parse_mrcl_detail_records_path do %>
+      <%= submit_tag "Parse MRCL" %>
+    <% end %>
 </div>
-<% end %>
-  <div>
-    <h3>Clear all records from Database</h3>
-      <%= form_tag democs_path, method: :delete do %>
-        <%= submit_tag "Delete Records" %>
-        <% end %>
-  </div>
+
+<div>
+  <h3>Delete All Records</h3>
+
+    <%= form_tag import_welcome_index_path, method: :delete do %>
+      <%= submit_tag "Delete all Records" %>
+    <% end %>
+</div>
 
 <p>Total Democ Single_rec = <%= @democ_count %></p>
 <p>Total Mrcl Single_rec = <%= @mrcl_count %></p>
@@ -34,3 +38,4 @@
 <p>Total Sc230 Single_rec = <%= @sc230_count %></p>
 
 <p>Total Democ Detail Records = <%= @democ_detail_records_count %></p>
+<p>Total Mrcls Detail Records = <%= @mrcl_detail_records_count %></p>
