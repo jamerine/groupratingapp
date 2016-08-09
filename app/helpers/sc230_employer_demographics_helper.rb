@@ -1,0 +1,2 @@
+module Sc230EmployerDemographicsHelper
+end
