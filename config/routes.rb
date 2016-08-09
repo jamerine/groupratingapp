@@ -1,17 +1,27 @@
 Rails.application.routes.draw do
 
-  resources :democs do
-      collection { post :import }
-      collection { delete :destroy}
-    end
+  get 'welcome/index'
+
+    # resources :democs do
+    #     collection { post :import }
+    #     collection { delete :destroy}
+    #   end
 
   resources :democ_detail_records do
       collection { post :parse }
+  end
 
+  resources :mrcl_detail_records do
+      collection { post :parse }
+  end
+
+  resources :welcome do
+    collection { post :import }
+    collection { delete :destroy}
   end
 
 
-  root 'democs#index'
+  root 'welcome#index'
 
 
   # The priority is based upon order of creation: first created -> highest priority.
