@@ -1,0 +1,2 @@
+module MrclDetailRecordsHelper
+end

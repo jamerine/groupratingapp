@@ -48,7 +48,8 @@ class CreateDemocDetailRecords < ActiveRecord::Migration
         t.integer :claim_mira_non_reducible_indemnity_paid_2
         t.integer :claim_total_subrogation_collected
 
-        t.timestamps null: false
+        t.timestamps null: true
     end
   end
+
 end
