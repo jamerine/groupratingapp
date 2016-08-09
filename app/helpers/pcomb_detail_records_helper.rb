@@ -1,0 +1,2 @@
+module PcombDetailRecordsHelper
+end

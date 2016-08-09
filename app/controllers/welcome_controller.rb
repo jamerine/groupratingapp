@@ -6,6 +6,30 @@ class WelcomeController < ApplicationController
     @democ_detail_records_count = DemocDetailRecord.count
     @mrcl_detail_records = MrclDetailRecord.all
     @mrcl_detail_records_count = MrclDetailRecord.count
+    @mremp_employee_experience_policy_level = MrempEmployeeExperiencePolicyLevel.all
+    @mremp_employee_experience_policy_level_count = MrempEmployeeExperiencePolicyLevel.count
+    @mremp_employee_experience_manual_class_level = MrempEmployeeExperienceManualClassLevel.all
+    @mremp_employee_experience_manual_class_level_count = MrempEmployeeExperienceManualClassLevel.count
+    @mremp_employee_experience_claim_level = MrempEmployeeExperienceClaimLevel.all
+    @mremp_employee_experience_claim_level_count = MrempEmployeeExperienceClaimLevel.count
+    @pcomb_detail_records = PcombDetailRecord.all
+    @pcomb_detail_records_count = PcombDetailRecord.count
+    @phmgn_detail_records = PhmgnDetailRecord.all
+    @phmgn_detail_records_count = PhmgnDetailRecord.count
+    @sc220_rec1_employer_demographics = Sc220Rec1EmployerDemographic.all
+    @sc220_rec1_employer_demographics_count = Sc220Rec1EmployerDemographic.count
+    @sc220_rec2_employer_manual_level_payrolls = Sc220Rec2EmployerManualLevelPayroll.all
+    @sc220_rec2_employer_manual_level_payrolls_count = Sc220Rec2EmployerManualLevelPayroll.count
+    @sc220_rec3_employer_ar_transactions = Sc220Rec3EmployerArTransaction.all
+    @sc220_rec3_employer_ar_transactions_count = Sc220Rec3EmployerArTransaction.count
+    @sc220_rec4_policy_not_founds = Sc220Rec4PolicyNotFound.all
+    @sc220_rec4_policy_not_founds_count = Sc220Rec4PolicyNotFound.count
+    @sc230_employer_demographics = Sc230EmployerDemographic.all
+    @sc230_employer_demographics_count = Sc230EmployerDemographic.count
+    @sc230_claim_medical_payments = Sc230ClaimMedicalPayment.all
+    @sc230_claim_medical_payments_count = Sc230ClaimMedicalPayment.count
+    @sc230_claim_indemnity_awards = Sc230ClaimIndemnityAward.all
+    @sc230_claim_indemnity_awards_count = Sc230ClaimIndemnityAward.count
     @mrcls = Mrcl.all
     @mrcl_count = Mrcl.count
     @mremps = Mremp.all
@@ -18,6 +42,7 @@ class WelcomeController < ApplicationController
     @sc220_count = Sc220.count
     @sc230s = Sc230.all
     @sc230_count = Sc230.count
+
   end
 
   def import
@@ -38,6 +63,18 @@ class WelcomeController < ApplicationController
   def destroy
     @democ_detail_records = DemocDetailRecord.all
     @mrcl_detail_records = MrclDetailRecord.all
+    @mremp_employee_experience_policy_level = MrempEmployeeExperiencePolicyLevel.all
+    @mremp_employee_experience_manual_class_level = MrempEmployeeExperienceManualClassLevel.all
+    @mremp_employee_experience_claim_level = MrempEmployeeExperienceClaimLevel.all
+    @pcomb_detail_records = PcombDetailRecord.all
+    @phmgn_detail_records = PhmgnDetailRecord.all
+    @sc220_rec1_employer_demographics = Sc220Rec1EmployerDemographic.all
+    @sc220_rec2_employer_manual_level_payrolls = Sc220Rec2EmployerManualLevelPayroll.all
+    @sc220_rec3_employer_ar_transactions = Sc220Rec3EmployerArTransaction.all
+    @sc220_rec4_policy_not_founds = Sc220Rec4PolicyNotFound.all
+    @sc230_employer_demographics = Sc230EmployerDemographics.all
+    @sc230_claim_medical_payments = Sc230ClaimMedicalPayments.all
+    @sc230_claim_indemnity_awards = Sc230ClaimIndemnityAwards.all
     @democs = Democ.all
     @mrcls = Mrcl.all
     @mremps = Mremp.all
@@ -53,10 +90,21 @@ class WelcomeController < ApplicationController
     @phmgns.delete_all
     @sc220s.delete_all
     @sc230s.delete_all
-
     @democ_detail_records.delete_all
     @mrcl_detail_records.delete_all
-    # @democs.delete_all
+    @mremp_employee_experience_policy_level.delete_all
+    @mremp_employee_experience_manual_class_level.delete_all
+    @mremp_employee_experience_claim_level.delete_all
+    @pcomb_detail_records.delete_all
+    @phmgn_detail_records.delete_all
+    @sc220_rec1_employer_demographics.delete_all
+    @sc220_rec2_employer_manual_level_payrolls.delete_all
+    @sc220_rec3_employer_ar_transactions.delete_all
+    @sc220_rec4_policy_not_founds.delete_all
+    @sc230_employer_demographics.delete_all
+    @sc230_claim_medical_payments.delete_all
+    @sc230_claim_indemnity_awards.delete_all
+
     redirect_to root_url, notice: "All files are deleted."
   end
 
