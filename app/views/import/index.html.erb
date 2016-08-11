@@ -1,0 +1,65 @@
+<div class="container text-center">
+  <div class="jumbotron">
+    <h1>Import BWC Flat Files</h1>
+    <div>
+        <h3>Import all BWC files from Amazon S3</h3>
+        <% if @democs.empty?  %>
+            <%= link_to 'Import All BWC Files', import_index_path, method: :post,  class: 'btn btn-success' %>
+        <% else %>
+            <%= link_to 'Move onto Parsing Files', parse_index_path, class: 'btn btn-success' %>
+
+        <% end %>
+    </div>
+  </div>
+</div>
+
+
+<div class="container">
+
+  <table class="table">
+    <tr>
+      <th>File Name</th>
+      <th>Row Count</th>
+      <th>Last Imported</th>
+    </tr>
+    <tr>
+      <td>Democ</td>
+      <td><%= @democ_count %></td>
+      <th></th>
+    </tr>
+    <tr>
+      <td>Mrcls</td>
+      <td><%= @mrcl_count %></td>
+      <th></th>
+    </tr>
+    <tr>
+      <td>Mremp</td>
+      <td><%= @mremp_count %></td>
+      <th></th>
+    </tr>
+    <tr>
+      <td>Pcomb</td>
+      <td><%= @pcomb_count %></td>
+      <th></th>
+    </tr>
+    <tr>
+      <td>Phmgn</td>
+      <td><%= @phmgn_count %></td>
+      <th></th>
+    </tr>
+    <tr>
+      <td>Sc220</td>
+      <td><%= @sc220_count %></td>
+      <th></th>
+    </tr>
+    <tr>
+      <td>Sc230</td>
+      <td><%= @sc230_count %></td>
+      <th></th>
+    </tr>
+  </table>
+  <% if @democs.empty?  %>
+  <% else %>
+    <%= link_to 'Delete All BWC Files', import_index_path, method: :delete, class: 'btn btn-danger' %>
+  <% end %>
+</div>

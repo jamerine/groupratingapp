@@ -1,74 +1,14 @@
-<%= flash[:notice] %>
+
+<div class="container text-center">
+  <div class="jumbotron">
+    <h1>Welcome to Group Rating App</h1>
+  </div>
+
+</div>
+
+
 
 <p>
   File Location on AWS
 </p>
 <div>
-<h3>Import a DEMOC file from Amazon S3</h3>
-  <%= form_tag import_welcome_index_path do %>
-    <%= submit_tag "Import All BWC Flat Files" %>
-  <% end %>
-</div>
-
-<div>
-  <h3>Process a file from Database</h3>
-    <%= form_tag parse_democ_detail_records_path do %>
-      <%= submit_tag "Parse DEMOC" %>
-    <% end %>
-
-    <%= form_tag parse_mrcl_detail_records_path do %>
-      <%= submit_tag "Parse MRCL" %>
-    <% end %>
-
-    <%= form_tag parse_mremp_employer_experience_index_path do %>
-      <%= submit_tag "Parse MREMP" %>
-    <% end %>
-
-    <%= form_tag parse_pcomb_detail_records_path do %>
-      <%= submit_tag "Parse PCOMB" %>
-    <% end %>
-
-    <%= form_tag parse_phmgn_detail_records_path do %>
-      <%= submit_tag "Parse Phmgn" %>
-    <% end %>
-
-    <%= form_tag parse_sc220_employer_demographics_path do %>
-      <%= submit_tag "Parse SC220" %>
-    <% end %>
-
-    <%= form_tag parse_sc230_employer_demographics_path do %>
-      <%= submit_tag "Parse SC230" %>
-    <% end %>
-
-</div>
-
-<div>
-  <h3>Delete All Records</h3>
-
-    <%= form_tag import_welcome_index_path, method: :delete do %>
-      <%= submit_tag "Delete all Records" %>
-    <% end %>
-</div>
-
-<p>Total Democ Single_rec = <%= @democ_count %></p>
-<p>Total Mrcl Single_rec = <%= @mrcl_count %></p>
-<p>Total Mremp Single_rec = <%= @mremp_count %></p>
-<p>Total Pcomb Single_rec = <%= @pcomb_count %></p>
-<p>Total Phmgn Single_rec = <%= @phmgn_count %></p>
-<p>Total Sc220 Single_rec = <%= @sc220_count %></p>
-<p>Total Sc230 Single_rec = <%= @sc230_count %></p>
-
-<p>Total Democ Detail Records = <%= @democ_detail_records_count %></p>
-<p>Total Mrcls Detail Records = <%= @mrcl_detail_records_count %></p>
-<p>Total Mremp Employee Experience Policy Level = <%= @mremp_employee_experience_policy_level_count %></p>
-<p>Total Mremp Employee Experience Manual Class Level = <%= @mremp_employee_experience_manual_class_level_count %></p>
-<p>Total Mremp Employee Experience Claims Level = <%= @mremp_employee_experience_claim_level_count %></p>
-<p>Total Pcomb Detail Records = <%= @pcomb_detail_records_count %></p>
-<p>Total Phmgn Detail Records = <%= @phmgn_detail_records_count %></p>
-<p>Total SC220 Record 1s = <%= @sc220_rec1_employer_demographics_count %></p>
-<p>Total SC220 Record 2s = <%= @sc220_rec2_employer_manual_level_payrolls_count %></p>
-<p>Total SC220 Record 3s = <%= @sc220_rec3_employer_ar_transactions_count %></p>
-<p>Total SC220 Record 4s = <%= @sc220_rec4_policy_not_founds_count %></p>
-<p>Total SC230 Record 1s = <%= @sc230_employer_demographics_count %></p>
-<p>Total SC230 Record 2s = <%= @sc230_claim_medical_payments_count %></p>
-<p>Total SC230 Record 3s = <%= @sc230_claim_indemnity_awards_count %></p>
