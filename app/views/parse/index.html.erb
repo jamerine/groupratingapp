@@ -1,0 +1,94 @@
+<div class="container text-center">
+  <div class="jumbotron">
+    <h1>Parse BWC Flat Files</h1>
+    <h3>Parse all BWC Files into seperate tables</h3>
+    <div>
+        <% if @democ_detail_records_count > 0 %>
+          <%= link_to 'Delete Parse Files', parse_index_path, method: :delete, class: 'btn btn-danger' %>
+        <% else %>
+          <%= link_to 'Parse Files', parse_index_path, method: :post,  class: 'btn btn-success' %>
+        <% end %>
+      </div>
+  </div>
+</div>
+
+
+<div class="container">
+
+  <table class="table">
+    <tr>
+      <th>Table Name</th>
+      <th>Row Count</th>
+      <th>Last Imported</th>
+    </tr>
+    <tr>
+      <td>Democ Detail Records</td>
+      <td><%= @democ_detail_records_count %></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>Mrcls Detail Records</td>
+      <td><%= @mrcl_detail_records_count %></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>Mremp Employee Experience Policy Level</td>
+      <td><%= @mremp_employee_experience_policy_level_count %></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>Mremp Employee Experience Manual Class Level</td>
+      <td><%= @mremp_employee_experience_manual_class_level_count %></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>Mremp Employee Experience Claims Level</td>
+      <td><%= @mremp_employee_experience_claim_level_count %></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>Pcomb Detail Records</td>
+      <td><%= @pcomb_detail_records_count %></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>Phmgn Detail Records</td>
+      <td><%= @phmgn_detail_records_count %></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>SC220 Record 1s</td>
+      <td><%= @sc220_rec1_employer_demographics_count %></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>SC220 Record 2s</td>
+      <td><%= @sc220_rec2_employer_manual_level_payrolls_count %></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>SC220 Record 3s</td>
+      <td><%= @sc220_rec3_employer_ar_transactions_count %></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>SC220 Record 4s</td>
+      <td><%= @sc220_rec4_policy_not_founds_count %></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>SC230 Record 1s</td>
+      <td><%= @sc230_employer_demographics_count %></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>SC230 Record 2s</td>
+      <td><%= @sc230_claim_medical_payments_count %></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>SC230 Record 3s</td>
+      <td><%= @sc230_claim_indemnity_awards_count %></td>
+      <td></td>
+    </tr>
+  </table>
