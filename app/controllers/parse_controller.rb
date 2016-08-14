@@ -41,7 +41,7 @@ class ParseController < ApplicationController
     Sc220Rec1EmployerDemographic.parse_table
     Sc230EmployerDemographic.parse_table
 
-    redirect_to root_url, notice: "The Democ, Mrcl, Mremp, Pcomb, Phmgn, SC220, and SC230 files have been parsed into seperate tables"
+    redirect_to parse_index_path, notice: "The Democ, Mrcl, Mremp, Pcomb, Phmgn, SC220, and SC230 files have been parsed into seperate tables"
     time2 = Time.new
     puts "Process End Time: " + time2.inspect
   end
@@ -61,5 +61,6 @@ class ParseController < ApplicationController
     Sc230EmployerDemographic.delete_all
     Sc230ClaimMedicalPayment.delete_all
     Sc230ClaimIndemnityAward.delete_all
+    redirect_to parse_index_path, notice: "All files are deleted."
   end
 end
