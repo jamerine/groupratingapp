@@ -33,7 +33,7 @@ class ImportController < ApplicationController
     Phmgn.delete_all
     Sc220.delete_all
     Sc230.delete_all
-    
+
     BwcCodesBaseRatesExpLossRate.delete_all
     BwcCodesCredibilityMaxLoss.delete_all
     BwcCodesIndustryGroupSavingsRatioCriterium.delete_all

@@ -3,14 +3,15 @@
     <h1>Parse BWC Flat Files</h1>
     <h3>Parse all BWC Files into seperate tables</h3>
     <div>
-        <% if @democ_detail_records_count > 0 %>
-          <%= link_to 'Delete Parse Files', parse_index_path, method: :delete, class: 'btn btn-danger' %>
-        <% else %>
+        <% if @democ_detail_records.empty? %>
           <%= link_to 'Parse Files', parse_index_path, method: :post,  class: 'btn btn-success' %>
+        <% else %>
+          <%= link_to 'Move onto Group Rating Process', parse_index_path, class: 'btn btn-success' %>
         <% end %>
-      </div>
+    </div>
   </div>
 </div>
+
 
 
 <div class="container">
@@ -92,3 +93,11 @@
       <td></td>
     </tr>
   </table>
+  <div>
+      <% if @democ_detail_records.empty? %>
+      <% else %>
+        <%= link_to 'Delete Parse Tables', parse_index_path, method: :delete, class: 'btn btn-danger' %>
+      <% end %>
+  </div>
+    <br>
+</div>
