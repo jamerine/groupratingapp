@@ -1,5 +1,8 @@
 Rails.application.routes.draw do
 
+
+
+
   resources :import do
     collection { delete :destroy }
   end
@@ -36,6 +39,7 @@ Rails.application.routes.draw do
      collection { post :parse }
   end
 
+  resources :group_rating
   
   resources :welcome
 

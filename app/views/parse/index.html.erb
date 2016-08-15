@@ -113,8 +113,7 @@
     </tr>
   </table>
   <div>
-      <% if @democ_detail_records.empty? %>
-      <% else %>
+      <% if @democ_detail_records_count != 0 || @mremp_employee_experience_policy_level_count != 0 || @mrcl_detail_records_count != 0 || @pcomb_detail_records_count != 0 || @phmgn_detail_records_count != 0 || @sc220_rec1_employer_demographics_count != 0 || @sc230_employer_demographics_count != 0 %>
         <%= link_to 'Delete Parse Tables', parse_index_path, method: :delete, class: 'btn btn-danger' %>
       <% end %>
   </div>
