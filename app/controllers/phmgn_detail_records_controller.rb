@@ -6,7 +6,8 @@ class PhmgnDetailRecordsController < ApplicationController
 
   def parse
     PhmgnDetailRecord.parse_table
-    redirect_to root_url, notice: "Step 2 Completed: Phmgn parsed into Phmgn Detail Records. Process Completed."
+    # redirect_to root_url, notice: "Step 2 Completed: Phmgn parsed into Phmgn Detail Records. Process Completed."
+    redirect_to parse_index_path, notice: "The Phmgn has been parsed"
   end
 
 end
