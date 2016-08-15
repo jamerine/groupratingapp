@@ -4,8 +4,27 @@
     <h3>Parse all BWC Files into seperate tables</h3>
     <div>
         <% if @democ_detail_records.empty? %>
-          <%= link_to 'Parse Files', parse_index_path, method: :post,  class: 'btn btn-success' %>
-        <% else %>
+          <%= link_to 'Parse Democ Files', parse_democ_detail_records_path, method: :post,  class: 'btn btn-success' %>
+        <% end %>
+        <% if @mremp_employee_experience_policy_level.empty? %>
+          <%= link_to 'Parse Mremp Files', parse_mremp_employer_experience_index_path, method: :post,  class: 'btn btn-success' %>
+          <% end %>
+          <% if @mrcl_detail_records.empty? %>
+          <%= link_to 'Parse Mrcl Files', parse_mrcl_detail_records_path, method: :post,  class: 'btn btn-success' %>
+          <% end %>
+          <% if @pcomb_detail_records.empty? %>
+          <%= link_to 'Parse Pcomb Files', parse_pcomb_detail_records_path, method: :post,  class: 'btn btn-success' %>
+          <% end %>
+          <% if @phmgn_detail_records.empty? %>
+          <%= link_to 'Parse Phmgn Files', parse_phmgn_detail_records_path, method: :post,  class: 'btn btn-success' %>
+          <% end %>
+          <% if @sc220_rec1_employer_demographics.empty? %>
+          <%= link_to 'Parse Sc220 Files', parse_sc220_employer_demographics_path, method: :post,  class: 'btn btn-success' %>
+          <% end %>
+          <% if @sc230_employer_demographics.empty? %>
+          <%= link_to 'Parse Sc230 Files', parse_sc230_employer_demographics_path, method: :post,  class: 'btn btn-success' %>
+          <% end %>
+        <% if @democ_detail_records_count != 0 && @mremp_employee_experience_policy_level_count != 0 && @mrcl_detail_records_count != 0 && @pcomb_detail_records_count != 0 && @phmgn_detail_records_count != 0 && @sc220_rec1_employer_demographics_count != 0 && @sc230_employer_demographics_count != 0 %>
           <%= link_to 'Move onto Group Rating Process', parse_index_path, class: 'btn btn-success' %>
         <% end %>
     </div>

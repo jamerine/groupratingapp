@@ -6,6 +6,7 @@ class MrclDetailRecordsController < ApplicationController
 
   def parse
     MrclDetailRecord.parse_table
-    redirect_to root_url, notice: "Step 2 Completed: Mrcl parsed into Mrcl Detail Records. Process Completed."
+    # redirect_to root_url, notice: "Step 2 Completed: Mrcl parsed into Mrcl Detail Records. Process Completed."
+    redirect_to parse_index_path, notice: "The Mrcl has been parsed"
   end
 end
