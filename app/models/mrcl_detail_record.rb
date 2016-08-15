@@ -3,9 +3,9 @@ class MrclDetailRecord < ActiveRecord::Base
 
   def self.parse_table
     time1 = Time.new
-    puts "Start Time: " + time1.inspect
       result = ActiveRecord::Base.connection.execute("SELECT public.proc_process_flat_mrcls()")
+      result.clear
     time2 = Time.new
-    puts "End Time: " + time2.inspect
+    puts 'Completed Mrcl Parse in: ' + ((time2 - time1).round(3)).to_s + ' seconds'
   end
 end
