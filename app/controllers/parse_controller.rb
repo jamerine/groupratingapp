@@ -32,18 +32,17 @@ class ParseController < ApplicationController
 
   def create
     time1 = Time.new
-    puts "Process Start Time: " + time1.inspect
-    DemocDetailRecord.parse_table
-    MrclDetailRecord.parse_table
-    MrempEmployeeExperiencePolicyLevel.parse_table
-    PcombDetailRecord.parse_table
-    PhmgnDetailRecord.parse_table
     Sc220Rec1EmployerDemographic.parse_table
-    Sc230EmployerDemographic.parse_table
+    # DemocDetailRecord.parse_table
+    # MrclDetailRecord.parse_table
+    # MrempEmployeeExperiencePolicyLevel.parse_table
+    # PcombDetailRecord.parse_table
+    # PhmgnDetailRecord.parse_table
+    # Sc230EmployerDemographic.parse_table
 
     redirect_to parse_index_path, notice: "The Democ, Mrcl, Mremp, Pcomb, Phmgn, SC220, and SC230 files have been parsed into seperate tables"
     time2 = Time.new
-    puts "Process End Time: " + time2.inspect
+    puts 'Completed Parse Process in: ' + ((time2 - time1).round(3)).to_s + ' seconds'
   end
 
   def destroy
