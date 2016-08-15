@@ -1896,6 +1896,339 @@ ALTER SEQUENCE democs_id_seq OWNED BY democs.id;
 
 
 --
+-- Name: exception_table_policy_combined_request_payroll_infos; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE exception_table_policy_combined_request_payroll_infos (
+    id integer NOT NULL,
+    predecessor_policy_type character varying,
+    predecessor_policy_number integer,
+    successor_policy_type character varying,
+    successor_policy_number integer,
+    transfer_type character varying,
+    transfer_effective_date date,
+    transfer_creation_date date,
+    payroll_origin character varying,
+    data_source character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: exception_table_policy_combined_request_payroll_infos_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE exception_table_policy_combined_request_payroll_infos_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: exception_table_policy_combined_request_payroll_infos_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE exception_table_policy_combined_request_payroll_infos_id_seq OWNED BY exception_table_policy_combined_request_payroll_infos.id;
+
+
+--
+-- Name: final_claim_cost_calculation_tables; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE final_claim_cost_calculation_tables (
+    id integer NOT NULL,
+    representative_number integer,
+    policy_type character varying,
+    policy_number integer,
+    claim_number character varying,
+    claim_injury_date date,
+    claim_handicap_percent double precision,
+    claim_handicap_percent_effective_date date,
+    claim_manual_number integer,
+    claim_medical_paid double precision,
+    claim_mira_medical_reserve_amount double precision,
+    claim_mira_non_reducible_indemnity_paid double precision,
+    claim_mira_reducible_indemnity_paid double precision,
+    claim_mira_indemnity_reserve_amount double precision,
+    claim_mira_non_reducible_indemnity_paid_2 double precision,
+    claim_total_subrogation_collected double precision,
+    claim_unlimited_limited_loss double precision,
+    policy_individual_maximum_claim_value double precision,
+    claim_group_multiplier double precision,
+    claim_individual_multiplier double precision,
+    claim_group_reduced_amount double precision,
+    claim_individual_reduced_amount double precision,
+    claim_subrogation_percent double precision,
+    claim_modified_losses_group_reduced double precision,
+    claim_modified_losses_individual_reduced double precision,
+    data_source character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: final_claim_cost_calculation_tables_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE final_claim_cost_calculation_tables_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: final_claim_cost_calculation_tables_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE final_claim_cost_calculation_tables_id_seq OWNED BY final_claim_cost_calculation_tables.id;
+
+
+--
+-- Name: final_employer_demographics_informations; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE final_employer_demographics_informations (
+    id integer NOT NULL,
+    representative_number integer,
+    policy_number integer,
+    successor_policy_number integer,
+    currently_assigned_representative_number integer,
+    federal_identification_number character varying,
+    business_name character varying,
+    trading_as_name character varying,
+    in_care_name_contact_name character varying,
+    address_1 character varying,
+    address_2 character varying,
+    city character varying,
+    state character varying,
+    zip_code character varying,
+    zip_code_plus_4 character varying,
+    country_code character varying,
+    county character varying,
+    policy_creation_date date,
+    current_policy_status character varying,
+    current_policy_status_effective_date date,
+    merit_rate double precision,
+    group_code character varying,
+    minimum_premium_percentage character varying,
+    rate_adjust_factor character varying,
+    em_effective_date date,
+    regular_balance_amount double precision,
+    attorney_general_balance_amount double precision,
+    appealed_balance_amount double precision,
+    pending_balance_amount double precision,
+    advance_deposit_amount double precision,
+    data_source character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: final_employer_demographics_informations_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE final_employer_demographics_informations_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: final_employer_demographics_informations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE final_employer_demographics_informations_id_seq OWNED BY final_employer_demographics_informations.id;
+
+
+--
+-- Name: final_manual_class_four_year_payroll_and_exp_losses; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE final_manual_class_four_year_payroll_and_exp_losses (
+    id integer NOT NULL,
+    representative_number integer,
+    policy_number integer,
+    manual_number integer,
+    manual_class_four_year_period_payroll double precision,
+    manual_class_expected_loss_rate double precision,
+    manual_class_base_rate double precision,
+    manual_class_expected_losses double precision,
+    manual_class_industry_group integer,
+    manual_class_limited_loss_rate double precision,
+    manual_class_limited_losses double precision,
+    data_source character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: final_manual_class_four_year_payroll_and_exp_losses_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE final_manual_class_four_year_payroll_and_exp_losses_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: final_manual_class_four_year_payroll_and_exp_losses_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE final_manual_class_four_year_payroll_and_exp_losses_id_seq OWNED BY final_manual_class_four_year_payroll_and_exp_losses.id;
+
+
+--
+-- Name: final_manual_class_group_rating_and_premium_projections; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE final_manual_class_group_rating_and_premium_projections (
+    id integer NOT NULL,
+    representative_number integer,
+    policy_number integer,
+    manual_number integer,
+    manual_class_industry_group integer,
+    manual_class_industry_group_premium_total double precision,
+    manual_class_current_estimated_payroll double precision,
+    manual_class_base_rate double precision,
+    manual_class_industry_group_premium_percentage double precision,
+    manual_class_modification_rate double precision,
+    manual_class_individual_total_rate double precision,
+    manual_class_group_total_rate double precision,
+    manual_class_standard_premium double precision,
+    manual_class_estimated_group_premium double precision,
+    manual_class_estimated_individual_premium double precision,
+    data_source character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: final_manual_class_group_rating_and_premium_projections_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE final_manual_class_group_rating_and_premium_projections_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: final_manual_class_group_rating_and_premium_projections_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE final_manual_class_group_rating_and_premium_projections_id_seq OWNED BY final_manual_class_group_rating_and_premium_projections.id;
+
+
+--
+-- Name: final_policy_experience_calculations; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE final_policy_experience_calculations (
+    id integer NOT NULL,
+    representative_number integer,
+    policy_number integer,
+    policy_group_number character varying,
+    policy_status character varying,
+    policy_total_four_year_payroll double precision,
+    policy_credibility_group integer,
+    policy_maximum_claim_value integer,
+    policy_credibility_percent double precision,
+    policy_total_expected_losses double precision,
+    policy_total_limited_losses double precision,
+    policy_total_claims_count integer,
+    policy_total_modified_losses_group_reduced double precision,
+    policy_total_modified_losses_individual_reduced double precision,
+    policy_group_ratio double precision,
+    policy_individual_total_modifier double precision,
+    policy_individual_experience_modified_rate double precision,
+    data_source character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: final_policy_experience_calculations_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE final_policy_experience_calculations_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: final_policy_experience_calculations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE final_policy_experience_calculations_id_seq OWNED BY final_policy_experience_calculations.id;
+
+
+--
+-- Name: final_policy_group_rating_and_premium_projections; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE final_policy_group_rating_and_premium_projections (
+    id integer NOT NULL,
+    representative_number integer,
+    policy_number integer,
+    policy_industry_group integer,
+    policy_status character varying,
+    group_rating_qualification character varying,
+    group_rating_tier double precision,
+    group_rating_group_number integer,
+    policy_total_current_payroll double precision,
+    policy_total_standard_premium double precision,
+    policy_total_individual_premium double precision,
+    policy_total_group_premium double precision,
+    policy_total_group_savings double precision,
+    policy_group_fees double precision,
+    policy_group_dues double precision,
+    policy_total_costs double precision,
+    data_source character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: final_policy_group_rating_and_premium_projections_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE final_policy_group_rating_and_premium_projections_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: final_policy_group_rating_and_premium_projections_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE final_policy_group_rating_and_premium_projections_id_seq OWNED BY final_policy_group_rating_and_premium_projections.id;
+
+
+--
 -- Name: mrcl_detail_records; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -2330,6 +2663,465 @@ CREATE SEQUENCE phmgns_id_seq
 --
 
 ALTER SEQUENCE phmgns_id_seq OWNED BY phmgns.id;
+
+
+--
+-- Name: process_manual_class_four_year_payroll_with_conditions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE process_manual_class_four_year_payroll_with_conditions (
+    id integer NOT NULL,
+    representative_number integer,
+    policy_number integer,
+    manual_number integer,
+    manual_class_four_year_period_payroll double precision,
+    data_source character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: process_manual_class_four_year_payroll_with_conditions_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE process_manual_class_four_year_payroll_with_conditions_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: process_manual_class_four_year_payroll_with_conditions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE process_manual_class_four_year_payroll_with_conditions_id_seq OWNED BY process_manual_class_four_year_payroll_with_conditions.id;
+
+
+--
+-- Name: process_manual_class_four_year_payroll_without_conditions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE process_manual_class_four_year_payroll_without_conditions (
+    id integer NOT NULL,
+    representative_number integer,
+    policy_number integer,
+    manual_number integer,
+    manual_class_four_year_period_payroll double precision,
+    data_source character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: process_manual_class_four_year_payroll_without_condition_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE process_manual_class_four_year_payroll_without_condition_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: process_manual_class_four_year_payroll_without_condition_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE process_manual_class_four_year_payroll_without_condition_id_seq OWNED BY process_manual_class_four_year_payroll_without_conditions.id;
+
+
+--
+-- Name: process_manual_reclass_tables; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE process_manual_reclass_tables (
+    id integer NOT NULL,
+    representative_number integer,
+    policy_number integer,
+    re_classed_from_manual_number integer,
+    re_classed_to_manual_number integer,
+    reclass_creation_date date,
+    payroll_reporting_period_from_date date,
+    payroll_reporting_period_to_date date,
+    re_classed_to_manual_payroll_total double precision,
+    payroll_origin character varying,
+    data_source character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: process_manual_reclass_tables_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE process_manual_reclass_tables_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: process_manual_reclass_tables_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE process_manual_reclass_tables_id_seq OWNED BY process_manual_reclass_tables.id;
+
+
+--
+-- Name: process_payroll_all_transactions_breakdown_by_manual_classes; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE process_payroll_all_transactions_breakdown_by_manual_classes (
+    id integer NOT NULL,
+    representative_number integer,
+    policy_number integer,
+    manual_number integer,
+    manual_class_effective_date date,
+    manual_class_payroll double precision,
+    payroll_origin character varying,
+    data_sourc character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: process_payroll_all_transactions_breakdown_by_manual_cla_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE process_payroll_all_transactions_breakdown_by_manual_cla_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: process_payroll_all_transactions_breakdown_by_manual_cla_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE process_payroll_all_transactions_breakdown_by_manual_cla_id_seq OWNED BY process_payroll_all_transactions_breakdown_by_manual_classes.id;
+
+
+--
+-- Name: process_payroll_breakdown_by_manual_class; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE process_payroll_breakdown_by_manual_class (
+    id integer NOT NULL,
+    representative_number integer,
+    policy_type character varying,
+    policy_number integer,
+    manual_number integer,
+    manual_type character varying,
+    manual_class_effective_date date,
+    manual_class_rate double precision,
+    manual_class_payroll double precision,
+    manual_class_premium double precision,
+    payroll_origin character varying,
+    data_source character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: process_payroll_breakdown_by_manual_class_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE process_payroll_breakdown_by_manual_class_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: process_payroll_breakdown_by_manual_class_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE process_payroll_breakdown_by_manual_class_id_seq OWNED BY process_payroll_breakdown_by_manual_class.id;
+
+
+--
+-- Name: process_policy_combination_lease_terminations; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE process_policy_combination_lease_terminations (
+    id integer NOT NULL,
+    representative_number integer,
+    valid_policy_number character varying,
+    policy_combinations character varying,
+    predecessor_policy_type character varying,
+    predecessor_policy_number integer,
+    successor_policy_type character varying,
+    successor_policy_number integer,
+    transfer_type character varying,
+    transfer_effective_date date,
+    transfer_creation_date date,
+    partial_transfer_due_to_labor_lease character varying,
+    labor_lease_type character varying,
+    partial_transfer_payroll_movement character varying,
+    ncci_manual_number integer,
+    manual_coverage_type character varying,
+    payroll_reporting_period_from_date date,
+    payroll_reporting_period_to_date date,
+    manual_payroll double precision,
+    payroll_origin character varying,
+    data_source character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: process_policy_combination_lease_terminations_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE process_policy_combination_lease_terminations_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: process_policy_combination_lease_terminations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE process_policy_combination_lease_terminations_id_seq OWNED BY process_policy_combination_lease_terminations.id;
+
+
+--
+-- Name: process_policy_combine_full_transfers; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE process_policy_combine_full_transfers (
+    id integer NOT NULL,
+    representative_number integer,
+    policy_type character varying,
+    manual_number integer,
+    manual_type character varying,
+    manual_class_effective_date date,
+    manual_class_rate double precision,
+    manual_class_payroll double precision,
+    manual_class_premium double precision,
+    predecessor_policy_type character varying,
+    predecessor_policy_number integer,
+    successor_policy_type character varying,
+    successor_policy_number integer,
+    transfer_type character varying,
+    transfer_effective_date date,
+    transfer_creation_date date,
+    payroll_origin character varying,
+    data_source character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: process_policy_combine_full_transfers_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE process_policy_combine_full_transfers_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: process_policy_combine_full_transfers_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE process_policy_combine_full_transfers_id_seq OWNED BY process_policy_combine_full_transfers.id;
+
+
+--
+-- Name: process_policy_combine_partial_to_full_leases; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE process_policy_combine_partial_to_full_leases (
+    id integer NOT NULL,
+    representative_number integer,
+    valid_policy_number character varying,
+    policy_combinations character varying,
+    predecessor_policy_type character varying,
+    predecessor_policy_number integer,
+    successor_policy_type character varying,
+    successor_policy_number integer,
+    transfer_type character varying,
+    transfer_effective_date date,
+    transfer_creation_date date,
+    partial_transfer_due_to_labor_lease character varying,
+    labor_lease_type character varying,
+    partial_transfer_payroll_movement character varying,
+    ncci_manual_number integer,
+    manual_coverage_type character varying,
+    payroll_reporting_period_from_date date,
+    payroll_reporting_period_to_date date,
+    manual_payroll double precision,
+    payroll_origin character varying,
+    data_source character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: process_policy_combine_partial_to_full_leases_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE process_policy_combine_partial_to_full_leases_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: process_policy_combine_partial_to_full_leases_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE process_policy_combine_partial_to_full_leases_id_seq OWNED BY process_policy_combine_partial_to_full_leases.id;
+
+
+--
+-- Name: process_policy_combine_partial_transfer_no_leases; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE process_policy_combine_partial_transfer_no_leases (
+    id integer NOT NULL,
+    representative_number integer,
+    valid_policy_number character varying,
+    policy_combinations character varying,
+    predecessor_policy_type character varying,
+    predecessor_policy_number integer,
+    successor_policy_type character varying,
+    successor_policy_number integer,
+    transfer_type character varying,
+    transfer_effective_date date,
+    transfer_creation_date date,
+    partial_transfer_due_to_labor_lease character varying,
+    labor_lease_type character varying,
+    partial_transfer_payroll_movement character varying,
+    ncci_manual_number integer,
+    manual_coverage_type character varying,
+    payroll_reporting_period_from_date date,
+    payroll_reporting_period_to_date date,
+    manual_payroll double precision,
+    payroll_origin character varying,
+    data_source character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: process_policy_combine_partial_transfer_no_leases_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE process_policy_combine_partial_transfer_no_leases_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: process_policy_combine_partial_transfer_no_leases_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE process_policy_combine_partial_transfer_no_leases_id_seq OWNED BY process_policy_combine_partial_transfer_no_leases.id;
+
+
+--
+-- Name: process_policy_coverage_status_histories; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE process_policy_coverage_status_histories (
+    id integer NOT NULL,
+    representative_number integer,
+    policy_number integer,
+    coverage_effective_date date,
+    coverage_end_date date,
+    coverage_status character varying,
+    lapse_days integer,
+    data_source character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: process_policy_coverage_status_histories_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE process_policy_coverage_status_histories_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: process_policy_coverage_status_histories_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE process_policy_coverage_status_histories_id_seq OWNED BY process_policy_coverage_status_histories.id;
+
+
+--
+-- Name: process_policy_experience_period_peos; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE process_policy_experience_period_peos (
+    id integer NOT NULL,
+    representative_number integer,
+    policy_number integer,
+    manual_class_sf_peo_lease_effective_date date,
+    manual_class_sf_peo_lease_termination_date date,
+    manual_class_si_peo_lease_effective_date date,
+    manual_class_si_peo_lease_termination_date date,
+    data_source character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: process_policy_experience_period_peos_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE process_policy_experience_period_peos_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: process_policy_experience_period_peos_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE process_policy_experience_period_peos_id_seq OWNED BY process_policy_experience_period_peos.id;
 
 
 --
@@ -3007,6 +3799,55 @@ ALTER TABLE ONLY democs ALTER COLUMN id SET DEFAULT nextval('democs_id_seq'::reg
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY exception_table_policy_combined_request_payroll_infos ALTER COLUMN id SET DEFAULT nextval('exception_table_policy_combined_request_payroll_infos_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY final_claim_cost_calculation_tables ALTER COLUMN id SET DEFAULT nextval('final_claim_cost_calculation_tables_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY final_employer_demographics_informations ALTER COLUMN id SET DEFAULT nextval('final_employer_demographics_informations_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY final_manual_class_four_year_payroll_and_exp_losses ALTER COLUMN id SET DEFAULT nextval('final_manual_class_four_year_payroll_and_exp_losses_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY final_manual_class_group_rating_and_premium_projections ALTER COLUMN id SET DEFAULT nextval('final_manual_class_group_rating_and_premium_projections_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY final_policy_experience_calculations ALTER COLUMN id SET DEFAULT nextval('final_policy_experience_calculations_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY final_policy_group_rating_and_premium_projections ALTER COLUMN id SET DEFAULT nextval('final_policy_group_rating_and_premium_projections_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY mrcl_detail_records ALTER COLUMN id SET DEFAULT nextval('mrcl_detail_records_id_seq'::regclass);
 
 
@@ -3071,6 +3912,83 @@ ALTER TABLE ONLY phmgn_detail_records ALTER COLUMN id SET DEFAULT nextval('phmgn
 --
 
 ALTER TABLE ONLY phmgns ALTER COLUMN id SET DEFAULT nextval('phmgns_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY process_manual_class_four_year_payroll_with_conditions ALTER COLUMN id SET DEFAULT nextval('process_manual_class_four_year_payroll_with_conditions_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY process_manual_class_four_year_payroll_without_conditions ALTER COLUMN id SET DEFAULT nextval('process_manual_class_four_year_payroll_without_condition_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY process_manual_reclass_tables ALTER COLUMN id SET DEFAULT nextval('process_manual_reclass_tables_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY process_payroll_all_transactions_breakdown_by_manual_classes ALTER COLUMN id SET DEFAULT nextval('process_payroll_all_transactions_breakdown_by_manual_cla_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY process_payroll_breakdown_by_manual_class ALTER COLUMN id SET DEFAULT nextval('process_payroll_breakdown_by_manual_class_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY process_policy_combination_lease_terminations ALTER COLUMN id SET DEFAULT nextval('process_policy_combination_lease_terminations_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY process_policy_combine_full_transfers ALTER COLUMN id SET DEFAULT nextval('process_policy_combine_full_transfers_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY process_policy_combine_partial_to_full_leases ALTER COLUMN id SET DEFAULT nextval('process_policy_combine_partial_to_full_leases_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY process_policy_combine_partial_transfer_no_leases ALTER COLUMN id SET DEFAULT nextval('process_policy_combine_partial_transfer_no_leases_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY process_policy_coverage_status_histories ALTER COLUMN id SET DEFAULT nextval('process_policy_coverage_status_histories_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY process_policy_experience_period_peos ALTER COLUMN id SET DEFAULT nextval('process_policy_experience_period_peos_id_seq'::regclass);
 
 
 --
@@ -3217,6 +4135,62 @@ ALTER TABLE ONLY democs
 
 
 --
+-- Name: exception_table_policy_combined_request_payroll_infos_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY exception_table_policy_combined_request_payroll_infos
+    ADD CONSTRAINT exception_table_policy_combined_request_payroll_infos_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: final_claim_cost_calculation_tables_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY final_claim_cost_calculation_tables
+    ADD CONSTRAINT final_claim_cost_calculation_tables_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: final_employer_demographics_informations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY final_employer_demographics_informations
+    ADD CONSTRAINT final_employer_demographics_informations_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: final_manual_class_four_year_payroll_and_exp_losses_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY final_manual_class_four_year_payroll_and_exp_losses
+    ADD CONSTRAINT final_manual_class_four_year_payroll_and_exp_losses_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: final_manual_class_group_rating_and_premium_projections_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY final_manual_class_group_rating_and_premium_projections
+    ADD CONSTRAINT final_manual_class_group_rating_and_premium_projections_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: final_policy_experience_calculations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY final_policy_experience_calculations
+    ADD CONSTRAINT final_policy_experience_calculations_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: final_policy_group_rating_and_premium_projections_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY final_policy_group_rating_and_premium_projections
+    ADD CONSTRAINT final_policy_group_rating_and_premium_projections_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: mrcl_detail_records_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3297,6 +4271,94 @@ ALTER TABLE ONLY phmgns
 
 
 --
+-- Name: process_manual_class_four_year_payroll_with_conditions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY process_manual_class_four_year_payroll_with_conditions
+    ADD CONSTRAINT process_manual_class_four_year_payroll_with_conditions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: process_manual_class_four_year_payroll_without_conditions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY process_manual_class_four_year_payroll_without_conditions
+    ADD CONSTRAINT process_manual_class_four_year_payroll_without_conditions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: process_manual_reclass_tables_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY process_manual_reclass_tables
+    ADD CONSTRAINT process_manual_reclass_tables_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: process_payroll_all_transactions_breakdown_by_manual_class_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY process_payroll_all_transactions_breakdown_by_manual_classes
+    ADD CONSTRAINT process_payroll_all_transactions_breakdown_by_manual_class_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: process_payroll_breakdown_by_manual_class_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY process_payroll_breakdown_by_manual_class
+    ADD CONSTRAINT process_payroll_breakdown_by_manual_class_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: process_policy_combination_lease_terminations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY process_policy_combination_lease_terminations
+    ADD CONSTRAINT process_policy_combination_lease_terminations_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: process_policy_combine_full_transfers_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY process_policy_combine_full_transfers
+    ADD CONSTRAINT process_policy_combine_full_transfers_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: process_policy_combine_partial_to_full_leases_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY process_policy_combine_partial_to_full_leases
+    ADD CONSTRAINT process_policy_combine_partial_to_full_leases_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: process_policy_combine_partial_transfer_no_leases_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY process_policy_combine_partial_transfer_no_leases
+    ADD CONSTRAINT process_policy_combine_partial_transfer_no_leases_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: process_policy_coverage_status_histories_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY process_policy_coverage_status_histories
+    ADD CONSTRAINT process_policy_coverage_status_histories_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: process_policy_experience_period_peos_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY process_policy_experience_period_peos
+    ADD CONSTRAINT process_policy_experience_period_peos_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: sc220_rec1_employer_demographics_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3373,6 +4435,69 @@ ALTER TABLE ONLY sc230s
 --
 
 CREATE INDEX index_bwc_codes_policy_effective_dates_on_policy_number ON bwc_codes_policy_effective_dates USING btree (policy_number);
+
+
+--
+-- Name: index_final_claim_cost_calculation_tables_on_policy_number; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_final_claim_cost_calculation_tables_on_policy_number ON final_claim_cost_calculation_tables USING btree (policy_number);
+
+
+--
+-- Name: index_final_employer_demographics_informations_on_policy_number; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_final_employer_demographics_informations_on_policy_number ON final_employer_demographics_informations USING btree (policy_number);
+
+
+--
+-- Name: index_final_policy_experience_calculations_on_policy_number; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_final_policy_experience_calculations_on_policy_number ON final_policy_experience_calculations USING btree (policy_number);
+
+
+--
+-- Name: index_final_policy_group_and_premium_proj_on_pol_num; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_final_policy_group_and_premium_proj_on_pol_num ON final_policy_group_rating_and_premium_projections USING btree (policy_number);
+
+
+--
+-- Name: index_man_class_exp_loss_pol_num_and_man_num; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_man_class_exp_loss_pol_num_and_man_num ON final_manual_class_four_year_payroll_and_exp_losses USING btree (policy_number, manual_number);
+
+
+--
+-- Name: index_man_class_prem_proj_pol_num_and_man_num; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_man_class_prem_proj_pol_num_and_man_num ON final_manual_class_group_rating_and_premium_projections USING btree (policy_number, manual_number);
+
+
+--
+-- Name: index_process_payroll_by_man_cl_on_pol_num_and_man_num; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_process_payroll_by_man_cl_on_pol_num_and_man_num ON process_payroll_breakdown_by_manual_class USING btree (policy_number, manual_number);
+
+
+--
+-- Name: index_process_policy_coverage_status_histories_on_policy_number; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_process_policy_coverage_status_histories_on_policy_number ON process_policy_coverage_status_histories USING btree (policy_number);
+
+
+--
+-- Name: index_process_policy_experience_period_peos_on_policy_number; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_process_policy_experience_period_peos_on_policy_number ON process_policy_experience_period_peos USING btree (policy_number);
 
 
 --
@@ -3461,4 +4586,40 @@ INSERT INTO schema_migrations (version) VALUES ('20160814180310');
 INSERT INTO schema_migrations (version) VALUES ('20160814180427');
 
 INSERT INTO schema_migrations (version) VALUES ('20160814180652');
+
+INSERT INTO schema_migrations (version) VALUES ('20160814183144');
+
+INSERT INTO schema_migrations (version) VALUES ('20160814184044');
+
+INSERT INTO schema_migrations (version) VALUES ('20160814184408');
+
+INSERT INTO schema_migrations (version) VALUES ('20160814184901');
+
+INSERT INTO schema_migrations (version) VALUES ('20160814190226');
+
+INSERT INTO schema_migrations (version) VALUES ('20160814190350');
+
+INSERT INTO schema_migrations (version) VALUES ('20160814191259');
+
+INSERT INTO schema_migrations (version) VALUES ('20160814191446');
+
+INSERT INTO schema_migrations (version) VALUES ('20160814191649');
+
+INSERT INTO schema_migrations (version) VALUES ('20160814191839');
+
+INSERT INTO schema_migrations (version) VALUES ('20160814192036');
+
+INSERT INTO schema_migrations (version) VALUES ('20160814192236');
+
+INSERT INTO schema_migrations (version) VALUES ('20160814192355');
+
+INSERT INTO schema_migrations (version) VALUES ('20160814192453');
+
+INSERT INTO schema_migrations (version) VALUES ('20160814192538');
+
+INSERT INTO schema_migrations (version) VALUES ('20160814192804');
+
+INSERT INTO schema_migrations (version) VALUES ('20160814193131');
+
+INSERT INTO schema_migrations (version) VALUES ('20160814193318');
 

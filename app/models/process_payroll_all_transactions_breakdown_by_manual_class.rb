@@ -1,0 +1,2 @@
+class ProcessPayrollAllTransactionsBreakdownByManualClass < ActiveRecord::Base
+end

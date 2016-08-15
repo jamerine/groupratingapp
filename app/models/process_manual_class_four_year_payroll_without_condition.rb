@@ -1,0 +1,2 @@
+class ProcessManualClassFourYearPayrollWithoutCondition < ActiveRecord::Base
+end
