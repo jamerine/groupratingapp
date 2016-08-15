@@ -12,6 +12,7 @@ class Sc220EmployerDemographicsController < ApplicationController
 
   def parse
     Sc220Rec1EmployerDemographic.parse_table
-    redirect_to root_url, notice: "Step 2 Completed: SC220 parsed into 4 different SC220 Records. Process Completed."
+    # redirect_to root_url, notice: "Step 2 Completed: SC220 parsed into 4 different SC220 Records. Process Completed."
+    redirect_to parse_index_path, notice: "The Sc220 has been parsed"
   end
 end

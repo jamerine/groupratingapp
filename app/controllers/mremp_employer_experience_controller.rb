@@ -10,6 +10,7 @@ class MrempEmployerExperienceController < ApplicationController
 
   def parse
     MrempEmployeeExperiencePolicyLevel.parse_table
-    redirect_to root_url, notice: "Step 2 Completed: Mremp parsed into 3 different Mremp Records. Process Completed."
+    # redirect_to root_url, notice: "Step 2 Completed: Mremp parsed into 3 different Mremp Records. Process Completed."
+    redirect_to parse_index_path, notice: "The Mremp has been parsed"
   end
 end
