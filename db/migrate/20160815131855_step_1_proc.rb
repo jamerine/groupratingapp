@@ -10,7 +10,7 @@ class Step1Proc < ActiveRecord::Migration
     $BODY$
 
         DECLARE
-          run_date date := CURRENT_DATE;
+          run_date timestamp := LOCALTIMESTAMP;
         BEGIN
 
 
@@ -249,7 +249,7 @@ class Step1Proc < ActiveRecord::Migration
           a.coverage_end_date,
           a.coverage_status,
           (CASE WHEN a.coverage_status = 'LAPSE' and a.coverage_end_date is not null Then (a.coverage_end_date - a.coverage_effective_date)
-               WHEN a.coverage_status = 'LAPSE' and a.coverage_end_date is null THEN (run_date - a.coverage_effective_date)
+               WHEN a.coverage_status = 'LAPSE' and a.coverage_end_date is null THEN (run_date::date - a.coverage_effective_date)
                ELSE '0'::integer END) as lapse_days,
            run_date as updated_at
           FROM public.process_policy_coverage_status_histories a
@@ -265,7 +265,7 @@ class Step1Proc < ActiveRecord::Migration
           a.coverage_effective_date,
           a.coverage_end_date,
           a.coverage_status,
-          (run_date - a.coverage_effective_date) as lapse_days,
+          (run_date::date - a.coverage_effective_date) as lapse_days,
            run_date as updated_at
           FROM public.process_policy_coverage_status_histories a
           WHERE a.coverage_end_date is null and a.coverage_status = 'LAPSE'

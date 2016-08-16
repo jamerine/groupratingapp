@@ -33,4 +33,19 @@ class GroupRating < ActiveRecord::Base
     puts 'Completed Group Rating Step 4 in: ' + ((time2 - time1).round(3)).to_s + ' seconds'
   end
 
+  def self.step_5(process_representative, experience_period_lower_date, experience_period_upper_date, current_payroll_period_lower_date)
+    time1 = Time.new
+      result = ActiveRecord::Base.connection.execute("SELECT public.proc_step_5(#{process_representative}, '#{experience_period_lower_date }', '#{experience_period_upper_date }', '#{current_payroll_period_lower_date }')")
+      result.clear
+    time2 = Time.new
+    puts 'Completed Group Rating Step 5 in: ' + ((time2 - time1).round(3)).to_s + ' seconds'
+  end
+
+  def self.step_6(process_representative, experience_period_lower_date, experience_period_upper_date, current_payroll_period_lower_date)
+    time1 = Time.new
+      result = ActiveRecord::Base.connection.execute("SELECT public.proc_step_6(#{process_representative}, '#{experience_period_lower_date }', '#{experience_period_upper_date }', '#{current_payroll_period_lower_date }')")
+      result.clear
+    time2 = Time.new
+    puts 'Completed Group Rating Step 6 in: ' + ((time2 - time1).round(3)).to_s + ' seconds'
+  end
 end

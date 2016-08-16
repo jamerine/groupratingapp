@@ -11,7 +11,7 @@ class Step2Proc < ActiveRecord::Migration
       $BODY$
 
       DECLARE
-        run_date date := CURRENT_DATE;
+        run_date timestamp := LOCALTIMESTAMP;
       BEGIN
       -- STEP 2A -- Process Payroll File
       /*************** Create Table for transposing the columns of sc220 to rows ***************/

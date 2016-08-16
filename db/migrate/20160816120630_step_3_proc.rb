@@ -14,7 +14,7 @@ class Step3Proc < ActiveRecord::Migration
   $BODY$
 
         DECLARE
-          run_date date := CURRENT_DATE;
+          run_date timestamp := LOCALTIMESTAMP;
         BEGIN
 
 
