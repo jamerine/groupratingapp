@@ -1,0 +1,14 @@
+<div class="container">
+  <div class="jumbotron">
+    <h1>Group Ratings</h1>
+  </div>
+  <div>
+    <%= @group_ratings.each do |group_rating| %>
+        <p><%= group_rating.id %></p>
+        <p><%=  group_rating.process_representative %></p>
+        <%= link_to 'View Group Rating Info', group_rating_path(group_rating.id) %>
+    <% end %>
+  </div>
+  <%= link_to 'Create New Group Rating', new_group_rating_path %>
+
+</div>

@@ -1519,324 +1519,6 @@ CREATE FUNCTION proc_process_flat_sc230() RETURNS void
 
 
 --
--- Name: proc_step_1(integer); Type: FUNCTION; Schema: public; Owner: -
---
-
-CREATE FUNCTION proc_step_1(process_representative integer) RETURNS void
-    LANGUAGE plpgsql
-    AS $$
-
-    DECLARE
-      run_date date := CURRENT_DATE;
-      
-    BEGIN
-	
-
-    /*  BEGIN GROUP RATING PROCESS OF INSERTING RECORDS FROM FLAT FILES INTO THE NEWLY CREATED PROCESS AND FINAL TABLES        */
-
-    -- STEP 1 A -- CREATE FINAL EMPLOYER DEMOGRAPHICS
-
-    INSERT INTO final_employer_demographics_informations (
-      representative_number,
-      policy_number,
-      successor_policy_number,
-      currently_assigned_representative_number,
-      federal_identification_number,
-      business_name,
-      trading_as_name,
-      in_care_name_contact_name,
-      address_1,
-      address_2,
-      city,
-      state,
-      zip_code,
-      zip_code_plus_4,
-      country_code,
-      county,
-      merit_rate,
-      group_code,
-      minimum_premium_percentage,
-      rate_adjust_factor,
-      em_effective_date,
-      regular_balance_amount,
-      attorney_general_balance_amount,
-      appealed_balance_amount,
-      pending_balance_amount,
-      advance_deposit_amount,
-      data_source
-        )
-
-    (Select
-      representative_number,
-      policy_number,
-      successor_policy_number,
-      currently_assigned_representative_number,
-      federal_identification_number,
-      business_name,
-      trading_as_name,
-      in_care_name_contact_name,
-      address_1,
-      address_2,
-      city,
-      state,
-      zip_code,
-      zip_code_plus_4,
-      country_code,
-      county,
-      merit_rate,
-      group_code,
-      minimum_premium_percentage,
-      rate_adjust_factor,
-      em_effective_date,
-      regular_balance_amount,
-      attorney_general_balance_amount,
-      appealed_balance_amount,
-      pending_balance_amount,
-      advance_deposit_amount,
-      'bwc' as data_source
-    FROM public.sc220_rec1_employer_demographics
-    WHERE representative_number = process_representative
-    );
-
-
-
-    -- STEP 1B -- CREATE POLICY COVERAGE HISTORY FROM SC220
-
-
-    Insert into process_policy_coverage_status_histories
-    (
-      representative_number,
-       policy_number,
-       coverage_effective_date,
-       coverage_end_date,
-       coverage_status,
-       data_source
-    )
-
-    (SELECT
-    representative_number,
-    policy_number,
-    coverage_effective_date,
-    coverage_end_date,
-    coverage_status,
-    'bwc' as data_source
-    FROM sc220_rec1_employer_demographics
-    WHERE coverage_effective_date is not null and representative_number = process_representative
-    );
-
-    Insert into process_policy_coverage_status_histories
-    (
-      representative_number,
-       policy_number,
-       coverage_effective_date,
-       coverage_end_date,
-       coverage_status,
-       data_source
-    )
-    (SELECT
-    representative_number,
-    policy_number,
-    n2nd_coverage_effective_date,
-    n2nd_coverage_end_date,
-    n2nd_coverage_status,
-    'bwc' as data_source
-    FROM sc220_rec1_employer_demographics
-    WHERE n2nd_coverage_effective_date is not null
-    and representative_number = process_representative
-    );
-
-    Insert into process_policy_coverage_status_histories
-    (
-      representative_number,
-       policy_number,
-       coverage_effective_date,
-       coverage_end_date,
-       coverage_status,
-       data_source
-    )
-    (SELECT
-    representative_number,
-    policy_number,
-    n3rd_coverage_effective_date,
-    n3rd_coverage_end_date,
-    n3rd_coverage_status,
-    'bwc' as data_source
-    FROM sc220_rec1_employer_demographics
-    WHERE n3rd_coverage_effective_date is not null
-    and representative_number = process_representative
-    );
-
-    Insert into process_policy_coverage_status_histories
-    (
-      representative_number,
-       policy_number,
-       coverage_effective_date,
-       coverage_end_date,
-       coverage_status,
-       data_source
-    )
-    (SELECT
-    representative_number,
-    policy_number,
-    n4th_coverage_effective_date,
-    n4th_coverage_end_date,
-    n4th_coverage_status,
-    'bwc' as data_source
-    FROM sc220_rec1_employer_demographics
-    WHERE n4th_coverage_effective_date is not null
-    and representative_number = process_representative
-    );
-
-    Insert into process_policy_coverage_status_histories
-    (
-      representative_number,
-       policy_number,
-       coverage_effective_date,
-       coverage_end_date,
-       coverage_status,
-       data_source
-    )
-    (SELECT
-    representative_number,
-    policy_number,
-    n5th_coverage_effective_date,
-    n5th_coverage_end_date,
-    n5th_coverage_status,
-    'bwc' as data_source
-    FROM sc220_rec1_employer_demographics
-    WHERE n5th_coverage_effective_date is not null
-    and representative_number = process_representative
-    );
-
-
-    Insert into process_policy_coverage_status_histories
-    (
-      representative_number,
-       policy_number,
-       coverage_effective_date,
-       coverage_end_date,
-       coverage_status,
-       data_source
-    )
-
-    (SELECT
-    representative_number,
-    policy_number,
-    n6th_coverage_effective_date,
-    n6th_coverage_end_date,
-    n6th_coverage_status,
-    'bwc' as data_source
-    FROM sc220_rec1_employer_demographics
-    WHERE n6th_coverage_effective_date is not null
-    and representative_number = process_representative
-    );
-
-    Update public.process_policy_coverage_status_histories pcsh set (lapse_days) = (t2.lapse_days)
-    FROM
-    (SELECT a.representative_number,
-      a.policy_number,
-      a.coverage_effective_date,
-      a.coverage_end_date,
-      a.coverage_status,
-      (CASE WHEN a.coverage_status = 'LAPSE' and a.coverage_end_date is not null Then (a.coverage_end_date - a.coverage_effective_date)
-           WHEN a.coverage_status = 'LAPSE' and a.coverage_end_date is null THEN (run_date - a.coverage_effective_date)
-           ELSE '0'::integer END) as lapse_days
-      FROM public.process_policy_coverage_status_histories a
-      WHERE a.representative_number = process_representative
-    ) t2
-    WHERE pcsh.representative_number = t2.representative_number and pcsh.policy_number = t2.policy_number and pcsh.coverage_effective_date = t2.coverage_effective_date and pcsh.coverage_end_date = t2.coverage_end_date and pcsh.coverage_status = t2.coverage_status;
-
-
-    Update public.process_policy_coverage_status_histories pcsh set (lapse_days) = (t2.lapse_days)
-    FROM
-    (SELECT a.representative_number,
-      a.policy_number,
-      a.coverage_effective_date,
-      a.coverage_end_date,
-      a.coverage_status,
-      (run_date - a.coverage_effective_date) as lapse_days
-      FROM public.process_policy_coverage_status_histories a
-      WHERE a.coverage_end_date is null and a.coverage_status = 'LAPSE'
-      and a.representative_number = process_representative
-    ) t2
-    WHERE  pcsh.policy_number = t2.policy_number and pcsh.coverage_effective_date = t2.coverage_effective_date and pcsh.coverage_status = t2.coverage_status ;
-
-
-    -- 65 milliseconds
-
-    -- Add policy_creation_date to the employer_demographics_information file first from Steve's file
-
-
-    UPDATE public.final_employer_demographics_informations edi SET
-    (policy_creation_date) =
-    (t2.policy_creation_date)
-    FROM
-    (SELECT a.policy_number,
-        a.policy_original_effective_date as policy_creation_date
-    FROM bwc_policy_coverage_creation_history a
-    ) t2
-    WHERE edi.policy_number = t2.policy_number;
-
-
-
-    -- UPDATE Null values of creation date that do not exist from Steve's file.
-    UPDATE public.final_employer_demographics_informations edi SET
-    (policy_creation_date) = (t2.min_coverage_effective_date)
-    FROM
-    (SELECT min_pcsh.policy_number,
-        min(min_pcsh.coverage_effective_date) as min_coverage_effective_date
-    FROM process_policy_coverage_status_histories min_pcsh
-    WHERE policy_number in
-      (
-        SELECT policy_number from public.final_employer_demographics_informations WHERE policy_creation_date is null
-      )
-    GROUP BY policy_number
-    ORDER by policy_number
-    ) t2
-    WHERE edi.policy_number = t2.policy_number;
-
-
-
-
-    UPDATE public.final_employer_demographics_informations edi SET
-    (current_policy_status, current_policy_status_effective_date) =
-    (t2.max_coverage_status, t2.max_coverage_effective_date)
-    FROM
-    (
-      (SELECT max_pcsh.policy_number as max_policy_number,
-          max_pcsh.coverage_effective_date as max_coverage_effective_date,
-          max_pcsh.coverage_status as max_coverage_status
-      FROM process_policy_coverage_status_histories max_pcsh
-      Inner Join (
-          SELECT policy_number, max(coverage_effective_date) as coverage_effective_date
-          FROM process_policy_coverage_status_histories
-          GROUP BY policy_number
-      ) b ON max_pcsh.policy_number = b.policy_number and max_pcsh.coverage_effective_date = b.coverage_effective_date)
-    ) t2
-    WHERE edi.policy_number = t2.max_policy_number;
-
-
-
-    -- UPDATE public.employer_demographics_information edi SET
-    -- (policy_creation_date) = (t2.min_coverage_effective_date)
-    -- FROM
-    -- (SELECT min_pcsh.policy_number,
-    --     min(min_pcsh.coverage_effective_date) as min_coverage_effective_date
-    -- FROM policy_coverage_status_history min_pcsh
-    -- GROUP BY policy_number
-    -- ORDER by policy_number
-    -- ) t2
-    -- WHERE edi.policy_number = t2.policy_number
-
-    end;
-
-
-
-
-      $$;
-
-
---
 -- Name: proc_step_1(integer, date, date, date); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -1844,311 +1526,1516 @@ CREATE FUNCTION proc_step_1(process_representative integer, experience_period_lo
     LANGUAGE plpgsql
     AS $$
 
-    DECLARE
-      run_date date := CURRENT_DATE;
-    BEGIN
+        DECLARE
+          run_date date := CURRENT_DATE;
+        BEGIN
 
 
-    /*  BEGIN GROUP RATING PROCESS OF INSERTING RECORDS FROM FLAT FILES INTO THE NEWLY CREATED PROCESS AND FINAL TABLES        */
+        /*  BEGIN GROUP RATING PROCESS OF INSERTING RECORDS FROM FLAT FILES INTO THE NEWLY CREATED PROCESS AND FINAL TABLES        */
 
-    -- STEP 1 A -- CREATE FINAL EMPLOYER DEMOGRAPHICS
+        -- STEP 1 A -- CREATE FINAL EMPLOYER DEMOGRAPHICS
 
-    INSERT INTO final_employer_demographics_informations (
-      representative_number,
-      policy_number,
-      successor_policy_number,
-      currently_assigned_representative_number,
-      federal_identification_number,
-      business_name,
-      trading_as_name,
-      in_care_name_contact_name,
-      address_1,
-      address_2,
-      city,
-      state,
-      zip_code,
-      zip_code_plus_4,
-      country_code,
-      county,
-      merit_rate,
-      group_code,
-      minimum_premium_percentage,
-      rate_adjust_factor,
-      em_effective_date,
-      regular_balance_amount,
-      attorney_general_balance_amount,
-      appealed_balance_amount,
-      pending_balance_amount,
-      advance_deposit_amount,
-      data_source
+        INSERT INTO final_employer_demographics_informations (
+          representative_number,
+          policy_number,
+          successor_policy_number,
+          currently_assigned_representative_number,
+          federal_identification_number,
+          business_name,
+          trading_as_name,
+          in_care_name_contact_name,
+          address_1,
+          address_2,
+          city,
+          state,
+          zip_code,
+          zip_code_plus_4,
+          country_code,
+          county,
+          merit_rate,
+          group_code,
+          minimum_premium_percentage,
+          rate_adjust_factor,
+          em_effective_date,
+          regular_balance_amount,
+          attorney_general_balance_amount,
+          appealed_balance_amount,
+          pending_balance_amount,
+          advance_deposit_amount,
+          data_source,
+          created_at,
+          updated_at
+            )
+
+        (Select
+          representative_number,
+          policy_number,
+          successor_policy_number,
+          currently_assigned_representative_number,
+          federal_identification_number,
+          business_name,
+          trading_as_name,
+          in_care_name_contact_name,
+          address_1,
+          address_2,
+          city,
+          state,
+          zip_code,
+          zip_code_plus_4,
+          country_code,
+          county,
+          merit_rate,
+          group_code,
+          minimum_premium_percentage,
+          rate_adjust_factor,
+          em_effective_date,
+          regular_balance_amount,
+          attorney_general_balance_amount,
+          appealed_balance_amount,
+          pending_balance_amount,
+          advance_deposit_amount,
+          'bwc' as data_source,
+          run_date as created_at,
+          run_date as updated_at
+        FROM public.sc220_rec1_employer_demographics
+        WHERE representative_number = process_representative
+        );
+
+
+
+        -- STEP 1B -- CREATE POLICY COVERAGE HISTORY FROM SC220
+
+
+        Insert into process_policy_coverage_status_histories
+        (
+          representative_number,
+           policy_number,
+           coverage_effective_date,
+           coverage_end_date,
+           coverage_status,
+           data_source,
+           created_at,
+           updated_at
         )
 
-    (Select
-      representative_number,
-      policy_number,
-      successor_policy_number,
-      currently_assigned_representative_number,
-      federal_identification_number,
-      business_name,
-      trading_as_name,
-      in_care_name_contact_name,
-      address_1,
-      address_2,
-      city,
-      state,
-      zip_code,
-      zip_code_plus_4,
-      country_code,
-      county,
-      merit_rate,
-      group_code,
-      minimum_premium_percentage,
-      rate_adjust_factor,
-      em_effective_date,
-      regular_balance_amount,
-      attorney_general_balance_amount,
-      appealed_balance_amount,
-      pending_balance_amount,
-      advance_deposit_amount,
-      'bwc' as data_source
-    FROM public.sc220_rec1_employer_demographics
-    WHERE representative_number = process_representative
-    );
+        (SELECT
+        representative_number,
+        policy_number,
+        coverage_effective_date,
+        coverage_end_date,
+        coverage_status,
+        'bwc' as data_source,
+        run_date as created_at,
+        run_date as updated_at
+        FROM sc220_rec1_employer_demographics
+        WHERE coverage_effective_date is not null and representative_number = process_representative
+        );
+
+        Insert into process_policy_coverage_status_histories
+        (
+          representative_number,
+           policy_number,
+           coverage_effective_date,
+           coverage_end_date,
+           coverage_status,
+           data_source,
+    	created_at,
+    	updated_at
+        )
+        (SELECT
+        representative_number,
+        policy_number,
+        n2nd_coverage_effective_date,
+        n2nd_coverage_end_date,
+        n2nd_coverage_status,
+        'bwc' as data_source,
+        run_date as created_at,
+        run_date as updated_at
+        FROM sc220_rec1_employer_demographics
+        WHERE n2nd_coverage_effective_date is not null
+        and representative_number = process_representative
+        );
+
+        Insert into process_policy_coverage_status_histories
+        (
+          representative_number,
+           policy_number,
+           coverage_effective_date,
+           coverage_end_date,
+           coverage_status,
+           data_source,
+    	     created_at,
+    	     updated_at
+        )
+        (SELECT
+        representative_number,
+        policy_number,
+        n3rd_coverage_effective_date,
+        n3rd_coverage_end_date,
+        n3rd_coverage_status,
+        'bwc' as data_source,
+            run_date as created_at,
+        run_date as updated_at
+        FROM sc220_rec1_employer_demographics
+        WHERE n3rd_coverage_effective_date is not null
+        and representative_number = process_representative
+        );
+
+        Insert into process_policy_coverage_status_histories
+        (
+          representative_number,
+           policy_number,
+           coverage_effective_date,
+           coverage_end_date,
+           coverage_status,
+           data_source,
+           created_at,
+           updated_at
+        )
+        (SELECT
+        representative_number,
+        policy_number,
+        n4th_coverage_effective_date,
+        n4th_coverage_end_date,
+        n4th_coverage_status,
+        'bwc' as data_source,
+        run_date as created_at,
+        run_date as updated_at
+        FROM sc220_rec1_employer_demographics
+        WHERE n4th_coverage_effective_date is not null
+        and representative_number = process_representative
+        );
+
+        Insert into process_policy_coverage_status_histories
+        (
+          representative_number,
+           policy_number,
+           coverage_effective_date,
+           coverage_end_date,
+           coverage_status,
+           data_source,
+           created_at,
+           updated_at
+        )
+        (SELECT
+        representative_number,
+        policy_number,
+        n5th_coverage_effective_date,
+        n5th_coverage_end_date,
+        n5th_coverage_status,
+        'bwc' as data_source,
+        run_date as created_at,
+        run_date as updated_at
+        FROM sc220_rec1_employer_demographics
+        WHERE n5th_coverage_effective_date is not null
+        and representative_number = process_representative
+        );
+
+
+        Insert into process_policy_coverage_status_histories
+        (
+          representative_number,
+           policy_number,
+           coverage_effective_date,
+           coverage_end_date,
+           coverage_status,
+           data_source,
+           created_at,
+           updated_at
+        )
+
+        (SELECT
+        representative_number,
+        policy_number,
+        n6th_coverage_effective_date,
+        n6th_coverage_end_date,
+        n6th_coverage_status,
+        'bwc' as data_source,
+            run_date as created_at,
+        run_date as updated_at
+        FROM sc220_rec1_employer_demographics
+        WHERE n6th_coverage_effective_date is not null
+        and representative_number = process_representative
+        );
+
+        Update public.process_policy_coverage_status_histories pcsh set (lapse_days, updated_at) = (t2.lapse_days, t2.updated_at)
+        FROM
+        (SELECT a.representative_number,
+          a.policy_number,
+          a.coverage_effective_date,
+          a.coverage_end_date,
+          a.coverage_status,
+          (CASE WHEN a.coverage_status = 'LAPSE' and a.coverage_end_date is not null Then (a.coverage_end_date - a.coverage_effective_date)
+               WHEN a.coverage_status = 'LAPSE' and a.coverage_end_date is null THEN (run_date - a.coverage_effective_date)
+               ELSE '0'::integer END) as lapse_days,
+           run_date as updated_at
+          FROM public.process_policy_coverage_status_histories a
+          WHERE a.representative_number = process_representative
+        ) t2
+        WHERE pcsh.representative_number = t2.representative_number and pcsh.policy_number = t2.policy_number and pcsh.coverage_effective_date = t2.coverage_effective_date and pcsh.coverage_end_date = t2.coverage_end_date and pcsh.coverage_status = t2.coverage_status;
+
+
+        Update public.process_policy_coverage_status_histories pcsh set (lapse_days, updated_at) = (t2.lapse_days, t2.updated_at)
+        FROM
+        (SELECT a.representative_number,
+          a.policy_number,
+          a.coverage_effective_date,
+          a.coverage_end_date,
+          a.coverage_status,
+          (run_date - a.coverage_effective_date) as lapse_days,
+           run_date as updated_at
+          FROM public.process_policy_coverage_status_histories a
+          WHERE a.coverage_end_date is null and a.coverage_status = 'LAPSE'
+          and a.representative_number = process_representative
+        ) t2
+        WHERE  pcsh.policy_number = t2.policy_number and pcsh.coverage_effective_date = t2.coverage_effective_date and pcsh.coverage_status = t2.coverage_status ;
+
+
+        -- 65 milliseconds
+
+        -- Add policy_creation_date to the employer_demographics_information file first from Steve's file
+
+
+        UPDATE public.final_employer_demographics_informations edi SET
+        (policy_creation_date, updated_at) =
+        (t2.policy_creation_date, t2.updated_at)
+        FROM
+        (SELECT a.policy_number,
+            a.policy_original_effective_date as policy_creation_date,
+            run_date as updated_at
+        FROM bwc_codes_policy_effective_dates a
+        ) t2
+        WHERE edi.policy_number = t2.policy_number;
 
 
 
-    -- STEP 1B -- CREATE POLICY COVERAGE HISTORY FROM SC220
-
-
-    Insert into process_policy_coverage_status_histories
-    (
-      representative_number,
-       policy_number,
-       coverage_effective_date,
-       coverage_end_date,
-       coverage_status,
-       data_source
-    )
-
-    (SELECT
-    representative_number,
-    policy_number,
-    coverage_effective_date,
-    coverage_end_date,
-    coverage_status,
-    'bwc' as data_source
-    FROM sc220_rec1_employer_demographics
-    WHERE coverage_effective_date is not null and representative_number = process_representative
-    );
-
-    Insert into process_policy_coverage_status_histories
-    (
-      representative_number,
-       policy_number,
-       coverage_effective_date,
-       coverage_end_date,
-       coverage_status,
-       data_source
-    )
-    (SELECT
-    representative_number,
-    policy_number,
-    n2nd_coverage_effective_date,
-    n2nd_coverage_end_date,
-    n2nd_coverage_status,
-    'bwc' as data_source
-    FROM sc220_rec1_employer_demographics
-    WHERE n2nd_coverage_effective_date is not null
-    and representative_number = process_representative
-    );
-
-    Insert into process_policy_coverage_status_histories
-    (
-      representative_number,
-       policy_number,
-       coverage_effective_date,
-       coverage_end_date,
-       coverage_status,
-       data_source
-    )
-    (SELECT
-    representative_number,
-    policy_number,
-    n3rd_coverage_effective_date,
-    n3rd_coverage_end_date,
-    n3rd_coverage_status,
-    'bwc' as data_source
-    FROM sc220_rec1_employer_demographics
-    WHERE n3rd_coverage_effective_date is not null
-    and representative_number = process_representative
-    );
-
-    Insert into process_policy_coverage_status_histories
-    (
-      representative_number,
-       policy_number,
-       coverage_effective_date,
-       coverage_end_date,
-       coverage_status,
-       data_source
-    )
-    (SELECT
-    representative_number,
-    policy_number,
-    n4th_coverage_effective_date,
-    n4th_coverage_end_date,
-    n4th_coverage_status,
-    'bwc' as data_source
-    FROM sc220_rec1_employer_demographics
-    WHERE n4th_coverage_effective_date is not null
-    and representative_number = process_representative
-    );
-
-    Insert into process_policy_coverage_status_histories
-    (
-      representative_number,
-       policy_number,
-       coverage_effective_date,
-       coverage_end_date,
-       coverage_status,
-       data_source
-    )
-    (SELECT
-    representative_number,
-    policy_number,
-    n5th_coverage_effective_date,
-    n5th_coverage_end_date,
-    n5th_coverage_status,
-    'bwc' as data_source
-    FROM sc220_rec1_employer_demographics
-    WHERE n5th_coverage_effective_date is not null
-    and representative_number = process_representative
-    );
-
-
-    Insert into process_policy_coverage_status_histories
-    (
-      representative_number,
-       policy_number,
-       coverage_effective_date,
-       coverage_end_date,
-       coverage_status,
-       data_source
-    )
-
-    (SELECT
-    representative_number,
-    policy_number,
-    n6th_coverage_effective_date,
-    n6th_coverage_end_date,
-    n6th_coverage_status,
-    'bwc' as data_source
-    FROM sc220_rec1_employer_demographics
-    WHERE n6th_coverage_effective_date is not null
-    and representative_number = process_representative
-    );
-
-    Update public.process_policy_coverage_status_histories pcsh set (lapse_days) = (t2.lapse_days)
-    FROM
-    (SELECT a.representative_number,
-      a.policy_number,
-      a.coverage_effective_date,
-      a.coverage_end_date,
-      a.coverage_status,
-      (CASE WHEN a.coverage_status = 'LAPSE' and a.coverage_end_date is not null Then (a.coverage_end_date - a.coverage_effective_date)
-           WHEN a.coverage_status = 'LAPSE' and a.coverage_end_date is null THEN (run_date - a.coverage_effective_date)
-           ELSE '0'::integer END) as lapse_days
-      FROM public.process_policy_coverage_status_histories a
-      WHERE a.representative_number = process_representative
-    ) t2
-    WHERE pcsh.representative_number = t2.representative_number and pcsh.policy_number = t2.policy_number and pcsh.coverage_effective_date = t2.coverage_effective_date and pcsh.coverage_end_date = t2.coverage_end_date and pcsh.coverage_status = t2.coverage_status;
-
-
-    Update public.process_policy_coverage_status_histories pcsh set (lapse_days) = (t2.lapse_days)
-    FROM
-    (SELECT a.representative_number,
-      a.policy_number,
-      a.coverage_effective_date,
-      a.coverage_end_date,
-      a.coverage_status,
-      (run_date - a.coverage_effective_date) as lapse_days
-      FROM public.process_policy_coverage_status_histories a
-      WHERE a.coverage_end_date is null and a.coverage_status = 'LAPSE'
-      and a.representative_number = process_representative
-    ) t2
-    WHERE  pcsh.policy_number = t2.policy_number and pcsh.coverage_effective_date = t2.coverage_effective_date and pcsh.coverage_status = t2.coverage_status ;
-
-
-    -- 65 milliseconds
-
-    -- Add policy_creation_date to the employer_demographics_information file first from Steve's file
-
-
-    UPDATE public.final_employer_demographics_informations edi SET
-    (policy_creation_date) =
-    (t2.policy_creation_date)
-    FROM
-    (SELECT a.policy_number,
-        a.policy_original_effective_date as policy_creation_date
-    FROM bwc_policy_coverage_creation_history a
-    ) t2
-    WHERE edi.policy_number = t2.policy_number;
+        -- UPDATE Null values of creation date that do not exist from Steve's file.
+        UPDATE public.final_employer_demographics_informations edi SET
+        (policy_creation_date, updated_at) = (t2.min_coverage_effective_date, t2.updated_at)
+        FROM
+        (SELECT min_pcsh.policy_number,
+            min(min_pcsh.coverage_effective_date) as min_coverage_effective_date,
+            run_date as updated_at
+        FROM process_policy_coverage_status_histories min_pcsh
+        WHERE policy_number in
+          (
+            SELECT policy_number from public.final_employer_demographics_informations WHERE policy_creation_date is null
+          )
+        GROUP BY policy_number
+        ORDER by policy_number
+        ) t2
+        WHERE edi.policy_number = t2.policy_number;
 
 
 
-    -- UPDATE Null values of creation date that do not exist from Steve's file.
-    UPDATE public.final_employer_demographics_informations edi SET
-    (policy_creation_date) = (t2.min_coverage_effective_date)
-    FROM
-    (SELECT min_pcsh.policy_number,
-        min(min_pcsh.coverage_effective_date) as min_coverage_effective_date
-    FROM process_policy_coverage_status_histories min_pcsh
-    WHERE policy_number in
-      (
-        SELECT policy_number from public.final_employer_demographics_informations WHERE policy_creation_date is null
+
+        UPDATE public.final_employer_demographics_informations edi SET
+        (current_policy_status, current_policy_status_effective_date, updated_at) =
+        (t2.max_coverage_status, t2.max_coverage_effective_date, t2.updated_at)
+        FROM
+        (
+          (SELECT max_pcsh.policy_number as max_policy_number,
+              max_pcsh.coverage_effective_date as max_coverage_effective_date,
+              max_pcsh.coverage_status as max_coverage_status,
+              run_date as updated_at
+          FROM process_policy_coverage_status_histories max_pcsh
+          Inner Join (
+              SELECT policy_number, max(coverage_effective_date) as coverage_effective_date
+              FROM process_policy_coverage_status_histories
+              GROUP BY policy_number
+          ) b ON max_pcsh.policy_number = b.policy_number and max_pcsh.coverage_effective_date = b.coverage_effective_date)
+        ) t2
+        WHERE edi.policy_number = t2.max_policy_number;
+
+        end;
+          $$;
+
+
+--
+-- Name: proc_step_2(integer, date, date, date); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION proc_step_2(process_representative integer, experience_period_lower_date date, experience_period_upper_date date, current_payroll_period_lower_date date) RETURNS void
+    LANGUAGE plpgsql
+    AS $$
+
+      DECLARE
+        run_date date := CURRENT_DATE;
+      BEGIN
+      -- STEP 2A -- Process Payroll File
+      /*************** Create Table for transposing the columns of sc220 to rows ***************/
+      /*************** Union all queries of subsets of sc220 into rows of new table ***************/
+
+      INSERT INTO process_payroll_breakdown_by_manual_classes (
+        representative_number,
+          policy_type,
+        	policy_number,
+        	manual_number,
+        	manual_type,
+        	manual_class_effective_date,
+        	manual_class_rate,
+        	manual_class_payroll,
+        	manual_class_premium,
+          payroll_origin,
+          data_source,
+          created_at,
+          updated_at
       )
-    GROUP BY policy_number
-    ORDER by policy_number
+
+
+
+      (SELECT representative_number,
+        policy_type,
+        policy_number,
+      	manual_number,
+      	manual_type,
+      	manual_effective_date as manual_class_effective_date,
+      	manual_class_rate as manual_class_rate,
+      	year_to_date_payroll as manual_class_payroll,
+      	year_to_date_premium_billed as manual_class_premium,
+        'payroll' as payroll_origin,
+        'bwc' as data_source,
+        run_date as created_at,
+        run_date as updated_at
+      	FROM public.sc220_rec2_employer_manual_level_payrolls
+        WHERE manual_effective_date is not null and representative_number = process_representative and manual_effective_date > experience_period_lower_date
+        )
+        Union ALL
+        (SELECT representative_number,
+          policy_type,
+        	policy_number,
+        	manual_number,
+        	manual_type,
+        	n2nd_manual_effective_date as manual_class_effective_date,
+        	n2nd_manual_class_rate as manual_class_rate,
+        	n2nd_year_to_date_payroll as manual_class_payroll,
+        	n2nd_year_to_date_premium_billed as manual_class_premium,
+          'payroll' as payroll_origin,
+          'bwc' as data_source,
+          run_date as created_at,
+          run_date as updated_at
+        	FROM public.sc220_rec2_employer_manual_level_payrolls
+          WHERE n2nd_manual_effective_date is not null and representative_number = process_representative and n2nd_manual_effective_date > experience_period_lower_date
+        )
+        Union ALL
+        (SELECT representative_number,
+          policy_type,
+        	policy_number,
+        	manual_number,
+        	manual_type,
+        	n3rd_manual_effective_date as manual_class_effective_date,
+        	n3rd_manual_class_rate as manual_class_rate,
+        	n3rd_year_to_date_payroll as manual_class_payroll,
+        	n3rd_year_to_date_premium_billed as manual_class_premium,
+          'payroll' as payroll_origin,
+          'bwc' as data_source,
+          run_date as created_at,
+          run_date as updated_at
+      	   FROM public.sc220_rec2_employer_manual_level_payrolls
+           WHERE n3rd_manual_effective_date is not null and representative_number = process_representative and n3rd_manual_effective_date > experience_period_lower_date
+        )
+        Union All
+        (SELECT representative_number,
+          policy_type,
+        	policy_number,
+        	manual_number,
+        	manual_type,
+        	n4th_manual_effective_date as manual_class_effective_date,
+        	n4th_manual_class_rate as manual_class_rate,
+        	n4th_year_to_date_payroll as manual_class_payroll,
+        	n4th_year_to_date_premium_billed as manual_class_premium,
+          'payroll' as payroll_origin,
+          'bwc' as data_source,
+          run_date as created_at,
+          run_date as updated_at
+        	FROM public.sc220_rec2_employer_manual_level_payrolls
+          WHERE n4th_manual_effective_date is not null and representative_number = process_representative and n4th_manual_effective_date > experience_period_lower_date
+        )
+        Union All
+        (SELECT representative_number,
+        policy_type,
+      	policy_number,
+      	manual_number,
+      	manual_type,
+      	n5th_manual_effective_date as manual_class_effective_date,
+      	n5th_manual_class_rate as manual_class_rate,
+      	n5th_year_to_date_payroll as manual_class_payroll,
+      	n5th_year_to_date_premium_billed as manual_class_premium,
+        'payroll' as payroll_origin,
+        'bwc' as data_source,
+        run_date as created_at,
+        run_date as updated_at
+      	FROM public.sc220_rec2_employer_manual_level_payrolls
+        WHERE n5th_manual_effective_date is not null and representative_number = process_representative and n5th_manual_effective_date > experience_period_lower_date
+        )
+        Union All
+        (SELECT representative_number,
+          policy_type,
+        	policy_number,
+        	manual_number,
+        	manual_type,
+        	n6th_manual_effective_date as manual_class_effective_date,
+        	n6th_manual_class_rate as manual_class_rate,
+        	n6th_year_to_date_payroll as manual_class_payroll,
+        	n6th_year_to_date_premium_billed as manual_class_premium,
+          'payroll' as payroll_origin,
+          'bwc' as data_source,
+          run_date as created_at,
+          run_date as updated_at
+      	FROM public.sc220_rec2_employer_manual_level_payrolls
+        WHERE n6th_manual_effective_date is not null and representative_number = process_representative and n6th_manual_effective_date > experience_period_lower_date
+        )
+        Union All
+        (SELECT representative_number,
+          policy_type,
+        	policy_number,
+        	manual_number,
+        	manual_type,
+        	n7th_manual_effective_date as manual_class_effective_date,
+        	n7th_manual_class_rate as manual_class_rate,
+        	n7th_year_to_date_payroll as manual_class_payroll,
+        	n7th_year_to_date_premium_billed as manual_class_premium,
+          'payroll' as payroll_origin,
+          'bwc' as data_source,
+          run_date as created_at,
+          run_date as updated_at
+      	FROM public.sc220_rec2_employer_manual_level_payrolls
+        WHERE n7th_manual_effective_date is not null and representative_number = process_representative and n7th_manual_effective_date > experience_period_lower_date
+        )
+        Union All
+        (SELECT representative_number,
+          policy_type,
+        	policy_number,
+        	manual_number,
+        	manual_type,
+        	n8th_manual_effective_date as manual_class_effective_date,
+        	n8th_manual_class_rate as manual_class_rate,
+        	n8th_year_to_date_payroll as manual_class_payroll,
+        	n8th_year_to_date_premium_billed as manual_class_premium,
+          'payroll' as payroll_origin,
+          'bwc' as data_source,
+          run_date as created_at,
+          run_date as updated_at
+      	FROM public.sc220_rec2_employer_manual_level_payrolls
+        WHERE n8th_manual_effective_date is not null and representative_number = process_representative and n8th_manual_effective_date > experience_period_lower_date
+        )
+        Union All
+        (SELECT representative_number,
+          policy_type,
+        	policy_number,
+        	manual_number,
+        	manual_type,
+        	n9th_manual_effective_date as manual_class_effective_date,
+        	n9th_manual_class_rate as manual_class_rate,
+        	n9th_year_to_date_payroll as manual_class_payroll,
+        	n9th_year_to_date_premium_billed as manual_class_premium,
+          'payroll' as payroll_origin,
+          'bwc' as data_source,
+          run_date as created_at,
+          run_date as updated_at
+      	FROM public.sc220_rec2_employer_manual_level_payrolls
+        WHERE n9th_manual_effective_date is not null and representative_number = process_representative and n9th_manual_effective_date > experience_period_lower_date
+        )
+        Union All
+        (SELECT representative_number,
+          policy_type,
+        	policy_number,
+        	manual_number,
+        	manual_type,
+        	n10th_manual_effective_date as manual_class_effective_date,
+        	n10th_manual_class_rate as manual_class_rate,
+        	n10th_year_to_date_payroll as manual_class_payroll,
+        	n10th_year_to_date_premium_billed as manual_class_premium,
+          'payroll' as payroll_origin,
+          'bwc' as data_source,
+          run_date as created_at,
+          run_date as updated_at
+      	FROM public.sc220_rec2_employer_manual_level_payrolls
+        WHERE n10th_manual_effective_date is not null and representative_number = process_representative and n10th_manual_effective_date > experience_period_lower_date
+        )
+        Union All
+        (SELECT representative_number,
+          policy_type,
+        	policy_number,
+        	manual_number,
+        	manual_type,
+        	n11th_manual_effective_date as manual_class_effective_date,
+        	n11th_manual_class_rate as manual_class_rate,
+        	n11th_year_to_date_payroll as manual_class_payroll,
+        	n11th_year_to_date_premium_billed as manual_class_premium,
+          'payroll' as payroll_origin,
+          'bwc' as data_source,
+          run_date as created_at,
+          run_date as updated_at
+      	FROM public.sc220_rec2_employer_manual_level_payrolls
+        WHERE n11th_manual_effective_date is not null and representative_number = process_representative and n11th_manual_effective_date > experience_period_lower_date
+        )
+        Union All
+        (SELECT representative_number,
+          policy_type,
+        	policy_number,
+        	manual_number,
+        	manual_type,
+        	n12th_manual_effective_date as manual_class_effective_date,
+        	n12th_manual_class_rate as manual_class_rate,
+        	n12th_year_to_date_payroll as manual_class_payroll,
+        	n12th_year_to_date_premium_billed as manual_class_premium,
+          'payroll' as payroll_origin,
+          'bwc' as data_source,
+          run_date as created_at,
+          run_date as updated_at
+        	FROM public.sc220_rec2_employer_manual_level_payrolls
+          WHERE n12th_manual_effective_date is not null and representative_number = process_representative and n12th_manual_effective_date > experience_period_lower_date
+        )
+        ORDER BY
+          policy_number ASC,
+          manual_number ASC,
+          manual_class_effective_date ASC;
+
+      end;
+
+        $$;
+
+
+--
+-- Name: proc_step_3(integer, date, date, date); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION proc_step_3(process_representative integer, experience_period_lower_date date, experience_period_upper_date date, current_payroll_period_lower_date date) RETURNS void
+    LANGUAGE plpgsql
+    AS $$
+
+        DECLARE
+          run_date date := CURRENT_DATE;
+        BEGIN
+
+
+        -- STEP 3A POLICY COMBINE FULL TRANSFER
+
+        INSERT INTO process_policy_combine_full_transfers (
+          representative_number,
+          policy_type,
+          manual_number,
+          manual_type,
+          manual_class_effective_date,
+          manual_class_rate,
+          manual_class_payroll,
+          manual_class_premium,
+          predecessor_policy_type,
+          predecessor_policy_number,
+          successor_policy_type,
+          successor_policy_number,
+          transfer_type,
+          transfer_effective_date,
+          transfer_creation_date,
+          payroll_origin,
+          data_source,
+          created_at,
+          updated_at
+        )
+        (SELECT DISTINCT
+            a.representative_number,
+            a.policy_type,
+            a.manual_number,
+            a.manual_type,
+            a.manual_class_effective_date,
+            a.manual_class_rate,
+            a.manual_class_payroll,
+            a.manual_class_premium,
+            b.predecessor_policy_type,
+            b.predecessor_policy_number,
+            b.successor_policy_type,
+            b.successor_policy_number,
+            b.transfer_type,
+            b.transfer_effective_date,
+            b.transfer_creation_date,
+            'full_transfer' as payroll_origin,
+            'bwc' as data_source,
+            run_date as created_at,
+            run_date as updated_at
+          FROM public.process_payroll_breakdown_by_manual_classes a
+          Right Join public.pcomb_detail_records b
+          ON a.policy_number = b.predecessor_policy_number
+          Where b.transfer_type = 'FC' and a.representative_number = process_representative
+          GROUP BY a.representative_number,
+            a.policy_type,
+            a.manual_number,
+            a.manual_type,
+            a.manual_class_effective_date,
+            a.manual_class_rate,
+            a.manual_class_payroll,
+            a.manual_class_premium,
+            b.predecessor_policy_type,
+            b.predecessor_policy_number,
+            b.successor_policy_type,
+            b.successor_policy_number,
+            b.transfer_type,
+            b.transfer_effective_date,
+            b.transfer_creation_date
+        );
+
+
+
+        /*********************************************************************/
+        -- Remove exceptions from full_transfer table
+        -- Create 'Request Payroll Information Table'
+        /*********************************************************************/
+
+
+        INSERT INTO exception_table_policy_combined_request_payroll_infos (
+          predecessor_policy_type,
+          predecessor_policy_number,
+          successor_policy_type,
+          successor_policy_number,
+          transfer_type,
+          transfer_effective_date,
+          transfer_creation_date,
+          payroll_origin,
+          data_source,
+          created_at,
+          updated_at
+        )
+         (SELECT DISTINCT
+             b.predecessor_policy_type,
+             b.predecessor_policy_number,
+             b.successor_policy_type,
+             b.successor_policy_number,
+             b.transfer_type,
+             b.transfer_effective_date,
+             b.transfer_creation_date,
+             'full_transfer' as payroll_origin,
+             'bwc' as data_source,
+             run_date as created_at,
+             run_date as updated_at
+           FROM public.process_payroll_breakdown_by_manual_classes a
+           Right Join public.pcomb_detail_records b
+           ON a.policy_number = b.predecessor_policy_number
+           Where b.transfer_type = 'FC' and a.representative_number is null
+           GROUP BY
+             b.predecessor_policy_type,
+             b.predecessor_policy_number,
+             b.successor_policy_type,
+             b.successor_policy_number,
+             b.transfer_type,
+             b.transfer_effective_date,
+             b.transfer_creation_date,
+             payroll_origin
+         );
+
+
+         DELETE FROM public.process_policy_combine_full_transfers
+          WHERE representative_number is null;
+
+
+        -- 3B -- POLICY COMBINE FULL TRANSFER NO LEASES
+
+        -- No labor lease, just partial payroll combinations
+        -- Will add the designated payroll amount for the manual class for the designated
+        -- payroll period from the predecessor_policy_number to the successor_policy_number.
+
+
+
+        -- 05/03/16 Appendment to Logic
+        -- If it is a State Fund PEO [will create a custom table to query against for a list of the PEOs], we want to only transfer payroll from [+ transfer] predecessor_policy_number (client) to the (successor_policy_number) State Fund PEO .  We will not do the [- transfer] away from the predecessor_policy_number (client). ALSO mark the policy number as not eligable for group rating.
+
+        -- If it is a Self Insured PEO [policy_type 2] we will not transfer any of the payroll or anything from the policy combined, but we will keep them eligable for group rating.
+
+
+
+
+
+        INSERT INTO process_policy_combine_partial_transfer_no_leases (
+            representative_number,
+            valid_policy_number,
+            policy_combinations,
+            predecessor_policy_type,
+            predecessor_policy_number,
+            successor_policy_type,
+            successor_policy_number,
+            transfer_type,
+            transfer_effective_date,
+            transfer_creation_date,
+            partial_transfer_due_to_labor_lease,
+            labor_lease_type,
+            partial_transfer_payroll_movement,
+            ncci_manual_number,
+            manual_coverage_type,
+            payroll_reporting_period_from_date,
+            payroll_reporting_period_to_date,
+            manual_payroll,
+            payroll_origin,
+            data_source,
+            created_at,
+            updated_at
+        )
+        (SELECT representative_number,
+            valid_policy_number,
+            policy_combinations,
+            predecessor_policy_type,
+            predecessor_policy_number,
+            successor_policy_type,
+            successor_policy_number,
+            transfer_type,
+            transfer_effective_date,
+            transfer_creation_date,
+            partial_transfer_due_to_labor_lease,
+            labor_lease_type,
+            partial_transfer_payroll_movement,
+            ncci_manual_number,
+            manual_coverage_type,
+            payroll_reporting_period_from_date,
+            payroll_reporting_period_to_date,
+            manual_payroll,
+            'partial_transfer' as payroll_origin,
+            'bwc' as data_source,
+            run_date as created_at,
+            run_date as updated_at
+        FROM public.pcomb_detail_records
+        WHERE policy_combinations = 'Y' and transfer_type = 'PT' and partial_transfer_due_to_labor_lease = 'N' and representative_number = process_representative
+        GROUP BY representative_number,
+              valid_policy_number,
+              policy_combinations,
+              predecessor_policy_type,
+              predecessor_policy_number,
+              successor_policy_type,
+              successor_policy_number,
+              transfer_type,
+              transfer_effective_date,
+              transfer_creation_date,
+              partial_transfer_due_to_labor_lease,
+              labor_lease_type,
+              partial_transfer_payroll_movement,
+              ncci_manual_number,
+              manual_coverage_type,
+              payroll_reporting_period_from_date,
+              payroll_reporting_period_to_date,
+              manual_payroll
+        );
+
+        -- Two different ways to do this, append the policy combination records to the end of the payroll
+        -- list or we can "merge" or "upsert" the data policy combination records with the list of payroll
+        -- for each manual class for the corresponding policies.
+
+
+        -- STEP 3C -- POLICY COMBINATION -- PARTIAL TO FULL LEASE
+        -- Labor lease, just full and partial payroll combinations
+        -- Will add the designated payroll amount for the manual class for the designated
+        -- payroll period from the predecessor_policy_number to the successor_policy_number.
+
+        -- Only add the predecessor_policy_number
+
+
+
+        INSERT INTO process_policy_combine_partial_to_full_leases (
+          representative_number,
+          valid_policy_number,
+          policy_combinations,
+          predecessor_policy_type,
+          predecessor_policy_number,
+          successor_policy_type,
+          successor_policy_number,
+          transfer_type,
+          transfer_effective_date,
+          transfer_creation_date,
+          partial_transfer_due_to_labor_lease,
+          labor_lease_type,
+          partial_transfer_payroll_movement,
+          ncci_manual_number,
+          manual_coverage_type,
+          payroll_reporting_period_from_date,
+          payroll_reporting_period_to_date,
+          manual_payroll,
+          payroll_origin,
+          data_source,
+          created_at,
+          updated_at
+        )
+        (
+        SELECT representative_number,
+          valid_policy_number,
+          policy_combinations,
+          predecessor_policy_type,
+          predecessor_policy_number,
+          successor_policy_type,
+          successor_policy_number,
+          transfer_type,
+          transfer_effective_date,
+          transfer_creation_date,
+          partial_transfer_due_to_labor_lease,
+          labor_lease_type,
+          partial_transfer_payroll_movement,
+          ncci_manual_number,
+          manual_coverage_type,
+          payroll_reporting_period_from_date,
+          payroll_reporting_period_to_date,
+          manual_payroll,
+          'partial_to_full_lease' as payroll_origin,
+          'bwc' as data_source,
+          run_date as created_at,
+          run_date as updated_at
+        FROM public.pcomb_detail_records
+        WHERE partial_transfer_due_to_labor_lease = 'Y' and labor_lease_type != 'LTERM' and representative_number = process_representative
+        GROUP BY representative_number,
+          valid_policy_number,
+          policy_combinations,
+          predecessor_policy_type,
+          predecessor_policy_number,
+          successor_policy_type,
+          successor_policy_number,
+          transfer_type,
+          transfer_effective_date,
+          transfer_creation_date,
+          partial_transfer_due_to_labor_lease,
+          labor_lease_type,
+          partial_transfer_payroll_movement,
+          ncci_manual_number,
+          manual_coverage_type,
+          payroll_reporting_period_from_date,
+          payroll_reporting_period_to_date,
+          manual_payroll
+        );
+
+
+
+        -- Two different ways to do this, append the policy combination records to the end of the payroll
+        -- list or we can "merge" or "upsert" the data policy combination records with the list of payroll
+        -- for each manual class for the corresponding policies.
+
+
+        --  UPDATE PEO LIST file from list of PEO Transfers.
+        INSERT INTO bwc_codes_peo_lists (
+        policy_number,
+        updated_at
+        )
+        (
+        SELECT DISTINCT
+           successor_policy_number,
+           run_date as updated_at
+        FROM public.process_policy_combine_partial_to_full_leases
+        WHERE partial_transfer_due_to_labor_lease = 'Y' and successor_policy_number not in (SELECT policy_number FROM public.bwc_codes_peo_lists)
+        );
+
+
+
+
+        -- STEP 3D -- TERMINATE POLICY COMBINATIONS LEASES --
+        -- Labor lease TERMINATE payroll combinations
+        -- Will  the designated payroll amount for the manual class for the designated
+        -- payroll period from the predecessor_policy_number to the successor_policy_number.
+
+        -- Only add the predecessor_policy_number
+
+
+
+        INSERT INTO process_policy_combination_lease_terminations (
+          representative_number,
+          valid_policy_number,
+          policy_combinations,
+          predecessor_policy_type,
+          predecessor_policy_number,
+          successor_policy_type,
+          successor_policy_number,
+          transfer_type,
+          transfer_effective_date,
+          transfer_creation_date,
+          partial_transfer_due_to_labor_lease,
+          labor_lease_type,
+          partial_transfer_payroll_movement,
+          ncci_manual_number,
+          manual_coverage_type,
+          payroll_reporting_period_from_date,
+          payroll_reporting_period_to_date,
+          manual_payroll,
+          payroll_origin,
+          data_source,
+          created_at,
+          updated_at
+        )
+        (
+          SELECT representative_number,
+              valid_policy_number,
+              policy_combinations,
+              predecessor_policy_type,
+              predecessor_policy_number,
+              successor_policy_type,
+              successor_policy_number,
+              transfer_type,
+              transfer_effective_date,
+              transfer_creation_date,
+              partial_transfer_due_to_labor_lease,
+              labor_lease_type,
+              partial_transfer_payroll_movement,
+              ncci_manual_number,
+              manual_coverage_type,
+              payroll_reporting_period_from_date,
+              payroll_reporting_period_to_date,
+              manual_payroll,
+              'lease_terminated' as payroll_origin,
+              'bwc' as data_source,
+              run_date as created_at,
+              run_date as updated_at
+          FROM public.pcomb_detail_records
+          WHERE partial_transfer_due_to_labor_lease = 'Y'
+            and labor_lease_type = 'LTERM' and representative_number = process_representative
+        GROUP BY representative_number,
+                valid_policy_number,
+                policy_combinations,
+                predecessor_policy_type,
+                predecessor_policy_number,
+                successor_policy_type,
+                successor_policy_number,
+                transfer_type,
+                transfer_effective_date,
+                transfer_creation_date,
+                partial_transfer_due_to_labor_lease,
+                labor_lease_type,
+                partial_transfer_payroll_movement,
+                ncci_manual_number,
+                manual_coverage_type,
+                payroll_reporting_period_from_date,
+                payroll_reporting_period_to_date,
+                manual_payroll
+        );
+
+
+
+
+        -- Two different ways to do this, append the policy combination records to the end of the payroll
+        -- list or we can "merge" or "upsert" the data policy combination records with the list of payroll
+        -- for each manual class for the corresponding policies.
+
+        -- transfering the leased payroll out of PEO and adding it back to the employer
+
+
+        -- STEP 3E -- CREATE POLICY LEVEL ROLLUPS for payroll and combinations
+
+        -- All payroll transactions for policy Number and Manual class per period
+
+        INSERT INTO process_payroll_all_transactions_breakdown_by_manual_classes (
+          representative_number,
+          policy_number,
+          manual_number,
+          manual_class_effective_date,
+          manual_class_payroll,
+          payroll_origin,
+          data_source,
+          created_at,
+          updated_at
+        )
+
+
+        -- Payroll breakdown by manual_class
+
+        (SELECT representative_number,
+        policy_number,
+        manual_number,
+        manual_class_effective_date,
+        manual_class_payroll,
+        payroll_origin,
+        'bwc' as data_source,
+        run_date as created_at,
+        run_date as updated_at
+        FROM public.process_payroll_breakdown_by_manual_classes
+        where representative_number = process_representative
+        )
+
+        UNION ALL
+
+        -- Payroll combination - Full Transfer -- Positive
+
+        (SELECT representative_number,
+        successor_policy_number as "policy_number",
+        manual_number,
+        manual_class_effective_date,
+        manual_class_payroll,
+        payroll_origin,
+        'bwc' as data_source,
+        run_date as created_at,
+        run_date as updated_at
+        FROM public.process_policy_combine_full_transfers
+        where representative_number = process_representative
+        )
+
+        UNION ALL
+
+        -- Payroll combination - Full Transfer -- Negative
+
+        (SELECT representative_number,
+        predecessor_policy_number as "policy_number",
+        manual_number,
+        manual_class_effective_date,
+        (- manual_class_payroll),
+        payroll_origin,
+        'bwc' as data_source,
+        run_date as created_at,
+        run_date as updated_at
+        FROM public.process_policy_combine_full_transfers
+        where representative_number = process_representative
+        )
+
+        UNION ALL
+
+        -- Payroll combination - Partial Transfer -- No Lease -- Positive
+        (SELECT representative_number,
+        successor_policy_number as "policy_number",
+        ncci_manual_number as "manual_number",
+        payroll_reporting_period_from_date as "manual_class_effective_date",
+        manual_payroll as "manual_payroll",
+        payroll_origin,
+        'bwc' as data_source,
+        run_date as created_at,
+        run_date as updated_at
+        FROM public.process_policy_combine_partial_transfer_no_leases
+        where representative_number = process_representative
+        )
+
+        UNION ALL
+
+        -- Payroll combination - Partial Transfer -- No Lease -- Negative
+
+        (SELECT representative_number,
+        predecessor_policy_number as "policy_number",
+        ncci_manual_number as "manual_number",
+        payroll_reporting_period_from_date as "manual_class_effective_date",
+        (-manual_payroll) as "manual_payroll",
+        payroll_origin,
+        'bwc' as data_source,
+        run_date as created_at,
+        run_date as updated_at
+        FROM public.process_policy_combine_partial_transfer_no_leases
+        where representative_number = process_representative
+        )
+
+        UNION ALL
+
+        -- Payroll Combination - Partial to Full Lease -- Positive
+
+        (SELECT representative_number,
+          successor_policy_number as "policy_number",
+          ncci_manual_number as "manual_number",
+          payroll_reporting_period_from_date as "manual_class_effective_date",
+          manual_payroll as "manual_payroll",
+          payroll_origin,
+          'bwc' as data_source,
+          run_date as created_at,
+          run_date as updated_at
+        FROM public.process_policy_combine_partial_to_full_leases
+        where representative_number = process_representative
+        )
+
+        UNION ALL
+
+        -- Payroll Combination - Partial to Full Lease -- Negative
+
+        (SELECT representative_number,
+          predecessor_policy_number as "policy_number",
+          ncci_manual_number as "manual_number",
+          payroll_reporting_period_from_date as "manual_class_effective_date",
+          (-manual_payroll) as "manual_payroll",
+          payroll_origin,
+          'bwc' as data_source,
+          run_date as created_at,
+          run_date as updated_at
+        FROM public.process_policy_combine_partial_to_full_leases
+        WHERE successor_policy_number not in (SELECT policy_number FROM public.bwc_codes_peo_lists)
+        and labor_lease_type != 'LFULL' and representative_number = process_representative
+        )
+
+        UNION ALL
+
+        -- Payroll Combinaton - Lease Termination -- Postive
+
+        (SELECT representative_number,
+          successor_policy_number as "policy_number",
+          ncci_manual_number as "manual_number",
+          payroll_reporting_period_from_date as "manual_class_effective_date",
+          manual_payroll as "manual_payroll",
+          payroll_origin,
+          'bwc' as data_source,
+          run_date as created_at,
+          run_date as updated_at
+        FROM public.process_policy_combination_lease_terminations
+        WHERE predecessor_policy_number not in (SELECT policy_number FROM public.bwc_codes_peo_lists)
+        and labor_lease_type != 'LFULL' and representative_number = process_representative
+        )
+
+
+        Union ALL
+
+        -- Payroll Combinaton - Lease Termination -- Negative
+
+        (SELECT representative_number,
+        predecessor_policy_number as "policy_number",
+        ncci_manual_number as "manual_number",
+        payroll_reporting_period_from_date as "manual_class_effective_date",
+        (-manual_payroll) as "manual_payroll",
+        payroll_origin,
+        'bwc' as data_source,
+        run_date as created_at,
+        run_date as updated_at
+        FROM public.process_policy_combination_lease_terminations
+        where representative_number = process_representative
+        );
+
+
+        -- STEP 3F -- Manual Reclassifications
+        -- Creates and inserts records into a table for all Manual Reclassifications
+
+
+
+
+
+
+        INSERT INTO process_manual_reclass_tables (
+            representative_number,
+            policy_number,
+            re_classed_from_manual_number,
+            re_classed_to_manual_number,
+            reclass_creation_date,
+            payroll_reporting_period_from_date,
+            payroll_reporting_period_to_date,
+            re_classed_to_manual_payroll_total,
+            payroll_origin,
+            data_source,
+            created_at,
+            updated_at
+        )
+        (Select
+            representative_number,
+            policy_number,
+            re_classed_from_manual_number,
+            re_classed_to_manual_number,
+            reclass_creation_date,
+            payroll_reporting_period_from_date,
+            payroll_reporting_period_to_date,
+            re_classed_to_manual_payroll_total,
+            'manual_reclass' as payroll_origin,
+            'bwc' as data_source,
+            run_date as created_at,
+            run_date as updated_at
+        FROM public.mrcl_detail_records
+        WHERE valid_policy_number = 'Y'
+            and manual_reclassifications = 'Y'
+            and reclass_creation_date is not null
+            and reclassed_payroll_information = 'Y'
+            and representative_number = process_representative
+        );
+
+
+        -- STEP 3G -- ADDING MANUAL RECLASSIFICIATIONS TO THE PAYROLL table
+
+        -- Insert Manual Reclassification Payroll changes into the payroll_all_transactions_breakdown_by_manual_class table.
+
+
+        INSERT INTO process_payroll_all_transactions_breakdown_by_manual_classes (
+          representative_number,
+          policy_number,
+          manual_number,
+          manual_class_effective_date,
+          manual_class_payroll,
+          payroll_origin,
+          data_source,
+          created_at,
+          updated_at
+        )
+        --  payroll deducted from the manual class that is being reclassed
+        (Select
+            representative_number,
+            policy_number as "policy_number",
+            re_classed_from_manual_number as "manual_number",
+            payroll_reporting_period_from_date as "payroll_reporting_period_from_date",
+            (-re_classed_to_manual_payroll_total) as "manual_payroll",
+            'manual_reclass' as payroll_origin,
+            'bwc' as data_source,
+            run_date as created_at,
+            run_date as updated_at
+        FROM public.process_manual_reclass_tables
+        where representative_number = process_representative
+        )
+
+        UNION ALL
+
+        -- payroll added to new payroll manual class
+
+        (Select
+            representative_number,
+            policy_number as "policy_number",
+            re_classed_to_manual_number as "manual_number",
+            payroll_reporting_period_from_date as "payroll_reporting_period_from_date",
+            (re_classed_to_manual_payroll_total) as "manual_payroll",
+            'manual_reclass' as payroll_origin,
+            'bwc' as data_source,
+            run_date as created_at,
+            run_date as updated_at
+        FROM public.process_manual_reclass_tables
+        where representative_number = process_representative
+        );
+        end;
+
+          $$;
+
+
+--
+-- Name: proc_step_4(integer, date, date, date); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION proc_step_4(process_representative integer, experience_period_lower_date date, experience_period_upper_date date, current_payroll_period_lower_date date) RETURNS void
+    LANGUAGE plpgsql
+    AS $$
+
+        DECLARE
+          run_date date := CURRENT_DATE;
+        BEGIN
+        -- STEP 4 -- Manual Class 4 Year Rollups
+        -- Create table that adds up 4 year payroll for each unique policy number and manual class combination,
+          -- Calculates expected losses for each manual class by joining bwc_codes_base_rates_exp_loss_rates table
+          -- Adds industry_group to manual class by joining bwc_codes_ncci_manual_classes
+
+        INSERT INTO final_manual_class_four_year_payroll_and_exp_losses
+          (
+            representative_number,
+            policy_number,
+            manual_number,
+            data_source,
+            created_at,
+            updated_at
+          )
+          (
+            SELECT
+            a.representative_number,
+            a.policy_number,
+            b.manual_number,
+            'bwc' as data_source,
+            run_date as created_at,
+            run_date as updated_at
+          FROM public.final_employer_demographics_informations a
+          Inner Join public.process_payroll_all_transactions_breakdown_by_manual_classes b
+          ON a.policy_number = b.policy_number
+          WHERE b.manual_class_effective_date > experience_period_lower_date and a.representative_number = process_representative
+          GROUP BY a.representative_number,
+            a.policy_number,
+            b.manual_number
+          );
+
+
+
+          -- Broke manual_class payroll calculations into two tables.
+          -- One  to calculate payroll and manual_reclass payroll when  a.manual_class_effective_date > edi.policy_creation_date because a payroll is only counted in your experience when you have a policy_created.
+
+          -- One to calculate the payroll of transferred payroll from another policy.  This does not require a policy to be  created.
+
+
+          INSERT INTO process_manual_class_four_year_payroll_with_conditions
+          (
+            representative_number,
+            policy_number,
+            manual_number,
+            manual_class_four_year_period_payroll,
+            data_source,
+            created_at,
+            updated_at
+          )
+          (
+            SELECT
+              a.representative_number,
+              a.policy_number,
+              a.manual_number,
+              SUM(a.manual_class_payroll) as manual_class_four_year_period_payroll,
+              'bwc' as data_source,
+              run_date as created_at,
+              run_date as updated_at
+            FROM public.process_payroll_all_transactions_breakdown_by_manual_classes a
+            Left Join public.final_employer_demographics_informations edi
+            ON a.policy_number = edi.policy_number
+            WHERE (a.manual_class_effective_date BETWEEN experience_period_lower_date and experience_period_upper_date)
+            and a.representative_number = process_representative -- date range for experience_period
+              and (a.payroll_origin = 'payroll' or a.payroll_origin = 'manual_reclass') and (a.manual_class_effective_date >= edi.policy_creation_date )
+            GROUP BY a.representative_number, a.policy_number, a.manual_number
+          );
+
+            INSERT INTO process_manual_class_four_year_payroll_without_conditions
+            (
+              representative_number,
+              policy_number,
+              manual_number,
+              manual_class_four_year_period_payroll,
+              data_source,
+              created_at,
+              updated_at
+            )
+            (
+              SELECT
+                a.representative_number,
+                a.policy_number,
+                a.manual_number,
+                SUM(a.manual_class_payroll) as manual_class_four_year_period_payroll,
+                'bwc' as data_source,
+                run_date as created_at,
+                run_date as updated_at
+              FROM public.process_payroll_all_transactions_breakdown_by_manual_classes a
+              Left Join public.final_employer_demographics_informations edi
+              ON a.policy_number = edi.policy_number
+              WHERE (a.manual_class_effective_date BETWEEN experience_period_lower_date and experience_period_upper_date) -- date range for experience_period
+                and (a.payroll_origin = 'partial_transfer' or a.payroll_origin = 'lease_terminated' and a.payroll_origin = 'partial_to_full_lease' or  a.payroll_origin = 'full_transfer' )
+                and a.representative_number = process_representative
+              GROUP BY a.representative_number, a.policy_number, a.manual_number
+            );
+
+
+
+
+
+        -- Calculate manual_class_payroll
+
+         UPDATE public.final_manual_class_four_year_payroll_and_exp_losses a SET (manual_class_four_year_period_payroll, updated_at) = (t2.manual_class_four_year_period_payroll, t2.updated_at)
+         FROM
+         (SELECT a.representative_number, a.policy_number, a.manual_number,
+        (Case when wo.manual_class_four_year_period_payroll is null then '0'::decimal ELSE
+        wo.manual_class_four_year_period_payroll END)
+        + (Case when w.manual_class_four_year_period_payroll is null then '0'::decimal ELSE
+        w.manual_class_four_year_period_payroll END) as manual_class_four_year_period_payroll,
+        run_date as updated_at
+        FROM public.final_manual_class_four_year_payroll_and_exp_losses a
+        Left join public.process_manual_class_four_year_payroll_without_conditions wo
+        ON a.policy_number = wo.policy_number and a.manual_number = wo.manual_number
+        Left join public.process_manual_class_four_year_payroll_with_conditions w
+        ON a.policy_number = w.policy_number and a.manual_number = w.manual_number
+         ) t2
+         WHERE a.policy_number = t2.policy_number and a.manual_number = t2.manual_number and a.representative_number = t2.representative_number and a.representative_number = process_representative;
+
+
+
+
+
+
+
+
+
+         UPDATE public.final_manual_class_four_year_payroll_and_exp_losses a SET (manual_class_expected_loss_rate, manual_class_base_rate, manual_class_expected_losses, manual_class_industry_group, updated_at) = (t2.manual_class_expected_loss_rate, t2.manual_class_base_rate, t2.manual_class_expected_losses, t2.manual_class_industry_group, t2.updated_at)
+         FROM
+         (  SELECT
+             a.representative_number,
+             a.policy_number,
+             a.manual_number,
+             b.expected_loss_rate as manual_class_expected_loss_rate,
+             b.base_rate as manual_class_base_rate,
+             (a.manual_class_four_year_period_payroll * b.expected_loss_rate)
+             as "manual_class_expected_losses",
+             c.industry_group as "manual_class_industry_group",
+             run_date as updated_at
+           FROM public.final_manual_class_four_year_payroll_and_exp_losses a
+           LEFT JOIN public.bwc_codes_base_rates_exp_loss_rates b
+           ON a.manual_number = b.class_code
+           LEFT JOIN public.bwc_codes_ncci_manual_classes c
+           ON a.manual_number = c.ncci_manual_classification
+           Left Join public.final_employer_demographics_informations edi
+           ON a.policy_number = edi.policy_number
+           ) t2
+         WHERE a.policy_number = t2.policy_number and a.manual_number = t2.manual_number and a.representative_number = t2.representative_number and (a.representative_number is not null) and a.representative_number = process_representative;
+
+
+
+
+
+        -- 7/5/2016 __ CREATED NEW PEO TABLE called process_policy_experience_period_peo.
+        -- This will calculate which policies were involved with a state fund or self insurred peo.
+        -- It finds the most recent date of the effective_date for si peo or sf peo and documents it
+        -- Then it finds the most recent termintation date for si peo or sf peo and documents it.
+        -- If a policy is involved with a peo within the experience period, you will eventually reject that policy from getting quoted for group rating.
+
+
+        -- Insert all policy_numbers and manual_numbers that are associated with a PEO LEASE
+        INSERT INTO public.process_policy_experience_period_peos (
+          representative_number,
+          policy_number,
+          data_source,
+          created_at,
+          updated_at
+        )
+        (
+          SELECT DISTINCT
+               representative_number,
+               predecessor_policy_number as policy_number,
+               'bwc' as data_source,
+               run_date as created_at,
+               run_date as updated_at
+          FROM public.process_policy_combine_partial_to_full_leases
+          where representative_number = process_representative
+        );
+
+
+
+        -- Self Insured  PEO LEASE INTO
+
+         UPDATE public.process_policy_experience_period_peos mce SET
+         (manual_class_si_peo_lease_effective_date, updated_at) = (t2.manual_class_si_peo_lease_effective_date, t2.updated_at)
+         FROM
+         (SELECT pcl.representative_number,
+          pcl.predecessor_policy_number as policy_number,
+          max(pcl.transfer_effective_date) as manual_class_si_peo_lease_effective_date,
+          run_date as updated_at
+         FROM public.process_policy_combine_partial_to_full_leases pcl
+         -- Self Insured PEO
+         WHERE pcl.successor_policy_type = '2' and pcl.successor_policy_number in (SELECT peo.policy_number FROM bwc_codes_peo_lists peo) and pcl.representative_number = process_representative
+         GROUP BY pcl.representative_number,
+          pcl.predecessor_policy_number
+        ) t2
+          WHERE mce.policy_number = t2.policy_number and mce.representative_number = t2.representative_number and (mce.representative_number is not null);
+
+        --
+        -- -- Self Insured PEO LEASE OUT
+        --
+        UPDATE public.process_policy_experience_period_peos mce SET
+        (manual_class_si_peo_lease_termination_date, updated_at) = (t2.manual_class_si_peo_lease_termination_date, t2.updated_at)
+        FROM
+        ( SELECT pct.representative_number,
+         pct.successor_policy_number as policy_number,
+         max(pct.transfer_effective_date) as manual_class_si_peo_lease_termination_date,
+         run_date as updated_at
+        FROM public.process_policy_combination_lease_terminations pct
+        WHERE pct.predecessor_policy_number in (SELECT peo.policy_number FROM bwc_codes_peo_lists peo) and pct.predecessor_policy_type = '2' and pct.representative_number = process_representative
+        GROUP BY pct.representative_number,
+         pct.successor_policy_number
+        ) t2
+        WHERE mce.policy_number = t2.policy_number and mce.representative_number = t2.representative_number and (mce.representative_number is not null);
+        --
+        -- -- State Fund PEO LEASE INTO
+        --
+
+     UPDATE public.process_policy_experience_period_peos mce SET
+     (manual_class_sf_peo_lease_effective_date, updated_at) = (t2.manual_class_sf_peo_lease_effective_date, t2.updated_at)
+     FROM
+     (SELECT pcl.representative_number,
+      pcl.predecessor_policy_number as policy_number,
+      max(pcl.transfer_effective_date) as manual_class_sf_peo_lease_effective_date,
+      run_date as updated_at
+     FROM public.process_policy_combine_partial_to_full_leases pcl
+     -- Self Insured PEO
+     WHERE pcl.successor_policy_type != '2' and pcl.successor_policy_number in (SELECT peo.policy_number FROM bwc_codes_peo_lists peo) and pcl.representative_number = process_representative
+     GROUP BY pcl.representative_number,
+      pcl.predecessor_policy_number
     ) t2
-    WHERE edi.policy_number = t2.policy_number;
+      WHERE mce.policy_number = t2.policy_number and mce.representative_number = t2.representative_number and (mce.representative_number is not null);
 
-
-
-
-    UPDATE public.final_employer_demographics_informations edi SET
-    (current_policy_status, current_policy_status_effective_date) =
-    (t2.max_coverage_status, t2.max_coverage_effective_date)
+    --
+    -- -- Self Insured PEO LEASE OUT
+    --
+    UPDATE public.process_policy_experience_period_peos mce SET
+    (manual_class_sf_peo_lease_termination_date, updated_at) = (t2.manual_class_sf_peo_lease_termination_date, t2.updated_at)
     FROM
-    (
-      (SELECT max_pcsh.policy_number as max_policy_number,
-          max_pcsh.coverage_effective_date as max_coverage_effective_date,
-          max_pcsh.coverage_status as max_coverage_status
-      FROM process_policy_coverage_status_histories max_pcsh
-      Inner Join (
-          SELECT policy_number, max(coverage_effective_date) as coverage_effective_date
-          FROM process_policy_coverage_status_histories
-          GROUP BY policy_number
-      ) b ON max_pcsh.policy_number = b.policy_number and max_pcsh.coverage_effective_date = b.coverage_effective_date)
+    ( SELECT pct.representative_number,
+     pct.successor_policy_number as policy_number,
+     max(pct.transfer_effective_date) as manual_class_sf_peo_lease_termination_date,
+     run_date as updated_at
+    FROM public.process_policy_combination_lease_terminations pct
+    WHERE pct.predecessor_policy_number in (SELECT peo.policy_number FROM bwc_codes_peo_lists peo) and pct.predecessor_policy_type != '2'and pct.representative_number = process_representative
+    GROUP BY pct.representative_number,
+     pct.successor_policy_number
     ) t2
-    WHERE edi.policy_number = t2.max_policy_number;
+    WHERE mce.policy_number = t2.policy_number and mce.representative_number = t2.representative_number and (mce.representative_number is not null);
 
-
-
-    -- UPDATE public.employer_demographics_information edi SET
-    -- (policy_creation_date) = (t2.min_coverage_effective_date)
-    -- FROM
-    -- (SELECT min_pcsh.policy_number,
-    --     min(min_pcsh.coverage_effective_date) as min_coverage_effective_date
-    -- FROM policy_coverage_status_history min_pcsh
-    -- GROUP BY policy_number
-    -- ORDER by policy_number
-    -- ) t2
-    -- WHERE edi.policy_number = t2.policy_number
 
     end;
-
-
-
 
       $$;
 
@@ -2423,38 +3310,6 @@ CREATE SEQUENCE bwc_codes_policy_effective_dates_id_seq
 --
 
 ALTER SEQUENCE bwc_codes_policy_effective_dates_id_seq OWNED BY bwc_codes_policy_effective_dates.id;
-
-
---
--- Name: bwc_policy_coverage_creation_histories; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE bwc_policy_coverage_creation_histories (
-    id integer NOT NULL,
-    policy_number integer,
-    policy_original_effective_date date,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
-);
-
-
---
--- Name: bwc_policy_coverage_creation_histories_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE bwc_policy_coverage_creation_histories_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: bwc_policy_coverage_creation_histories_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE bwc_policy_coverage_creation_histories_id_seq OWNED BY bwc_policy_coverage_creation_histories.id;
 
 
 --
@@ -3488,7 +4343,7 @@ CREATE TABLE process_payroll_all_transactions_breakdown_by_manual_classes (
     manual_class_effective_date date,
     manual_class_payroll double precision,
     payroll_origin character varying,
-    data_sourc character varying,
+    data_source character varying,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
 );
@@ -3514,10 +4369,10 @@ ALTER SEQUENCE process_payroll_all_transactions_breakdown_by_manual_cla_id_seq O
 
 
 --
--- Name: process_payroll_breakdown_by_manual_class; Type: TABLE; Schema: public; Owner: -
+-- Name: process_payroll_breakdown_by_manual_classes; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE process_payroll_breakdown_by_manual_class (
+CREATE TABLE process_payroll_breakdown_by_manual_classes (
     id integer NOT NULL,
     representative_number integer,
     policy_type character varying,
@@ -3536,10 +4391,10 @@ CREATE TABLE process_payroll_breakdown_by_manual_class (
 
 
 --
--- Name: process_payroll_breakdown_by_manual_class_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: process_payroll_breakdown_by_manual_classes_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE process_payroll_breakdown_by_manual_class_id_seq
+CREATE SEQUENCE process_payroll_breakdown_by_manual_classes_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -3548,10 +4403,10 @@ CREATE SEQUENCE process_payroll_breakdown_by_manual_class_id_seq
 
 
 --
--- Name: process_payroll_breakdown_by_manual_class_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: process_payroll_breakdown_by_manual_classes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE process_payroll_breakdown_by_manual_class_id_seq OWNED BY process_payroll_breakdown_by_manual_class.id;
+ALTER SEQUENCE process_payroll_breakdown_by_manual_classes_id_seq OWNED BY process_payroll_breakdown_by_manual_classes.id;
 
 
 --
@@ -4486,13 +5341,6 @@ ALTER TABLE ONLY bwc_codes_policy_effective_dates ALTER COLUMN id SET DEFAULT ne
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY bwc_policy_coverage_creation_histories ALTER COLUMN id SET DEFAULT nextval('bwc_policy_coverage_creation_histories_id_seq'::regclass);
-
-
---
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
---
-
 ALTER TABLE ONLY democ_detail_records ALTER COLUMN id SET DEFAULT nextval('democ_detail_records_id_seq'::regclass);
 
 
@@ -4661,7 +5509,7 @@ ALTER TABLE ONLY process_payroll_all_transactions_breakdown_by_manual_classes AL
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY process_payroll_breakdown_by_manual_class ALTER COLUMN id SET DEFAULT nextval('process_payroll_breakdown_by_manual_class_id_seq'::regclass);
+ALTER TABLE ONLY process_payroll_breakdown_by_manual_classes ALTER COLUMN id SET DEFAULT nextval('process_payroll_breakdown_by_manual_classes_id_seq'::regclass);
 
 
 --
@@ -4831,14 +5679,6 @@ ALTER TABLE ONLY bwc_codes_peo_lists
 
 ALTER TABLE ONLY bwc_codes_policy_effective_dates
     ADD CONSTRAINT bwc_codes_policy_effective_dates_pkey PRIMARY KEY (id);
-
-
---
--- Name: bwc_policy_coverage_creation_histories_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY bwc_policy_coverage_creation_histories
-    ADD CONSTRAINT bwc_policy_coverage_creation_histories_pkey PRIMARY KEY (id);
 
 
 --
@@ -5034,11 +5874,11 @@ ALTER TABLE ONLY process_payroll_all_transactions_breakdown_by_manual_classes
 
 
 --
--- Name: process_payroll_breakdown_by_manual_class_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: process_payroll_breakdown_by_manual_classes_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY process_payroll_breakdown_by_manual_class
-    ADD CONSTRAINT process_payroll_breakdown_by_manual_class_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY process_payroll_breakdown_by_manual_classes
+    ADD CONSTRAINT process_payroll_breakdown_by_manual_classes_pkey PRIMARY KEY (id);
 
 
 --
@@ -5169,13 +6009,6 @@ CREATE INDEX index_bwc_codes_policy_effective_dates_on_policy_number ON bwc_code
 
 
 --
--- Name: index_bwc_policy_coverage_creation_histories_on_policy_number; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_bwc_policy_coverage_creation_histories_on_policy_number ON bwc_policy_coverage_creation_histories USING btree (policy_number);
-
-
---
 -- Name: index_final_claim_cost_calculation_tables_on_policy_number; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -5221,7 +6054,7 @@ CREATE INDEX index_man_class_prem_proj_pol_num_and_man_num ON final_manual_class
 -- Name: index_process_payroll_by_man_cl_on_pol_num_and_man_num; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_process_payroll_by_man_cl_on_pol_num_and_man_num ON process_payroll_breakdown_by_manual_class USING btree (policy_number, manual_number);
+CREATE INDEX index_process_payroll_by_man_cl_on_pol_num_and_man_num ON process_payroll_breakdown_by_manual_classes USING btree (policy_number, manual_number);
 
 
 --
@@ -5365,5 +6198,9 @@ INSERT INTO schema_migrations (version) VALUES ('20160815131855');
 
 INSERT INTO schema_migrations (version) VALUES ('20160815135347');
 
-INSERT INTO schema_migrations (version) VALUES ('20160815165501');
+INSERT INTO schema_migrations (version) VALUES ('20160815205101');
+
+INSERT INTO schema_migrations (version) VALUES ('20160816120630');
+
+INSERT INTO schema_migrations (version) VALUES ('20160816143616');
 
