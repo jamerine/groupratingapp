@@ -1,6 +1,6 @@
 class CreateProcessPayrollBreakdownByManualClasses < ActiveRecord::Migration
   def change
-    create_table :process_payroll_breakdown_by_manual_class do |t|
+    create_table :process_payroll_breakdown_by_manual_classes do |t|
       t.integer :representative_number
       t.string :policy_type
       t.integer :policy_number

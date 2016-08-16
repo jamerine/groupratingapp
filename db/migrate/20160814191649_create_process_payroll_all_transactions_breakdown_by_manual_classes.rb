@@ -7,7 +7,7 @@ class CreateProcessPayrollAllTransactionsBreakdownByManualClasses < ActiveRecord
       t.date :manual_class_effective_date
       t.float :manual_class_payroll
       t.string :payroll_origin
-      t.string :data_sourc
+      t.string :data_source
 
       t.timestamps null: false
     end
