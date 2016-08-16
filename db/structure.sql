@@ -1527,7 +1527,7 @@ CREATE FUNCTION proc_step_1(process_representative integer, experience_period_lo
     AS $$
 
         DECLARE
-          run_date date := CURRENT_DATE;
+          run_date timestamp := LOCALTIMESTAMP;
         BEGIN
 
 
@@ -1766,7 +1766,7 @@ CREATE FUNCTION proc_step_1(process_representative integer, experience_period_lo
           a.coverage_end_date,
           a.coverage_status,
           (CASE WHEN a.coverage_status = 'LAPSE' and a.coverage_end_date is not null Then (a.coverage_end_date - a.coverage_effective_date)
-               WHEN a.coverage_status = 'LAPSE' and a.coverage_end_date is null THEN (run_date - a.coverage_effective_date)
+               WHEN a.coverage_status = 'LAPSE' and a.coverage_end_date is null THEN (run_date::date - a.coverage_effective_date)
                ELSE '0'::integer END) as lapse_days,
            run_date as updated_at
           FROM public.process_policy_coverage_status_histories a
@@ -1782,7 +1782,7 @@ CREATE FUNCTION proc_step_1(process_representative integer, experience_period_lo
           a.coverage_effective_date,
           a.coverage_end_date,
           a.coverage_status,
-          (run_date - a.coverage_effective_date) as lapse_days,
+          (run_date::date - a.coverage_effective_date) as lapse_days,
            run_date as updated_at
           FROM public.process_policy_coverage_status_histories a
           WHERE a.coverage_end_date is null and a.coverage_status = 'LAPSE'
@@ -1860,7 +1860,7 @@ CREATE FUNCTION proc_step_2(process_representative integer, experience_period_lo
     AS $$
 
       DECLARE
-        run_date date := CURRENT_DATE;
+        run_date timestamp := LOCALTIMESTAMP;
       BEGIN
       -- STEP 2A -- Process Payroll File
       /*************** Create Table for transposing the columns of sc220 to rows ***************/
@@ -2106,7 +2106,7 @@ CREATE FUNCTION proc_step_3(process_representative integer, experience_period_lo
     AS $$
 
         DECLARE
-          run_date date := CURRENT_DATE;
+          run_date timestamp := LOCALTIMESTAMP;
         BEGIN
 
 
@@ -2784,7 +2784,7 @@ CREATE FUNCTION proc_step_4(process_representative integer, experience_period_lo
     AS $$
 
         DECLARE
-          run_date date := CURRENT_DATE;
+          run_date timestamp := LOCALTIMESTAMP;
         BEGIN
         -- STEP 4 -- Manual Class 4 Year Rollups
         -- Create table that adds up 4 year payroll for each unique policy number and manual class combination,
@@ -2890,10 +2890,10 @@ CREATE FUNCTION proc_step_4(process_representative integer, experience_period_lo
          UPDATE public.final_manual_class_four_year_payroll_and_exp_losses a SET (manual_class_four_year_period_payroll, updated_at) = (t2.manual_class_four_year_period_payroll, t2.updated_at)
          FROM
          (SELECT a.representative_number, a.policy_number, a.manual_number,
-        (Case when wo.manual_class_four_year_period_payroll is null then '0'::decimal ELSE
+        ROUND(((Case when wo.manual_class_four_year_period_payroll is null then '0'::decimal ELSE
         wo.manual_class_four_year_period_payroll END)
         + (Case when w.manual_class_four_year_period_payroll is null then '0'::decimal ELSE
-        w.manual_class_four_year_period_payroll END) as manual_class_four_year_period_payroll,
+        w.manual_class_four_year_period_payroll END))::numeric,2) as manual_class_four_year_period_payroll,
         run_date as updated_at
         FROM public.final_manual_class_four_year_payroll_and_exp_losses a
         Left join public.process_manual_class_four_year_payroll_without_conditions wo
@@ -2919,7 +2919,7 @@ CREATE FUNCTION proc_step_4(process_representative integer, experience_period_lo
              a.manual_number,
              b.expected_loss_rate as manual_class_expected_loss_rate,
              b.base_rate as manual_class_base_rate,
-             (a.manual_class_four_year_period_payroll * b.expected_loss_rate)
+             ROUND((a.manual_class_four_year_period_payroll * b.expected_loss_rate)::numeric, 4)
              as "manual_class_expected_losses",
              c.industry_group as "manual_class_industry_group",
              run_date as updated_at
@@ -2932,7 +2932,6 @@ CREATE FUNCTION proc_step_4(process_representative integer, experience_period_lo
            ON a.policy_number = edi.policy_number
            ) t2
          WHERE a.policy_number = t2.policy_number and a.manual_number = t2.manual_number and a.representative_number = t2.representative_number and (a.representative_number is not null) and a.representative_number = process_representative;
-
 
 
 
@@ -3038,6 +3037,385 @@ CREATE FUNCTION proc_step_4(process_representative integer, experience_period_lo
     end;
 
       $$;
+
+
+--
+-- Name: proc_step_5(integer, date, date, date); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION proc_step_5(process_representative integer, experience_period_lower_date date, experience_period_upper_date date, current_payroll_period_lower_date date) RETURNS void
+    LANGUAGE plpgsql
+    AS $$
+
+      DECLARE
+        run_date timestamp := LOCALTIMESTAMP;
+      BEGIN
+
+
+      -- STEP 5A -- POLICY EXPERIENCE ROLLUPS
+
+      -- INSERT THEN UPDATE STATEMENTS TO CREATE MORE SPEED.
+      INSERT INTO public.final_policy_experience_calculations
+      (
+      representative_number,
+      policy_number,
+      data_source,
+      created_at,
+      updated_at
+      )
+      (SELECT DISTINCT representative_number,
+             policy_number,
+             'bwc' as data_source,
+             run_date as created_at,
+             run_date as updated_at
+       FROM final_manual_class_four_year_payroll_and_exp_losses
+       where representative_number = process_representative
+       );
+
+
+      --  UPDATE policy_group_number
+
+      UPDATE public.final_policy_experience_calculations pec SET (policy_group_number, updated_at) =
+      (t2.policy_group_number, t2.updated_at)
+      FROM
+      (
+       SELECT a.policy_number, a.group_code as policy_group_number,
+       run_date as updated_at
+       FROM final_employer_demographics_informations a
+       where a.representative_number = process_representative
+      ) t2
+      WHERE pec.policy_number = t2.policy_number;
+
+
+      -- UPDATE policy_role_ups
+      UPDATE public.final_policy_experience_calculations pec SET (policy_total_four_year_payroll, policy_total_expected_losses, updated_at) = (t2.policy_four_year_payroll, t2.policy_total_expected_losses, t2.updated_at)
+      FROM
+      (SELECT policy_number,
+       round(sum(manual_class_four_year_period_payroll)::numeric,2) as policy_four_year_payroll,
+       round(sum(manual_class_expected_losses)::numeric,2) as policy_total_expected_losses,
+       run_date as created_at,
+       run_date as updated_at
+       FROM public.final_manual_class_four_year_payroll_and_exp_losses
+       WHERE representative_number = process_representative
+       GROUP BY policy_number
+      ) t2
+      WHERE pec.policy_number = t2.policy_number;
+
+
+      -- UPDATE industry_group
+
+
+
+
+      ----------------------------
+      -- Update policy_status
+
+      UPDATE public.final_policy_experience_calculations a SET (policy_status, updated_at) = (t2.current_policy_status, t2.updated_at)
+      FROM
+      (SELECT p.policy_number, p.current_policy_status,
+      run_date as updated_at
+        FROM public.final_employer_demographics_informations p
+        where p.representative_number = process_representative
+      ) t2
+      WHERE a.policy_number = t2.policy_number;
+
+      ----------
+      -- UPDATE policy_level credibilty_group
+
+       UPDATE public.final_policy_experience_calculations a SET (policy_credibility_group, updated_at) = (t2.credibility_group, t2.updated_at)
+      FROM
+       (SELECT p.policy_number,
+             (SELECT case when (min(bwc.credibility_group) - 1) is null THEN '22'
+                    ELSE (min(bwc.credibility_group) - 1)
+                       END
+             as credibility_group
+               FROM public.bwc_codes_credibility_max_losses bwc
+                 WHERE (p.policy_total_expected_losses / expected_losses ) <= 1),
+                 run_date as updated_at
+         FROM public.final_policy_experience_calculations p
+         WHERE p.representative_number = process_representative
+        ) t2
+        WHERE a.policy_number = t2.policy_number;
+
+
+      --- Update Credibilty policy_credibility_percent and maximum_claim_value
+
+      UPDATE public.final_policy_experience_calculations a SET (policy_credibility_percent, policy_maximum_claim_value, updated_at) = (t2.policy_credibility_percent, t2.policy_maximum_claim_value, t2.updated_at)
+      FROM
+      (
+        SELECT
+        p.policy_number,
+       case when bwc.credibility_percent is null THEN '0.00'
+       ELSE bwc.credibility_percent
+       end as policy_credibility_percent,
+        case when bwc.group_maximum_value is null THEN '250000'
+       ELSE bwc.group_maximum_value
+     end as policy_maximum_claim_value,
+      run_date as updated_at
+
+        from public.bwc_codes_credibility_max_losses bwc
+        right Join public.final_policy_experience_calculations p
+        ON bwc.credibility_group = p.policy_credibility_group
+        WHERE p.representative_number = process_representative
+      ) t2
+      WHERE a.policy_number = t2.policy_number
+      ;
+      -- Update limited_loss_rate On Manual_class_level
+
+      UPDATE public.final_manual_class_four_year_payroll_and_exp_losses a SET (manual_class_limited_loss_rate, updated_at) =
+      (t2.limited_loss_rate, t2.updated_at)
+      FROM
+
+      (SELECT
+        p.policy_number as policy_number,
+        mc.manual_number as manual_number,
+        bwc.limited_loss_ratio as limited_loss_rate,
+        run_date as updated_at
+      FROM public.final_policy_experience_calculations p
+      RIGHT JOIN final_manual_class_four_year_payroll_and_exp_losses mc
+      on p.policy_number = mc.policy_number
+      RIGHT JOIN bwc_codes_limited_loss_ratios bwc
+      ON  p.policy_credibility_group = bwc.credibility_group
+       and mc.manual_class_industry_group = bwc.industry_group
+      WHERE p.representative_number = process_representative
+      ) t2
+      WHERE t2.policy_number = a.policy_number and a.manual_number = t2.manual_number;
+
+
+
+
+
+       -- Update Manual Class LImited Losses on the Manual Classes
+
+      UPDATE public.final_manual_class_four_year_payroll_and_exp_losses a SET (manual_class_limited_losses, updated_at) =
+      (t2.manual_class_limited_losses, t2.updated_at)
+      FROM
+      (
+        SELECT
+          b.policy_number as policy_number,
+          b.manual_number as manual_number,
+          round((manual_class_expected_losses * manual_class_limited_loss_rate)::numeric,2) as manual_class_limited_losses,
+          run_date as updated_at
+        FROM public.final_manual_class_four_year_payroll_and_exp_losses b
+        WHERE b.representative_number = process_representative
+      ) t2
+      WHERE a.policy_number = t2.policy_number and a.manual_number = t2.manual_number;
+
+
+
+
+
+
+      UPDATE public.final_policy_experience_calculations a SET (policy_total_limited_losses,updated_at) =
+      (t2.policy_total_limited_losses, t2.updated_at)
+      FROM
+      (
+        SELECT
+        b.policy_number as policy_number,
+        round(SUM(b.manual_class_limited_losses)::numeric,2) as policy_total_limited_losses,
+        run_date as updated_at
+        FROM public.final_manual_class_four_year_payroll_and_exp_losses b
+        where b.representative_number = process_representative
+        GROUP BY policy_number
+      ) t2
+      Where t2.policy_number = a.policy_number;
+
+
+
+      end;
+
+        $$;
+
+
+--
+-- Name: proc_step_6(integer, date, date, date); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION proc_step_6(process_representative integer, experience_period_lower_date date, experience_period_upper_date date, current_payroll_period_lower_date date) RETURNS void
+    LANGUAGE plpgsql
+    AS $$
+
+      DECLARE
+        run_date timestamp := LOCALTIMESTAMP;
+      BEGIN
+
+      -- STEP 6 -- CREATE CLAIMS TABLE and Calculations
+
+      INSERT INTO final_claim_cost_calculation_tables
+        (
+        representative_number,
+        policy_type,
+        policy_number,
+        claim_number,
+        claim_injury_date,
+        claim_handicap_percent,
+        claim_handicap_percent_effective_date,
+        claim_manual_number,
+        claim_medical_paid,
+        claim_mira_medical_reserve_amount,
+        claim_mira_non_reducible_indemnity_paid,
+        claim_mira_reducible_indemnity_paid,
+        claim_mira_indemnity_reserve_amount,
+        claim_mira_non_reducible_indemnity_paid_2,
+        claim_total_subrogation_collected,
+        claim_unlimited_limited_loss,
+        policy_individual_maximum_claim_value,
+        --claim_group_multiplier,
+        --claim_individual_multiplier,
+        -- claim_group_reduced_amount,
+        -- claim_individual_reduced_amount,
+        --claim_subrogation_percent,
+        --claim_modified_losses_group_reduced
+        --claim_modified_losses_individual_reduced,
+        data_source,
+        created_at,
+        updated_at
+        )
+        (SELECT
+          a.representative_number,
+          a.policy_type,
+          a.policy_number,
+          a.claim_number,
+          a.claim_injury_date,
+          round(a.claim_handicap_percent::numeric/100,2),
+          a.claim_handicap_percent_effective_date,
+          a.claim_manual_number,
+          a.claim_medical_paid,
+          a.claim_mira_medical_reserve_amount,
+          a.claim_mira_non_reducible_indemnity_paid,
+          a.claim_mira_reducible_indemnity_paid,
+          a.claim_mira_indemnity_reserve_amount,
+          a.claim_mira_non_reducible_indemnity_paid_2,
+          a.claim_total_subrogation_collected,
+          (a.claim_medical_paid +
+            a.claim_mira_medical_reserve_amount +
+            a.claim_mira_non_reducible_indemnity_paid +
+            a.claim_mira_reducible_indemnity_paid +
+            a.claim_mira_indemnity_reserve_amount +
+            a.claim_mira_non_reducible_indemnity_paid_2
+          ) as "claim_unlimited_limited_loss"
+          /*(case when (a.claim_medical_paid +
+            a.claim_mira_medical_reserve_amount +
+            a.claim_mira_non_reducible_indemnity_paid +
+            a.claim_mira_reducible_indemnity_paid +
+            a.claim_mira_indemnity_reserve_amount +
+            a.claim_mira_non_reducible_indemnity_paid_2
+          ) < '25000' THEN '1'
+            else '25000'/(a.claim_medical_paid +
+              a.claim_mira_medical_reserve_amount +
+              a.claim_mira_non_reducible_indemnity_paid +
+              a.claim_mira_reducible_indemnity_paid +
+              a.claim_mira_indemnity_reserve_amount +
+              a.claim_mira_non_reducible_indemnity_paid_2
+            )
+            end)::numeric as "claim_group_multiplier",
+
+            (case when (a.claim_medical_paid +
+              a.claim_mira_medical_reserve_amount +
+              a.claim_mira_non_reducible_indemnity_paid +
+              a.claim_mira_reducible_indemnity_paid +
+              a.claim_mira_indemnity_reserve_amount +
+              a.claim_mira_non_reducible_indemnity_paid_2
+            ) < (SELECT b.policy_maximum_claim_value FROM public.test_table b WHERE a.policy_sequence_number = b.policy_number) THEN '1'
+              else (SELECT b.policy_maximum_claim_value FROM public.test_table b WHERE a.policy_sequence_number = b.policy_number)/(a.claim_medical_paid +
+                a.claim_mira_medical_reserve_amount +
+                a.claim_mira_non_reducible_indemnity_paid +
+                a.claim_mira_reducible_indemnity_paid +
+                a.claim_mira_indemnity_reserve_amount +
+                a.claim_mira_non_reducible_indemnity_paid_2
+              )
+              end)::decimal as "claim_independent_multiplier" */
+              ,(SELECT plec.policy_maximum_claim_value from final_policy_experience_calculations plec where a.policy_number = plec.policy_number) as "policy_individual_maximum_claim_value",
+              'bwc' as data_source,
+              run_date as created_at,
+              run_date as updated_at
+          FROM public.democ_detail_records a
+          WHERE a.representative_number = process_representative
+          ORDER BY claim_unlimited_limited_loss desc
+          );
+
+
+
+      -- STEP 6B -- CALCULATION OF CLAIMS COSTS
+
+
+
+      -- Calculate out the claim_group_multiplier
+        -- give employers figures on how much they are saving by being in a group.
+      UPDATE public.final_claim_cost_calculation_tables SET claim_group_multiplier =
+
+        ((CASE WHEN '250000' > claim_unlimited_limited_loss THEN '1'
+              ELSE ('250000' / nullif(claim_unlimited_limited_loss, 0))
+              END)::numeric);
+
+
+      -- Calculate out the claim_individual_multiplier
+        -- give employers figures on how much they are saving by being in a group.
+      UPDATE public.final_claim_cost_calculation_tables SET claim_individual_multiplier =
+        (CASE WHEN (policy_individual_maximum_claim_value is null or claim_unlimited_limited_loss is null) THEN '1'
+              WHEN policy_individual_maximum_claim_value > claim_unlimited_limited_loss THEN '1'
+              WHEN policy_individual_maximum_claim_value = '0.00' THEN '1'
+              ELSE (policy_individual_maximum_claim_value / claim_unlimited_limited_loss)
+              END)::numeric;
+
+
+
+
+        -- claim_group_reduced_amount,
+        -- claim_individual_reduced_amount,
+
+      -- Calculate out the claim reducable cost
+        -- [ NON-REDUCABLE AMOUNT * CLAIMS GROUP MULTIPLIER ] + [ ( REDUCIBLE AMOUNT ) * (CLAIMS GROUP MULTIPLIER * ( 1 - Handicapped Percent))]
+
+      UPDATE public.final_claim_cost_calculation_tables SET claim_group_reduced_amount =
+      (((claim_mira_non_reducible_indemnity_paid + claim_mira_non_reducible_indemnity_paid_2 ) * claim_group_multiplier ) + ((claim_medical_paid +
+      claim_mira_medical_reserve_amount +
+      claim_mira_reducible_indemnity_paid +
+      claim_mira_indemnity_reserve_amount) * claim_group_multiplier * (1 - claim_handicap_percent)));
+
+
+
+      -- Calculate out the claim reducable cost
+        -- [ NON-REDUCABLE AMOUNT * CLAIMS INDIVIDUAL MULTIPLIER ] + [ ( REDUCIBLE AMOUNT ) * (CLAIMS INDIVIDUAL MULTIPLIER * ( 1 - Handicapped Percent))]
+
+      UPDATE public.final_claim_cost_calculation_tables SET claim_individual_reduced_amount =
+      (((claim_mira_non_reducible_indemnity_paid +
+        claim_mira_non_reducible_indemnity_paid_2) * claim_individual_multiplier) +
+      (
+      (claim_medical_paid +
+      claim_mira_medical_reserve_amount +
+      claim_mira_reducible_indemnity_paid +
+      claim_mira_indemnity_reserve_amount) * claim_individual_multiplier * ( 1 - claim_handicap_percent )));
+
+
+
+      -- Calculate subrogation of case AMOUNT
+
+
+      UPDATE public.final_claim_cost_calculation_tables SET claim_subrogation_percent =
+      (
+      case WHEN claim_total_subrogation_collected = '0' THEN '0'
+           WHEN claim_total_subrogation_collected > claim_unlimited_limited_loss THEN '1'
+           ELSE claim_total_subrogation_collected / claim_unlimited_limited_loss
+           END
+      );
+
+
+      -- Calulate final claim cost if in group rating
+
+      UPDATE public.final_claim_cost_calculation_tables SET claim_modified_losses_group_reduced =
+      (
+        round((claim_group_reduced_amount * (1 - claim_subrogation_percent))::numeric,2)
+      );
+
+      -- calculate final claim cost if individual not group.
+
+      UPDATE public.final_claim_cost_calculation_tables SET claim_modified_losses_individual_reduced =
+      (
+        round((claim_individual_reduced_amount * (1 - claim_subrogation_percent))::numeric,2)
+      );
+      end;
+        $$;
 
 
 SET default_tablespace = '';
@@ -6203,4 +6581,8 @@ INSERT INTO schema_migrations (version) VALUES ('20160815205101');
 INSERT INTO schema_migrations (version) VALUES ('20160816120630');
 
 INSERT INTO schema_migrations (version) VALUES ('20160816143616');
+
+INSERT INTO schema_migrations (version) VALUES ('20160816154538');
+
+INSERT INTO schema_migrations (version) VALUES ('20160816160133');
 

@@ -10,7 +10,7 @@ class Step4Proc < ActiveRecord::Migration
         $BODY$
 
         DECLARE
-          run_date date := CURRENT_DATE;
+          run_date timestamp := LOCALTIMESTAMP;
         BEGIN
         -- STEP 4 -- Manual Class 4 Year Rollups
         -- Create table that adds up 4 year payroll for each unique policy number and manual class combination,
@@ -116,10 +116,10 @@ class Step4Proc < ActiveRecord::Migration
          UPDATE public.final_manual_class_four_year_payroll_and_exp_losses a SET (manual_class_four_year_period_payroll, updated_at) = (t2.manual_class_four_year_period_payroll, t2.updated_at)
          FROM
          (SELECT a.representative_number, a.policy_number, a.manual_number,
-        (Case when wo.manual_class_four_year_period_payroll is null then '0'::decimal ELSE
+        ROUND(((Case when wo.manual_class_four_year_period_payroll is null then '0'::decimal ELSE
         wo.manual_class_four_year_period_payroll END)
         + (Case when w.manual_class_four_year_period_payroll is null then '0'::decimal ELSE
-        w.manual_class_four_year_period_payroll END) as manual_class_four_year_period_payroll,
+        w.manual_class_four_year_period_payroll END))::numeric,2) as manual_class_four_year_period_payroll,
         run_date as updated_at
         FROM public.final_manual_class_four_year_payroll_and_exp_losses a
         Left join public.process_manual_class_four_year_payroll_without_conditions wo
@@ -145,7 +145,7 @@ class Step4Proc < ActiveRecord::Migration
              a.manual_number,
              b.expected_loss_rate as manual_class_expected_loss_rate,
              b.base_rate as manual_class_base_rate,
-             (a.manual_class_four_year_period_payroll * b.expected_loss_rate)
+             ROUND((a.manual_class_four_year_period_payroll * b.expected_loss_rate)::numeric, 4)
              as "manual_class_expected_losses",
              c.industry_group as "manual_class_industry_group",
              run_date as updated_at
@@ -158,7 +158,6 @@ class Step4Proc < ActiveRecord::Migration
            ON a.policy_number = edi.policy_number
            ) t2
          WHERE a.policy_number = t2.policy_number and a.manual_number = t2.manual_number and a.representative_number = t2.representative_number and (a.representative_number is not null) and a.representative_number = process_representative;
-
 
 
 
@@ -271,7 +270,7 @@ class Step4Proc < ActiveRecord::Migration
 
   def down
     connection.execute(%q{
-
+      DROP FUNCTION public.proc_step_4(integer, date, date, date);
     })
   end
 end
