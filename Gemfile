@@ -35,7 +35,9 @@ gem 'activerecord-import'
 
 gem 'bootstrap-sass'
 
+gem 'resque'
 
+gem 'redis-rails'
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 

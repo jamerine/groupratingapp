@@ -3418,6 +3418,488 @@ CREATE FUNCTION proc_step_6(process_representative integer, experience_period_lo
         $$;
 
 
+--
+-- Name: proc_step_7(integer, date, date, date); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION proc_step_7(process_representative integer, experience_period_lower_date date, experience_period_upper_date date, current_payroll_period_lower_date date) RETURNS void
+    LANGUAGE plpgsql
+    AS $$
+
+      DECLARE
+        run_date timestamp := LOCALTIMESTAMP;
+      BEGIN
+
+      -- STEP 7A -- Calcualate FINAL POLICY EXPERIENCE
+
+      --UPDATE Policy_level group modified losses from the claim_calculations table
+
+      -- NEW QUERY FOR CALCULATED MOTIFIED LOSSES.
+
+      UPDATE public.final_policy_experience_calculations c SET (policy_total_modified_losses_group_reduced, policy_total_modified_losses_individual_reduced, policy_total_claims_count, updated_at) = (t2.policy_total_modified_losses_group_reduced, t2.policy_total_modified_losses_individual_reduced, t2.policy_total_claims_count, t2.updated_at)
+      FROM
+      (SELECT
+      	b.policy_number,
+      	round(sum(b.claim_modified_losses_group_reduced)::numeric,2) as policy_total_modified_losses_group_reduced,
+      	round(sum(b.claim_modified_losses_individual_reduced)::numeric,2) as policy_total_modified_losses_individual_reduced,
+      	(CASE WHEN sum(b.claim_modified_losses_group_reduced) = 0 and sum(b.claim_modified_losses_individual_reduced) = 0 THEN '0'
+      	ELSE count(b.policy_number)
+      	END)::integer as policy_total_claims_count,
+        run_date as updated_at
+      from public.final_claim_cost_calculation_tables b
+      WHERE b.claim_injury_date BETWEEN experience_period_lower_date and experience_period_upper_date
+      and b.representative_number = process_representative
+      GROUP BY b.policy_number) t2
+      WHERE c.policy_number = t2.policy_number;
+
+
+
+
+
+      -- UPDATE losses for companies without claims.
+
+      UPDATE public.final_policy_experience_calculations c SET (policy_total_modified_losses_group_reduced, policy_total_modified_losses_individual_reduced, policy_total_claims_count, updated_at) = (t2.policy_total_modified_losses_group_reduced, t2.policy_total_modified_losses_individual_reduced, t2.policy_total_claims_count, t2.updated_at)
+      FROM
+      (SELECT
+      	b.policy_number,
+      	round(sum(b.claim_modified_losses_group_reduced)::numeric,2) as policy_total_modified_losses_group_reduced,
+      	round(sum(b.claim_modified_losses_individual_reduced)::numeric,2) as policy_total_modified_losses_individual_reduced,
+      	'0'::integer as policy_total_claims_count,
+        run_date as updated_at
+      from public.final_claim_cost_calculation_tables b
+      WHERE b.claim_injury_date is null and b.representative_number = process_representative
+      GROUP BY b.policy_number) t2
+      where c.policy_number = t2.policy_number;
+      --
+
+      -- UPdate for companies with really old claims, to zero out null values
+      	UPDATE public.final_policy_experience_calculations c SET (policy_total_modified_losses_group_reduced, policy_total_modified_losses_individual_reduced, policy_total_claims_count) = (round('0'::numeric,2),round('0'::numeric,2),round('0'::numeric,1))
+      	where policy_total_claims_count is null;
+
+
+
+
+        -- UPDATE policy_group_ratio using the policy_total_modified_losses_group_reduced / policy_total_expected_losses
+
+        update public.final_policy_experience_calculations SET policy_group_ratio =
+          (
+            CASE WHEN policy_total_expected_losses = '0.00' THEN '0.00'::numeric
+            ELSE
+            round((policy_total_modified_losses_group_reduced / policy_total_expected_losses)::numeric, 4)
+            END
+          );
+
+
+
+      -- UPDATE policy_group_ratio for policies that have a four_year_payroll, but do not have any claims data.
+
+      -- update public.policy_experience_calculations c SET policy_group_ratio =
+      -- 	(
+      -- SELECT Case when a.policy_group_ratio is null THEN 0
+      -- 	ELSE a.policy_group_ratio
+      -- END
+      --   FROM public.policy_experience_calculations a
+      --   LEFT JOIN public.claim_cost_calculation_table b
+      --   ON a.policy_number = b.policy_number
+      --   WHERE b.claim_unlimited_limited_loss = '0' and b.claim_injury_date is null and
+      --   c.policy_number = a.policy_number and
+      -- a.policy_total_modified_losses_group_reduced is null and a.policy_total_four_year_payroll > '0'
+      --
+      -- )
+
+      -- Update policy_individual_total_modifier but subtracting total limited losses from total modified losses and dividing by the total limited Losses.  Then Multiplying by the policy_credibility_percent
+
+      update public.final_policy_experience_calculations SET policy_individual_total_modifier =
+        (
+          CASE WHEN policy_total_limited_losses = '0.00' THEN '0.00'::numeric
+          ELSE
+          round(((((policy_total_modified_losses_individual_reduced - policy_total_limited_losses ) / policy_total_limited_losses) * policy_credibility_percent)::numeric),2)
+          END
+        );
+
+      -- Update policy_individual_total_modifier but subtracting total limited losses from total modified losses and dividing by the total limited Losses.  Then Multiplying by the policy_credibility_percent and adding one
+
+
+      update public.final_policy_experience_calculations SET policy_individual_experience_modified_rate =
+      	(
+      		CASE WHEN policy_total_limited_losses = '0' THEN '1'::numeric
+      		ELSE
+      		round((((((policy_total_modified_losses_individual_reduced - policy_total_limited_losses ) / policy_total_limited_losses) * policy_credibility_percent) + 1)::numeric),2)
+      		END
+      	);
+
+        end;
+
+          $$;
+
+
+--
+-- Name: proc_step_8(integer, date, date, date); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION proc_step_8(process_representative integer, experience_period_lower_date date, experience_period_upper_date date, current_payroll_period_lower_date date) RETURNS void
+    LANGUAGE plpgsql
+    AS $$
+
+      DECLARE
+        run_date timestamp := LOCALTIMESTAMP;
+      BEGIN
+
+      -- STEP 8A -- CREATE FINAL POLICY PREMIUMS AND PROJECTIONS
+
+      Insert into final_policy_group_rating_and_premium_projections
+      (
+        representative_number,
+        policy_number,
+        policy_status,
+        data_source,
+        created_at,
+        updated_at
+      )
+      (Select
+        representative_number,
+        policy_number,
+        policy_status,
+        'bwc' as data_source,
+        run_date as created_at,
+        run_date as updated_at
+      FROM final_policy_experience_calculations
+      WHERE representative_number = process_representative
+      );
+
+
+      -- STEP 8B -- CREATE MANUAL LEVEL GROUP RATING AND PREMIUM CALCULATIONS
+
+
+      INSERT INTO final_manual_class_group_rating_and_premium_projections
+      (
+        representative_number,
+        policy_number,
+        manual_number,
+        -- ADD ALL INDUSTRY_GROUP'S PAYROLL WITHIN A POLICY_NUMBER SURE TO UPDATE THIS AFTER GOING AF
+        -- PAYROLL IS PREVIOUS EXPERIENCE YEARS PAYROLL FROM THE TRANSACTIONS TABLE 'July & January'
+        manual_class_current_estimated_payroll,
+        data_source,
+        created_at,
+        updated_at
+      )
+      (
+        SELECT
+          a.representative_number,
+          a.policy_number,
+          a.manual_number,
+          round(sum(a.manual_class_payroll)::numeric,2) as manual_class_current_estimated_payroll,
+          'bwc' as data_source,
+          run_date as created_at,
+          run_date as updated_at
+        FROM public.process_payroll_all_transactions_breakdown_by_manual_classes a
+        WHERE (a.manual_class_effective_date BETWEEN current_payroll_period_lower_date and experience_period_upper_date) and a.representative_number = process_representative
+        GROUP BY a.representative_number, a.policy_number, a.manual_number
+      );
+
+
+
+      -- UPDATE THE Industry_group
+      update public.final_manual_class_group_rating_and_premium_projections mcgr SET (manual_class_industry_group, updated_at)  = (t1.manual_class_industry_group, t1.updated_at)
+      FROM
+      (SELECT
+        a.policy_number as policy_number,
+        a.manual_number as manual_number,
+        c.industry_group as manual_class_industry_group,
+        run_date as updated_at
+      FROM public.final_manual_class_group_rating_and_premium_projections a
+      LEFT JOIN public.bwc_codes_ncci_manual_classes c
+      ON a.manual_number = c.ncci_manual_classification
+      WHERE a.representative_number = process_representative
+      ) t1
+      WHERE mcgr.policy_number = t1.policy_number and mcgr.manual_number = t1.manual_number
+      ;
+
+
+      -- Update base_rate of manual_cass
+      update public.final_manual_class_group_rating_and_premium_projections mcgr SET (manual_class_base_rate, updated_at)  = (t1.manual_class_base_rate, t1.updated_at)
+      FROM
+      (SELECT
+        a.policy_number as policy_number,
+        a.manual_number as manual_number,
+        b.base_rate as manual_class_base_rate,
+        run_date as updated_at
+      FROM public.final_manual_class_group_rating_and_premium_projections a
+      LEFT JOIN public.bwc_codes_base_rates_exp_loss_rates b
+      ON a.manual_number = b.class_code
+      WHERE a.representative_number = process_representative
+      ) t1
+      WHERE mcgr.policy_number = t1.policy_number and mcgr.manual_number = t1.manual_number;
+
+
+      update public.final_manual_class_group_rating_and_premium_projections mcgr SET (manual_class_standard_premium, updated_at)  = (t1.manual_class_standard_premium, t1.updated_at)
+      FROM
+      (SELECT
+        a.policy_number as policy_number,
+        a.manual_number as manual_number,
+        round((a.manual_class_base_rate * a.manual_class_current_estimated_payroll * pec.policy_individual_experience_modified_rate)::numeric,2) as manual_class_standard_premium,
+        run_date as updated_at
+      FROM public.final_manual_class_group_rating_and_premium_projections a
+      LEFT JOIN public.final_policy_experience_calculations pec
+      ON a.policy_number = pec.policy_number
+      WHERE a.representative_number = process_representative
+      ) t1
+      WHERE mcgr.policy_number = t1.policy_number and mcgr.manual_number = t1.manual_number;
+
+
+
+      -- UPDATE manual_class industry_group PAYROLL totals
+      update public.final_manual_class_group_rating_and_premium_projections mcgr SET
+      (manual_class_industry_group_premium_total, updated_at) = (t1.manual_class_industry_group_premium_total, t1.updated_at)
+      FROM
+        (
+      SELECT
+      a.policy_number as policy_number,
+      a.manual_class_industry_group as manual_class_industry_group,
+      round(sum(a.manual_class_standard_premium)::numeric,2) as manual_class_industry_group_premium_total,
+      run_date as updated_at
+      FROM public.final_manual_class_group_rating_and_premium_projections a
+      WHERE a.representative_number = process_representative
+      GROUP BY a.policy_number, a.manual_class_industry_group
+        ) t1
+        WHERE mcgr.policy_number = t1.policy_number and mcgr.manual_class_industry_group = t1.manual_class_industry_group
+      ;
+
+
+
+
+      -- -- UPDATE policy_total_std_premium
+      -- update public.final_manual_class_group_rating_and_premium_projections mcgr SET
+      -- (policy_total_std_premium) = (t1.policy_total_std_premium)
+      -- FROM
+      --   ( SELECT
+      --       a.policy_number as policy_number,
+      --     sum(a.manual_class_standard_premium) as policy_total_std_premium
+      --     FROM public.final_manual_class_group_rating_and_premium_projections a
+      --     WHERE a.representative_number = process_representative
+      --     GROUP BY a.policy_number
+      --  ) t1
+      --  WHERE mcgr.policy_number = t1.policy_number;
+
+
+       update public.final_policy_group_rating_and_premium_projections pgr SET (policy_total_standard_premium, updated_at) =
+       (t1.policy_total_standard_premium, t1.updated_at)
+       FROM
+       (SELECT
+           a.policy_number as policy_number,
+         sum(a.manual_class_standard_premium) as policy_total_standard_premium,
+         run_date as updated_at
+         FROM public.final_manual_class_group_rating_and_premium_projections a
+         WHERE a.representative_number = process_representative
+         GROUP BY a.policy_number
+       ) t1
+       WHERE pgr.policy_number = t1.policy_number;
+
+
+
+       -- UPDATE policy_total_payroll
+       -- update public.final_manual_class_group_rating_and_premium_projections mcgr SET
+       -- (policy_total_payroll) = (t1.policy_total_payroll)
+       -- FROM
+       --   ( SELECT
+       --       a.policy_number as policy_number,
+       --     sum(a.manual_class_current_estimated_payroll) as policy_total_payroll
+       --     FROM public.final_manual_class_group_rating_and_premium_projections a
+       --     WHERE a.representative_number = process_representative
+       --     GROUP BY a.policy_number
+       --  ) t1
+       --  WHERE mcgr.policy_number = t1.policy_number;
+
+
+
+      update public.final_policy_group_rating_and_premium_projections pgr SET (policy_total_current_payroll, updated_at) =
+      (t1.policy_total_current_payroll, t1.updated_at)
+      FROM
+      (SELECT
+          a.policy_number as policy_number,
+        sum(a.manual_class_current_estimated_payroll) as policy_total_current_payroll,
+        run_date as updated_at
+        FROM public.final_manual_class_group_rating_and_premium_projections a
+        WHERE a.representative_number = process_representative
+        GROUP BY a.policy_number
+      ) t1
+      WHERE pgr.policy_number = t1.policy_number;
+
+
+
+
+      --
+      --
+      --
+       -- UPDATE manual_class_industry_group_payroll_percentage
+       update public.final_manual_class_group_rating_and_premium_projections mcgr SET
+       (manual_class_industry_group_premium_percentage, updated_at) = (t1.manual_class_industry_group_premium_percentage, t1.updated_at)
+       FROM
+       (SELECT mc.policy_number, mc.manual_number,
+       round((CASE WHEN (p.policy_total_standard_premium is null) or (p.policy_total_standard_premium = '0') or (mc.manual_class_industry_group_premium_total = '0') or (mc.manual_class_industry_group_premium_total is null) THEN '0'
+       	ELSE
+       ( mc.manual_class_industry_group_premium_total / p.policy_total_standard_premium)
+       END )::numeric,3) as manual_class_industry_group_premium_percentage,
+       run_date as updated_at
+       FROM public.final_manual_class_group_rating_and_premium_projections mc
+       RIGHT JOIN public.final_policy_group_rating_and_premium_projections p
+       ON mc.policy_number = p.policy_number
+       WHERE p.representative_number = process_representative
+       ) t1
+       WHERE mcgr.policy_number = t1.policy_number and mcgr.manual_number = t1.manual_number;
+
+
+      -- UPDATE  modification rate
+       update public.final_manual_class_group_rating_and_premium_projections mcgr SET
+       (manual_class_modification_rate, updated_at) = (t1.manual_class_modification_rate, t1.updated_at)
+       FROM
+       (
+         SELECT
+         a.policy_number as policy_number,
+         a.manual_number as manual_number,
+         (a.manual_class_base_rate * plec.policy_individual_experience_modified_rate) as manual_class_modification_rate,
+         run_date as updated_at
+           FROM public.final_manual_class_group_rating_and_premium_projections a
+           LEFT JOIN public.final_policy_experience_calculations plec
+           ON a.policy_number = plec.policy_number
+           WHERE a.representative_number = process_representative
+         ) t1
+         WHERE mcgr.policy_number = t1.policy_number and mcgr.manual_number = t1.manual_number;
+
+
+
+      -- update Individual Total Rate
+      UPDATE public.final_manual_class_group_rating_and_premium_projections mcgr SET
+      (manual_class_individual_total_rate) =
+      ( manual_class_modification_rate *  (1 + (SELECT value from public.bwc_codes_constant_values
+      where name = 'administrative_rate' and completed_date is null)));
+
+
+
+
+
+      -- Update policy industry group based on highest payroll industry group of all manual classes.
+        -- Adds up like manual classes if different manual classes for a policy belong to the same policy.
+      update public.final_policy_group_rating_and_premium_projections c SET
+        (policy_industry_group, updated_at) = (t1.manual_class, t1.updated_at)
+        FROM
+      (SELECT a.policy_number as policy_number,
+      	(SELECT b.manual_class_industry_group
+      	FROM final_manual_class_group_rating_and_premium_projections b
+      	WHERE  b.policy_number = a.policy_number
+              ORDER BY manual_class_industry_group_premium_percentage DESC NULLS LAST LIMIT 1) as manual_class,
+              run_date as updated_at
+      FROM final_policy_group_rating_and_premium_projections a
+      WHERE a.representative_number = process_representative
+        ) t1
+        WHERE c.policy_number = t1.policy_number;
+
+
+      -- ADD logic to update a  new industry_group when the industry_group is 10.
+
+      -- LOGIC: query to find the policy_numbers that have an industry_group of 10 and a experience ratio between .05 and .86
+              -- THEN find a manual_class within for a policy_number within that list that has a 20% or above premium for the policy_number
+      UPDATE public.final_policy_group_rating_and_premium_projections c SET
+        (policy_industry_group, updated_at) = (t1.manual_class_industry_group, t1.updated_at)
+      FROM
+      (SELECT l.policy_number, l.manual_class_industry_group, run_date as updated_at
+          FROM public.final_manual_class_group_rating_and_premium_projections l
+          WHERE policy_number in (SELECT fp.policy_number
+          FROM public.final_policy_group_rating_and_premium_projections fp
+          WHERE fp.policy_industry_group = '10' and fp.representative_number = process_representative) and policy_number in (SELECT fpe.policy_number FROM final_policy_experience_calculations fpe where fpe.policy_group_ratio between '.05' and '.86')
+          and manual_class_industry_group != '10' and manual_class_industry_group_premium_percentage > '.2'
+          and representative_number = process_representative
+          GROUP BY representative_number, policy_number, manual_class_industry_group, manual_class_industry_group_premium_percentage
+          ORDER BY manual_class_industry_group_premium_percentage
+        ) t1
+        WHERE c.policy_number = t1.policy_number;
+
+
+      -- 06/06/2016 ADDED condition for creating group_rating_tier only when the policy_status is Active, ReInsured, or Lapse
+      -- update group_rating_tier
+
+      update public.final_policy_group_rating_and_premium_projections c SET
+      (group_rating_tier, updated_at)	= (t1.group_rating_tier, t1.updated_at)
+      FROM
+      	(SELECT
+      		a.policy_number,
+      		(SELECT (CASE WHEN (a.policy_group_ratio = '0') AND (a.policy_status in ('ACTIV', 'REINS', 'LAPSE')) THEN '-.53'
+      					ELSE min(market_rate)
+      					END)  as group_rating_tier
+      				 FROM public.bwc_codes_industry_group_savings_ratio_criteria
+      				 WHERE (a.policy_group_ratio /ratio_criteria <= 1) and (industry_group = b.policy_industry_group)),
+               run_date as updated_at
+      			FROM public.final_policy_experience_calculations a
+            LEFT JOIN final_policy_group_rating_and_premium_projections b
+            ON a.policy_number = b.policy_number
+            WHERE a.representative_number = process_representative
+      			GROUP BY a.policy_number, a.policy_group_ratio, a.policy_status, b.policy_industry_group
+      		) t1
+      WHERE c.policy_number = t1.policy_number;
+
+
+
+
+      UPDATE public.final_manual_class_group_rating_and_premium_projections mcgr SET
+      (manual_class_group_total_rate, updated_at) = (t1.manual_class_group_total_rate, t1.updated_at)
+      FROM
+      (
+        SELECT a.policy_number as policy_number,
+          a.manual_number as manual_number,
+          ((1+ b.group_rating_tier) * a.manual_class_base_rate * (1 + (SELECT value from public.bwc_codes_constant_values
+          where name = 'administrative_rate' and completed_date is null))) as manual_class_group_total_rate,
+          run_date as updated_at
+        FROM public.final_manual_class_group_rating_and_premium_projections a
+        Left Join public.final_policy_group_rating_and_premium_projections b
+        ON a.policy_number = b.policy_number
+        WHERE a.representative_number = process_representative
+      ) t1
+      WHERE mcgr.policy_number = t1.policy_number and mcgr.manual_number = t1.manual_number;
+
+
+
+      --Update Premium Values
+      UPDATE public.final_manual_class_group_rating_and_premium_projections mcgr SET
+      (
+      manual_class_estimated_group_premium,
+      manual_class_estimated_individual_premium) =
+      (
+      manual_class_current_estimated_payroll * manual_class_group_total_rate
+      ,
+      manual_class_current_estimated_payroll * manual_class_individual_total_rate
+      );
+
+      UPDATE public.final_policy_group_rating_and_premium_projections pgr SET (policy_total_individual_premium, policy_total_group_premium, updated_at) = (t1.policy_total_individual_premium, t1.policy_total_group_premium, t1.updated_at)
+      FROM
+      (SELECT a.policy_number,
+        round(SUM(a.manual_class_estimated_individual_premium)::numeric,2) as policy_total_individual_premium,
+        round(SUM(a.manual_class_estimated_group_premium)::numeric,2) as policy_total_group_premium,
+        run_date as updated_at
+        FROM public.final_manual_class_group_rating_and_premium_projections a
+        WHERE a.representative_number = process_representative
+        Group BY a.policy_number
+      ) t1
+      WHERE pgr.policy_number = t1.policy_number;
+
+
+      -- Update policy_total_group_savings
+      UPDATE public.final_policy_group_rating_and_premium_projections pgr SET (policy_total_group_savings, updated_at) =
+      (t1.policy_total_group_savings, t1.updated_at)
+      FROM
+      (SELECT a.policy_number,
+         round((a.policy_total_individual_premium - a.policy_total_group_premium)::numeric,2) as policy_total_group_savings,
+         run_date as updated_at
+       FROM final_policy_group_rating_and_premium_projections a
+       WHERE a.representative_number = process_representative
+      ) t1
+      WHERE pgr.policy_number = t1.policy_number;
+
+
+      end;
+
+        $$;
+
+
 SET default_tablespace = '';
 
 SET default_with_oids = false;
@@ -3464,6 +3946,7 @@ CREATE TABLE bwc_codes_constant_values (
     name character varying,
     value double precision,
     start_date date,
+    completed_date date,
     created_at timestamp without time zone,
     updated_at timestamp without time zone
 );
@@ -3950,6 +4433,56 @@ ALTER SEQUENCE final_employer_demographics_informations_id_seq OWNED BY final_em
 
 
 --
+-- Name: final_manual_class_calculations; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE final_manual_class_calculations (
+    id integer NOT NULL,
+    representative_number integer,
+    policy_number integer,
+    manual_number integer,
+    manual_class_four_year_period_payroll double precision,
+    manual_class_expected_loss_rate double precision,
+    manual_class_base_rate double precision,
+    manual_class_expected_losses double precision,
+    manual_class_industry_group integer,
+    manual_class_limited_loss_rate double precision,
+    manual_class_limited_losses double precision,
+    manual_class_industry_group_premium_total double precision,
+    manual_class_current_estimated_payroll double precision,
+    manual_class_industry_group_premium_percentage double precision,
+    manual_class_modification_rate double precision,
+    manual_class_individual_total_rate double precision,
+    manual_class_group_total_rate double precision,
+    manual_class_standard_premium double precision,
+    manual_class_estimated_group_premium double precision,
+    manual_class_estimated_individual_premium double precision,
+    data_source character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: final_manual_class_calculations_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE final_manual_class_calculations_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: final_manual_class_calculations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE final_manual_class_calculations_id_seq OWNED BY final_manual_class_calculations.id;
+
+
+--
 -- Name: final_manual_class_four_year_payroll_and_exp_losses; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -4033,6 +4566,64 @@ CREATE SEQUENCE final_manual_class_group_rating_and_premium_projections_id_seq
 --
 
 ALTER SEQUENCE final_manual_class_group_rating_and_premium_projections_id_seq OWNED BY final_manual_class_group_rating_and_premium_projections.id;
+
+
+--
+-- Name: final_policy_calculations; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE final_policy_calculations (
+    id integer NOT NULL,
+    representative_number integer,
+    policy_number integer,
+    policy_group_number character varying,
+    policy_status character varying,
+    policy_total_four_year_payroll double precision,
+    policy_credibility_group integer,
+    policy_maximum_claim_value integer,
+    policy_credibility_percent double precision,
+    policy_total_expected_losses double precision,
+    policy_total_limited_losses double precision,
+    policy_total_claims_count integer,
+    policy_total_modified_losses_group_reduced double precision,
+    policy_total_modified_losses_individual_reduced double precision,
+    policy_group_ratio double precision,
+    policy_individual_total_modifier double precision,
+    policy_individual_experience_modified_rate double precision,
+    group_rating_qualification character varying,
+    group_rating_tier double precision,
+    group_rating_group_number integer,
+    policy_total_current_payroll double precision,
+    policy_total_standard_premium double precision,
+    policy_total_individual_premium double precision,
+    policy_total_group_premium double precision,
+    policy_total_group_savings double precision,
+    policy_group_fees double precision,
+    policy_group_dues double precision,
+    policy_total_costs double precision,
+    data_source character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: final_policy_calculations_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE final_policy_calculations_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: final_policy_calculations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE final_policy_calculations_id_seq OWNED BY final_policy_calculations.id;
 
 
 --
@@ -5754,6 +6345,13 @@ ALTER TABLE ONLY final_employer_demographics_informations ALTER COLUMN id SET DE
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY final_manual_class_calculations ALTER COLUMN id SET DEFAULT nextval('final_manual_class_calculations_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY final_manual_class_four_year_payroll_and_exp_losses ALTER COLUMN id SET DEFAULT nextval('final_manual_class_four_year_payroll_and_exp_losses_id_seq'::regclass);
 
 
@@ -5762,6 +6360,13 @@ ALTER TABLE ONLY final_manual_class_four_year_payroll_and_exp_losses ALTER COLUM
 --
 
 ALTER TABLE ONLY final_manual_class_group_rating_and_premium_projections ALTER COLUMN id SET DEFAULT nextval('final_manual_class_group_rating_and_premium_projections_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY final_policy_calculations ALTER COLUMN id SET DEFAULT nextval('final_policy_calculations_id_seq'::regclass);
 
 
 --
@@ -6100,6 +6705,14 @@ ALTER TABLE ONLY final_employer_demographics_informations
 
 
 --
+-- Name: final_manual_class_calculations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY final_manual_class_calculations
+    ADD CONSTRAINT final_manual_class_calculations_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: final_manual_class_four_year_payroll_and_exp_losses_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -6113,6 +6726,14 @@ ALTER TABLE ONLY final_manual_class_four_year_payroll_and_exp_losses
 
 ALTER TABLE ONLY final_manual_class_group_rating_and_premium_projections
     ADD CONSTRAINT final_manual_class_group_rating_and_premium_projections_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: final_policy_calculations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY final_policy_calculations
+    ADD CONSTRAINT final_policy_calculations_pkey PRIMARY KEY (id);
 
 
 --
@@ -6401,6 +7022,20 @@ CREATE INDEX index_final_employer_demographics_informations_on_policy_number ON 
 
 
 --
+-- Name: index_final_man_class_calc_pol_num_and_man_num; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_final_man_class_calc_pol_num_and_man_num ON final_manual_class_calculations USING btree (policy_number, manual_number);
+
+
+--
+-- Name: index_final_policy_calculations_on_pol_num; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_final_policy_calculations_on_pol_num ON final_policy_calculations USING btree (policy_number);
+
+
+--
 -- Name: index_final_policy_experience_calculations_on_policy_number; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -6585,4 +7220,12 @@ INSERT INTO schema_migrations (version) VALUES ('20160816143616');
 INSERT INTO schema_migrations (version) VALUES ('20160816154538');
 
 INSERT INTO schema_migrations (version) VALUES ('20160816160133');
+
+INSERT INTO schema_migrations (version) VALUES ('20160816164855');
+
+INSERT INTO schema_migrations (version) VALUES ('20160816170044');
+
+INSERT INTO schema_migrations (version) VALUES ('20160816180824');
+
+INSERT INTO schema_migrations (version) VALUES ('20160816182146');
 

@@ -1,0 +1,35 @@
+<div class="container">
+  <div class="jumbotron">
+    <h1>Policies Projection Calculations</h1>
+  </div>
+  <div>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Policy Number</th>
+          <th>Status</th>
+          <th>Industry Group</th>
+          <th>Group Rating Tier</th>
+          <th>Projected Payroll</th>
+
+          <th>View</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @final_policy_group_rating_and_premium_projections.each do |policy| %>
+        <tr>
+          <th scope="row"> <%= policy.policy_number %> </th>
+          <td><%=  policy.policy_status %></td>
+          <td><%=  policy.policy_industry_group %></td>
+          <td><%=  policy.group_rating_tier %></td>
+          <td><%=  policy.policy_total_current_payroll %></td>
+          <td><%= link_to 'View Group Rating Info', final_policy_group_rating_and_premium_projection_path(policy.id) %></td>
+        </tr>
+        <% end %>
+
+      </tbody>
+    </table>
+
+  </div>
+
+</div>
