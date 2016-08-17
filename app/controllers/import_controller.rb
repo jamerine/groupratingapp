@@ -53,6 +53,7 @@ class ImportController < ApplicationController
     time1 = Time.new
     puts "Process Start Time: " + time1.inspect
       # Flat files
+      Resque
       Democ.import_file("https://s3.amazonaws.com/grouprating/ARM/DEMOCFILE")
       Mrcl.import_file("https://s3.amazonaws.com/grouprating/ARM/MRCLSFILE")
       Mremp.import_file("https://s3.amazonaws.com/grouprating/ARM/MREMPFILE")

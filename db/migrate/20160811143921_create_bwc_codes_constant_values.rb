@@ -4,6 +4,7 @@ class CreateBwcCodesConstantValues < ActiveRecord::Migration
       t.string :name
       t.float :value
       t.date :start_date
+      t.date :completed_date
 
       t.timestamps null: true
     end

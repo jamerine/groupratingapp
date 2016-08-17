@@ -1,4 +1,10 @@
+require 'resque/server'
+
 Rails.application.routes.draw do
+
+  mount Resque::Server.new, at: "/resque"
+
+  get 'final_policy_group_rating_and_premium_projections/index'
 
   resources :import do
     collection { delete :destroy }
@@ -9,6 +15,8 @@ Rails.application.routes.draw do
   end
 
   resources :group_ratings
+
+  resources :final_policy_group_rating_and_premium_projections
 
   resources :democ_detail_records do
      collection { post :parse }

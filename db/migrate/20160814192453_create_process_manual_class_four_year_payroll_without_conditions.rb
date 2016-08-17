@@ -1,6 +1,6 @@
 class CreateProcessManualClassFourYearPayrollWithoutConditions < ActiveRecord::Migration
   def change
-    create_table :process_manual_class_four_year_payroll_without_conditions do |t|
+    create_table :process_manual_class_four_year_payroll_without_conditions, id: false do |t|
       t.integer :representative_number
       t.integer :policy_number
       t.integer :manual_number
