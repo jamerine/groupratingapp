@@ -1,24 +1,27 @@
 <div class="container">
   <div class="jumbotron">
     <h1>Policies Projection Calculations</h1>
+    <%= link_to "Update Policies", create_policy_objects_final_policy_calculations_path %>
   </div>
   <div>
     <table class="table">
       <thead>
         <tr>
-          <th>ID</th>
-          <th>Representative Number</th>
+          <th>Policy Number</th>
+          <th>Rep Number</th>
           <th>Run Time</th>
           <th>View</th>
         </tr>
       </thead>
       <tbody>
-        <% @group_ratings.each do |group_rating| %>
+        <% @final_policy_calculations.each do |final_policy_calculation| %>
         <tr>
-          <th scope="row"> <%= group_rating.id %> </th>
-          <td><%= group_rating.process_representative %> </td>
-          <td><%= group_rating.created_at %> </td>
-          <td><%= link_to 'View Group Rating Info', group_rating_path(group_rating.id) %></td>
+          <th scope="row"> <%= final_policy_calculation.policy_number %> </th>
+          <td><%= final_policy_calculation.representative_number %> </td>
+          <td><%= final_policy_calculation.created_at %> </td>
+          <td><%= final_policy_calculation.policy_maximum_claim_value %> </td>
+
+          <td><%= link_to 'View Group Rating Info', final_policy_calculation_path(final_policy_calculation.id) %></td>
         </tr>
         <% end %>
 
