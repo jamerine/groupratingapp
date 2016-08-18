@@ -6,7 +6,7 @@
       <% if @democ_detail_records_count != 0 && @mremp_employee_experience_policy_level_count != 0 && @mrcl_detail_records_count != 0 && @pcomb_detail_records_count != 0 && @phmgn_detail_records_count != 0 && @sc220_rec1_employer_demographics_count != 0 && @sc230_employer_demographics_count != 0 %>
         <%= link_to 'Move onto Group Rating Process', new_group_rating_path, class: 'btn btn-success' %>
       <% else %>
-        <%= link_to 'Import All BWC Files', parse_index_path, method: :post,  class: 'btn btn-success' %>
+        <%= link_to 'Parse All BWC Flat Files', parse_index_path, method: :post,  class: 'btn btn-success' %>
       <% end %>
 
 

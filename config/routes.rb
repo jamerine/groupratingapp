@@ -4,8 +4,6 @@ Rails.application.routes.draw do
 
   mount Resque::Server.new, at: "/resque"
 
-  get 'final_policy_group_rating_and_premium_projections/index'
-
   resources :import do
     collection { delete :destroy }
   end
@@ -17,6 +15,10 @@ Rails.application.routes.draw do
   resources :group_ratings
 
   resources :final_policy_group_rating_and_premium_projections
+
+  resources :final_policy_calculations do
+    collection {get 'create_policy_objects'}
+  end
 
   resources :democ_detail_records do
      collection { post :parse }
