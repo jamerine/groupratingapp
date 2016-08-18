@@ -36,11 +36,11 @@ class ParseController < ApplicationController
     MrclDetailRecord.parse_table
     MrempEmployeeExperiencePolicyLevel.parse_table
     PcombDetailRecord.parse_table
-    Sc220Rec1EmployerDemographic.parse_table
     PhmgnDetailRecord.parse_table
+    Sc220Rec1EmployerDemographic.parse_table
     Sc230EmployerDemographic.parse_table
 
-    redirect_to parse_index_path, notice: "The Democ, Mrcl, Mremp, Pcomb, Phmgn, SC220, and SC230 files have been parsed into seperate tables"
+    redirect_to parse_index_path, notice: "The files have been queued to parse.  Please wait.."
     time2 = Time.new
     puts 'Completed Parse Process in: ' + ((time2 - time1).round(3)).to_s + ' seconds'
   end

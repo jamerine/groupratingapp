@@ -34,14 +34,14 @@ class ImportController < ApplicationController
     Sc220.delete_all
     Sc230.delete_all
 
-    BwcCodesBaseRatesExpLossRate.delete_all
-    BwcCodesCredibilityMaxLoss.delete_all
-    BwcCodesIndustryGroupSavingsRatioCriterium.delete_all
-    BwcCodesLimitedLossRatio.delete_all
-    BwcCodesNcciManualClass.delete_all
-    BwcCodesPolicyEffectiveDate.delete_all
-    BwcCodesPeoList.delete_all
-    BwcCodesConstantValue.delete_all
+    # BwcCodesBaseRatesExpLossRate.delete_all
+    # BwcCodesCredibilityMaxLoss.delete_all
+    # BwcCodesIndustryGroupSavingsRatioCriterium.delete_all
+    # BwcCodesLimitedLossRatio.delete_all
+    # BwcCodesNcciManualClass.delete_all
+    # BwcCodesPolicyEffectiveDate.delete_all
+    # BwcCodesPeoList.delete_all
+    # BwcCodesConstantValue.delete_all
 
     redirect_to import_index_path, notice: "All files are deleted."
   end
@@ -62,16 +62,16 @@ class ImportController < ApplicationController
       Sc230.import_file("https://s3.amazonaws.com/grouprating/ARM/SC230FILE")
 
       # BWC Support Tables
-      BwcCodesBaseRatesExpLossRate.import_table('https://s3.amazonaws.com/grouprating/BwcSupportTables/bwc_expected_loss.csv')
-      BwcCodesCredibilityMaxLoss.import_table('https://s3.amazonaws.com/grouprating/BwcSupportTables/bwc_credibility_max_loss.csv')
-      BwcCodesIndustryGroupSavingsRatioCriterium.import_table('https://s3.amazonaws.com/grouprating/BwcSupportTables/Industry+Group+Savings+Ratio+Criteria.csv')
-      BwcCodesLimitedLossRatio.import_table('https://s3.amazonaws.com/grouprating/BwcSupportTables/limited_loss_ratio.csv')
-      BwcCodesNcciManualClass.import_table('https://s3.amazonaws.com/grouprating/BwcSupportTables/NCCI+Manual+Classes.csv')
-      BwcCodesPolicyEffectiveDate.import_table('https://s3.amazonaws.com/grouprating/BwcSupportTables/BWC+History+with+Pol+and+Eff+Date.csv')
-      BwcCodesPeoList.import_table('https://s3.amazonaws.com/grouprating/BwcSupportTables/peo_list.csv')
-      BwcCodesConstantValue.import_table('https://s3.amazonaws.com/grouprating/BwcSupportTables/bwc_codes_constant_values.csv')
+      # BwcCodesBaseRatesExpLossRate.import_table('https://s3.amazonaws.com/grouprating/BwcSupportTables/bwc_expected_loss.csv')
+      # BwcCodesCredibilityMaxLoss.import_table('https://s3.amazonaws.com/grouprating/BwcSupportTables/bwc_credibility_max_loss.csv')
+      # BwcCodesIndustryGroupSavingsRatioCriterium.import_table('https://s3.amazonaws.com/grouprating/BwcSupportTables/Industry+Group+Savings+Ratio+Criteria.csv')
+      # BwcCodesLimitedLossRatio.import_table('https://s3.amazonaws.com/grouprating/BwcSupportTables/limited_loss_ratio.csv')
+      # BwcCodesNcciManualClass.import_table('https://s3.amazonaws.com/grouprating/BwcSupportTables/NCCI+Manual+Classes.csv')
+      # BwcCodesPolicyEffectiveDate.import_table('https://s3.amazonaws.com/grouprating/BwcSupportTables/BWC+History+with+Pol+and+Eff+Date.csv')
+      # BwcCodesPeoList.import_table('https://s3.amazonaws.com/grouprating/BwcSupportTables/peo_list.csv')
+      # BwcCodesConstantValue.import_table('https://s3.amazonaws.com/grouprating/BwcSupportTables/bwc_codes_constant_values.csv')
 
-      redirect_to import_index_path, notice: "All files are uploaded."
+      redirect_to import_index_path, notice: "All files have been queued to import.  Please wait."
     time2 = Time.new
     puts "Process End Time: " + time2.inspect
 

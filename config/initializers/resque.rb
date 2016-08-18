@@ -7,3 +7,5 @@ Resque.before_fork do
     defined?(ActiveRecord::Base) and
       conn = ActiveRecord::Base.establish_connection
   end
+
+Resque.redis = 'localhost:6379'
