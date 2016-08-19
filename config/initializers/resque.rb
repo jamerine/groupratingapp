@@ -8,4 +8,4 @@ Resque.before_fork do
       conn = ActiveRecord::Base.establish_connection
   end
 
-Resque.redis = 'localhost:6379'
+Resque.redis = Rails.env.production? ? $redis : "localhost:6379"
