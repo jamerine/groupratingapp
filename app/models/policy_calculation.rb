@@ -1,6 +1,6 @@
-class FinalPolicyCalculation < ActiveRecord::Base
+class PolicyCalculation < ActiveRecord::Base
 
-  has_many :final_manual_class_calculations, dependent: :destroy
+  has_many :manual_class_calculations, dependent: :destroy
 
   def self.update_or_create(attributes)
     assign_or_new(attributes).save
