@@ -1,9 +1,9 @@
-class CreateFinalPolicyCalculations < ActiveRecord::Migration
+class CreatePolicyCalculations < ActiveRecord::Migration
   def change
-    create_table :final_policy_calculations do |t|
+    create_table :policy_calculations do |t|
       t.integer :representative_number
       t.integer :policy_number
-      t.index :policy_number, name: 'index_final_policy_calculations_on_pol_num'
+      t.index :policy_number, name: 'index_policy_calculations_on_pol_num'
       t.string :policy_group_number
       t.string :policy_status
       t.float :policy_total_four_year_payroll
@@ -18,6 +18,7 @@ class CreateFinalPolicyCalculations < ActiveRecord::Migration
       t.float :policy_group_ratio
       t.float :policy_individual_total_modifier
       t.float :policy_individual_experience_modified_rate
+      t.integer :policy_industry_group
       t.string :group_rating_qualification
       t.float :group_rating_tier
       t.integer :group_rating_group_number

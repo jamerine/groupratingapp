@@ -1,10 +1,11 @@
-class CreateFinalManualClassCalculations < ActiveRecord::Migration
+class CreateManualClassCalculations < ActiveRecord::Migration
   def change
-    create_table :final_manual_class_calculations do |t|
+    create_table :manual_class_calculations do |t|
       t.integer :representative_number
+      t.references :policy_calculation, index: true, foreign_key: true
       t.integer :policy_number
       t.integer :manual_number
-      t.index [:policy_number, :manual_number], name: 'index_final_man_class_calc_pol_num_and_man_num'
+      t.index [:policy_number, :manual_number], name: 'index_man_class_calc_pol_num_and_man_num'
       t.float :manual_class_four_year_period_payroll
       t.float :manual_class_expected_loss_rate
       t.float :manual_class_base_rate

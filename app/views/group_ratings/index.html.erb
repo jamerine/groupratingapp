@@ -1,6 +1,7 @@
 <div class="container">
-  <div class="jumbotron">
+  <div class="jumbotron text-center">
     <h1>Group Rating Calculations</h1>
+    <%= link_to 'Create New Group Rating', new_group_rating_path, class: 'btn btn-primary' %>
   </div>
   <div>
     <table class="table">
@@ -8,6 +9,7 @@
         <tr>
           <th>ID</th>
           <th>Representative Number</th>
+          <th>Group Rating Step</th>
           <th>Run Time</th>
           <th>View</th>
         </tr>
@@ -17,6 +19,7 @@
         <tr>
           <th scope="row"> <%= group_rating.id %> </th>
           <td><%= group_rating.process_representative %> </td>
+          <td><%= group_rating.status %> </td>
           <td><%= group_rating.created_at %> </td>
           <td><%= link_to 'View Group Rating Info', group_rating_path(group_rating.id) %></td>
         </tr>
@@ -28,6 +31,6 @@
 
 
   </div>
-  <%= link_to 'Create New Group Rating', new_group_rating_path %>
+
 
 </div>
