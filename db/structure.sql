@@ -1898,7 +1898,7 @@ CREATE FUNCTION proc_step_2(process_representative integer, experience_period_lo
         run_date as created_at,
         run_date as updated_at
       	FROM public.sc220_rec2_employer_manual_level_payrolls
-        WHERE manual_effective_date is not null and representative_number = process_representative and manual_effective_date > experience_period_lower_date
+        WHERE manual_effective_date is not null and representative_number = process_representative and manual_effective_date > experience_period_lower_date and manual_effective_date < experience_period_upper_date
         )
         Union ALL
         (SELECT representative_number,
@@ -1915,7 +1915,7 @@ CREATE FUNCTION proc_step_2(process_representative integer, experience_period_lo
           run_date as created_at,
           run_date as updated_at
         	FROM public.sc220_rec2_employer_manual_level_payrolls
-          WHERE n2nd_manual_effective_date is not null and representative_number = process_representative and n2nd_manual_effective_date > experience_period_lower_date
+          WHERE n2nd_manual_effective_date is not null and representative_number = process_representative and n2nd_manual_effective_date > experience_period_lower_date and manual_effective_date < experience_period_upper_date
         )
         Union ALL
         (SELECT representative_number,
@@ -1932,7 +1932,7 @@ CREATE FUNCTION proc_step_2(process_representative integer, experience_period_lo
           run_date as created_at,
           run_date as updated_at
       	   FROM public.sc220_rec2_employer_manual_level_payrolls
-           WHERE n3rd_manual_effective_date is not null and representative_number = process_representative and n3rd_manual_effective_date > experience_period_lower_date
+           WHERE n3rd_manual_effective_date is not null and representative_number = process_representative and n3rd_manual_effective_date > experience_period_lower_date and manual_effective_date < experience_period_upper_date
         )
         Union All
         (SELECT representative_number,
@@ -1949,7 +1949,7 @@ CREATE FUNCTION proc_step_2(process_representative integer, experience_period_lo
           run_date as created_at,
           run_date as updated_at
         	FROM public.sc220_rec2_employer_manual_level_payrolls
-          WHERE n4th_manual_effective_date is not null and representative_number = process_representative and n4th_manual_effective_date > experience_period_lower_date
+          WHERE n4th_manual_effective_date is not null and representative_number = process_representative and n4th_manual_effective_date > experience_period_lower_date and manual_effective_date < experience_period_upper_date
         )
         Union All
         (SELECT representative_number,
@@ -1966,7 +1966,7 @@ CREATE FUNCTION proc_step_2(process_representative integer, experience_period_lo
         run_date as created_at,
         run_date as updated_at
       	FROM public.sc220_rec2_employer_manual_level_payrolls
-        WHERE n5th_manual_effective_date is not null and representative_number = process_representative and n5th_manual_effective_date > experience_period_lower_date
+        WHERE n5th_manual_effective_date is not null and representative_number = process_representative and n5th_manual_effective_date > experience_period_lower_date and manual_effective_date < experience_period_upper_date
         )
         Union All
         (SELECT representative_number,
@@ -1983,7 +1983,7 @@ CREATE FUNCTION proc_step_2(process_representative integer, experience_period_lo
           run_date as created_at,
           run_date as updated_at
       	FROM public.sc220_rec2_employer_manual_level_payrolls
-        WHERE n6th_manual_effective_date is not null and representative_number = process_representative and n6th_manual_effective_date > experience_period_lower_date
+        WHERE n6th_manual_effective_date is not null and representative_number = process_representative and n6th_manual_effective_date > experience_period_lower_date and manual_effective_date < experience_period_upper_date
         )
         Union All
         (SELECT representative_number,
@@ -2000,7 +2000,7 @@ CREATE FUNCTION proc_step_2(process_representative integer, experience_period_lo
           run_date as created_at,
           run_date as updated_at
       	FROM public.sc220_rec2_employer_manual_level_payrolls
-        WHERE n7th_manual_effective_date is not null and representative_number = process_representative and n7th_manual_effective_date > experience_period_lower_date
+        WHERE n7th_manual_effective_date is not null and representative_number = process_representative and n7th_manual_effective_date > experience_period_lower_date and manual_effective_date < experience_period_upper_date
         )
         Union All
         (SELECT representative_number,
@@ -2017,7 +2017,7 @@ CREATE FUNCTION proc_step_2(process_representative integer, experience_period_lo
           run_date as created_at,
           run_date as updated_at
       	FROM public.sc220_rec2_employer_manual_level_payrolls
-        WHERE n8th_manual_effective_date is not null and representative_number = process_representative and n8th_manual_effective_date > experience_period_lower_date
+        WHERE n8th_manual_effective_date is not null and representative_number = process_representative and n8th_manual_effective_date > experience_period_lower_date and manual_effective_date < experience_period_upper_date
         )
         Union All
         (SELECT representative_number,
@@ -2034,7 +2034,7 @@ CREATE FUNCTION proc_step_2(process_representative integer, experience_period_lo
           run_date as created_at,
           run_date as updated_at
       	FROM public.sc220_rec2_employer_manual_level_payrolls
-        WHERE n9th_manual_effective_date is not null and representative_number = process_representative and n9th_manual_effective_date > experience_period_lower_date
+        WHERE n9th_manual_effective_date is not null and representative_number = process_representative and n9th_manual_effective_date > experience_period_lower_date and manual_effective_date < experience_period_upper_date
         )
         Union All
         (SELECT representative_number,
@@ -2051,7 +2051,7 @@ CREATE FUNCTION proc_step_2(process_representative integer, experience_period_lo
           run_date as created_at,
           run_date as updated_at
       	FROM public.sc220_rec2_employer_manual_level_payrolls
-        WHERE n10th_manual_effective_date is not null and representative_number = process_representative and n10th_manual_effective_date > experience_period_lower_date
+        WHERE n10th_manual_effective_date is not null and representative_number = process_representative and n10th_manual_effective_date > experience_period_lower_date and manual_effective_date < experience_period_upper_date
         )
         Union All
         (SELECT representative_number,
@@ -2068,7 +2068,7 @@ CREATE FUNCTION proc_step_2(process_representative integer, experience_period_lo
           run_date as created_at,
           run_date as updated_at
       	FROM public.sc220_rec2_employer_manual_level_payrolls
-        WHERE n11th_manual_effective_date is not null and representative_number = process_representative and n11th_manual_effective_date > experience_period_lower_date
+        WHERE n11th_manual_effective_date is not null and representative_number = process_representative and n11th_manual_effective_date > experience_period_lower_date and manual_effective_date < experience_period_upper_date
         )
         Union All
         (SELECT representative_number,
@@ -2085,7 +2085,7 @@ CREATE FUNCTION proc_step_2(process_representative integer, experience_period_lo
           run_date as created_at,
           run_date as updated_at
         	FROM public.sc220_rec2_employer_manual_level_payrolls
-          WHERE n12th_manual_effective_date is not null and representative_number = process_representative and n12th_manual_effective_date > experience_period_lower_date
+          WHERE n12th_manual_effective_date is not null and representative_number = process_representative and n12th_manual_effective_date > experience_period_lower_date and manual_effective_date < experience_period_upper_date
         )
         ORDER BY
           policy_number ASC,
@@ -2811,7 +2811,7 @@ CREATE FUNCTION proc_step_4(process_representative integer, experience_period_lo
           FROM public.final_employer_demographics_informations a
           Inner Join public.process_payroll_all_transactions_breakdown_by_manual_classes b
           ON a.policy_number = b.policy_number
-          WHERE b.manual_class_effective_date > experience_period_lower_date and a.representative_number = process_representative
+          WHERE b.manual_class_effective_date > experience_period_lower_date and b.manual_class_effective_date < experience_period_upper_date and a.representative_number = process_representative
           GROUP BY a.representative_number,
             a.policy_number,
             b.manual_number
@@ -4433,56 +4433,6 @@ ALTER SEQUENCE final_employer_demographics_informations_id_seq OWNED BY final_em
 
 
 --
--- Name: final_manual_class_calculations; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE final_manual_class_calculations (
-    id integer NOT NULL,
-    representative_number integer,
-    policy_number integer,
-    manual_number integer,
-    manual_class_four_year_period_payroll double precision,
-    manual_class_expected_loss_rate double precision,
-    manual_class_base_rate double precision,
-    manual_class_expected_losses double precision,
-    manual_class_industry_group integer,
-    manual_class_limited_loss_rate double precision,
-    manual_class_limited_losses double precision,
-    manual_class_industry_group_premium_total double precision,
-    manual_class_current_estimated_payroll double precision,
-    manual_class_industry_group_premium_percentage double precision,
-    manual_class_modification_rate double precision,
-    manual_class_individual_total_rate double precision,
-    manual_class_group_total_rate double precision,
-    manual_class_standard_premium double precision,
-    manual_class_estimated_group_premium double precision,
-    manual_class_estimated_individual_premium double precision,
-    data_source character varying,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
-);
-
-
---
--- Name: final_manual_class_calculations_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE final_manual_class_calculations_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: final_manual_class_calculations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE final_manual_class_calculations_id_seq OWNED BY final_manual_class_calculations.id;
-
-
---
 -- Name: final_manual_class_four_year_payroll_and_exp_losses; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -4566,64 +4516,6 @@ CREATE SEQUENCE final_manual_class_group_rating_and_premium_projections_id_seq
 --
 
 ALTER SEQUENCE final_manual_class_group_rating_and_premium_projections_id_seq OWNED BY final_manual_class_group_rating_and_premium_projections.id;
-
-
---
--- Name: final_policy_calculations; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE final_policy_calculations (
-    id integer NOT NULL,
-    representative_number integer,
-    policy_number integer,
-    policy_group_number character varying,
-    policy_status character varying,
-    policy_total_four_year_payroll double precision,
-    policy_credibility_group integer,
-    policy_maximum_claim_value integer,
-    policy_credibility_percent double precision,
-    policy_total_expected_losses double precision,
-    policy_total_limited_losses double precision,
-    policy_total_claims_count integer,
-    policy_total_modified_losses_group_reduced double precision,
-    policy_total_modified_losses_individual_reduced double precision,
-    policy_group_ratio double precision,
-    policy_individual_total_modifier double precision,
-    policy_individual_experience_modified_rate double precision,
-    group_rating_qualification character varying,
-    group_rating_tier double precision,
-    group_rating_group_number integer,
-    policy_total_current_payroll double precision,
-    policy_total_standard_premium double precision,
-    policy_total_individual_premium double precision,
-    policy_total_group_premium double precision,
-    policy_total_group_savings double precision,
-    policy_group_fees double precision,
-    policy_group_dues double precision,
-    policy_total_costs double precision,
-    data_source character varying,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
-);
-
-
---
--- Name: final_policy_calculations_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE final_policy_calculations_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: final_policy_calculations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE final_policy_calculations_id_seq OWNED BY final_policy_calculations.id;
 
 
 --
@@ -4726,6 +4618,7 @@ ALTER SEQUENCE final_policy_group_rating_and_premium_projections_id_seq OWNED BY
 CREATE TABLE group_ratings (
     id integer NOT NULL,
     process_representative integer,
+    status text,
     experience_period_lower_date date,
     experience_period_upper_date date,
     current_payroll_period_lower_date date,
@@ -4751,6 +4644,57 @@ CREATE SEQUENCE group_ratings_id_seq
 --
 
 ALTER SEQUENCE group_ratings_id_seq OWNED BY group_ratings.id;
+
+
+--
+-- Name: manual_class_calculations; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE manual_class_calculations (
+    id integer NOT NULL,
+    representative_number integer,
+    policy_calculation_id integer,
+    policy_number integer,
+    manual_number integer,
+    manual_class_four_year_period_payroll double precision,
+    manual_class_expected_loss_rate double precision,
+    manual_class_base_rate double precision,
+    manual_class_expected_losses double precision,
+    manual_class_industry_group integer,
+    manual_class_limited_loss_rate double precision,
+    manual_class_limited_losses double precision,
+    manual_class_industry_group_premium_total double precision,
+    manual_class_current_estimated_payroll double precision,
+    manual_class_industry_group_premium_percentage double precision,
+    manual_class_modification_rate double precision,
+    manual_class_individual_total_rate double precision,
+    manual_class_group_total_rate double precision,
+    manual_class_standard_premium double precision,
+    manual_class_estimated_group_premium double precision,
+    manual_class_estimated_individual_premium double precision,
+    data_source character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: manual_class_calculations_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE manual_class_calculations_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: manual_class_calculations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE manual_class_calculations_id_seq OWNED BY manual_class_calculations.id;
 
 
 --
@@ -5191,6 +5135,65 @@ ALTER SEQUENCE phmgns_id_seq OWNED BY phmgns.id;
 
 
 --
+-- Name: policy_calculations; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE policy_calculations (
+    id integer NOT NULL,
+    representative_number integer,
+    policy_number integer,
+    policy_group_number character varying,
+    policy_status character varying,
+    policy_total_four_year_payroll double precision,
+    policy_credibility_group integer,
+    policy_maximum_claim_value integer,
+    policy_credibility_percent double precision,
+    policy_total_expected_losses double precision,
+    policy_total_limited_losses double precision,
+    policy_total_claims_count integer,
+    policy_total_modified_losses_group_reduced double precision,
+    policy_total_modified_losses_individual_reduced double precision,
+    policy_group_ratio double precision,
+    policy_individual_total_modifier double precision,
+    policy_individual_experience_modified_rate double precision,
+    policy_industry_group integer,
+    group_rating_qualification character varying,
+    group_rating_tier double precision,
+    group_rating_group_number integer,
+    policy_total_current_payroll double precision,
+    policy_total_standard_premium double precision,
+    policy_total_individual_premium double precision,
+    policy_total_group_premium double precision,
+    policy_total_group_savings double precision,
+    policy_group_fees double precision,
+    policy_group_dues double precision,
+    policy_total_costs double precision,
+    data_source character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: policy_calculations_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE policy_calculations_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: policy_calculations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE policy_calculations_id_seq OWNED BY policy_calculations.id;
+
+
+--
 -- Name: process_manual_class_four_year_payroll_with_conditions; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -5230,7 +5233,6 @@ ALTER SEQUENCE process_manual_class_four_year_payroll_with_conditions_id_seq OWN
 --
 
 CREATE TABLE process_manual_class_four_year_payroll_without_conditions (
-    id integer NOT NULL,
     representative_number integer,
     policy_number integer,
     manual_number integer,
@@ -5239,25 +5241,6 @@ CREATE TABLE process_manual_class_four_year_payroll_without_conditions (
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
 );
-
-
---
--- Name: process_manual_class_four_year_payroll_without_condition_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE process_manual_class_four_year_payroll_without_condition_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: process_manual_class_four_year_payroll_without_condition_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE process_manual_class_four_year_payroll_without_condition_id_seq OWNED BY process_manual_class_four_year_payroll_without_conditions.id;
 
 
 --
@@ -6345,13 +6328,6 @@ ALTER TABLE ONLY final_employer_demographics_informations ALTER COLUMN id SET DE
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY final_manual_class_calculations ALTER COLUMN id SET DEFAULT nextval('final_manual_class_calculations_id_seq'::regclass);
-
-
---
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
---
-
 ALTER TABLE ONLY final_manual_class_four_year_payroll_and_exp_losses ALTER COLUMN id SET DEFAULT nextval('final_manual_class_four_year_payroll_and_exp_losses_id_seq'::regclass);
 
 
@@ -6360,13 +6336,6 @@ ALTER TABLE ONLY final_manual_class_four_year_payroll_and_exp_losses ALTER COLUM
 --
 
 ALTER TABLE ONLY final_manual_class_group_rating_and_premium_projections ALTER COLUMN id SET DEFAULT nextval('final_manual_class_group_rating_and_premium_projections_id_seq'::regclass);
-
-
---
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY final_policy_calculations ALTER COLUMN id SET DEFAULT nextval('final_policy_calculations_id_seq'::regclass);
 
 
 --
@@ -6388,6 +6357,13 @@ ALTER TABLE ONLY final_policy_group_rating_and_premium_projections ALTER COLUMN 
 --
 
 ALTER TABLE ONLY group_ratings ALTER COLUMN id SET DEFAULT nextval('group_ratings_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY manual_class_calculations ALTER COLUMN id SET DEFAULT nextval('manual_class_calculations_id_seq'::regclass);
 
 
 --
@@ -6464,14 +6440,14 @@ ALTER TABLE ONLY phmgns ALTER COLUMN id SET DEFAULT nextval('phmgns_id_seq'::reg
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY process_manual_class_four_year_payroll_with_conditions ALTER COLUMN id SET DEFAULT nextval('process_manual_class_four_year_payroll_with_conditions_id_seq'::regclass);
+ALTER TABLE ONLY policy_calculations ALTER COLUMN id SET DEFAULT nextval('policy_calculations_id_seq'::regclass);
 
 
 --
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY process_manual_class_four_year_payroll_without_conditions ALTER COLUMN id SET DEFAULT nextval('process_manual_class_four_year_payroll_without_condition_id_seq'::regclass);
+ALTER TABLE ONLY process_manual_class_four_year_payroll_with_conditions ALTER COLUMN id SET DEFAULT nextval('process_manual_class_four_year_payroll_with_conditions_id_seq'::regclass);
 
 
 --
@@ -6705,14 +6681,6 @@ ALTER TABLE ONLY final_employer_demographics_informations
 
 
 --
--- Name: final_manual_class_calculations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY final_manual_class_calculations
-    ADD CONSTRAINT final_manual_class_calculations_pkey PRIMARY KEY (id);
-
-
---
 -- Name: final_manual_class_four_year_payroll_and_exp_losses_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -6726,14 +6694,6 @@ ALTER TABLE ONLY final_manual_class_four_year_payroll_and_exp_losses
 
 ALTER TABLE ONLY final_manual_class_group_rating_and_premium_projections
     ADD CONSTRAINT final_manual_class_group_rating_and_premium_projections_pkey PRIMARY KEY (id);
-
-
---
--- Name: final_policy_calculations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY final_policy_calculations
-    ADD CONSTRAINT final_policy_calculations_pkey PRIMARY KEY (id);
 
 
 --
@@ -6758,6 +6718,14 @@ ALTER TABLE ONLY final_policy_group_rating_and_premium_projections
 
 ALTER TABLE ONLY group_ratings
     ADD CONSTRAINT group_ratings_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: manual_class_calculations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY manual_class_calculations
+    ADD CONSTRAINT manual_class_calculations_pkey PRIMARY KEY (id);
 
 
 --
@@ -6841,19 +6809,19 @@ ALTER TABLE ONLY phmgns
 
 
 --
+-- Name: policy_calculations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY policy_calculations
+    ADD CONSTRAINT policy_calculations_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: process_manual_class_four_year_payroll_with_conditions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY process_manual_class_four_year_payroll_with_conditions
     ADD CONSTRAINT process_manual_class_four_year_payroll_with_conditions_pkey PRIMARY KEY (id);
-
-
---
--- Name: process_manual_class_four_year_payroll_without_conditions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY process_manual_class_four_year_payroll_without_conditions
-    ADD CONSTRAINT process_manual_class_four_year_payroll_without_conditions_pkey PRIMARY KEY (id);
 
 
 --
@@ -7022,20 +6990,6 @@ CREATE INDEX index_final_employer_demographics_informations_on_policy_number ON 
 
 
 --
--- Name: index_final_man_class_calc_pol_num_and_man_num; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_final_man_class_calc_pol_num_and_man_num ON final_manual_class_calculations USING btree (policy_number, manual_number);
-
-
---
--- Name: index_final_policy_calculations_on_pol_num; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_final_policy_calculations_on_pol_num ON final_policy_calculations USING btree (policy_number);
-
-
---
 -- Name: index_final_policy_experience_calculations_on_policy_number; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -7050,6 +7004,13 @@ CREATE INDEX index_final_policy_group_and_premium_proj_on_pol_num ON final_polic
 
 
 --
+-- Name: index_man_class_calc_pol_num_and_man_num; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_man_class_calc_pol_num_and_man_num ON manual_class_calculations USING btree (policy_number, manual_number);
+
+
+--
 -- Name: index_man_class_exp_loss_pol_num_and_man_num; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -7061,6 +7022,20 @@ CREATE INDEX index_man_class_exp_loss_pol_num_and_man_num ON final_manual_class_
 --
 
 CREATE INDEX index_man_class_prem_proj_pol_num_and_man_num ON final_manual_class_group_rating_and_premium_projections USING btree (policy_number, manual_number);
+
+
+--
+-- Name: index_manual_class_calculations_on_policy_calculation_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_manual_class_calculations_on_policy_calculation_id ON manual_class_calculations USING btree (policy_calculation_id);
+
+
+--
+-- Name: index_policy_calculations_on_pol_num; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_policy_calculations_on_pol_num ON policy_calculations USING btree (policy_number);
 
 
 --
@@ -7089,6 +7064,14 @@ CREATE INDEX index_process_policy_experience_period_peos_on_policy_number ON pro
 --
 
 CREATE UNIQUE INDEX unique_schema_migrations ON schema_migrations USING btree (version);
+
+
+--
+-- Name: fk_rails_040ed49e64; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY manual_class_calculations
+    ADD CONSTRAINT fk_rails_040ed49e64 FOREIGN KEY (policy_calculation_id) REFERENCES policy_calculations(id);
 
 
 --

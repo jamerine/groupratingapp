@@ -37,7 +37,7 @@ class Step4Proc < ActiveRecord::Migration
           FROM public.final_employer_demographics_informations a
           Inner Join public.process_payroll_all_transactions_breakdown_by_manual_classes b
           ON a.policy_number = b.policy_number
-          WHERE b.manual_class_effective_date > experience_period_lower_date and a.representative_number = process_representative
+          WHERE b.manual_class_effective_date > experience_period_lower_date and b.manual_class_effective_date < experience_period_upper_date and a.representative_number = process_representative
           GROUP BY a.representative_number,
             a.policy_number,
             b.manual_number

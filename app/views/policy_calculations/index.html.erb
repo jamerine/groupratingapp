@@ -1,0 +1,45 @@
+<div class="container">
+  <div class="jumbotron">
+    <h1>Policies Projection Calculations</h1>
+    <%= link_to "Update Policies", create_policy_objects_policy_calculations_path, class: 'btn btn-primary' %>
+    <%= link_to "Update Manual Classes", create_manual_class_objects_manual_class_calculations_path, class: 'btn btn-primary' %>
+  </div>
+  <div>
+    <%= will_paginate @policy_calculations %>
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>Policy Number</th>
+          <th>Rep Number</th>
+          <th>Status</th>
+
+          <th>Group Tier</th>
+
+          <th>Industry Group</th>
+          <th>Current Payroll</th>
+          <th>Est. Premium</th>
+
+          <th>Updated Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @policy_calculations.each do |policy_calculation| %>
+        <tr>
+          <th scope="row"> <%= link_to "#{policy_calculation.policy_number}", policy_calculation_path(policy_calculation.id) %></th>
+          <td><%= policy_calculation.representative_number %> </td>
+          <td><%= policy_calculation.policy_status %> </td>
+          <td><%= policy_calculation.group_rating_tier %> </td>
+          <td><%= policy_calculation.policy_industry_group %> </td>
+          <td><%= number_to_currency(policy_calculation.policy_total_current_payroll) %> </td>
+          <td><%= number_to_currency(policy_calculation.policy_total_standard_premium) %> </td>
+          <td><%= policy_calculation.updated_at %> </td>
+        </tr>
+        <% end %>
+
+      </tbody>
+    </table>
+    <%= will_paginate @policy_calculations %>
+  </div>
+
+
+</div>
