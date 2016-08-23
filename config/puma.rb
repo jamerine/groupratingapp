@@ -1,4 +1,3 @@
-
 workers Integer(ENV['WEB_CONCURRENCY'] || 2)
 threads_count = Integer(ENV['RAILS_MAX_THREADS'] || 5)
 threads threads_count, threads_count
@@ -14,7 +13,8 @@ on_worker_boot do
   # See: https://devcenter.heroku.com/articles/deploying-rails-applications-with-the-puma-web-server#on-worker-boot
   ActiveRecord::Base.establish_connection
 
-  if defined?(Resque)
-     Resque.redis = ENV["REDIS_URL"] || "redis://127.0.0.1:6379"
-  end
+end
+
+if defined?(Resque)
+   Resque.redis = ENV["REDIS_URL"] || "redis://127.0.0.1:6379"
 end
