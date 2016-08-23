@@ -7,11 +7,7 @@ class GroupRatingStep
 
     result.clear
     @group_rating = GroupRating.find_by(id: group_rating_id)
-    if step == '8'
-      @group_rating.status = "Completed"
-    else
-      @group_rating.status = "Step #{step} completed"
-    end
+      @group_rating.status = "Step #{step} Completed"
     @group_rating.save
   end
 
