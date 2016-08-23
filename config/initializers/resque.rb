@@ -1,3 +1,5 @@
+require 'resque/tasks'
+
 Resque.before_fork do
     defined?(ActiveRecord::Base) and
       ActiveRecord::Base.connection.disconnect!
@@ -8,10 +10,17 @@ Resque.before_fork do
       conn = ActiveRecord::Base.establish_connection
   end
 
-  rails_root = ENV['RAILS_ROOT'] || File.dirname(__FILE__) + '/../..'
-  rails_env = ENV['RAILS_ENV'] || 'development'
 
-  resque_config = YAML.load_file(rails_root + '/config/resque.yml')
-  Resque.redis = resque_config[rails_env]
+  namespace :resque do
+    task :setup do
+      require 'resque'
+      ENV['QUEUE'] = '*'
 
-  
+      Resque.redis = 'localhost:6379' unless Rails.env == 'production'
+    end
+  end
+
+  Resque.after_fork = Proc.new { ActiveRecord::Base.establish_connection } #this is necessary for production environments, otherwise your background jobs will start to fail when hit from many different connections.
+
+  desc "Alias for resque:work (To run workers on Heroku)"
+  task "jobs:work" => "resque:work"
