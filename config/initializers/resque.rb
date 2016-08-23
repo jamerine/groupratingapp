@@ -14,4 +14,4 @@ Resque.before_fork do
   resque_config = YAML.load_file(rails_root + '/config/resque.yml')
   Resque.redis = resque_config[rails_env]
 
-  Resque.logger = Logger.new(Rails.root.join('log', "#{Rails.env}_resque.log"))
+  
