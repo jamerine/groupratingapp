@@ -1,100 +1,101 @@
 <%= content_tag_for :div, @manual_class_calculation do %>
-  <div class="container">
+
+  <div class="container ">
+    <div>
+      <%= link_to "Back to Policy: #{ @policy_calculation.policy_number }", policy_calculation_path(@manual_class_calculation.policy_calculation_id), class: 'btn btn-default' %>
+    </div>
     <div class="jumbotron text-center">
       <div class="row">
-        <div class="col-md-12">
-          <h1><%= @policy_calculation.business_name.titleize %></h1>
+        <div class="col-md-3">
+          <h5>Policy Number:</h5>
+          <h3><%= @policy_calculation.policy_number %></h3>
         </div>
-      </div>
-      <div class="row">
-        <div class="col-md-12">
+
+        <div class="col-md-6">
+          <h2><%= @policy_calculation.business_name.titleize %></h2>
           <p><%=  @policy_calculation.address_1.titleize %>, <%=  @policy_calculation.address_2.titleize %><%=  @policy_calculation.city.titleize %>, <%= @policy_calculation.state %> <%= @policy_calculation.zip_code %></p>
         </div>
-      </div>
-      <div class="row">
-        <div class="col-md-4">
-          <h4>Policy Number:</h4><h2><%= @policy_calculation.policy_number %></h2>
-
-        </div>
-        <div class="col-md-4">
-          <h4>Created at:</h4><h4> <%= @policy_calculation.created_at.in_time_zone("America/New_York").strftime("%m/%d/%y @ %I:%M %p") %></h4>
-
-
-        </div>
-        <div class="col-md-4">
-        <h4>Updated at:</h4><h4><%= @policy_calculation.updated_at.in_time_zone("America/New_York").strftime("%m/%d/%y @ %I:%M %p") %></h4>
+        <div class="col-md-3">
+          <h5>Policy Updated at:</h5>
+          <h4><%= @policy_calculation.updated_at.in_time_zone("America/New_York").strftime("%m/%d/%y @ %I:%M %p") %></h4>
         </div>
       </div>
-
     </div>
   </div>
 
 
+
+
   <div class="container text-center">
+    <h2>Manual Class Number: <%= @manual_class_calculation.manual_number %></h2>
+    <div class="table-responsive">
+      <table class="table">
+        <caption align: "center"><h3>Manual Class Premium Projection</h3></caption>
+        <thead>
+          <tr>
+            <th>Manual Number</th>
+            <th>IG Premium Ratio</th>
+            <th>Modification Rate</th>
+            <th>Individual Rate</th>
+            <th>Group Rate</th>
+            <th>Standard Premium</th>
+            <th>Group Premium</th>
+            <th>Individual Premium</th>
+
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td><%= @manual_class_calculation.manual_number %></td>
+            <td><%= @manual_class_calculation.manual_class_industry_group_premium_percentage %></td>
+            <td><%= @manual_class_calculation.manual_class_modification_rate %></td>
+            <td><%= @manual_class_calculation.manual_class_individual_total_rate %></td>
+            <td><%= @manual_class_calculation.manual_class_group_total_rate %></td>
+            <td><%= number_to_currency(@manual_class_calculation.manual_class_standard_premium) %></td>
+            <td><%= number_to_currency(@manual_class_calculation.manual_class_estimated_group_premium) %></td>
+            <td><%= number_to_currency(@manual_class_calculation.manual_class_estimated_individual_premium) %></td>
+          </tr>
+        </tbody>
+
+      </table>
+    </div>
+  </div>
+
+  <div class="container text-center">
+
     <div class="table-responsive">
       <table class="table">
         <caption align: "center"><h3>Manual Class Experience History</h3></caption>
         <thead>
           <tr>
-            <th>Industry Rate</th>
-
-          </tr>
-        </thead>
-
-        <tbody>
-          <tr>
-            <td><%= number_to_currency(@policy_calculation.policy_total_four_year_payroll) %></td>
-
-
-          </tr>
-        </tbody>
-
-      </table>
-    </div>
-  </div>
-
-
-  <div class="container text-center">
-    <div class="table-responsive">
-      <table class="table">
-        <caption><h3>Manual Class Premium Projections</h3></caption>
-        <thead>
-          <tr>
-            <th>Status</th>
-            <th>Qualification</th>
-            <th>Group Rating Tier</th>
+            <th>Manual Number</th>
             <th>Industry Group</th>
-            <th>Group Number</th>
-            <th>Current Payroll</th>
-            <th>Standard Premium</th>
-            <th>Individual Premium</th>
-            <th>Group Premium</th>
-            <th>Group Savings</th>
-            <th>Group Fees</th>
-            <th>Group Dues</th>
-            <th>Total Cost</th>
+            <th>Experience Payroll</th>
+            <th>Expected Loss Rate</th>
+            <th>Base Rate</th>
+            <th>Limited Loss Rate</th>
+            <th>Expected Losses</th>
+
           </tr>
         </thead>
+
         <tbody>
           <tr>
-            <td><%= @policy_calculation.policy_status %></td>
-            <td><%= @policy_calculation.group_rating_qualification %></td>
-            <td><%= @policy_calculation.group_rating_tier %></td>
-            <td><%= @policy_calculation.policy_industry_group %></td>
-            <td><%= @policy_calculation.group_rating_group_number %></td>
-            <td><%= number_to_currency(@policy_calculation.policy_total_current_payroll) %></td>
-            <td><%= number_to_currency(@policy_calculation.policy_total_standard_premium) %></td>
-            <td><%= number_to_currency(@policy_calculation.policy_total_individual_premium) %></td>
-            <td><%= number_to_currency(@policy_calculation.policy_total_group_premium) %></td>
-            <td><%= number_to_currency(@policy_calculation.policy_total_group_savings) %></td>
-            <td><%= number_to_currency(@policy_calculation.policy_group_fees) %></td>
-            <td><%= number_to_currency(@policy_calculation.policy_group_dues) %></td>
-            <td><%= number_to_currency(@policy_calculation.policy_total_costs) %></td>
+            <td><%= @manual_class_calculation.manual_number %></td>
+            <td><%= @manual_class_calculation.manual_class_industry_group %></td>
+            <td><%= number_to_currency(@manual_class_calculation.manual_class_four_year_period_payroll) %></td>
+            <td><%= @manual_class_calculation.manual_class_expected_loss_rate %></td>
+            <td><%= @manual_class_calculation.manual_class_base_rate %></td>
+            <td><%= @manual_class_calculation.manual_class_limited_loss_rate %></td>
+            <td><%= number_to_currency(@manual_class_calculation.manual_class_expected_losses) %></td>
           </tr>
         </tbody>
+
       </table>
     </div>
   </div>
+
 
 
 <% end %>

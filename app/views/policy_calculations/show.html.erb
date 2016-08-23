@@ -1,56 +1,22 @@
 <%= content_tag_for :div, @policy_calculation do %>
   <div class="container">
+    <%= link_to 'Return to All Policies', policy_calculations_path, class: 'btn btn-default' %>
     <div class="jumbotron text-center">
-      <h1><%= @policy_calculation.business_name.titleize %></h1>
-      <p><%=  @policy_calculation.address_1.titleize %>, <%=  @policy_calculation.address_2.titleize %><%=  @policy_calculation.city.titleize %>, <%= @policy_calculation.state %> <%= @policy_calculation.zip_code %></p>
-    </div>
-  </div>
+      <div class="row">
+        <div class="col-md-3">
+          <h5>Policy Number:</h5>
+          <h3><%= @policy_calculation.policy_number %></h3>
+        </div>
 
-
-  <div class="container text-center">
-    <h4>Policy Number: <%= @policy_calculation.policy_number %></h4>
-    <h4>Created At: <%= @policy_calculation.created_at.in_time_zone("America/New_York").strftime("%m/%d/%y @ %I:%M %p") %></h4>
-    <h4>Updated At: <%= @policy_calculation.updated_at.in_time_zone("America/New_York").strftime("%m/%d/%y @ %I:%M %p") %></h4>
-
-    <div class="table-responsive">
-      <table class="table">
-        <caption align: "center"><h3>Policy Experience History</h3></caption>
-        <thead>
-          <tr>
-            <th>Total Payroll</th>
-            <th>Credibility Group</th>
-            <th>Credibility %</th>
-            <th>Max Claim Value</th>
-            <th>TEL</th>
-            <th>TLL</th>
-            <th>Claim Count</th>
-            <th>Group TML</th>
-            <th>Ind TML</th>
-            <th>Group Ratio</th>
-            <th>Ind TM</th>
-            <th>Ind EMR</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          <tr>
-            <td><%= number_to_currency(@policy_calculation.policy_total_four_year_payroll) %></td>
-            <td><%= @policy_calculation.policy_credibility_group %></td>
-            <td><%= @policy_calculation.policy_credibility_percent %></td>
-            <td><%= number_to_currency(@policy_calculation.policy_maximum_claim_value) %></td>
-            <td><%= number_to_currency(@policy_calculation.policy_total_expected_losses) %></td>
-            <td><%= number_to_currency(@policy_calculation.policy_total_limited_losses) %></td>
-            <td><%= @policy_calculation.policy_total_claims_count %></td>
-            <td><%= number_to_currency(@policy_calculation.policy_total_modified_losses_group_reduced) %></td>
-            <td><%= number_to_currency(@policy_calculation.policy_total_modified_losses_individual_reduced) %></td>
-            <td><%= @policy_calculation.policy_group_ratio %></td>
-            <td><%= @policy_calculation.policy_individual_total_modifier %></td>
-            <td><%= @policy_calculation.policy_individual_experience_modified_rate %></td>
-
-          </tr>
-        </tbody>
-
-      </table>
+        <div class="col-md-6">
+          <h2><%= @policy_calculation.business_name.titleize %></h2>
+          <p><%=  @policy_calculation.address_1.titleize %>, <%=  @policy_calculation.address_2.titleize %><%=  @policy_calculation.city.titleize %>, <%= @policy_calculation.state %> <%= @policy_calculation.zip_code %></p>
+        </div>
+        <div class="col-md-3">
+          <h5>Policy Updated at:</h5>
+          <h4><%= @policy_calculation.updated_at.in_time_zone("America/New_York").strftime("%m/%d/%y @ %I:%M %p") %></h4>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -95,6 +61,52 @@
         </tbody>
       </table>
     </div>
+
+  </div>
+
+
+  <div class="container text-center">
+    <div class="table-responsive">
+      <table class="table">
+        <caption align: "center"><h3>Policy Experience History</h3></caption>
+        <thead>
+          <tr>
+            <th>Total Payroll</th>
+            <th>Credibility Group</th>
+            <th>Credibility %</th>
+            <th>Max Claim Value</th>
+            <th>TEL</th>
+            <th>TLL</th>
+            <th>Claim Count</th>
+            <th>Group TML</th>
+            <th>Ind TML</th>
+            <th>Group Ratio</th>
+            <th>Ind TM</th>
+            <th>Ind EMR</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td><%= number_to_currency(@policy_calculation.policy_total_four_year_payroll) %></td>
+            <td><%= @policy_calculation.policy_credibility_group %></td>
+            <td><%= @policy_calculation.policy_credibility_percent %></td>
+            <td><%= number_to_currency(@policy_calculation.policy_maximum_claim_value) %></td>
+            <td><%= number_to_currency(@policy_calculation.policy_total_expected_losses) %></td>
+            <td><%= number_to_currency(@policy_calculation.policy_total_limited_losses) %></td>
+            <td><%= @policy_calculation.policy_total_claims_count %></td>
+            <td><%= number_to_currency(@policy_calculation.policy_total_modified_losses_group_reduced) %></td>
+            <td><%= number_to_currency(@policy_calculation.policy_total_modified_losses_individual_reduced) %></td>
+            <td><%= @policy_calculation.policy_group_ratio %></td>
+            <td><%= @policy_calculation.policy_individual_total_modifier %></td>
+            <td><%= @policy_calculation.policy_individual_experience_modified_rate %></td>
+
+          </tr>
+        </tbody>
+
+      </table>
+    </div>
+
   </div>
 
   <div class="container">
@@ -110,9 +122,9 @@
             <th>Base Rate</th>
             <th>Limited Losses</th>
             <th>Current Payroll</th>
-            <th>Standard Premium</th>
+            <th>IG Premium Ratio</th>
             <th>Group Premium</th>
-            <th>Ind. Premium</th>
+            <th>Individual Premium</th>
 
           </tr>
 
@@ -120,7 +132,6 @@
         <tbody>
           <% @manual_class_calculations.each do |manual_class_calculation| %>
           <tr>
-
             <td><%= link_to "#{manual_class_calculation.manual_number}", manual_class_calculation_path(manual_class_calculation.id) %></td>
             <td><%= manual_class_calculation.manual_class_industry_group %></td>
             <td><%= number_to_currency(manual_class_calculation.manual_class_four_year_period_payroll) %></td>
@@ -128,10 +139,9 @@
             <td><%= manual_class_calculation.manual_class_base_rate %></td>
             <td><%= number_to_currency(manual_class_calculation.manual_class_limited_losses) %></td>
             <td><%= number_to_currency(manual_class_calculation.manual_class_current_estimated_payroll) %></td>
-            <td><%= number_to_currency(manual_class_calculation.manual_class_standard_premium) %></td>
+            <td><%= manual_class_calculation.manual_class_industry_group_premium_percentage %></td>
             <td><%= number_to_currency(manual_class_calculation.manual_class_estimated_group_premium) %></td>
             <td><%= number_to_currency(manual_class_calculation.manual_class_estimated_individual_premium) %></td>
-
           </tr>
           <% end %>
         </tbody>

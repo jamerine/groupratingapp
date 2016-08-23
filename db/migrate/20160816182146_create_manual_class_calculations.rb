@@ -15,7 +15,6 @@ class CreateManualClassCalculations < ActiveRecord::Migration
       t.float :manual_class_limited_losses
       t.float :manual_class_industry_group_premium_total
       t.float :manual_class_current_estimated_payroll
-      t.float :manual_class_base_rate
       t.float :manual_class_industry_group_premium_percentage
       t.float :manual_class_modification_rate
       t.float :manual_class_individual_total_rate

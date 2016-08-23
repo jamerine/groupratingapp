@@ -1,7 +1,12 @@
 class PolicyCalculationsController < ApplicationController
 
   def index
-    @policy_calculations = PolicyCalculation.all.paginate(page: params[:page], per_page: 100)
+    @policy_calculations = PolicyCalculation.all
+    if params[:search].present?
+      @policy_calculations = PolicyCalculation.search(params[:search]).paginate(page: params[:page], per_page: 100)
+    else
+      @policy_calculations = PolicyCalculation.all.paginate(page: params[:page], per_page: 100)
+    end
   end
 
   def show
