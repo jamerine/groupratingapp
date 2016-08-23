@@ -34,7 +34,6 @@ class ImportsController < ApplicationController
       redirect_to imports_path
     end
 
-    redirect_to imports_path
   end
 
   def new
