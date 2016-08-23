@@ -2,7 +2,6 @@
   <div class="jumbotron">
     <h1>Policies Projection Calculations</h1>
     <%= link_to "Update Policies", create_policy_objects_policy_calculations_path, class: 'btn btn-primary' %>
-    <%= link_to "Update Manual Classes", create_manual_class_objects_manual_class_calculations_path, class: 'btn btn-primary' %>
   </div>
   <div>
     <%= will_paginate @policy_calculations %>
@@ -32,7 +31,7 @@
           <td><%= policy_calculation.policy_industry_group %> </td>
           <td><%= number_to_currency(policy_calculation.policy_total_current_payroll) %> </td>
           <td><%= number_to_currency(policy_calculation.policy_total_standard_premium) %> </td>
-          <td><%= policy_calculation.updated_at %> </td>
+          <td><%= policy_calculation.updated_at.in_time_zone("America/New_York").strftime("%m/%d/%y @ %I:%M %p") %> </td>
         </tr>
         <% end %>
 

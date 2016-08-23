@@ -1,10 +1,15 @@
+
+
+
+
+
 <div class="container text-center">
   <div class="jumbotron">
     <h1>Import BWC Flat Files</h1>
     <div>
         <h3>Import all BWC files from Amazon S3</h3>
         <% if @democs.empty?  %>
-            <%= link_to 'Import All BWC Files', import_index_path, method: :post,  class: 'btn btn-success' %>
+            <%= link_to 'Import All BWC Files', imports_path, method: :post,  class: 'btn btn-success' %>
         <% else %>
             <%= link_to 'Move onto Parsing Files', parse_index_path, class: 'btn btn-success' %>
         <% end %>
@@ -59,6 +64,6 @@
   </table>
   <% if @democs.empty?  %>
   <% else %>
-    <%= link_to 'Delete All BWC Files', import_index_path, method: :delete, class: 'btn btn-danger' %>
+    <%= link_to 'Delete All BWC Files', imports_index_path, method: :delete, class: 'btn btn-danger' %>
   <% end %>
 </div>

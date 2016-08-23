@@ -26,5 +26,8 @@ module Groupratingapp
 
     # To create schema file for postgres
     config.active_record.schema_format = :sql
+
+
+
   end
 end

@@ -1,0 +1,21 @@
+<div class="container">
+  <div class="jumbotron text-center">
+    <h1>Begin Import Process</h1>
+    <div>
+      <%= form_for @import do |f| %>
+
+          <div class="form-group" >
+            <%= f.label :process_representative %>
+            <%= f.number_field :process_representative, value: '219406' %>
+          </div>
+
+
+          <%= f.submit 'Import Files', class: 'btn btn-info' %>
+      <% end %>
+
+
+
+    </div>
+    </div>
+
+  </div>

@@ -30,6 +30,33 @@ class CreatePolicyCalculations < ActiveRecord::Migration
       t.float :policy_group_fees
       t.float :policy_group_dues
       t.float :policy_total_costs
+      t.integer :successor_policy_number
+      t.integer :currently_assigned_representative_number
+      t.string :federal_identification_number
+      t.string :business_name
+      t.string :trading_as_name
+      t.string :in_care_name_contact_name
+      t.string :address_1
+      t.string :address_2
+      t.string :city
+      t.string :state
+      t.string :zip_code
+      t.string :zip_code_plus_4
+      t.string :country_code
+      t.string :county
+      t.date :policy_creation_date
+      t.string :current_policy_status
+      t.date :current_policy_status_effective_date
+      t.float :merit_rate
+      t.string :group_code
+      t.string :minimum_premium_percentage
+      t.string :rate_adjust_factor
+      t.date :em_effective_date
+      t.float :regular_balance_amount
+      t.float :attorney_general_balance_amount
+      t.float :appealed_balance_amount
+      t.float :pending_balance_amount
+      t.float :advance_deposit_amount
       t.string :data_source
 
       t.timestamps null: false

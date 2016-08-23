@@ -1,0 +1,45 @@
+<div class="container text-center">
+  <div class="jumbotron">
+    <h1>Import BWC Flat Files</h1>
+    <div>
+        <h3>Import all BWC files from Amazon S3</h3>
+
+          <%= link_to 'Move onto Group Rating', group_ratings_path, class: 'btn btn-success' %>
+
+           <%= link_to 'Import All BWC Files', new_import_path, class: 'btn btn-success' %>
+           <%= link_to 'Delete all BWC Files', imports_path, method: 'delete', class: 'btn btn-success' %>
+
+    </div>
+  </div>
+</div>
+
+
+<div class="container">
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Representative Number</th>
+        <th>Import Status</th>
+        <th>Parse Status</th>
+        <th>Run Time</th>
+        <th>View</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @imports.each do |import| %>
+      <tr>
+        <th scope="row"> <%= import.id %> </th>
+        <td><%= import.process_representative %> </td>
+        <td><%= import.import_status %> </td>
+        <td><%= import.parse_status %> </td>
+        <td><%= import.created_at.in_time_zone("America/New_York").strftime("%m/%d/%y @ %I:%M %p") %> </td>
+        <td><%= link_to 'View Import Info', import_path(import.id) %></td>
+      </tr>
+      <% end %>
+
+    </tbody>
+  </table>
+
+</div>

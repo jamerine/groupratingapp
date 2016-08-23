@@ -1,7 +1,10 @@
 class ManualClassUpdateCreate
   @queue = :manual_class_update_create
 
-  def self.perform()
+  def self.perform(group_rating_id)
+    @group_rating = GroupRating.find_by(id: group_rating_id)
+    @group_rating.status = "Manual Classes Updating"
+    @group_rating.save
     FinalManualClassGroupRatingAndPremiumProjection.find_each do |man_class_proj|
         man_class_exp = FinalManualClassFourYearPayrollAndExpLoss.find_by(policy_number: man_class_proj.policy_number, manual_number: man_class_proj.manual_number, representative_number: man_class_proj.representative_number)
         @policy_calculation = PolicyCalculation.find_by(policy_number: man_class_proj.policy_number, representative_number: man_class_proj.representative_number)
@@ -31,6 +34,10 @@ class ManualClassUpdateCreate
           )
         end
     end
+    @group_rating = GroupRating.find_by(id: group_rating_id)
+    @group_rating.status = "Completed"
+    @group_rating.save
+
   end
 
 end
