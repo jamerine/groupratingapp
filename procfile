@@ -1,4 +1,2 @@
-bundle exec puma -C config/puma.rb
-env TERM_CHILD=1 QUEUE=* bundle exec rake rescue:work
-bundle exec rake resque:work COUNT=1 QUEUE=*
-heroku rake jobs:work
+web: bundle exec puma -C config/puma.rb
+worker: bundle exec rake resque:work QUEUE='*'
