@@ -13,6 +13,25 @@ class GroupRatingsController < ApplicationController
   end
 
   def create
+
+    ExceptionTablePolicyCombinedRequestPayrollInfo.delete_all
+    FinalClaimCostCalculationTable.delete_all
+    FinalEmployerDemographicsInformation.delete_all
+    FinalManualClassFourYearPayrollAndExpLoss.delete_all
+    FinalManualClassGroupRatingAndPremiumProjection.delete_all
+    FinalPolicyExperienceCalculation.delete_all
+    FinalPolicyGroupRatingAndPremiumProjection.delete_all
+    ProcessManualClassFourYearPayrollWithCondition.delete_all
+    ProcessManualClassFourYearPayrollWithoutCondition.delete_all
+    ProcessManualReclassTable.delete_all
+    ProcessPayrollAllTransactionsBreakdownByManualClass.delete_all
+    ProcessPayrollBreakdownByManualClass.delete_all
+    ProcessPolicyCombinationLeaseTermination.delete_all
+    ProcessPolicyCombineFullTransfer.delete_all
+    ProcessPolicyCombinePartialToFullLease.delete_all
+    ProcessPolicyCombinePartialTransferNoLease.delete_all
+    ProcessPolicyCoverageStatusHistory.delete_all
+
     @group_rating = GroupRating.new(group_rating_params)
     @group_rating.status = 'Queuing'
     if @group_rating.save

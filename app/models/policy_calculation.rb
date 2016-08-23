@@ -12,4 +12,5 @@ class PolicyCalculation < ActiveRecord::Base
     obj
   end
 
+
 end

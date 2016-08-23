@@ -4,7 +4,7 @@ Rails.application.routes.draw do
 
   mount Resque::Server.new, at: "/resque"
 
-  resources :import do
+  resources :imports do
     collection { delete :destroy }
   end
 

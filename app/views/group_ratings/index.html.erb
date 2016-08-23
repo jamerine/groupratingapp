@@ -20,7 +20,7 @@
           <th scope="row"> <%= group_rating.id %> </th>
           <td><%= group_rating.process_representative %> </td>
           <td><%= group_rating.status %> </td>
-          <td><%= group_rating.created_at %> </td>
+          <td><%= group_rating.created_at.in_time_zone("America/New_York").strftime("%m/%d/%y @ %I:%M %p") %> </td>
           <td><%= link_to 'View Group Rating Info', group_rating_path(group_rating.id) %></td>
         </tr>
         <% end %>

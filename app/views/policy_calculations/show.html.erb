@@ -1,14 +1,17 @@
 <%= content_tag_for :div, @policy_calculation do %>
   <div class="container">
     <div class="jumbotron text-center">
-      <h1><%= @policy_demographics.business_name.titleize %></h1>
-      <p><%=  @policy_demographics.address_1.titleize %>, <%=  @policy_demographics.address_2.titleize %><%=  @policy_demographics.city.titleize %>, <%= @policy_demographics.state %> <%= @policy_demographics.zip_code %></p>
+      <h1><%= @policy_calculation.business_name.titleize %></h1>
+      <p><%=  @policy_calculation.address_1.titleize %>, <%=  @policy_calculation.address_2.titleize %><%=  @policy_calculation.city.titleize %>, <%= @policy_calculation.state %> <%= @policy_calculation.zip_code %></p>
     </div>
   </div>
 
 
   <div class="container text-center">
     <h4>Policy Number: <%= @policy_calculation.policy_number %></h4>
+    <h4>Created At: <%= @policy_calculation.created_at.in_time_zone("America/New_York").strftime("%m/%d/%y @ %I:%M %p") %></h4>
+    <h4>Updated At: <%= @policy_calculation.updated_at.in_time_zone("America/New_York").strftime("%m/%d/%y @ %I:%M %p") %></h4>
+
     <div class="table-responsive">
       <table class="table">
         <caption align: "center"><h3>Policy Experience History</h3></caption>
@@ -117,7 +120,8 @@
         <tbody>
           <% @manual_class_calculations.each do |manual_class_calculation| %>
           <tr>
-            <td><%= manual_class_calculation.manual_number %></td>
+
+            <td><%= link_to "#{manual_class_calculation.manual_number}", manual_class_calculation_path(manual_class_calculation.id) %></td>
             <td><%= manual_class_calculation.manual_class_industry_group %></td>
             <td><%= number_to_currency(manual_class_calculation.manual_class_four_year_period_payroll) %></td>
             <td><%= number_to_currency(manual_class_calculation.manual_class_expected_losses) %></td>
