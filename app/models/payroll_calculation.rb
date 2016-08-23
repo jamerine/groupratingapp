@@ -1,7 +1,6 @@
-class ManualClassCalculation < ActiveRecord::Base
+class PayrollCalculation < ActiveRecord::Base
 
-  belongs_to :policy_calculation
-  has_many :payroll_calculations, dependent: :destroy
+  belongs_to :manual_class_calculation
 
   def self.update_or_create(attributes)
     assign_or_new(attributes).save

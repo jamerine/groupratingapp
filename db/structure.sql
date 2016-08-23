@@ -1881,9 +1881,6 @@ CREATE FUNCTION proc_step_2(process_representative integer, experience_period_lo
           created_at,
           updated_at
       )
-
-
-
       (SELECT representative_number,
         policy_type,
         policy_number,
@@ -5024,6 +5021,44 @@ ALTER SEQUENCE mremps_id_seq OWNED BY mremps.id;
 
 
 --
+-- Name: payroll_calculations; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE payroll_calculations (
+    id integer NOT NULL,
+    representative_number integer,
+    policy_number integer,
+    manual_number integer,
+    manual_class_calculation_id integer,
+    manual_class_effective_date date,
+    manual_class_payroll double precision,
+    payroll_origin character varying,
+    data_source character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: payroll_calculations_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE payroll_calculations_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: payroll_calculations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE payroll_calculations_id_seq OWNED BY payroll_calculations.id;
+
+
+--
 -- Name: pcomb_detail_records; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -5272,67 +5307,6 @@ CREATE SEQUENCE policy_calculations_id_seq
 --
 
 ALTER SEQUENCE policy_calculations_id_seq OWNED BY policy_calculations.id;
-
-
---
--- Name: policy_demographics; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE policy_demographics (
-    id integer NOT NULL,
-    representative_number integer,
-    policy_number integer,
-    policy_calculation_id integer,
-    successor_policy_number integer,
-    currently_assigned_representative_number integer,
-    federal_identification_number character varying,
-    business_name character varying,
-    trading_as_name character varying,
-    in_care_name_contact_name character varying,
-    address_1 character varying,
-    address_2 character varying,
-    city character varying,
-    state character varying,
-    zip_code character varying,
-    zip_code_plus_4 character varying,
-    country_code character varying,
-    county character varying,
-    policy_creation_date date,
-    current_policy_status character varying,
-    current_policy_status_effective_date date,
-    merit_rate double precision,
-    group_code character varying,
-    minimum_premium_percentage character varying,
-    rate_adjust_factor character varying,
-    em_effective_date date,
-    regular_balance_amount double precision,
-    attorney_general_balance_amount double precision,
-    appealed_balance_amount double precision,
-    pending_balance_amount double precision,
-    advance_deposit_amount double precision,
-    data_source character varying,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
-);
-
-
---
--- Name: policy_demographics_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE policy_demographics_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: policy_demographics_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE policy_demographics_id_seq OWNED BY policy_demographics.id;
 
 
 --
@@ -6561,6 +6535,13 @@ ALTER TABLE ONLY mremps ALTER COLUMN id SET DEFAULT nextval('mremps_id_seq'::reg
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY payroll_calculations ALTER COLUMN id SET DEFAULT nextval('payroll_calculations_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY pcomb_detail_records ALTER COLUMN id SET DEFAULT nextval('pcomb_detail_records_id_seq'::regclass);
 
 
@@ -6590,13 +6571,6 @@ ALTER TABLE ONLY phmgns ALTER COLUMN id SET DEFAULT nextval('phmgns_id_seq'::reg
 --
 
 ALTER TABLE ONLY policy_calculations ALTER COLUMN id SET DEFAULT nextval('policy_calculations_id_seq'::regclass);
-
-
---
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY policy_demographics ALTER COLUMN id SET DEFAULT nextval('policy_demographics_id_seq'::regclass);
 
 
 --
@@ -6941,6 +6915,14 @@ ALTER TABLE ONLY mremps
 
 
 --
+-- Name: payroll_calculations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY payroll_calculations
+    ADD CONSTRAINT payroll_calculations_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: pcomb_detail_records_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -6978,14 +6960,6 @@ ALTER TABLE ONLY phmgns
 
 ALTER TABLE ONLY policy_calculations
     ADD CONSTRAINT policy_calculations_pkey PRIMARY KEY (id);
-
-
---
--- Name: policy_demographics_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY policy_demographics
-    ADD CONSTRAINT policy_demographics_pkey PRIMARY KEY (id);
 
 
 --
@@ -7204,24 +7178,24 @@ CREATE INDEX index_manual_class_calculations_on_policy_calculation_id ON manual_
 
 
 --
+-- Name: index_payroll_calc_on_pol_num_and_man_num; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_payroll_calc_on_pol_num_and_man_num ON payroll_calculations USING btree (policy_number, manual_number);
+
+
+--
+-- Name: index_payroll_calculations_on_manual_class_calculation_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_payroll_calculations_on_manual_class_calculation_id ON payroll_calculations USING btree (manual_class_calculation_id);
+
+
+--
 -- Name: index_policy_calculations_on_pol_num; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_policy_calculations_on_pol_num ON policy_calculations USING btree (policy_number);
-
-
---
--- Name: index_policy_demographics_on_policy_calculation_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_policy_demographics_on_policy_calculation_id ON policy_demographics USING btree (policy_calculation_id);
-
-
---
--- Name: index_policy_demographics_on_policy_number; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_policy_demographics_on_policy_number ON policy_demographics USING btree (policy_number);
 
 
 --
@@ -7261,11 +7235,11 @@ ALTER TABLE ONLY manual_class_calculations
 
 
 --
--- Name: fk_rails_3b233d708f; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: fk_rails_0c7708bfbc; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY policy_demographics
-    ADD CONSTRAINT fk_rails_3b233d708f FOREIGN KEY (policy_calculation_id) REFERENCES policy_calculations(id);
+ALTER TABLE ONLY payroll_calculations
+    ADD CONSTRAINT fk_rails_0c7708bfbc FOREIGN KEY (manual_class_calculation_id) REFERENCES manual_class_calculations(id);
 
 
 --
@@ -7408,5 +7382,5 @@ INSERT INTO schema_migrations (version) VALUES ('20160816182146');
 
 INSERT INTO schema_migrations (version) VALUES ('20160822105403');
 
-INSERT INTO schema_migrations (version) VALUES ('20160822183506');
+INSERT INTO schema_migrations (version) VALUES ('20160823184229');
 

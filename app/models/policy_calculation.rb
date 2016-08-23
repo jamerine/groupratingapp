@@ -12,5 +12,8 @@ class PolicyCalculation < ActiveRecord::Base
     obj
   end
 
+  def self.search(search)
+    where("policy_number = ?", "#{search}")
+  end
 
 end

@@ -32,9 +32,6 @@ class Step2Proc < ActiveRecord::Migration
           created_at,
           updated_at
       )
-
-
-
       (SELECT representative_number,
         policy_type,
         policy_number,
