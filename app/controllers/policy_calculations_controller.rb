@@ -19,10 +19,6 @@ class PolicyCalculationsController < ApplicationController
     @policy_calculation = PolicyCalculation.new
   end
 
-  def create_policy_objects
-    Resque.enqueue(PolicyUpdateCreate)
-    redirect_to policy_calculations_path, notice: "Policies are queued to update."
-  end
 
 
  private
