@@ -35,12 +35,10 @@
           <tr>
             <th>Manual Number</th>
             <th>IG Premium Ratio</th>
-            <th>Modification Rate</th>
-            <th>Individual Rate</th>
-            <th>Group Rate</th>
+            <th>Estimated Payroll</th>
             <th>Standard Premium</th>
-            <th>Group Premium</th>
             <th>Individual Premium</th>
+            <th>Group Premium</th>
 
           </tr>
         </thead>
@@ -49,12 +47,10 @@
           <tr>
             <td><%= @manual_class_calculation.manual_number %></td>
             <td><%= @manual_class_calculation.manual_class_industry_group_premium_percentage %></td>
-            <td><%= @manual_class_calculation.manual_class_modification_rate %></td>
-            <td><%= @manual_class_calculation.manual_class_individual_total_rate %></td>
-            <td><%= @manual_class_calculation.manual_class_group_total_rate %></td>
+            <td><%= number_to_currency(@manual_class_calculation.manual_class_current_estimated_payroll) %></td>
             <td><%= number_to_currency(@manual_class_calculation.manual_class_standard_premium) %></td>
-            <td><%= number_to_currency(@manual_class_calculation.manual_class_estimated_group_premium) %></td>
             <td><%= number_to_currency(@manual_class_calculation.manual_class_estimated_individual_premium) %></td>
+            <td><%= number_to_currency(@manual_class_calculation.manual_class_estimated_group_premium) %></td>
           </tr>
         </tbody>
 
@@ -95,6 +91,35 @@
       </table>
     </div>
   </div>
+
+  <div class="container">
+    <div class="table-responsive">
+      <table class="table">
+        <caption align: "center"><h3>Payroll History</h3></caption>
+        <thead>
+          <tr>
+            <th>Effective Date</th>
+            <th>Payroll Amount</th>
+            <th>Payroll Origin</th>
+            <th>Payroll Source</th>
+
+          </tr>
+        </thead>
+
+        <tbody>
+          <% @payroll_calculations.order("manual_class_effective_date desc").each do |payroll_calculation| %>
+          <tr>
+            <td> <%= payroll_calculation.manual_class_effective_date %></td>
+            <td> <%= number_to_currency(payroll_calculation.manual_class_payroll) %></td>
+            <td> <%= payroll_calculation.payroll_origin %></td>
+            <td> <%= payroll_calculation.data_source %></td>
+          </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
 
 
 

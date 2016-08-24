@@ -1,15 +1,15 @@
-class ManualClassUpdateCreate
-  @queue = :manual_class_update_create
+class ManualClassUpdateCreateSingle
+  @queue = :manual_class_update_single_create
 
-  def self.perform(group_rating_id)
+  def self.perform(group_rating_id, policy_calculation_id)
     @group_rating = GroupRating.find_by(id: group_rating_id)
     @group_rating.status = "Manual Classes Updating"
     @group_rating.save
-    FinalManualClassGroupRatingAndPremiumProjection.find_each do |man_class_proj|
-        man_class_exp = FinalManualClassFourYearPayrollAndExpLoss.find_by(policy_number: man_class_proj.policy_number, manual_number: man_class_proj.manual_number, representative_number: man_class_proj.representative_number)
-        @policy_calculation = PolicyCalculation.find_by(policy_number: man_class_proj.policy_number, representative_number: man_class_proj.representative_number)
+    @policy_calculation = PolicyCalculation.find(id: policy_calculation_id )
+    FinalManualClassGroupRatingAndPremiumProjection.find_each(policy_number: @policy_calculation.policy_number) do |man_class_proj|
+        man_class_exp = FinalManualClassFourYearPayrollAndExpLoss.find_by(policy_number: manual_class_proj.policy_number, manual_number: man_class_proj.manual_number, representative_number: man_class_proj.representative_number)
         unless @policy_calculation.nil?
-          ManualClassCalculation.where(policy_number: man_class_proj.policy_number, manual_number: man_class_proj.manual_number, representative_number: man_class_proj.representative_number).update_or_create(
+          @manual_class_calculation = ManualClassCalculation.where(policy_number: man_class_proj.policy_number, manual_number: man_class_proj.manual_number, representative_number: man_class_proj.representative_number).update_or_create(
             representative_number: man_class_exp.representative_number,
             policy_number: man_class_exp.policy_number,
             policy_calculation_id: @policy_calculation.id,
