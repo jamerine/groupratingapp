@@ -8,6 +8,7 @@ class CreatePayrollCalculations < ActiveRecord::Migration
       t.index [:policy_number, :manual_number], name: 'index_payroll_calc_on_pol_num_and_man_num'
       t.date :manual_class_effective_date
       t.float :manual_class_payroll
+      t.integer :process_payroll_all_transactions_breakdown_by_manual_class_id
       t.string :payroll_origin
       t.string :data_source
 

@@ -75,7 +75,7 @@ class Step4Proc < ActiveRecord::Migration
             ON a.policy_number = edi.policy_number
             WHERE (a.manual_class_effective_date BETWEEN experience_period_lower_date and experience_period_upper_date)
             and a.representative_number = process_representative -- date range for experience_period
-              and (a.payroll_origin = 'payroll' or a.payroll_origin = 'manual_reclass') and (a.manual_class_effective_date >= edi.policy_creation_date )
+              and (a.payroll_origin = 'payroll' or a.payroll_origin = 'manual_reclass' or a.payroll_origin = 'payroll_adjustment') and (a.manual_class_effective_date >= edi.policy_creation_date )
             GROUP BY a.representative_number, a.policy_number, a.manual_number
           );
 

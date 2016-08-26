@@ -2,6 +2,11 @@ class PayrollCalculation < ActiveRecord::Base
 
   belongs_to :manual_class_calculation
 
+
+
+
+
+
   def self.update_or_create(attributes)
     assign_or_new(attributes).save
   end

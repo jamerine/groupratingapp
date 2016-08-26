@@ -2846,7 +2846,7 @@ CREATE FUNCTION proc_step_4(process_representative integer, experience_period_lo
             ON a.policy_number = edi.policy_number
             WHERE (a.manual_class_effective_date BETWEEN experience_period_lower_date and experience_period_upper_date)
             and a.representative_number = process_representative -- date range for experience_period
-              and (a.payroll_origin = 'payroll' or a.payroll_origin = 'manual_reclass') and (a.manual_class_effective_date >= edi.policy_creation_date )
+              and (a.payroll_origin = 'payroll' or a.payroll_origin = 'manual_reclass' or a.payroll_origin = 'payroll_adjustment') and (a.manual_class_effective_date >= edi.policy_creation_date )
             GROUP BY a.representative_number, a.policy_number, a.manual_number
           );
 
@@ -5032,6 +5032,7 @@ CREATE TABLE payroll_calculations (
     manual_class_calculation_id integer,
     manual_class_effective_date date,
     manual_class_payroll double precision,
+    process_payroll_all_transactions_breakdown_by_manual_class_id integer,
     payroll_origin character varying,
     data_source character varying,
     created_at timestamp without time zone NOT NULL,
