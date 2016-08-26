@@ -1,0 +1,53 @@
+<div class="container">
+  <div class="jumbotron text-center">
+    <h1>Adjust Payroll</h1>
+    <div>
+      <%= form_for @payroll_calculation do |f| %>
+
+          <div class="form-group" >
+            <%= f.label :process_representative %>
+            <%= f.number_field :process_representative, value: '219406' %>
+          </div>
+
+          <div class="form-group" >
+            <%= f.label :policy_number %>
+            <%= f.number_field :policy_number, value: "#{@manual_class_calculation.policy_number}"%>
+          </div>
+
+          <div class="form-group" >
+            <%= f.label :manual_number %>
+            <%= f.number_field :manual_number, value: "#{@manual_class_calculation.manual_number}" %>
+          </div>
+
+          <div class="form-group" >
+
+            <%= f.hidden_field :manual_class_calculation_id, value: "#{@manual_class_calculation.id}" %>
+          </div>
+
+          <div class="form-group" >
+            <%= f.label :manual_class_effective_date %>
+            <%= f.date_field :manual_class_effective_date %>
+          </div>
+
+          <div class="form-group" >
+            <%= f.label :manual_class_payroll %>
+            <%= f.number_field :manual_class_payroll %>
+          </div>
+
+          <div class="form-group" >
+            <%= f.label :payroll_origin %>
+            <%= f.text_field :payroll_origin, value: "payroll_adjustment" %>
+          </div>
+
+          <div class="form-group" >
+            <%= f.label :data_source %>
+            <%= f.text_field :data_source, value: "user_adjustment" %>
+          </div>
+
+
+          <%= f.submit 'Adjust Payroll', class: 'btn btn-info' %>
+      <% end %>
+    </div>
+    </div>
+
+  </div>

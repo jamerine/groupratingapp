@@ -1,0 +1,45 @@
+
+<div class="container">
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Effective Date</th>
+          <th>Payroll Amount</th>
+          <th>Payroll Origin</th>
+          <th>Payroll Source</th>
+          <th>Submit</th>
+        </tr>
+      </thead>
+      <tbody>
+        <%= form_for payroll_calculation do |f| %>
+
+        <%= f.hidden_field :manual_class_calculation_id, value: "#{manual_class_calculation.id}" %>
+        <%= f.hidden_field :manual_number, value: "#{manual_class_calculation.manual_number}" %>
+        <%= f.hidden_field :policy_number, value: "#{manual_class_calculation.policy_number}" %>
+        <%= f.hidden_field :representative_number, value: "#{manual_class_calculation.representative_number}" %>
+
+        <tr>
+          <td> <div class="form-group" >
+
+            <%= f.date_field :manual_class_effective_date %>
+          </div></td>
+          <td><div class="form-group" >
+
+                      <%= f.number_field :manual_class_payroll %>
+                    </div></td>
+          <td><div class="form-group" >
+
+                      <%= f.text_field :payroll_origin, value: "payroll_adjustment" %>
+                    </div></td>
+          <td><div class="form-group" >
+
+                      <%= f.text_field :data_source, value: "user_adjustment" %>
+                    </div></td>
+            <td><%= f.submit 'Adjust Payroll', class: 'btn btn-info' %></td>
+        </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
