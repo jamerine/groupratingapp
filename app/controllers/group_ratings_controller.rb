@@ -14,23 +14,23 @@ class GroupRatingsController < ApplicationController
 
   def create
 
-    ExceptionTablePolicyCombinedRequestPayrollInfo.delete_all
-    FinalClaimCostCalculationTable.delete_all
-    FinalEmployerDemographicsInformation.delete_all
-    FinalManualClassFourYearPayrollAndExpLoss.delete_all
-    FinalManualClassGroupRatingAndPremiumProjection.delete_all
-    FinalPolicyExperienceCalculation.delete_all
-    FinalPolicyGroupRatingAndPremiumProjection.delete_all
-    ProcessManualClassFourYearPayrollWithCondition.delete_all
-    ProcessManualClassFourYearPayrollWithoutCondition.delete_all
-    ProcessManualReclassTable.delete_all
-    ProcessPayrollAllTransactionsBreakdownByManualClass.delete_all
-    ProcessPayrollBreakdownByManualClass.delete_all
-    ProcessPolicyCombinationLeaseTermination.delete_all
-    ProcessPolicyCombineFullTransfer.delete_all
-    ProcessPolicyCombinePartialToFullLease.delete_all
-    ProcessPolicyCombinePartialTransferNoLease.delete_all
-    ProcessPolicyCoverageStatusHistory.delete_all
+    ExceptionTablePolicyCombinedRequestPayrollInfo.where(data_source: 'bwc').delete_all
+    FinalClaimCostCalculationTable.where(data_source: 'bwc').delete_all
+    FinalEmployerDemographicsInformation.where(data_source: 'bwc').delete_all
+    FinalManualClassFourYearPayrollAndExpLoss.where(data_source: 'bwc').delete_all
+    FinalManualClassGroupRatingAndPremiumProjection.where(data_source: 'bwc').delete_all
+    FinalPolicyExperienceCalculation.where(data_source: 'bwc').delete_all
+    FinalPolicyGroupRatingAndPremiumProjection.where(data_source: 'bwc').delete_all
+    ProcessManualClassFourYearPayrollWithCondition.where(data_source: 'bwc').delete_all
+    ProcessManualClassFourYearPayrollWithoutCondition.where(data_source: 'bwc').delete_all
+    ProcessManualReclassTable.where(data_source: 'bwc').delete_all
+    ProcessPayrollAllTransactionsBreakdownByManualClass.where(data_source: 'bwc').delete_all
+    ProcessPayrollBreakdownByManualClass.where(data_source: 'bwc').delete_all
+    ProcessPolicyCombinationLeaseTermination.where(data_source: 'bwc').delete_all
+    ProcessPolicyCombineFullTransfer.where(data_source: 'bwc').delete_all
+    ProcessPolicyCombinePartialToFullLease.where(data_source: 'bwc').delete_all
+    ProcessPolicyCombinePartialTransferNoLease.where(data_source: 'bwc').delete_all
+    ProcessPolicyCoverageStatusHistory.where(data_source: 'bwc').delete_all
 
     @group_rating = GroupRating.new(group_rating_params)
     @group_rating.status = 'Queuing'

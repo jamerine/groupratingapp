@@ -1,0 +1,35 @@
+<div class="container">
+  <div class="table-responsive">
+    <table class="table">
+      <caption align: "center"><h3>Payroll History</h3></caption>
+
+      <thead>
+        <%= link_to 'Adjust Payroll', new_payroll_calculation_path(id: params[:id]), class: 'btn btn-success' %>
+        <tr>
+          <th>Effective Date</th>
+          <th>Payroll Amount</th>
+          <th>Payroll Origin</th>
+          <th>Payroll Source</th>
+          <th>Action</th>
+
+        </tr>
+      </thead>
+
+      <tbody>
+        <% @payroll_calculations.order("manual_class_effective_date desc").each do |payroll_calculation| %>
+        <tr>
+          <td> <%= payroll_calculation.manual_class_effective_date %></td>
+          <td> <%= number_to_currency(payroll_calculation.manual_class_payroll) %></td>
+          <td> <%= payroll_calculation.payroll_origin %></td>
+          <td> <%= payroll_calculation.data_source %></td>
+          <% if payroll_calculation.data_source == 'bwc' %>
+            <td><small>uneditable</small></td>
+          <% else %>
+            <td> <%= link_to 'Delete', payroll_calculation_path(id: payroll_calculation.id), method: :delete %></td>
+          <% end %>
+        </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

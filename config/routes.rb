@@ -14,6 +14,8 @@ Rails.application.routes.draw do
 
   resources :group_ratings
 
+  resources :payroll_calculations
+
   resources :final_policy_group_rating_and_premium_projections
 
   resources :policy_calculations do
