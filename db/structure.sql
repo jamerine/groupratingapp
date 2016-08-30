@@ -3590,7 +3590,7 @@ CREATE FUNCTION proc_step_8(process_representative integer, experience_period_lo
           run_date as created_at,
           run_date as updated_at
         FROM public.process_payroll_all_transactions_breakdown_by_manual_classes a
-        WHERE (a.manual_class_effective_date BETWEEN current_payroll_period_lower_date and experience_period_upper_date) and a.representative_number = process_representative
+        WHERE (a.manual_class_effective_date > current_payroll_period_lower_date) and a.representative_number = process_representative
         GROUP BY a.representative_number, a.policy_number, a.manual_number
       );
 
@@ -3820,7 +3820,7 @@ CREATE FUNCTION proc_step_8(process_representative integer, experience_period_lo
       FROM
       	(SELECT
       		a.policy_number,
-      		(SELECT (CASE WHEN (a.policy_group_ratio = '0') AND (a.policy_status in ('ACTIV', 'REINS', 'LAPSE')) THEN '-.53'
+      		(SELECT (CASE WHEN (a.policy_group_ratio = '0') THEN '-.53'
       					ELSE min(market_rate)
       					END)  as group_rating_tier
       				 FROM public.bwc_codes_industry_group_savings_ratio_criteria
@@ -4168,6 +4168,62 @@ CREATE SEQUENCE bwc_codes_policy_effective_dates_id_seq
 --
 
 ALTER SEQUENCE bwc_codes_policy_effective_dates_id_seq OWNED BY bwc_codes_policy_effective_dates.id;
+
+
+--
+-- Name: claim_calculations; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE claim_calculations (
+    id integer NOT NULL,
+    representative_number integer,
+    policy_type character varying,
+    policy_number integer,
+    policy_calculation_id integer,
+    claim_number character varying,
+    claim_injury_date date,
+    claim_handicap_percent double precision,
+    claim_handicap_percent_effective_date date,
+    claim_manual_number integer,
+    claim_medical_paid double precision,
+    claim_mira_medical_reserve_amount double precision,
+    claim_mira_non_reducible_indemnity_paid double precision,
+    claim_mira_reducible_indemnity_paid double precision,
+    claim_mira_indemnity_reserve_amount double precision,
+    claim_mira_non_reducible_indemnity_paid_2 double precision,
+    claim_total_subrogation_collected double precision,
+    claim_unlimited_limited_loss double precision,
+    policy_individual_maximum_claim_value double precision,
+    claim_group_multiplier double precision,
+    claim_individual_multiplier double precision,
+    claim_group_reduced_amount double precision,
+    claim_individual_reduced_amount double precision,
+    claim_subrogation_percent double precision,
+    claim_modified_losses_group_reduced double precision,
+    claim_modified_losses_individual_reduced double precision,
+    data_source character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: claim_calculations_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE claim_calculations_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: claim_calculations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE claim_calculations_id_seq OWNED BY claim_calculations.id;
 
 
 --
@@ -6410,6 +6466,13 @@ ALTER TABLE ONLY bwc_codes_policy_effective_dates ALTER COLUMN id SET DEFAULT ne
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY claim_calculations ALTER COLUMN id SET DEFAULT nextval('claim_calculations_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY democ_detail_records ALTER COLUMN id SET DEFAULT nextval('democ_detail_records_id_seq'::regclass);
 
 
@@ -6772,6 +6835,14 @@ ALTER TABLE ONLY bwc_codes_policy_effective_dates
 
 
 --
+-- Name: claim_calculations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY claim_calculations
+    ADD CONSTRAINT claim_calculations_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: democ_detail_records_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -7123,6 +7194,20 @@ CREATE INDEX index_bwc_codes_policy_effective_dates_on_policy_number ON bwc_code
 
 
 --
+-- Name: index_claim_calc_on_pol_num_and_claim_num; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_claim_calc_on_pol_num_and_claim_num ON claim_calculations USING btree (policy_number, claim_number);
+
+
+--
+-- Name: index_claim_calculations_on_policy_calculation_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_claim_calculations_on_policy_calculation_id ON claim_calculations USING btree (policy_calculation_id);
+
+
+--
 -- Name: index_final_claim_cost_calculation_tables_on_policy_number; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -7241,6 +7326,14 @@ ALTER TABLE ONLY manual_class_calculations
 
 ALTER TABLE ONLY payroll_calculations
     ADD CONSTRAINT fk_rails_0c7708bfbc FOREIGN KEY (manual_class_calculation_id) REFERENCES manual_class_calculations(id);
+
+
+--
+-- Name: fk_rails_f48992ad9e; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY claim_calculations
+    ADD CONSTRAINT fk_rails_f48992ad9e FOREIGN KEY (policy_calculation_id) REFERENCES policy_calculations(id);
 
 
 --
@@ -7384,4 +7477,6 @@ INSERT INTO schema_migrations (version) VALUES ('20160816182146');
 INSERT INTO schema_migrations (version) VALUES ('20160822105403');
 
 INSERT INTO schema_migrations (version) VALUES ('20160823184229');
+
+INSERT INTO schema_migrations (version) VALUES ('20160829130503');
 
