@@ -18,6 +18,8 @@ class ManualClassCalculationsController < ApplicationController
   end
 
 
+
+
  private
 
 

@@ -1,6 +1,8 @@
 <%= content_tag_for :div, @policy_calculation do %>
   <div class="container">
     <%= link_to 'Return to All Policies', policy_calculations_path, class: 'btn btn-default' %>
+    
+
     <div class="jumbotron text-center">
       <div class="row">
         <div class="col-md-3">
@@ -109,7 +111,7 @@
 
   </div>
 
-  <div class="container">
+  <!-- <div class="container">
     <div class="table-responsive">
       <table class="table">
         <caption><h3>Manual Class</h3></caption>
@@ -147,6 +149,8 @@
         </tbody>
       </table>
     </div>
-  </div>
+  </div> -->
 
+  <%= render partial: 'manual_class_calculations/manual_classes', locals: { manual_class_calculations: @manual_class_calculations} %>
+  <%= render partial: 'claim_calculations/claims', locals: { claims: @policy_calculation.claim_calculations } %>
 <% end %>

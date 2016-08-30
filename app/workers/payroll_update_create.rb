@@ -1,5 +1,4 @@
 class PayrollUpdateCreate
-
   @queue = :payroll_update_create
 
   def self.perform(group_rating_id)
@@ -30,8 +29,10 @@ class PayrollUpdateCreate
       end
     end
     @group_rating = GroupRating.find_by(id: group_rating_id)
-    @group_rating.status = "Completed"
+    @group_rating.status = "Payroll Completed"
     @group_rating.save
+
+    Resque.enqueue(ClaimUpdateCreate, group_rating_id)
   end
 
 end

@@ -1,0 +1,31 @@
+<div class="container">
+  <div class="table-responsive">
+    <table class="table">
+      <caption><h3>Claims</h3></caption>
+      <thead>
+        <tr>
+          <th>Claim Number</th>
+          <th>Injury Date</th>
+          <th>Manual Number</th>
+          <th>Unlimited Limited Loss</th>
+          <th>Modified Losses Group Reduced</th>
+          <th>Modified Losses Individual Reduced</th>
+        </tr>
+
+      </thead>
+      <tbody>
+        <% claims.each do |claim| %>
+        <tr>
+          <!-- <td><%= link_to "#{claim.claim_number}", claim_calculation_path(claim.id) %></td> -->
+          <td><%= claim.claim_number %></td>
+          <td><%= claim.claim_injury_date %></td>
+          <td><%= claim.claim_manual_number %></td>
+          <td><%= number_to_currency(claim.claim_unlimited_limited_loss) %></td>
+          <td><%= number_to_currency(claim.claim_modified_losses_group_reduced) %></td>
+          <td><%= number_to_currency(claim.claim_modified_losses_individual_reduced) %></td>
+        </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
