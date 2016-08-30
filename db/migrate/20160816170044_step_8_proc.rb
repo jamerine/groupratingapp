@@ -63,7 +63,7 @@ class Step8Proc < ActiveRecord::Migration
           run_date as created_at,
           run_date as updated_at
         FROM public.process_payroll_all_transactions_breakdown_by_manual_classes a
-        WHERE (a.manual_class_effective_date BETWEEN current_payroll_period_lower_date and experience_period_upper_date) and a.representative_number = process_representative
+        WHERE (a.manual_class_effective_date > current_payroll_period_lower_date) and a.representative_number = process_representative
         GROUP BY a.representative_number, a.policy_number, a.manual_number
       );
 
@@ -293,7 +293,7 @@ class Step8Proc < ActiveRecord::Migration
       FROM
       	(SELECT
       		a.policy_number,
-      		(SELECT (CASE WHEN (a.policy_group_ratio = '0') AND (a.policy_status in ('ACTIV', 'REINS', 'LAPSE')) THEN '-.53'
+      		(SELECT (CASE WHEN (a.policy_group_ratio = '0') THEN '-.53'
       					ELSE min(market_rate)
       					END)  as group_rating_tier
       				 FROM public.bwc_codes_industry_group_savings_ratio_criteria

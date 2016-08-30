@@ -14,7 +14,6 @@ class GroupRatingProcess
 
     Resque.enqueue(PolicyUpdateCreate, group_rating_id)
 
-
   end
 
 end
