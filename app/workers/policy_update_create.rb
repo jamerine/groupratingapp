@@ -68,7 +68,9 @@ class PolicyUpdateCreate
     @group_rating = GroupRating.find_by(id: group_rating_id)
     @group_rating.status = "Policy Updates Complete"
     @group_rating.save
-        
+
+    Resque.enqueue(ManualClassUpdateCreate, group_rating_id)
+
   end
 
 end

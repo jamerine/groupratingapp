@@ -11,6 +11,7 @@
           <th>Representative Number</th>
           <th>Group Rating Step</th>
           <th>Run Time</th>
+          <th>Status Updated</th>
           <th>View</th>
         </tr>
       </thead>
@@ -21,6 +22,7 @@
           <td><%= group_rating.process_representative %> </td>
           <td><%= group_rating.status %> </td>
           <td><%= group_rating.created_at.in_time_zone("America/New_York").strftime("%m/%d/%y @ %I:%M %p") %> </td>
+          <td><%= group_rating.updated_at.in_time_zone("America/New_York").strftime("%m/%d/%y @ %I:%M %p") %> </td>
           <td><%= link_to 'View Group Rating Info', group_rating_path(group_rating.id) %></td>
         </tr>
         <% end %>

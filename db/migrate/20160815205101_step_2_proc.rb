@@ -46,7 +46,7 @@ class Step2Proc < ActiveRecord::Migration
         run_date as created_at,
         run_date as updated_at
       	FROM public.sc220_rec2_employer_manual_level_payrolls
-        WHERE manual_effective_date is not null and representative_number = process_representative and manual_effective_date > experience_period_lower_date and manual_effective_date < experience_period_upper_date
+        WHERE manual_effective_date is not null and representative_number = process_representative and manual_effective_date >= experience_period_lower_date and manual_effective_date <= experience_period_upper_date
         )
         Union ALL
         (SELECT representative_number,
@@ -63,7 +63,7 @@ class Step2Proc < ActiveRecord::Migration
           run_date as created_at,
           run_date as updated_at
         	FROM public.sc220_rec2_employer_manual_level_payrolls
-          WHERE n2nd_manual_effective_date is not null and representative_number = process_representative and n2nd_manual_effective_date > experience_period_lower_date and manual_effective_date < experience_period_upper_date
+          WHERE n2nd_manual_effective_date is not null and representative_number = process_representative and n2nd_manual_effective_date >= experience_period_lower_date and manual_effective_date <= experience_period_upper_date
         )
         Union ALL
         (SELECT representative_number,
@@ -80,7 +80,7 @@ class Step2Proc < ActiveRecord::Migration
           run_date as created_at,
           run_date as updated_at
       	   FROM public.sc220_rec2_employer_manual_level_payrolls
-           WHERE n3rd_manual_effective_date is not null and representative_number = process_representative and n3rd_manual_effective_date > experience_period_lower_date and manual_effective_date < experience_period_upper_date
+           WHERE n3rd_manual_effective_date is not null and representative_number = process_representative and n3rd_manual_effective_date >= experience_period_lower_date and manual_effective_date <= experience_period_upper_date
         )
         Union All
         (SELECT representative_number,
@@ -97,7 +97,7 @@ class Step2Proc < ActiveRecord::Migration
           run_date as created_at,
           run_date as updated_at
         	FROM public.sc220_rec2_employer_manual_level_payrolls
-          WHERE n4th_manual_effective_date is not null and representative_number = process_representative and n4th_manual_effective_date > experience_period_lower_date and manual_effective_date < experience_period_upper_date
+          WHERE n4th_manual_effective_date is not null and representative_number = process_representative and n4th_manual_effective_date >= experience_period_lower_date and manual_effective_date <= experience_period_upper_date
         )
         Union All
         (SELECT representative_number,
@@ -114,7 +114,7 @@ class Step2Proc < ActiveRecord::Migration
         run_date as created_at,
         run_date as updated_at
       	FROM public.sc220_rec2_employer_manual_level_payrolls
-        WHERE n5th_manual_effective_date is not null and representative_number = process_representative and n5th_manual_effective_date > experience_period_lower_date and manual_effective_date < experience_period_upper_date
+        WHERE n5th_manual_effective_date is not null and representative_number = process_representative and n5th_manual_effective_date >= experience_period_lower_date and manual_effective_date <= experience_period_upper_date
         )
         Union All
         (SELECT representative_number,
@@ -131,7 +131,7 @@ class Step2Proc < ActiveRecord::Migration
           run_date as created_at,
           run_date as updated_at
       	FROM public.sc220_rec2_employer_manual_level_payrolls
-        WHERE n6th_manual_effective_date is not null and representative_number = process_representative and n6th_manual_effective_date > experience_period_lower_date and manual_effective_date < experience_period_upper_date
+        WHERE n6th_manual_effective_date is not null and representative_number = process_representative and n6th_manual_effective_date >= experience_period_lower_date and manual_effective_date <= experience_period_upper_date
         )
         Union All
         (SELECT representative_number,
@@ -148,7 +148,7 @@ class Step2Proc < ActiveRecord::Migration
           run_date as created_at,
           run_date as updated_at
       	FROM public.sc220_rec2_employer_manual_level_payrolls
-        WHERE n7th_manual_effective_date is not null and representative_number = process_representative and n7th_manual_effective_date > experience_period_lower_date and manual_effective_date < experience_period_upper_date
+        WHERE n7th_manual_effective_date is not null and representative_number = process_representative and n7th_manual_effective_date >= experience_period_lower_date and manual_effective_date <= experience_period_upper_date
         )
         Union All
         (SELECT representative_number,
@@ -165,7 +165,7 @@ class Step2Proc < ActiveRecord::Migration
           run_date as created_at,
           run_date as updated_at
       	FROM public.sc220_rec2_employer_manual_level_payrolls
-        WHERE n8th_manual_effective_date is not null and representative_number = process_representative and n8th_manual_effective_date > experience_period_lower_date and manual_effective_date < experience_period_upper_date
+        WHERE n8th_manual_effective_date is not null and representative_number = process_representative and n8th_manual_effective_date >= experience_period_lower_date and manual_effective_date <= experience_period_upper_date
         )
         Union All
         (SELECT representative_number,
@@ -182,7 +182,7 @@ class Step2Proc < ActiveRecord::Migration
           run_date as created_at,
           run_date as updated_at
       	FROM public.sc220_rec2_employer_manual_level_payrolls
-        WHERE n9th_manual_effective_date is not null and representative_number = process_representative and n9th_manual_effective_date > experience_period_lower_date and manual_effective_date < experience_period_upper_date
+        WHERE n9th_manual_effective_date is not null and representative_number = process_representative and n9th_manual_effective_date >= experience_period_lower_date and manual_effective_date <= experience_period_upper_date
         )
         Union All
         (SELECT representative_number,
@@ -199,7 +199,7 @@ class Step2Proc < ActiveRecord::Migration
           run_date as created_at,
           run_date as updated_at
       	FROM public.sc220_rec2_employer_manual_level_payrolls
-        WHERE n10th_manual_effective_date is not null and representative_number = process_representative and n10th_manual_effective_date > experience_period_lower_date and manual_effective_date < experience_period_upper_date
+        WHERE n10th_manual_effective_date is not null and representative_number = process_representative and n10th_manual_effective_date >= experience_period_lower_date and manual_effective_date <= experience_period_upper_date
         )
         Union All
         (SELECT representative_number,
@@ -216,7 +216,7 @@ class Step2Proc < ActiveRecord::Migration
           run_date as created_at,
           run_date as updated_at
       	FROM public.sc220_rec2_employer_manual_level_payrolls
-        WHERE n11th_manual_effective_date is not null and representative_number = process_representative and n11th_manual_effective_date > experience_period_lower_date and manual_effective_date < experience_period_upper_date
+        WHERE n11th_manual_effective_date is not null and representative_number = process_representative and n11th_manual_effective_date >= experience_period_lower_date and manual_effective_date <= experience_period_upper_date
         )
         Union All
         (SELECT representative_number,
@@ -233,7 +233,7 @@ class Step2Proc < ActiveRecord::Migration
           run_date as created_at,
           run_date as updated_at
         	FROM public.sc220_rec2_employer_manual_level_payrolls
-          WHERE n12th_manual_effective_date is not null and representative_number = process_representative and n12th_manual_effective_date > experience_period_lower_date and manual_effective_date < experience_period_upper_date
+          WHERE n12th_manual_effective_date is not null and representative_number = process_representative and n12th_manual_effective_date >= experience_period_lower_date and manual_effective_date <= experience_period_upper_date
         )
         ORDER BY
           policy_number ASC,

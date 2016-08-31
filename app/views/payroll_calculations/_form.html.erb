@@ -1,5 +1,5 @@
-
 <div class="container">
+  <%= form_for payroll_calculation do |f| %>
   <div class="table-responsive">
     <table class="table">
       <thead>
@@ -12,34 +12,40 @@
         </tr>
       </thead>
       <tbody>
-        <%= form_for payroll_calculation do |f| %>
-
-        <%= f.hidden_field :manual_class_calculation_id, value: "#{manual_class_calculation.id}" %>
-        <%= f.hidden_field :manual_number, value: "#{manual_class_calculation.manual_number}" %>
-        <%= f.hidden_field :policy_number, value: "#{manual_class_calculation.policy_number}" %>
-        <%= f.hidden_field :representative_number, value: "#{manual_class_calculation.representative_number}" %>
-
         <tr>
-          <td> <div class="form-group" >
-
-            <%= f.date_field :manual_class_effective_date %>
-          </div></td>
-          <td><div class="form-group" >
-
-                      <%= f.number_field :manual_class_payroll %>
-                    </div></td>
-          <td><div class="form-group" >
-
-                      <%= f.text_field :payroll_origin, value: "payroll_adjustment" %>
-                    </div></td>
-          <td><div class="form-group" >
-
-                      <%= f.text_field :data_source, value: "user_adjustment" %>
-                    </div></td>
-            <td><%= f.submit 'Adjust Payroll', class: 'btn btn-info' %></td>
+          <div class="form-group" >
+            <%= f.hidden_field :manual_class_calculation_id, value: "#{manual_class_calculation.id}" %>
+            <%= f.hidden_field :manual_number, value: "#{manual_class_calculation.manual_number}" %>
+            <%= f.hidden_field :policy_number, value: "#{manual_class_calculation.policy_number}" %>
+            <%= f.hidden_field :representative_number, value: "#{manual_class_calculation.representative_number}" %>
+          </div>
+          <td>
+            <div class="form-group" >
+              <%= f.date_field :manual_class_effective_date, class: 'form-control' %>
+            </div>
+          </td>
+          <td>
+            <div class="form-group" >
+              <label class="sr-only" for="exampleInputAmount">Amount (in dollars)</label>
+              <%= f.number_field :manual_class_payroll, class: 'form-control' %>
+            </div>
+          </td>
+          <td>
+            <div class="form-group" >
+              <%= f.text_field :payroll_origin, value: "payroll_adjustment", class: 'form-control' %>
+              </div>
+          </td>
+          <td>
+            <div class="form-group" >
+              <%= f.text_field :data_source, value: "user_adjustment", class: 'form-control', readonly: true %>
+            </div>
+          </td>
+          <td>
+              <%= f.submit "Adjust Payroll", class: 'btn btn-info' %>
+          </td>
         </tr>
-        <% end %>
       </tbody>
     </table>
   </div>
+  <% end %>
 </div>

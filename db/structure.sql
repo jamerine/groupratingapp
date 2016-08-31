@@ -1895,7 +1895,7 @@ CREATE FUNCTION proc_step_2(process_representative integer, experience_period_lo
         run_date as created_at,
         run_date as updated_at
       	FROM public.sc220_rec2_employer_manual_level_payrolls
-        WHERE manual_effective_date is not null and representative_number = process_representative and manual_effective_date > experience_period_lower_date and manual_effective_date < experience_period_upper_date
+        WHERE manual_effective_date is not null and representative_number = process_representative and manual_effective_date >= experience_period_lower_date and manual_effective_date <= experience_period_upper_date
         )
         Union ALL
         (SELECT representative_number,
@@ -1912,7 +1912,7 @@ CREATE FUNCTION proc_step_2(process_representative integer, experience_period_lo
           run_date as created_at,
           run_date as updated_at
         	FROM public.sc220_rec2_employer_manual_level_payrolls
-          WHERE n2nd_manual_effective_date is not null and representative_number = process_representative and n2nd_manual_effective_date > experience_period_lower_date and manual_effective_date < experience_period_upper_date
+          WHERE n2nd_manual_effective_date is not null and representative_number = process_representative and n2nd_manual_effective_date >= experience_period_lower_date and manual_effective_date <= experience_period_upper_date
         )
         Union ALL
         (SELECT representative_number,
@@ -1929,7 +1929,7 @@ CREATE FUNCTION proc_step_2(process_representative integer, experience_period_lo
           run_date as created_at,
           run_date as updated_at
       	   FROM public.sc220_rec2_employer_manual_level_payrolls
-           WHERE n3rd_manual_effective_date is not null and representative_number = process_representative and n3rd_manual_effective_date > experience_period_lower_date and manual_effective_date < experience_period_upper_date
+           WHERE n3rd_manual_effective_date is not null and representative_number = process_representative and n3rd_manual_effective_date >= experience_period_lower_date and manual_effective_date <= experience_period_upper_date
         )
         Union All
         (SELECT representative_number,
@@ -1946,7 +1946,7 @@ CREATE FUNCTION proc_step_2(process_representative integer, experience_period_lo
           run_date as created_at,
           run_date as updated_at
         	FROM public.sc220_rec2_employer_manual_level_payrolls
-          WHERE n4th_manual_effective_date is not null and representative_number = process_representative and n4th_manual_effective_date > experience_period_lower_date and manual_effective_date < experience_period_upper_date
+          WHERE n4th_manual_effective_date is not null and representative_number = process_representative and n4th_manual_effective_date >= experience_period_lower_date and manual_effective_date <= experience_period_upper_date
         )
         Union All
         (SELECT representative_number,
@@ -1963,7 +1963,7 @@ CREATE FUNCTION proc_step_2(process_representative integer, experience_period_lo
         run_date as created_at,
         run_date as updated_at
       	FROM public.sc220_rec2_employer_manual_level_payrolls
-        WHERE n5th_manual_effective_date is not null and representative_number = process_representative and n5th_manual_effective_date > experience_period_lower_date and manual_effective_date < experience_period_upper_date
+        WHERE n5th_manual_effective_date is not null and representative_number = process_representative and n5th_manual_effective_date >= experience_period_lower_date and manual_effective_date <= experience_period_upper_date
         )
         Union All
         (SELECT representative_number,
@@ -1980,7 +1980,7 @@ CREATE FUNCTION proc_step_2(process_representative integer, experience_period_lo
           run_date as created_at,
           run_date as updated_at
       	FROM public.sc220_rec2_employer_manual_level_payrolls
-        WHERE n6th_manual_effective_date is not null and representative_number = process_representative and n6th_manual_effective_date > experience_period_lower_date and manual_effective_date < experience_period_upper_date
+        WHERE n6th_manual_effective_date is not null and representative_number = process_representative and n6th_manual_effective_date >= experience_period_lower_date and manual_effective_date <= experience_period_upper_date
         )
         Union All
         (SELECT representative_number,
@@ -1997,7 +1997,7 @@ CREATE FUNCTION proc_step_2(process_representative integer, experience_period_lo
           run_date as created_at,
           run_date as updated_at
       	FROM public.sc220_rec2_employer_manual_level_payrolls
-        WHERE n7th_manual_effective_date is not null and representative_number = process_representative and n7th_manual_effective_date > experience_period_lower_date and manual_effective_date < experience_period_upper_date
+        WHERE n7th_manual_effective_date is not null and representative_number = process_representative and n7th_manual_effective_date >= experience_period_lower_date and manual_effective_date <= experience_period_upper_date
         )
         Union All
         (SELECT representative_number,
@@ -2014,7 +2014,7 @@ CREATE FUNCTION proc_step_2(process_representative integer, experience_period_lo
           run_date as created_at,
           run_date as updated_at
       	FROM public.sc220_rec2_employer_manual_level_payrolls
-        WHERE n8th_manual_effective_date is not null and representative_number = process_representative and n8th_manual_effective_date > experience_period_lower_date and manual_effective_date < experience_period_upper_date
+        WHERE n8th_manual_effective_date is not null and representative_number = process_representative and n8th_manual_effective_date >= experience_period_lower_date and manual_effective_date <= experience_period_upper_date
         )
         Union All
         (SELECT representative_number,
@@ -2031,7 +2031,7 @@ CREATE FUNCTION proc_step_2(process_representative integer, experience_period_lo
           run_date as created_at,
           run_date as updated_at
       	FROM public.sc220_rec2_employer_manual_level_payrolls
-        WHERE n9th_manual_effective_date is not null and representative_number = process_representative and n9th_manual_effective_date > experience_period_lower_date and manual_effective_date < experience_period_upper_date
+        WHERE n9th_manual_effective_date is not null and representative_number = process_representative and n9th_manual_effective_date >= experience_period_lower_date and manual_effective_date <= experience_period_upper_date
         )
         Union All
         (SELECT representative_number,
@@ -2048,7 +2048,7 @@ CREATE FUNCTION proc_step_2(process_representative integer, experience_period_lo
           run_date as created_at,
           run_date as updated_at
       	FROM public.sc220_rec2_employer_manual_level_payrolls
-        WHERE n10th_manual_effective_date is not null and representative_number = process_representative and n10th_manual_effective_date > experience_period_lower_date and manual_effective_date < experience_period_upper_date
+        WHERE n10th_manual_effective_date is not null and representative_number = process_representative and n10th_manual_effective_date >= experience_period_lower_date and manual_effective_date <= experience_period_upper_date
         )
         Union All
         (SELECT representative_number,
@@ -2065,7 +2065,7 @@ CREATE FUNCTION proc_step_2(process_representative integer, experience_period_lo
           run_date as created_at,
           run_date as updated_at
       	FROM public.sc220_rec2_employer_manual_level_payrolls
-        WHERE n11th_manual_effective_date is not null and representative_number = process_representative and n11th_manual_effective_date > experience_period_lower_date and manual_effective_date < experience_period_upper_date
+        WHERE n11th_manual_effective_date is not null and representative_number = process_representative and n11th_manual_effective_date >= experience_period_lower_date and manual_effective_date <= experience_period_upper_date
         )
         Union All
         (SELECT representative_number,
@@ -2082,7 +2082,7 @@ CREATE FUNCTION proc_step_2(process_representative integer, experience_period_lo
           run_date as created_at,
           run_date as updated_at
         	FROM public.sc220_rec2_employer_manual_level_payrolls
-          WHERE n12th_manual_effective_date is not null and representative_number = process_representative and n12th_manual_effective_date > experience_period_lower_date and manual_effective_date < experience_period_upper_date
+          WHERE n12th_manual_effective_date is not null and representative_number = process_representative and n12th_manual_effective_date >= experience_period_lower_date and manual_effective_date <= experience_period_upper_date
         )
         ORDER BY
           policy_number ASC,
@@ -2808,7 +2808,7 @@ CREATE FUNCTION proc_step_4(process_representative integer, experience_period_lo
           FROM public.final_employer_demographics_informations a
           Inner Join public.process_payroll_all_transactions_breakdown_by_manual_classes b
           ON a.policy_number = b.policy_number
-          WHERE b.manual_class_effective_date > experience_period_lower_date and b.manual_class_effective_date < experience_period_upper_date and a.representative_number = process_representative
+          WHERE b.manual_class_effective_date >= experience_period_lower_date and b.manual_class_effective_date <= experience_period_upper_date and a.representative_number = process_representative
           GROUP BY a.representative_number,
             a.policy_number,
             b.manual_number
@@ -3590,7 +3590,7 @@ CREATE FUNCTION proc_step_8(process_representative integer, experience_period_lo
           run_date as created_at,
           run_date as updated_at
         FROM public.process_payroll_all_transactions_breakdown_by_manual_classes a
-        WHERE (a.manual_class_effective_date > current_payroll_period_lower_date) and a.representative_number = process_representative
+        WHERE (a.manual_class_effective_date >= current_payroll_period_lower_date) and a.representative_number = process_representative
         GROUP BY a.representative_number, a.policy_number, a.manual_number
       );
 
@@ -6407,6 +6407,46 @@ CREATE TABLE schema_migrations (
 
 
 --
+-- Name: users; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE users (
+    id integer NOT NULL,
+    email character varying DEFAULT ''::character varying NOT NULL,
+    encrypted_password character varying DEFAULT ''::character varying NOT NULL,
+    reset_password_token character varying,
+    reset_password_sent_at timestamp without time zone,
+    remember_created_at timestamp without time zone,
+    sign_in_count integer DEFAULT 0 NOT NULL,
+    current_sign_in_at timestamp without time zone,
+    last_sign_in_at timestamp without time zone,
+    current_sign_in_ip inet,
+    last_sign_in_ip inet,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE users_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE users_id_seq OWNED BY users.id;
+
+
+--
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -6768,6 +6808,13 @@ ALTER TABLE ONLY sc230_employer_demographics ALTER COLUMN id SET DEFAULT nextval
 --
 
 ALTER TABLE ONLY sc230s ALTER COLUMN id SET DEFAULT nextval('sc230s_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY users ALTER COLUMN id SET DEFAULT nextval('users_id_seq'::regclass);
 
 
 --
@@ -7187,6 +7234,14 @@ ALTER TABLE ONLY sc230s
 
 
 --
+-- Name: users_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY users
+    ADD CONSTRAINT users_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: index_bwc_codes_policy_effective_dates_on_policy_number; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -7303,6 +7358,20 @@ CREATE INDEX index_process_policy_coverage_status_histories_on_policy_number ON 
 --
 
 CREATE INDEX index_process_policy_experience_period_peos_on_policy_number ON process_policy_experience_period_peos USING btree (policy_number);
+
+
+--
+-- Name: index_users_on_email; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_users_on_email ON users USING btree (email);
+
+
+--
+-- Name: index_users_on_reset_password_token; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_users_on_reset_password_token ON users USING btree (reset_password_token);
 
 
 --
@@ -7479,4 +7548,6 @@ INSERT INTO schema_migrations (version) VALUES ('20160822105403');
 INSERT INTO schema_migrations (version) VALUES ('20160823184229');
 
 INSERT INTO schema_migrations (version) VALUES ('20160829130503');
+
+INSERT INTO schema_migrations (version) VALUES ('20160830140433');
 
