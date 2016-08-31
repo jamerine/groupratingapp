@@ -41,7 +41,7 @@ class ManualClassUpdateCreate
     @group_rating.save
 
     Resque.enqueue(PayrollUpdateCreate, group_rating_id)
-    group_rating_id
+
 
 
   end

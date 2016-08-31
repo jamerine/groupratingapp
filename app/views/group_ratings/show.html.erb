@@ -2,10 +2,11 @@
   <div class="container">
 
     <h1 class="text-center">Group Rating id: <%= @group_rating.id %></h1>
-    <h3 class="text-center">Group Rating Process Rep:<%= @group_rating.process_representative %></h3>
+    <h3 class="text-center">Group Rating Process Rep: <%= @group_rating.process_representative %></h3>
     <h3 class="text-center">Group Rating Experience Period Lower Date: <%= @group_rating.experience_period_lower_date %></h3>
     <h3 class="text-center">Group Rating Experience Period Upper Date: <%= @group_rating.experience_period_upper_date %></h3>
     <h3 class="text-center">Group Rating Current Payroll Period Lower Date: <%= @group_rating.current_payroll_period_lower_date %></h3>
+    <h3 class="text-center">Status: <%= @group_rating.status %></h3>
     <%= link_to "Delete Group Rating", @group_rating, method: :delete %>
   </div>
 <% end %>

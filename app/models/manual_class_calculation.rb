@@ -16,7 +16,7 @@ class ManualClassCalculation < ActiveRecord::Base
   def recalculate_experience
     @group_rating = GroupRating.find_by(process_representative: self.representative_number)
 
-    four_year_sum = self.payroll_calculations.where("manual_class_effective_date >= :experience_period_lower_date and manual_class_effective_date <= :experience_period_upper_date",  experience_period_lower_date: @group_rating.experience_period_lower_date, experience_period_upper_date: @group_rating.experience_period_upper_date).sum(:manual_class_payroll)
+    four_year_sum = self.payroll_calculations.where("manual_class_effective_date BETWEEN :experience_period_lower_date and :experience_period_upper_date",  experience_period_lower_date: @group_rating.experience_period_lower_date, experience_period_upper_date: @group_rating.experience_period_upper_date).sum(:manual_class_payroll)
 
     current_payroll = self.payroll_calculations.where("manual_class_effective_date >= :current_payroll_period_lower_date", current_payroll_period_lower_date: @group_rating.current_payroll_period_lower_date).sum(:manual_class_payroll)
 
@@ -41,15 +41,16 @@ class ManualClassCalculation < ActiveRecord::Base
 
     @credibility_row = BwcCodesCredibilityMaxLoss.where("expected_losses >= :expected_losses", expected_losses: @policy_calculation.policy_total_expected_losses).min
 
-    if @credibility_row.credibility_group == 0
-      credibility_group
-    elsif @credibility_row.nil?
-      credibility_group = 23
+    if @policy_calculation.policy_total_expected_losses <= 2000
+      @credibility_row.credibility_group = 0
+      @credibility_row.expected_losses = 0
+      @credibility_row.credibility_percent = 0
+      @credibility_row.group_maximum_value = 0
+    elsif @policy_calculation.policy_total_expected_losses >= 1000000
+      @credibility_row = BwcCodesCredibilityMaxLoss.find_by(expected_losses: 1000000)
     else
-      credibility_group = @credibility_row.credibility_group - 1
+      @credibility_row = BwcCodesCredibilityMaxLoss.find_by(credibility_group: (@credibility_row.credibility_group - 1))
     end
-
-    @credibility_row = BwcCodesCredibilityMaxLoss.find_by(credibility_group: credibility_group)
 
     @limited_loss_rate = BwcCodesLimitedLossRatio.find_by(industry_group: self.manual_class_industry_group, credibility_group: @policy_calculation.policy_credibility_group)
 
@@ -60,7 +61,9 @@ class ManualClassCalculation < ActiveRecord::Base
 
     policy_limited_losses = @policy_calculation.manual_class_calculations.sum(:manual_class_limited_losses)
 
-    @policy_calculation.update_attributes(policy_maximum_claim_value: @credibility_row.group_maximum_value, policy_credibility_percent: @credibility_row.credibility_percent, policy_credibility_group: @credibility_row.credibility_group, policy_total_limited_losses: policy_limited_losses)
+    @policy_calculation.update_attributes(policy_maximum_claim_value: @credibility_row.group_maximum_value)
+
+    @policy_calculation.update_attributes(policy_credibility_percent: @credibility_row.credibility_percent, policy_credibility_group: @credibility_row.credibility_group, policy_total_limited_losses: policy_limited_losses)
 
     @claims = @policy_calculation.claim_calculations.where("claim_injury_date >= :experience_period_lower_date and claim_injury_date <= :experience_period_upper_date",  experience_period_lower_date: @group_rating.experience_period_lower_date, experience_period_upper_date: @group_rating.experience_period_upper_date)
 
@@ -138,15 +141,22 @@ class ManualClassCalculation < ActiveRecord::Base
 
       @policy_calculation.update_attribute(:policy_total_standard_premium, policy_total_standard_premium)
 
+      @collection = @policy_calculation.manual_class_calculations.select(:manual_class_industry_group).distinct
+
+      @collection_hash = {}
+      @collection.each do |c|
+        @collection_hash[c.manual_class_industry_group] = @policy_calculation.manual_class_calculations.where(manual_class_industry_group: c.manual_class_industry_group).sum(:manual_class_standard_premium)
+      end
+
     @policy_calculation.manual_class_calculations.each do |manual_class_calculation|
 
       manual_class_industry_group_premium_percentage =
         if @policy_calculation.policy_total_standard_premium == 0 || @policy_calculation.policy_total_standard_premium.nil?
           0
         else
-          manual_class_industry_group_premium_total = @policy_calculation.manual_class_calculations.where(manual_class_industry_group: manual_class_calculation.manual_class_industry_group).sum(:manual_class_standard_premium)
+          manual_class_industry_group_premium_total = @collection_hash[manual_class_calculation.manual_class_industry_group]
 
-          (manual_class_calculation.manual_class_industry_group_premium_total / @policy_calculation.policy_total_standard_premium).round(4)
+          (manual_class_industry_group_premium_total / @policy_calculation.policy_total_standard_premium).round(4)
         end
 
       manual_class_calculation.update_attribute(:manual_class_industry_group_premium_percentage, manual_class_industry_group_premium_percentage )
@@ -168,11 +178,11 @@ class ManualClassCalculation < ActiveRecord::Base
     @policy_calculation.manual_class_calculations.each do |manual_class_calculation|
 
       if @policy_calculation.group_rating_tier.nil?
-        manual_class_group_total_rate = nil
-        manual_class_estimated_group_premium = nil
+        manual_class_calculation.manual_class_group_total_rate = 0
+        manual_class_group_total_ratemanual_class_estimated_group_premium = 0
       else
         manual_class_group_total_rate = (1 + @policy_calculation.group_rating_tier) * manual_class_calculation.manual_class_base_rate * (1 + BwcCodesConstantValue.find_by(name: 'administrative_rate', completed_date: nil).value )
-              manual_class_estimated_group_premium = manual_class_calculation.manual_class_current_estimated_payroll * manual_class_calculation.manual_class_group_total_rate
+        manual_class_estimated_group_premium = manual_class_calculation.manual_class_current_estimated_payroll * manual_class_group_total_rate
       end
 
 
