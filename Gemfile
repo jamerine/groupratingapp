@@ -35,7 +35,7 @@ gem 'activerecord-import'
 
 gem 'bootstrap-sass'
 
-gem 'resque', :require => "resque/server"
+gem 'resque', "~> 1.22.0", :require => "resque/server"
 
 gem 'redis-rails'
 # Use ActiveModel has_secure_password
