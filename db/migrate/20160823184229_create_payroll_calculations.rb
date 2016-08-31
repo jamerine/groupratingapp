@@ -2,7 +2,7 @@ class CreatePayrollCalculations < ActiveRecord::Migration
   def change
     create_table :payroll_calculations do |t|
       t.integer :representative_number
-      t.references :representative, index: true, foreign_key: true
+
       t.integer :policy_number
       t.integer :manual_number
       t.references :manual_class_calculation, index: true, foreign_key: true

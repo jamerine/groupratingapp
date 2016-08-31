@@ -2,7 +2,7 @@ class CreateGroupRatings < ActiveRecord::Migration
   def change
     create_table :group_ratings do |t|
       t.integer :process_representative
-      t.references :representative, index: true, foreign_key: true
+
       t.text :status
       t.date :experience_period_lower_date
       t.date :experience_period_upper_date
