@@ -1,7 +1,9 @@
-class GroupRatingStep
-  @queue = :group_rating_step
+  class GroupRatingStep6
+    include Sidekiq::Worker
 
-  def self.perform(step, process_representative, experience_period_lower_date, experience_period_upper_date, current_payroll_period_lower_date, group_rating_id)
+    sidekiq_options queue: :group_rating_step_6
+
+  def perform(step, process_representative, experience_period_lower_date, experience_period_upper_date, current_payroll_period_lower_date, group_rating_id)
 
     result = ActiveRecord::Base.connection.execute("SELECT public.proc_step_#{step}(#{process_representative}, '#{experience_period_lower_date }', '#{experience_period_upper_date }', '#{current_payroll_period_lower_date }')")
 

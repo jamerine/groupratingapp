@@ -1,7 +1,7 @@
 class CreateProcessMrempProc < ActiveRecord::Migration
   def up
     connection.execute(%q{
-      CREATE OR REPLACE FUNCTION public.proc_process_flat_mremp()
+      CREATE OR REPLACE FUNCTION public.proc_process_flat_mremps()
         RETURNS void AS
       $BODY$
 
