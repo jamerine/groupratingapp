@@ -2,6 +2,10 @@ require 'resque/server'
 
 Rails.application.routes.draw do
 
+  devise_for :users, controllers: {
+        sessions: 'users/sessions'
+      }
+
   mount Resque::Server.new, at: "/resque"
 
   resources :imports do
@@ -15,7 +19,7 @@ Rails.application.routes.draw do
   resources :group_ratings
 
   resources :payroll_calculations
-  
+
   resources :claim_calculations
 
   resources :final_policy_group_rating_and_premium_projections

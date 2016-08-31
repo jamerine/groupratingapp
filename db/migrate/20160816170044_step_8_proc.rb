@@ -63,7 +63,7 @@ class Step8Proc < ActiveRecord::Migration
           run_date as created_at,
           run_date as updated_at
         FROM public.process_payroll_all_transactions_breakdown_by_manual_classes a
-        WHERE (a.manual_class_effective_date > current_payroll_period_lower_date) and a.representative_number = process_representative
+        WHERE (a.manual_class_effective_date >= current_payroll_period_lower_date) and a.representative_number = process_representative
         GROUP BY a.representative_number, a.policy_number, a.manual_number
       );
 

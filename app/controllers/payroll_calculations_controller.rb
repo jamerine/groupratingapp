@@ -18,7 +18,7 @@ class PayrollCalculationsController < ApplicationController
       end
       redirect_to manual_class_calculation_path(@payroll_calculation.manual_class_calculation_id), notice: "Payroll has been adjusted"
     else
-      redirect_to manual_class_calculation_path(@payroll_calculation.manual_class_calculation_id), notice: "Payroll adjustment failed"
+      redirect_to manual_class_calculation_path(@payroll_calculation.manual_class_calculation_id), alert: "Payroll adjustment failed"
     end
   end
 
