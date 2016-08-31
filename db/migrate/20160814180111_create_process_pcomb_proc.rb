@@ -1,7 +1,7 @@
 class CreateProcessPcombProc < ActiveRecord::Migration
   def up
     connection.execute(%q{
-      CREATE OR REPLACE FUNCTION public.proc_process_flat_pcomb()
+      CREATE OR REPLACE FUNCTION public.proc_process_flat_pcombs()
         RETURNS void AS
       $BODY$
 

@@ -1,7 +1,9 @@
 class ParseFile
-  @queue = :parse_file
+  include Sidekiq::Worker
+  sidekiq_options :queue => :parse_file
 
-  def self.perform(table_name, import_id)
+
+  def perform(table_name, import_id)
     result = ActiveRecord::Base.connection.execute("SELECT public.proc_process_flat_" + table_name + "()")
     result.clear
     @import = Import.find_by(id: import_id)

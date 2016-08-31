@@ -1,0 +1,6 @@
+
+
+:queues:
+  - default
+  - import_file
+  - parse_file

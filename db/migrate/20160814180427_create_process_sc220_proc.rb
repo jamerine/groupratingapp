@@ -1,7 +1,7 @@
 class CreateProcessSc220Proc < ActiveRecord::Migration
   def up
     connection.execute(%q{
-      CREATE OR REPLACE FUNCTION public.proc_process_flat_sc220()
+      CREATE OR REPLACE FUNCTION public.proc_process_flat_sc220s()
   RETURNS void AS
 $BODY$
 
