@@ -19,7 +19,7 @@
 
       </thead>
       <tbody>
-        <% manual_class_calculations.each do |manual_class_calculation| %>
+        <% manual_class_calculations.order("manual_number asc").each do |manual_class_calculation| %>
         <tr>
           <td><%= link_to "#{manual_class_calculation.manual_number}", manual_class_calculation_path(manual_class_calculation.id) %></td>
           <td><%= manual_class_calculation.manual_class_industry_group %></td>
