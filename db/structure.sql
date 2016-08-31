@@ -4675,6 +4675,10 @@ CREATE TABLE group_ratings (
     experience_period_lower_date date,
     experience_period_upper_date date,
     current_payroll_period_lower_date date,
+    total_policies_updated integer,
+    total_manual_classes_updated integer,
+    total_payrolls_updated integer,
+    total_claims_updated integer,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
 );
