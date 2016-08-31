@@ -5806,6 +5806,38 @@ ALTER SEQUENCE process_policy_experience_period_peos_id_seq OWNED BY process_pol
 
 
 --
+-- Name: representatives; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE representatives (
+    id integer NOT NULL,
+    representative_number integer,
+    name character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: representatives_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE representatives_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: representatives_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE representatives_id_seq OWNED BY representatives.id;
+
+
+--
 -- Name: sc220_rec1_employer_demographics; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -6751,6 +6783,13 @@ ALTER TABLE ONLY process_policy_experience_period_peos ALTER COLUMN id SET DEFAU
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY representatives ALTER COLUMN id SET DEFAULT nextval('representatives_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY sc220_rec1_employer_demographics ALTER COLUMN id SET DEFAULT nextval('sc220_rec1_employer_demographics_id_seq'::regclass);
 
 
@@ -7162,6 +7201,14 @@ ALTER TABLE ONLY process_policy_experience_period_peos
 
 
 --
+-- Name: representatives_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY representatives
+    ADD CONSTRAINT representatives_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: sc220_rec1_employer_demographics_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -7550,4 +7597,6 @@ INSERT INTO schema_migrations (version) VALUES ('20160823184229');
 INSERT INTO schema_migrations (version) VALUES ('20160829130503');
 
 INSERT INTO schema_migrations (version) VALUES ('20160830140433');
+
+INSERT INTO schema_migrations (version) VALUES ('20160831122718');
 

@@ -1,4 +1,5 @@
 class GroupRating < ActiveRecord::Base
+  belongs_to :representive
 
   def self.step_1(process_representative, experience_period_lower_date, experience_period_upper_date, current_payroll_period_lower_date )
 
