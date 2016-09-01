@@ -1,6 +1,27 @@
-
-
+:concurrency: 5
+:pidfile: tmp/pids/sidekiq.pid
+staging:
+  :concurrency: 10
+production:
+  :concurrency: 20
 :queues:
   - default
   - import_file
+  - import_process
   - parse_file
+  - group_rating_step_one
+  - group_rating_step_two
+  - group_rating_step_three
+  - group_rating_step_four
+  - group_rating_step_five
+  - group_rating_step_six
+  - group_rating_step_seven
+  - group_rating_step_eight
+  - policy_update_create
+  - policy_update_create_process
+  - manual_class_update_create
+  - manual_class_update_create_process
+  - payroll_update_create
+  - payroll_update_create_process
+  - claim_update_create
+  - claim_update_create_process

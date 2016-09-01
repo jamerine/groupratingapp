@@ -48,6 +48,8 @@ gem 'devise'
 
 gem 'sidekiq'
 
+gem 'sinatra', :require => false
+
 # Use Unicorn as the app server
 # gem 'unicorn'
 
