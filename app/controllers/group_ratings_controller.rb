@@ -35,9 +35,13 @@ class GroupRatingsController < ApplicationController
     @group_rating = GroupRating.new(group_rating_params)
     @group_rating.status = 'Queuing'
     if @group_rating.save
-      Resque.enqueue(GroupRatingProcess, @group_rating.process_representative, @group_rating.experience_period_lower_date, @group_rating.experience_period_upper_date, @group_rating.current_payroll_period_lower_date, @group_rating.id )
+
+      GroupRatingStepOne.perform_async("1", @group_rating.process_representative, @group_rating.experience_period_lower_date, @group_rating.experience_period_upper_date, @group_rating.current_payroll_period_lower_date, @group_rating.id)
+
+      
 
       redirect_to group_ratings_path, notice: "Step 1, Step 2, Step 3, Step 4, Step 5, Step 6, Step 7, Step 8 have been queued."
+
     end
   end
 

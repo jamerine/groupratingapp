@@ -32,13 +32,15 @@ class ParseController < ApplicationController
 
   def create
     time1 = Time.new
-    DemocDetailRecord.parse_table
-    MrclDetailRecord.parse_table
-    MrempEmployeeExperiencePolicyLevel.parse_table
-    PcombDetailRecord.parse_table
-    PhmgnDetailRecord.parse_table
-    Sc220Rec1EmployerDemographic.parse_table
-    Sc230EmployerDemographic.parse_table
+
+    @import = Import.find(19)
+        ParseFile.perform_async("democ", @import.id)
+        ParseFile.perform_async("mrcl", @import.id)
+        ParseFile.perform_async("mremp", @import.id)
+        ParseFile.perform_async("pcomb", @import.id)
+        ParseFile.perform_async("phmgn", @import.id)
+        ParseFile.perform_async("sc220", @import.id)
+        ParseFile.perform_async("sc230", @import.id)
 
     redirect_to parse_index_path, notice: "The files have been queued to parse.  Please wait.."
     time2 = Time.new

@@ -2,7 +2,6 @@ class CreateImports < ActiveRecord::Migration
   def change
     create_table :imports do |t|
       t.integer :process_representative
-
       t.text :import_status
       t.text :parse_status
       t.integer :democs_count
