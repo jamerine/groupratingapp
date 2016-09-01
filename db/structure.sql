@@ -47,10 +47,10 @@ CREATE FUNCTION cast_to_int(text) RETURNS integer
 
 
 --
--- Name: proc_process_flat_democ(); Type: FUNCTION; Schema: public; Owner: -
+-- Name: proc_process_flat_democs(); Type: FUNCTION; Schema: public; Owner: -
 --
 
-CREATE FUNCTION proc_process_flat_democ() RETURNS void
+CREATE FUNCTION proc_process_flat_democs() RETURNS void
     LANGUAGE plpgsql
     AS $$
 
@@ -268,10 +268,10 @@ CREATE FUNCTION proc_process_flat_mrcls() RETURNS void
 
 
 --
--- Name: proc_process_flat_mremp(); Type: FUNCTION; Schema: public; Owner: -
+-- Name: proc_process_flat_mremps(); Type: FUNCTION; Schema: public; Owner: -
 --
 
-CREATE FUNCTION proc_process_flat_mremp() RETURNS void
+CREATE FUNCTION proc_process_flat_mremps() RETURNS void
     LANGUAGE plpgsql
     AS $$
 
@@ -478,10 +478,10 @@ CREATE FUNCTION proc_process_flat_mremp() RETURNS void
 
 
 --
--- Name: proc_process_flat_pcomb(); Type: FUNCTION; Schema: public; Owner: -
+-- Name: proc_process_flat_pcombs(); Type: FUNCTION; Schema: public; Owner: -
 --
 
-CREATE FUNCTION proc_process_flat_pcomb() RETURNS void
+CREATE FUNCTION proc_process_flat_pcombs() RETURNS void
     LANGUAGE plpgsql
     AS $$
 
@@ -569,10 +569,10 @@ CREATE FUNCTION proc_process_flat_pcomb() RETURNS void
 
 
 --
--- Name: proc_process_flat_phmgn(); Type: FUNCTION; Schema: public; Owner: -
+-- Name: proc_process_flat_phmgns(); Type: FUNCTION; Schema: public; Owner: -
 --
 
-CREATE FUNCTION proc_process_flat_phmgn() RETURNS void
+CREATE FUNCTION proc_process_flat_phmgns() RETURNS void
     LANGUAGE plpgsql
     AS $$
 
@@ -648,10 +648,10 @@ CREATE FUNCTION proc_process_flat_phmgn() RETURNS void
 
 
 --
--- Name: proc_process_flat_sc220(); Type: FUNCTION; Schema: public; Owner: -
+-- Name: proc_process_flat_sc220s(); Type: FUNCTION; Schema: public; Owner: -
 --
 
-CREATE FUNCTION proc_process_flat_sc220() RETURNS void
+CREATE FUNCTION proc_process_flat_sc220s() RETURNS void
     LANGUAGE plpgsql
     AS $$
 
@@ -1360,10 +1360,10 @@ from sc220s where substring(single_rec,11,1) = '4');
 
 
 --
--- Name: proc_process_flat_sc230(); Type: FUNCTION; Schema: public; Owner: -
+-- Name: proc_process_flat_sc230s(); Type: FUNCTION; Schema: public; Owner: -
 --
 
-CREATE FUNCTION proc_process_flat_sc230() RETURNS void
+CREATE FUNCTION proc_process_flat_sc230s() RETURNS void
     LANGUAGE plpgsql
     AS $$
 

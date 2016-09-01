@@ -1,7 +1,9 @@
-class GroupRatingStep
-  @queue = :group_rating_step
+  class GroupRatingStepEight
+    include Sidekiq::Worker
 
-  def self.perform(step, process_representative, experience_period_lower_date, experience_period_upper_date, current_payroll_period_lower_date, group_rating_id)
+    sidekiq_options queue: :group_rating_step_eight
+
+  def perform(step, process_representative, experience_period_lower_date, experience_period_upper_date, current_payroll_period_lower_date, group_rating_id)
 
     result = ActiveRecord::Base.connection.execute("SELECT public.proc_step_#{step}(#{process_representative}, '#{experience_period_lower_date }', '#{experience_period_upper_date }', '#{current_payroll_period_lower_date }')")
 
@@ -9,6 +11,8 @@ class GroupRatingStep
     @group_rating = GroupRating.find_by(id: group_rating_id)
       @group_rating.status = "Step #{step} Completed"
     @group_rating.save
+
+    PolicyUpdateCreateProcess.perform_async(@group_rating.id)
   end
 
 end

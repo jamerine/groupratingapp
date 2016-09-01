@@ -1,10 +1,15 @@
-require 'resque/server'
+require 'sidekiq/web'
+
+
 
 Rails.application.routes.draw do
 
   devise_for :users
 
-  mount Resque::Server.new, at: "/resque"
+  # mount Resque::Server.new, at: "/resque"
+  # ...
+  mount Sidekiq::Web, at: '/sidekiq'
+
 
   resources :imports do
     collection { delete :destroy }

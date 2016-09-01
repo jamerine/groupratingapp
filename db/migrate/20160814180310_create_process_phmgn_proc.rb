@@ -1,7 +1,7 @@
 class CreateProcessPhmgnProc < ActiveRecord::Migration
   def up
     connection.execute(%q{
-      CREATE OR REPLACE FUNCTION public.proc_process_flat_phmgn()
+      CREATE OR REPLACE FUNCTION public.proc_process_flat_phmgns()
         RETURNS void AS
       $BODY$
 
