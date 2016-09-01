@@ -65,15 +65,15 @@ class ImportsController < ApplicationController
         Sc230ClaimMedicalPayment.delete_all
         Sc230ClaimIndemnityAward.delete_all
 
-        ImportFile.perform_async("https://s3.amazonaws.com/grouprating/ARM/DEMOCFILE", "democs", @import.id)
-        ImportFile.perform_async("https://s3.amazonaws.com/grouprating/ARM/MRCLSFILE", "mrcls", @import.id)
-        ImportFile.perform_async("https://s3.amazonaws.com/grouprating/ARM/MREMPFILE", "mremps", @import.id)
-        ImportFile.perform_async("https://s3.amazonaws.com/grouprating/ARM/PCOMBFILE", "pcombs", @import.id)
-        ImportFile.perform_async("https://s3.amazonaws.com/grouprating/ARM/PHMGNFILE", "phmgns", @import.id)
-        ImportFile.perform_async("https://s3.amazonaws.com/grouprating/ARM/SC220FILE", "sc220s", @import.id)
-        ImportFile.perform_async("https://s3.amazonaws.com/grouprating/ARM/SC230FILE", "sc230s", @import.id)
+        # ImportFile.perform_async("https://s3.amazonaws.com/grouprating/ARM/DEMOCFILE", "democs", @import.id)
+        # ImportFile.perform_async("https://s3.amazonaws.com/grouprating/ARM/MRCLSFILE", "mrcls", @import.id)
+        # ImportFile.perform_async("https://s3.amazonaws.com/grouprating/ARM/MREMPFILE", "mremps", @import.id)
+        # ImportFile.perform_async("https://s3.amazonaws.com/grouprating/ARM/PCOMBFILE", "pcombs", @import.id)
+        # ImportFile.perform_async("https://s3.amazonaws.com/grouprating/ARM/PHMGNFILE", "phmgns", @import.id)
+        # ImportFile.perform_async("https://s3.amazonaws.com/grouprating/ARM/SC220FILE", "sc220s", @import.id)
+        # ImportFile.perform_async("https://s3.amazonaws.com/grouprating/ARM/SC230FILE", "sc230s", @import.id)
 
-        # ImportProcess.perform_async(@import.process_representative, @import.id)
+        ImportProcess.perform_async(@import.process_representative, @import.id)
         # Resque.enqueue(ParseProcess, @import.process_representative, @import.id)
 
         redirect_to imports_path, notice: "Files to be imported and parse have been queued."
