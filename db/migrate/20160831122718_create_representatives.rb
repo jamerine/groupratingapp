@@ -2,7 +2,8 @@ class CreateRepresentatives < ActiveRecord::Migration
   def change
     create_table :representatives do |t|
       t.integer :representative_number
-      t.string :name
+      t.string :company_name
+      t.string :abbreviated_name
 
       t.timestamps null: false
     end
