@@ -3,6 +3,8 @@ class PolicyCalculation < ActiveRecord::Base
   has_many :manual_class_calculations, dependent: :destroy
   has_many :claim_calculations, dependent: :destroy
 
+  belongs_to :representative
+
   def self.update_or_create(attributes)
     assign_or_new(attributes).save
   end
@@ -21,7 +23,7 @@ class PolicyCalculation < ActiveRecord::Base
   def recalculate_experience
     @group_rating = GroupRating.find_by(process_representative: self.representative_number)
 
-    
+
   end
 
 

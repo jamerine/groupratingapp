@@ -445,12 +445,22 @@ class Step3Proc < ActiveRecord::Migration
         run_date as updated_at
         FROM public.process_payroll_breakdown_by_manual_classes
         where representative_number = process_representative
-        )
+        );
 
-        UNION ALL
+
 
         -- Payroll combination - Full Transfer -- Positive
-
+        INSERT INTO process_payroll_all_transactions_breakdown_by_manual_classes (
+          representative_number,
+          policy_number,
+          manual_number,
+          manual_class_effective_date,
+          manual_class_payroll,
+          payroll_origin,
+          data_source,
+          created_at,
+          updated_at
+        )
         (SELECT representative_number,
         successor_policy_number as "policy_number",
         manual_number,
@@ -462,12 +472,20 @@ class Step3Proc < ActiveRecord::Migration
         run_date as updated_at
         FROM public.process_policy_combine_full_transfers
         where representative_number = process_representative
-        )
-
-        UNION ALL
+        );
 
         -- Payroll combination - Full Transfer -- Negative
-
+        INSERT INTO process_payroll_all_transactions_breakdown_by_manual_classes (
+          representative_number,
+          policy_number,
+          manual_number,
+          manual_class_effective_date,
+          manual_class_payroll,
+          payroll_origin,
+          data_source,
+          created_at,
+          updated_at
+        )
         (SELECT representative_number,
         predecessor_policy_number as "policy_number",
         manual_number,
@@ -479,11 +497,21 @@ class Step3Proc < ActiveRecord::Migration
         run_date as updated_at
         FROM public.process_policy_combine_full_transfers
         where representative_number = process_representative
-        )
+        );
 
-        UNION ALL
 
         -- Payroll combination - Partial Transfer -- No Lease -- Positive
+        INSERT INTO process_payroll_all_transactions_breakdown_by_manual_classes (
+          representative_number,
+          policy_number,
+          manual_number,
+          manual_class_effective_date,
+          manual_class_payroll,
+          payroll_origin,
+          data_source,
+          created_at,
+          updated_at
+        )
         (SELECT representative_number,
         successor_policy_number as "policy_number",
         ncci_manual_number as "manual_number",
@@ -495,12 +523,19 @@ class Step3Proc < ActiveRecord::Migration
         run_date as updated_at
         FROM public.process_policy_combine_partial_transfer_no_leases
         where representative_number = process_representative
+        );
+
+        INSERT INTO process_payroll_all_transactions_breakdown_by_manual_classes (
+          representative_number,
+          policy_number,
+          manual_number,
+          manual_class_effective_date,
+          manual_class_payroll,
+          payroll_origin,
+          data_source,
+          created_at,
+          updated_at
         )
-
-        UNION ALL
-
-        -- Payroll combination - Partial Transfer -- No Lease -- Negative
-
         (SELECT representative_number,
         predecessor_policy_number as "policy_number",
         ncci_manual_number as "manual_number",
@@ -512,12 +547,21 @@ class Step3Proc < ActiveRecord::Migration
         run_date as updated_at
         FROM public.process_policy_combine_partial_transfer_no_leases
         where representative_number = process_representative
-        )
+        );
 
-        UNION ALL
 
         -- Payroll Combination - Partial to Full Lease -- Positive
-
+        INSERT INTO process_payroll_all_transactions_breakdown_by_manual_classes (
+          representative_number,
+          policy_number,
+          manual_number,
+          manual_class_effective_date,
+          manual_class_payroll,
+          payroll_origin,
+          data_source,
+          created_at,
+          updated_at
+        )
         (SELECT representative_number,
           successor_policy_number as "policy_number",
           ncci_manual_number as "manual_number",
@@ -529,12 +573,21 @@ class Step3Proc < ActiveRecord::Migration
           run_date as updated_at
         FROM public.process_policy_combine_partial_to_full_leases
         where representative_number = process_representative
-        )
+        );
 
-        UNION ALL
 
         -- Payroll Combination - Partial to Full Lease -- Negative
-
+        INSERT INTO process_payroll_all_transactions_breakdown_by_manual_classes (
+          representative_number,
+          policy_number,
+          manual_number,
+          manual_class_effective_date,
+          manual_class_payroll,
+          payroll_origin,
+          data_source,
+          created_at,
+          updated_at
+        )
         (SELECT representative_number,
           predecessor_policy_number as "policy_number",
           ncci_manual_number as "manual_number",
@@ -547,12 +600,21 @@ class Step3Proc < ActiveRecord::Migration
         FROM public.process_policy_combine_partial_to_full_leases
         WHERE successor_policy_number not in (SELECT policy_number FROM public.bwc_codes_peo_lists)
         and labor_lease_type != 'LFULL' and representative_number = process_representative
-        )
+        );
 
-        UNION ALL
 
         -- Payroll Combinaton - Lease Termination -- Postive
-
+        INSERT INTO process_payroll_all_transactions_breakdown_by_manual_classes (
+          representative_number,
+          policy_number,
+          manual_number,
+          manual_class_effective_date,
+          manual_class_payroll,
+          payroll_origin,
+          data_source,
+          created_at,
+          updated_at
+        )
         (SELECT representative_number,
           successor_policy_number as "policy_number",
           ncci_manual_number as "manual_number",
@@ -565,13 +627,23 @@ class Step3Proc < ActiveRecord::Migration
         FROM public.process_policy_combination_lease_terminations
         WHERE predecessor_policy_number not in (SELECT policy_number FROM public.bwc_codes_peo_lists)
         and labor_lease_type != 'LFULL' and representative_number = process_representative
-        )
+        );
 
 
-        Union ALL
+
 
         -- Payroll Combinaton - Lease Termination -- Negative
-
+        INSERT INTO process_payroll_all_transactions_breakdown_by_manual_classes (
+          representative_number,
+          policy_number,
+          manual_number,
+          manual_class_effective_date,
+          manual_class_payroll,
+          payroll_origin,
+          data_source,
+          created_at,
+          updated_at
+        )
         (SELECT representative_number,
         predecessor_policy_number as "policy_number",
         ncci_manual_number as "manual_number",
@@ -659,12 +731,20 @@ class Step3Proc < ActiveRecord::Migration
             run_date as updated_at
         FROM public.process_manual_reclass_tables
         where representative_number = process_representative
-        )
-
-        UNION ALL
+        );
 
         -- payroll added to new payroll manual class
-
+        INSERT INTO process_payroll_all_transactions_breakdown_by_manual_classes (
+          representative_number,
+          policy_number,
+          manual_number,
+          manual_class_effective_date,
+          manual_class_payroll,
+          payroll_origin,
+          data_source,
+          created_at,
+          updated_at
+        )
         (Select
             representative_number,
             policy_number as "policy_number",

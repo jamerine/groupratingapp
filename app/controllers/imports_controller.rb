@@ -1,12 +1,14 @@
 class ImportsController < ApplicationController
   def show
     @import = Import.find(params[:id])
+    @representative = Representative.find_by(id: @import.representative_id)
   end
 
   def index
     @imports = Import.all
     @import_count = Import.count
     @last_import = Import.last
+    @representatives = Representative.all
   end
   def edit
   end
@@ -35,10 +37,13 @@ class ImportsController < ApplicationController
 
   def new
     @import = Import.new
+    @representatives = Representative.all
   end
 
   def create
     @import = Import.new(import_params)
+    @representative = Representative.find(@import.representative_id)
+    @import.process_representative = @representative.representative_number
     @import.import_status = 'Queuing'
     @import.parse_status = 'Queuing'
       # Flat files
@@ -73,7 +78,7 @@ class ImportsController < ApplicationController
         # ImportFile.perform_async("https://s3.amazonaws.com/grouprating/ARM/SC220FILE", "sc220s", @import.id)
         # ImportFile.perform_async("https://s3.amazonaws.com/grouprating/ARM/SC230FILE", "sc230s", @import.id)
 
-        ImportProcess.perform_async(@import.process_representative, @import.id)
+        ImportProcess.perform_async(@import.process_representative, @import.id, @representative.abbreviated_name)
         # Resque.enqueue(ParseProcess, @import.process_representative, @import.id)
 
         redirect_to imports_path, notice: "Files to be imported and parse have been queued."
@@ -106,6 +111,6 @@ class ImportsController < ApplicationController
   private
 
   def import_params
-    params.require(:import).permit(:process_representative, :import_status, :parse_status)
+    params.require(:import).permit(:process_representative, :import_status, :parse_status, :representative_id)
   end
 end

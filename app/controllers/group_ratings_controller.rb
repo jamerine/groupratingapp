@@ -2,14 +2,17 @@ class GroupRatingsController < ApplicationController
 
   def index
     @group_ratings = GroupRating.all
+    @representatives = Representative.all
   end
 
   def show
     @group_rating = GroupRating.find(params[:id])
+    @representative = Representative.find(@group_rating.representative_id)
   end
 
   def new
     @group_rating = GroupRating.new
+    @representatives = Representative.all
   end
 
   def create
@@ -33,13 +36,11 @@ class GroupRatingsController < ApplicationController
     ProcessPolicyCoverageStatusHistory.where(data_source: 'bwc').delete_all
 
     @group_rating = GroupRating.new(group_rating_params)
+    @representative = Representative.find(@group_rating.representative_id)
+    @group_rating.process_representative = @representative.representative_number
     @group_rating.status = 'Queuing'
     if @group_rating.save
-
       GroupRatingStepOne.perform_async("1", @group_rating.process_representative, @group_rating.experience_period_lower_date, @group_rating.experience_period_upper_date, @group_rating.current_payroll_period_lower_date, @group_rating.id)
-
-      
-
       redirect_to group_ratings_path, notice: "Step 1, Step 2, Step 3, Step 4, Step 5, Step 6, Step 7, Step 8 have been queued."
 
     end
@@ -74,6 +75,6 @@ class GroupRatingsController < ApplicationController
   private
 
   def group_rating_params
-    params.require(:group_rating).permit(:process_representative, :experience_period_lower_date,:experience_period_upper_date, :current_payroll_period_lower_date)
+    params.require(:group_rating).permit(:process_representative, :experience_period_lower_date,:experience_period_upper_date, :current_payroll_period_lower_date, :representative_id)
   end
 end
