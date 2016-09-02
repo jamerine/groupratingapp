@@ -29,7 +29,7 @@
         <% @policy_calculations.each do |policy_calculation| %>
         <tr>
           <th scope="row"> <%= link_to "#{policy_calculation.policy_number}", policy_calculation_path(policy_calculation.id), class: 'btn btn-info' %></th>
-          <td><%= policy_calculation.representative_number %> </td>
+          <td><%= @representatives.find(policy_calculation.representative_id).abbreviated_name %> </td>
           <td><%= policy_calculation.policy_status %> </td>
           <td><%= policy_calculation.group_rating_tier %> </td>
           <td><%= policy_calculation.policy_industry_group %> </td>

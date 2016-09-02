@@ -2,8 +2,6 @@ class Sc230 < ActiveRecord::Base
 
   require 'activerecord-import'
   require 'open-uri'
-
-      
     def self.import_file(url)
       time1 = Time.new
       puts "Start Time: " + time1.inspect

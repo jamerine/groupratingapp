@@ -6,15 +6,15 @@
 
           <div class="form-group" >
             <%= f.label :process_representative %>
-            <%= f.number_field :process_representative, value: '219406' %>
+            <%= f.select(:representative_id, options_from_collection_for_select(@representatives, :id, :abbreviated_name)) %>
           </div>
           <div class="form-group" >
             <%= f.label :experience_period_lower_date %>
-            <%= f.date_field :experience_period_lower_date, value: '2011-06-30' %>
+            <%= f.date_field :experience_period_lower_date, value: '2011-07-01' %>
           </div>
           <div class="form-group" >
             <%= f.label :experience_period_upper_date %>
-            <%= f.date_field :experience_period_upper_date, value: '2015-06-30' %>
+            <%= f.date_field :experience_period_upper_date, value: '2015-07-01' %>
           </div>
           <div class="form-group">
             <%= f.label :current_payroll_period_lower_date %>
