@@ -7,8 +7,7 @@
     <table class="table">
       <thead>
         <tr>
-          <th>ID</th>
-          <th>Representative Number</th>
+          <th>Representative Name</th>
           <th>Group Rating Step</th>
           <th>Run Time</th>
           <th>Status Updated</th>
@@ -16,17 +15,15 @@
         </tr>
       </thead>
       <tbody>
-        <% @group_ratings.each do |group_rating| %>
+        <% @group_ratings.order("id desc").each do |group_rating| %>
         <tr>
-          <th scope="row"> <%= group_rating.id %> </th>
-          <td><%= group_rating.process_representative %> </td>
+          <td><%= Representative.find(group_rating.representative_id).abbreviated_name %> </td>
           <td><%= group_rating.status %> </td>
           <td><%= group_rating.created_at.in_time_zone("America/New_York").strftime("%m/%d/%y @ %I:%M %p") %> </td>
           <td><%= group_rating.updated_at.in_time_zone("America/New_York").strftime("%m/%d/%y @ %I:%M %p") %> </td>
           <td><%= link_to 'View Group Rating Info', group_rating_path(group_rating.id) %></td>
         </tr>
         <% end %>
-
       </tbody>
     </table>
 

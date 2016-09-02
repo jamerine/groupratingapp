@@ -2534,12 +2534,22 @@ CREATE FUNCTION proc_step_3(process_representative integer, experience_period_lo
         run_date as updated_at
         FROM public.process_payroll_breakdown_by_manual_classes
         where representative_number = process_representative
-        )
+        );
 
-        UNION ALL
+
 
         -- Payroll combination - Full Transfer -- Positive
-
+        INSERT INTO process_payroll_all_transactions_breakdown_by_manual_classes (
+          representative_number,
+          policy_number,
+          manual_number,
+          manual_class_effective_date,
+          manual_class_payroll,
+          payroll_origin,
+          data_source,
+          created_at,
+          updated_at
+        )
         (SELECT representative_number,
         successor_policy_number as "policy_number",
         manual_number,
@@ -2551,12 +2561,20 @@ CREATE FUNCTION proc_step_3(process_representative integer, experience_period_lo
         run_date as updated_at
         FROM public.process_policy_combine_full_transfers
         where representative_number = process_representative
-        )
-
-        UNION ALL
+        );
 
         -- Payroll combination - Full Transfer -- Negative
-
+        INSERT INTO process_payroll_all_transactions_breakdown_by_manual_classes (
+          representative_number,
+          policy_number,
+          manual_number,
+          manual_class_effective_date,
+          manual_class_payroll,
+          payroll_origin,
+          data_source,
+          created_at,
+          updated_at
+        )
         (SELECT representative_number,
         predecessor_policy_number as "policy_number",
         manual_number,
@@ -2568,11 +2586,21 @@ CREATE FUNCTION proc_step_3(process_representative integer, experience_period_lo
         run_date as updated_at
         FROM public.process_policy_combine_full_transfers
         where representative_number = process_representative
-        )
+        );
 
-        UNION ALL
 
         -- Payroll combination - Partial Transfer -- No Lease -- Positive
+        INSERT INTO process_payroll_all_transactions_breakdown_by_manual_classes (
+          representative_number,
+          policy_number,
+          manual_number,
+          manual_class_effective_date,
+          manual_class_payroll,
+          payroll_origin,
+          data_source,
+          created_at,
+          updated_at
+        )
         (SELECT representative_number,
         successor_policy_number as "policy_number",
         ncci_manual_number as "manual_number",
@@ -2584,12 +2612,19 @@ CREATE FUNCTION proc_step_3(process_representative integer, experience_period_lo
         run_date as updated_at
         FROM public.process_policy_combine_partial_transfer_no_leases
         where representative_number = process_representative
+        );
+
+        INSERT INTO process_payroll_all_transactions_breakdown_by_manual_classes (
+          representative_number,
+          policy_number,
+          manual_number,
+          manual_class_effective_date,
+          manual_class_payroll,
+          payroll_origin,
+          data_source,
+          created_at,
+          updated_at
         )
-
-        UNION ALL
-
-        -- Payroll combination - Partial Transfer -- No Lease -- Negative
-
         (SELECT representative_number,
         predecessor_policy_number as "policy_number",
         ncci_manual_number as "manual_number",
@@ -2601,12 +2636,21 @@ CREATE FUNCTION proc_step_3(process_representative integer, experience_period_lo
         run_date as updated_at
         FROM public.process_policy_combine_partial_transfer_no_leases
         where representative_number = process_representative
-        )
+        );
 
-        UNION ALL
 
         -- Payroll Combination - Partial to Full Lease -- Positive
-
+        INSERT INTO process_payroll_all_transactions_breakdown_by_manual_classes (
+          representative_number,
+          policy_number,
+          manual_number,
+          manual_class_effective_date,
+          manual_class_payroll,
+          payroll_origin,
+          data_source,
+          created_at,
+          updated_at
+        )
         (SELECT representative_number,
           successor_policy_number as "policy_number",
           ncci_manual_number as "manual_number",
@@ -2618,12 +2662,21 @@ CREATE FUNCTION proc_step_3(process_representative integer, experience_period_lo
           run_date as updated_at
         FROM public.process_policy_combine_partial_to_full_leases
         where representative_number = process_representative
-        )
+        );
 
-        UNION ALL
 
         -- Payroll Combination - Partial to Full Lease -- Negative
-
+        INSERT INTO process_payroll_all_transactions_breakdown_by_manual_classes (
+          representative_number,
+          policy_number,
+          manual_number,
+          manual_class_effective_date,
+          manual_class_payroll,
+          payroll_origin,
+          data_source,
+          created_at,
+          updated_at
+        )
         (SELECT representative_number,
           predecessor_policy_number as "policy_number",
           ncci_manual_number as "manual_number",
@@ -2636,12 +2689,21 @@ CREATE FUNCTION proc_step_3(process_representative integer, experience_period_lo
         FROM public.process_policy_combine_partial_to_full_leases
         WHERE successor_policy_number not in (SELECT policy_number FROM public.bwc_codes_peo_lists)
         and labor_lease_type != 'LFULL' and representative_number = process_representative
-        )
+        );
 
-        UNION ALL
 
         -- Payroll Combinaton - Lease Termination -- Postive
-
+        INSERT INTO process_payroll_all_transactions_breakdown_by_manual_classes (
+          representative_number,
+          policy_number,
+          manual_number,
+          manual_class_effective_date,
+          manual_class_payroll,
+          payroll_origin,
+          data_source,
+          created_at,
+          updated_at
+        )
         (SELECT representative_number,
           successor_policy_number as "policy_number",
           ncci_manual_number as "manual_number",
@@ -2654,13 +2716,23 @@ CREATE FUNCTION proc_step_3(process_representative integer, experience_period_lo
         FROM public.process_policy_combination_lease_terminations
         WHERE predecessor_policy_number not in (SELECT policy_number FROM public.bwc_codes_peo_lists)
         and labor_lease_type != 'LFULL' and representative_number = process_representative
-        )
+        );
 
 
-        Union ALL
+
 
         -- Payroll Combinaton - Lease Termination -- Negative
-
+        INSERT INTO process_payroll_all_transactions_breakdown_by_manual_classes (
+          representative_number,
+          policy_number,
+          manual_number,
+          manual_class_effective_date,
+          manual_class_payroll,
+          payroll_origin,
+          data_source,
+          created_at,
+          updated_at
+        )
         (SELECT representative_number,
         predecessor_policy_number as "policy_number",
         ncci_manual_number as "manual_number",
@@ -2748,12 +2820,20 @@ CREATE FUNCTION proc_step_3(process_representative integer, experience_period_lo
             run_date as updated_at
         FROM public.process_manual_reclass_tables
         where representative_number = process_representative
-        )
-
-        UNION ALL
+        );
 
         -- payroll added to new payroll manual class
-
+        INSERT INTO process_payroll_all_transactions_breakdown_by_manual_classes (
+          representative_number,
+          policy_number,
+          manual_number,
+          manual_class_effective_date,
+          manual_class_payroll,
+          payroll_origin,
+          data_source,
+          created_at,
+          updated_at
+        )
         (Select
             representative_number,
             policy_number as "policy_number",
@@ -4680,7 +4760,8 @@ CREATE TABLE group_ratings (
     total_payrolls_updated integer,
     total_claims_updated integer,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    representative_id integer
 );
 
 
@@ -4734,7 +4815,8 @@ CREATE TABLE imports (
     sc230_claim_medical_payments_count integer,
     sc230_claim_indemnity_awards_count integer,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    representative_id integer
 );
 
 
@@ -5347,7 +5429,8 @@ CREATE TABLE policy_calculations (
     advance_deposit_amount double precision,
     data_source character varying,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    representative_id integer
 );
 
 
@@ -5816,7 +5899,8 @@ ALTER SEQUENCE process_policy_experience_period_peos_id_seq OWNED BY process_pol
 CREATE TABLE representatives (
     id integer NOT NULL,
     representative_number integer,
-    name character varying,
+    company_name character varying,
+    abbreviated_name character varying,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
 );
@@ -7342,6 +7426,20 @@ CREATE INDEX index_final_policy_group_and_premium_proj_on_pol_num ON final_polic
 
 
 --
+-- Name: index_group_ratings_on_representative_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_group_ratings_on_representative_id ON group_ratings USING btree (representative_id);
+
+
+--
+-- Name: index_imports_on_representative_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_imports_on_representative_id ON imports USING btree (representative_id);
+
+
+--
 -- Name: index_man_class_calc_pol_num_and_man_num; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -7388,6 +7486,13 @@ CREATE INDEX index_payroll_calculations_on_manual_class_calculation_id ON payrol
 --
 
 CREATE INDEX index_policy_calculations_on_pol_num ON policy_calculations USING btree (policy_number);
+
+
+--
+-- Name: index_policy_calculations_on_representative_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_policy_calculations_on_representative_id ON policy_calculations USING btree (representative_id);
 
 
 --
@@ -7449,11 +7554,35 @@ ALTER TABLE ONLY payroll_calculations
 
 
 --
+-- Name: fk_rails_1706ec48e7; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY imports
+    ADD CONSTRAINT fk_rails_1706ec48e7 FOREIGN KEY (representative_id) REFERENCES representatives(id);
+
+
+--
+-- Name: fk_rails_35addb0042; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY group_ratings
+    ADD CONSTRAINT fk_rails_35addb0042 FOREIGN KEY (representative_id) REFERENCES representatives(id);
+
+
+--
 -- Name: fk_rails_f48992ad9e; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY claim_calculations
     ADD CONSTRAINT fk_rails_f48992ad9e FOREIGN KEY (policy_calculation_id) REFERENCES policy_calculations(id);
+
+
+--
+-- Name: fk_rails_fd78fc6eb3; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY policy_calculations
+    ADD CONSTRAINT fk_rails_fd78fc6eb3 FOREIGN KEY (representative_id) REFERENCES representatives(id);
 
 
 --
@@ -7603,4 +7732,10 @@ INSERT INTO schema_migrations (version) VALUES ('20160829130503');
 INSERT INTO schema_migrations (version) VALUES ('20160830140433');
 
 INSERT INTO schema_migrations (version) VALUES ('20160831122718');
+
+INSERT INTO schema_migrations (version) VALUES ('20160902120955');
+
+INSERT INTO schema_migrations (version) VALUES ('20160902121250');
+
+INSERT INTO schema_migrations (version) VALUES ('20160902121319');
 

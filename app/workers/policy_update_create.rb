@@ -3,7 +3,7 @@ class PolicyUpdateCreate
 
   sidekiq_options queue: :policy_update_create
 
-  def perform(policy_exp_id, policy_proj_id, policy_demographic_id)
+  def perform(policy_exp_id, policy_proj_id, policy_demographic_id, representative_id)
     @policy_proj = FinalPolicyGroupRatingAndPremiumProjection.find(policy_proj_id)
     @policy_demographic = FinalEmployerDemographicsInformation.find(policy_demographic_id)
     @policy_exp = FinalPolicyExperienceCalculation.find(policy_exp_id)
@@ -62,7 +62,8 @@ class PolicyUpdateCreate
       appealed_balance_amount: @policy_demographic.appealed_balance_amount,
       pending_balance_amount: @policy_demographic.pending_balance_amount,
       advance_deposit_amount: @policy_demographic.advance_deposit_amount,
-      data_source: @policy_exp.data_source)
+      data_source: @policy_exp.data_source,
+      representative_id: representative_id)
   end
 
 end
