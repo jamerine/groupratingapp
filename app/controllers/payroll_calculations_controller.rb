@@ -14,9 +14,10 @@ class PayrollCalculationsController < ApplicationController
     if @payroll_calculation.save
       if @payroll_calculation.data_source != 'bwc'
         @manual_class_calculation = ManualClassCalculation.find_by(id: @payroll_calculation.manual_class_calculation_id)
+        @policy_calculation = PolicyCalculation.find(@manual_class_calculation.policy_calculation_id)
         @manual_class_calculation.recalculate_experience
       end
-      redirect_to manual_class_calculation_path(@payroll_calculation.manual_class_calculation_id), notice: "Payroll has been adjusted"
+      redirect_to policy_calculation_path(@policy_calculation.id), notice: "Payroll has been adjusted"
     else
       redirect_to manual_class_calculation_path(@payroll_calculation.manual_class_calculation_id), alert: "Payroll adjustment failed"
     end
