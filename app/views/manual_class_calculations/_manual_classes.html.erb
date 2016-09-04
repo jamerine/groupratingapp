@@ -7,30 +7,29 @@
           <th>Manual Number</th>
           <th>Industry Group</th>
           <th>Four Year Payroll</th>
-          <th>Exp. Losses</th>
-          <th>Base Rate</th>
-          <th>Limited Losses</th>
           <th>Current Payroll</th>
           <th>IG Premium Ratio</th>
           <th>Group Premium</th>
           <th>Individual Premium</th>
-
+          <th>Effective Date</th>
+          <th>Payroll Amount</th>
         </tr>
 
       </thead>
       <tbody>
         <% manual_class_calculations.order("manual_number asc").each do |manual_class_calculation| %>
+
         <tr>
+          <div class="form-group" >
+          </div>
           <td><%= link_to "#{manual_class_calculation.manual_number}", manual_class_calculation_path(manual_class_calculation.id) %></td>
           <td><%= manual_class_calculation.manual_class_industry_group %></td>
           <td><%= number_to_currency(manual_class_calculation.manual_class_four_year_period_payroll) %></td>
-          <td><%= number_to_currency(manual_class_calculation.manual_class_expected_losses) %></td>
-          <td><%= manual_class_calculation.manual_class_base_rate %></td>
-          <td><%= number_to_currency(manual_class_calculation.manual_class_limited_losses) %></td>
           <td><%= number_to_currency(manual_class_calculation.manual_class_current_estimated_payroll) %></td>
           <td><%= manual_class_calculation.manual_class_industry_group_premium_percentage %></td>
           <td><%= number_to_currency(manual_class_calculation.manual_class_estimated_group_premium) %></td>
           <td><%= number_to_currency(manual_class_calculation.manual_class_estimated_individual_premium) %></td>
+          <%= render partial: 'payroll_calculations/form_2', locals: { payroll_calculation: @new_payroll_calculation, manual_class_calculation: manual_class_calculation} %>
         </tr>
         <% end %>
       </tbody>
