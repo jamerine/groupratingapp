@@ -17,24 +17,6 @@ class GroupRatingsController < ApplicationController
 
   def create
 
-    ExceptionTablePolicyCombinedRequestPayrollInfo.where(data_source: 'bwc').delete_all
-    FinalClaimCostCalculationTable.where(data_source: 'bwc').delete_all
-    FinalEmployerDemographicsInformation.where(data_source: 'bwc').delete_all
-    FinalManualClassFourYearPayrollAndExpLoss.where(data_source: 'bwc').delete_all
-    FinalManualClassGroupRatingAndPremiumProjection.where(data_source: 'bwc').delete_all
-    FinalPolicyExperienceCalculation.where(data_source: 'bwc').delete_all
-    FinalPolicyGroupRatingAndPremiumProjection.where(data_source: 'bwc').delete_all
-    ProcessManualClassFourYearPayrollWithCondition.where(data_source: 'bwc').delete_all
-    ProcessManualClassFourYearPayrollWithoutCondition.where(data_source: 'bwc').delete_all
-    ProcessManualReclassTable.where(data_source: 'bwc').delete_all
-    ProcessPayrollAllTransactionsBreakdownByManualClass.where(data_source: 'bwc').delete_all
-    ProcessPayrollBreakdownByManualClass.where(data_source: 'bwc').delete_all
-    ProcessPolicyCombinationLeaseTermination.where(data_source: 'bwc').delete_all
-    ProcessPolicyCombineFullTransfer.where(data_source: 'bwc').delete_all
-    ProcessPolicyCombinePartialToFullLease.where(data_source: 'bwc').delete_all
-    ProcessPolicyCombinePartialTransferNoLease.where(data_source: 'bwc').delete_all
-    ProcessPolicyCoverageStatusHistory.where(data_source: 'bwc').delete_all
-
     @group_rating = GroupRating.new(group_rating_params)
     @representative = Representative.find(@group_rating.representative_id)
     @group_rating.process_representative = @representative.representative_number
