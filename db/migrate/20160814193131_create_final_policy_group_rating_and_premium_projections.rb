@@ -3,7 +3,7 @@ class CreateFinalPolicyGroupRatingAndPremiumProjections < ActiveRecord::Migratio
     create_table :final_policy_group_rating_and_premium_projections do |t|
       t.integer :representative_number
       t.integer :policy_number
-      t.index :policy_number, name: 'index_final_policy_group_and_premium_proj_on_pol_num'
+      t.index [:policy_number, :representative_number], name: 'index_pol_prem_pol_num_and_rep'
       t.integer :policy_industry_group
       t.string :policy_status
       t.string :group_rating_qualification

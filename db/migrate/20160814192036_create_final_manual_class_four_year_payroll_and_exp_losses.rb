@@ -4,7 +4,7 @@ class CreateFinalManualClassFourYearPayrollAndExpLosses < ActiveRecord::Migratio
       t.integer :representative_number
       t.integer :policy_number
       t.integer :manual_number
-      t.index [:policy_number, :manual_number], name: 'index_man_class_exp_loss_pol_num_and_man_num'
+      t.index [:policy_number, :manual_number, :representative_number], name: 'index_man_pr_pol_num_and_man_num_rep'
       t.float :manual_class_four_year_period_payroll
       t.float :manual_class_expected_loss_rate
       t.float :manual_class_base_rate

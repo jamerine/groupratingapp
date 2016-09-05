@@ -4,7 +4,7 @@ class CreateFinalManualClassGroupRatingAndPremiumProjections < ActiveRecord::Mig
       t.integer :representative_number
       t.integer :policy_number
       t.integer :manual_number
-      t.index [:policy_number, :manual_number], name: 'index_man_class_prem_proj_pol_num_and_man_num'
+      t.index [:policy_number, :manual_number, :representative_number], name: 'index_man_pr_pol_num_and_man_num_rep'
       t.integer :manual_class_industry_group
       t.float :manual_class_industry_group_premium_total
       t.float :manual_class_current_estimated_payroll
