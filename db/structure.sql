@@ -7384,6 +7384,13 @@ CREATE INDEX index_bwc_codes_policy_effective_dates_on_policy_number ON bwc_code
 
 
 --
+-- Name: index_cl_pol_num_and_rep; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_cl_pol_num_and_rep ON final_claim_cost_calculation_tables USING btree (policy_number, representative_number);
+
+
+--
 -- Name: index_claim_calc_on_pol_num_and_claim_num; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -7398,31 +7405,17 @@ CREATE INDEX index_claim_calculations_on_policy_calculation_id ON claim_calculat
 
 
 --
--- Name: index_final_claim_cost_calculation_tables_on_policy_number; Type: INDEX; Schema: public; Owner: -
+-- Name: index_emp_demo_pol_num_and_man_num; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_final_claim_cost_calculation_tables_on_policy_number ON final_claim_cost_calculation_tables USING btree (policy_number);
-
-
---
--- Name: index_final_employer_demographics_informations_on_policy_number; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_final_employer_demographics_informations_on_policy_number ON final_employer_demographics_informations USING btree (policy_number);
+CREATE INDEX index_emp_demo_pol_num_and_man_num ON final_employer_demographics_informations USING btree (policy_number, representative_number);
 
 
 --
--- Name: index_final_policy_experience_calculations_on_policy_number; Type: INDEX; Schema: public; Owner: -
+-- Name: index_fin_man_pr_pol_num_and_man_num_rep; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_final_policy_experience_calculations_on_policy_number ON final_policy_experience_calculations USING btree (policy_number);
-
-
---
--- Name: index_final_policy_group_and_premium_proj_on_pol_num; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_final_policy_group_and_premium_proj_on_pol_num ON final_policy_group_rating_and_premium_projections USING btree (policy_number);
+CREATE INDEX index_fin_man_pr_pol_num_and_man_num_rep ON final_manual_class_group_rating_and_premium_projections USING btree (policy_number, manual_number, representative_number);
 
 
 --
@@ -7447,17 +7440,10 @@ CREATE INDEX index_man_class_calc_pol_num_and_man_num ON manual_class_calculatio
 
 
 --
--- Name: index_man_class_exp_loss_pol_num_and_man_num; Type: INDEX; Schema: public; Owner: -
+-- Name: index_man_pr_pol_num_and_man_num_rep; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_man_class_exp_loss_pol_num_and_man_num ON final_manual_class_four_year_payroll_and_exp_losses USING btree (policy_number, manual_number);
-
-
---
--- Name: index_man_class_prem_proj_pol_num_and_man_num; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_man_class_prem_proj_pol_num_and_man_num ON final_manual_class_group_rating_and_premium_projections USING btree (policy_number, manual_number);
+CREATE INDEX index_man_pr_pol_num_and_man_num_rep ON final_manual_class_four_year_payroll_and_exp_losses USING btree (policy_number, manual_number, representative_number);
 
 
 --
@@ -7482,6 +7468,20 @@ CREATE INDEX index_payroll_calculations_on_manual_class_calculation_id ON payrol
 
 
 --
+-- Name: index_pol_exp_pol_num_and_man_num_rep; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_pol_exp_pol_num_and_man_num_rep ON final_policy_experience_calculations USING btree (policy_number, representative_number);
+
+
+--
+-- Name: index_pol_prem_pol_num_and_rep; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_pol_prem_pol_num_and_rep ON final_policy_group_rating_and_premium_projections USING btree (policy_number, representative_number);
+
+
+--
 -- Name: index_policy_calculations_on_pol_num; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -7496,10 +7496,17 @@ CREATE INDEX index_policy_calculations_on_representative_id ON policy_calculatio
 
 
 --
--- Name: index_process_payroll_by_man_cl_on_pol_num_and_man_num; Type: INDEX; Schema: public; Owner: -
+-- Name: index_pr_pol_num_and_man_num_rep; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_process_payroll_by_man_cl_on_pol_num_and_man_num ON process_payroll_breakdown_by_manual_classes USING btree (policy_number, manual_number);
+CREATE INDEX index_pr_pol_num_and_man_num_rep ON process_payroll_all_transactions_breakdown_by_manual_classes USING btree (policy_number, manual_number, representative_number);
+
+
+--
+-- Name: index_proc_pr_by_man_cl_on_pol_and_man_rep; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_proc_pr_by_man_cl_on_pol_and_man_rep ON process_payroll_breakdown_by_manual_classes USING btree (policy_number, manual_number, representative_number);
 
 
 --
