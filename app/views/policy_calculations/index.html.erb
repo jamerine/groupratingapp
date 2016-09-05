@@ -26,7 +26,7 @@
         </tr>
       </thead>
       <tbody>
-        <% @policy_calculations.each do |policy_calculation| %>
+        <% @policy_calculations.order("policy_number asc").each do |policy_calculation| %>
         <tr>
           <th scope="row"> <%= link_to "#{policy_calculation.policy_number}", policy_calculation_path(policy_calculation.id), class: 'btn btn-info' %></th>
           <td><%= @representatives.find(policy_calculation.representative_id).abbreviated_name %> </td>
