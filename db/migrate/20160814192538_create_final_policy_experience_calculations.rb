@@ -3,7 +3,7 @@ class CreateFinalPolicyExperienceCalculations < ActiveRecord::Migration
     create_table :final_policy_experience_calculations do |t|
       t.integer :representative_number
       t.integer :policy_number
-      t.index :policy_number
+      t.index [:policy_number, :representative_number], name: 'index_pol_exp_pol_num_and_man_num_rep'
       t.string :policy_group_number
       t.string :policy_status
       t.float :policy_total_four_year_payroll
