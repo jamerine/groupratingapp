@@ -1,8 +1,4 @@
-:concurrency: 7
-staging:
-  :concurrency: 10
-production:
-  :concurrency: 20
+
 :queues:
   - default
   - import_file
