@@ -4,7 +4,7 @@ class CreateFinalClaimCostCalculationTables < ActiveRecord::Migration
       t.integer :representative_number
       t.string :policy_type
       t.integer :policy_number
-      t.index :policy_number 
+      t.index [:policy_number, :representative_number], name: 'index_cl_pol_num_and_rep'
       t.string :claim_number
       t.date :claim_injury_date
       t.float :claim_handicap_percent
