@@ -4,8 +4,8 @@
   </div>
 
   <%= form_tag(policy_calculations_path, :method => "get", id: "search-form") do %>
-    <%= text_field_tag :search, params[:search], placeholder: "Search Policy" %>
-    <%= submit_tag "Search", name: nil, class: 'btn btn-primary' %>
+        <%= text_field_tag :search, params[:search], placeholder: "Search Policy" %>
+      <%= submit_tag "Search", name: nil, class: 'btn btn-primary' %>
   <% end %>
   <div>
     <%= will_paginate @policy_calculations %>
