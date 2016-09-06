@@ -5901,6 +5901,8 @@ CREATE TABLE representatives (
     representative_number integer,
     company_name character varying,
     abbreviated_name character varying,
+    group_fees character varying,
+    group_dues character varying,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
 );
