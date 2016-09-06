@@ -18,7 +18,6 @@ class PayrollUpdateCreate
     representative_number: representative_number,
     manual_class_calculation_id: manual_class_calculation_id,
     manual_class_effective_date: manual_class_effective_date,
-    manual_class_payroll: manual_class_payroll,
     payroll_origin: payroll_origin,
     data_source: data_source).update_or_create(
     representative_number: representative_number,
