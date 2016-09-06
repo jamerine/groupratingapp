@@ -4,6 +4,9 @@ class CreateRepresentatives < ActiveRecord::Migration
       t.integer :representative_number
       t.string :company_name
       t.string :abbreviated_name
+      t.string :group_fees
+      t.string :group_dues
+
 
       t.timestamps null: false
     end

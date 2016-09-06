@@ -1,22 +1,29 @@
 <%= content_tag_for :div, @policy_calculation do %>
   <div class="container">
     <%= link_to 'Return to All Policies', policy_calculations_path, class: 'btn btn-default' %>
-    
+
 
     <div class="jumbotron text-center">
       <div class="row">
         <div class="col-md-3">
           <h5>Policy Number:</h5>
           <h3><%= @policy_calculation.policy_number %></h3>
+          <h5>Policy Status:</h5>
+          <h3><%= @policy_calculation.current_policy_status %></h3>
         </div>
 
         <div class="col-md-6">
           <h2><%= @policy_calculation.business_name.titleize %></h2>
           <p><%=  @policy_calculation.address_1.titleize %>, <%=  @policy_calculation.address_2.titleize %><%=  @policy_calculation.city.titleize %>, <%= @policy_calculation.state %> <%= @policy_calculation.zip_code %></p>
+          <p>
+          <%=  @policy_calculation.in_care_name_contact_name %>
+          </p>
         </div>
         <div class="col-md-3">
           <h5>Policy Updated at:</h5>
           <h4><%= @policy_calculation.updated_at.in_time_zone("America/New_York").strftime("%m/%d/%y @ %I:%M %p") %></h4>
+          <h5>Status Effective Date:</h5>
+          <h4><%= @policy_calculation.current_policy_status_effective_date.strftime("%b %d, %Y") %></h4>
         </div>
       </div>
     </div>

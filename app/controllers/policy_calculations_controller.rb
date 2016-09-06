@@ -8,7 +8,6 @@ class PolicyCalculationsController < ApplicationController
     else
       @policy_calculations = PolicyCalculation.all.paginate(page: params[:page], per_page: 100)
     end
-    @representatives = Representative.all
   end
 
   def show
