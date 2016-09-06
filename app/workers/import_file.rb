@@ -63,6 +63,18 @@ class ImportFile
       end
       @import.save
 
+      # unless @import.sc230s_count.nil? || @import.sc230_employer_demographics_count.nil? || @import.sc230_claim_medical_payments_count.nil? || @import.sc230_claim_indemnity_awards_count.nil? || @import.sc220s_count.nil? || @import.sc220_rec1_employer_demographics_count.nil? || @import.sc220_rec2_employer_manual_level_payrolls_count.nil? || @import.sc220_rec3_employer_ar_transactions_count.nil? || @import.democs_count.nil? || @import.democ_detail_records_count.nil? || @import.mrcls_count.nil? || @import.mrcl_detail_records_count.nil? || @import.mremps_count.nil? || @import.mremp_employee_experience_policy_levels_count.nil? || @import.mremp_employee_experience_manual_class_levels_count.nil? || @import.mremp_employee_experience_claim_levels_count.nil? || @import.pcombs_count.nil? || @import.pcomb_detail_records_count.nil? || @import.phmgns_count.nil? || @import.phmgn_detail_records_count.nil?
+      #   puts "Hello Bro"
+      # end
+
+
+
+
+
+
+
+
+
 
       time2 = Time.new
       puts "End Time: " + time2.inspect
