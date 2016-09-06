@@ -4,8 +4,15 @@
   </div>
 
   <%= form_tag(policy_calculations_path, :method => "get", id: "search-form") do %>
-        <%= text_field_tag :search, params[:search], placeholder: "Search Policy" %>
+      <div class="form-inline">
+        <div class="form-group">
+          <%= select_tag(:representative_number, options_from_collection_for_select(@representatives, :representative_number, :abbreviated_name, params[:representative_number]), include_blank: "All Representatives", class: 'dropdown-toggle form-control')%>
+        </div>
+        <div class="form-group">
+          <%= text_field_tag :search, params[:search], placeholder: "Search Policy" %>
+        </div>
       <%= submit_tag "Search", name: nil, class: 'btn btn-primary' %>
+    </div>
   <% end %>
   <div>
     <%= will_paginate @policy_calculations %>
@@ -13,20 +20,17 @@
       <thead>
         <tr>
           <th>Policy Number</th>
-          <th>Rep Number</th>
+          <th>Rep Name</th>
           <th>Status</th>
-
           <th>Group Tier</th>
-
           <th>Industry Group</th>
           <th>Current Payroll</th>
           <th>Est. Premium</th>
-
           <th>Updated Date</th>
         </tr>
       </thead>
       <tbody>
-        <% @policy_calculations.order("policy_number asc").each do |policy_calculation| %>
+        <% @policy_calculations.order("representative_id, policy_number asc").each do |policy_calculation| %>
         <tr>
           <th scope="row"> <%= link_to "#{policy_calculation.policy_number}", policy_calculation_path(policy_calculation.id), class: 'btn btn-info' %></th>
           <td><%= @representatives.find(policy_calculation.representative_id).abbreviated_name %> </td>

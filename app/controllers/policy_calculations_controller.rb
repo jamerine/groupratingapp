@@ -5,6 +5,8 @@ class PolicyCalculationsController < ApplicationController
     @representatives = Representative.all
     if params[:search].present?
       @policy_calculations = PolicyCalculation.search(params[:search]).paginate(page: params[:page], per_page: 100)
+    elsif params[:representative_number].present?
+      @policy_calculations = PolicyCalculation.where(representative_number: params[:representative_number]).paginate(page: params[:page], per_page: 100)
     else
       @policy_calculations = PolicyCalculation.all.paginate(page: params[:page], per_page: 100)
     end
@@ -23,9 +25,13 @@ class PolicyCalculationsController < ApplicationController
     @representatives = Representatives.all
   end
 
-  def update_or_create_policy
 
 
+  def edit
+
+  end
+
+  def update
   end
 
 
