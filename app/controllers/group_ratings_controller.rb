@@ -16,6 +16,7 @@ class GroupRatingsController < ApplicationController
   end
 
   def create
+
     @group_rating = GroupRating.new(group_rating_params)
     @representative = Representative.find(@group_rating.representative_id)
     @group_rating.process_representative = @representative.representative_number
