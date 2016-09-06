@@ -12,11 +12,6 @@ class ManualClassCalculationsController < ApplicationController
   end
 
 
-  def create_manual_class_objects
-    Resque.enqueue(ManualClassUpdateCreate)
-    redirect_to manual_class_calculations_path, notice: "Manual Classes are queued to update."
-  end
-
 
 
 
