@@ -1,51 +1,50 @@
-<div class="container">
+<div class="container text-center">
+  <ul class="list-group">
   <%= form_for payroll_calculation do |f| %>
-  <div class="table-responsive">
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Effective Date</th>
-          <th>Payroll Amount</th>
-          <th>Payroll Origin</th>
-          <th>Payroll Source</th>
-          <th>Submit</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
+      <div class="row list-group-item list-group-item-success hidden-sm hidden-xs ">
+        <div class="col-md-3 col-sm-4 col-xs-6 hidden-sm hidden-xs">
+          <h5>Effective Date</h5>
+        </div>
+        <div class="col-md-3 col-sm-4 col-xs-6 hidden-sm hidden-xs">
+          <h5>Payroll Amount</h5>
+        </div>
+        <div class="col-md-3 col-sm-4 col-xs-6 hidden-sm hidden-xs">
+          <h5>Payroll Origin</h5>
+        </div>
+        <div class="col-md-3 col-sm-4 col-xs-6 hidden-sm hidden-xs">
+          <h5>Action</h5>
+        </div>
+      </div>
+      <div class="row list-group-item">
           <div class="form-group" >
             <%= f.hidden_field :manual_class_calculation_id, value: "#{manual_class_calculation.id}" %>
             <%= f.hidden_field :manual_number, value: "#{manual_class_calculation.manual_number}" %>
             <%= f.hidden_field :policy_number, value: "#{manual_class_calculation.policy_number}" %>
             <%= f.hidden_field :representative_number, value: "#{manual_class_calculation.representative_number}" %>
+            <%= f.hidden_field :data_source, value: "user_adjustment" %>
           </div>
-          <td>
+          <div class="col-md-3 col-sm-4 col-xs-12">
             <div class="form-group" >
+              <h5 class="hidden-md hidden-lg">Effective Date</h5>
               <%= f.date_field :manual_class_effective_date, class: 'form-control' %>
             </div>
-          </td>
-          <td>
+          </div>
+          <div class="col-md-3 col-sm-4 col-xs-12">
             <div class="form-group" >
-              <label class="sr-only" for="exampleInputAmount">Amount (in dollars)</label>
+              <h5 class="hidden-md hidden-lg">Payroll</h5>
               <%= f.number_field :manual_class_payroll, class: 'form-control' %>
             </div>
-          </td>
-          <td>
+          </div>
+          <div class="col-md-3 col-sm-4 col-xs-12">
             <div class="form-group" >
+              <h5 class="hidden-md hidden-lg">Payroll Origin</h5>
               <%= f.text_field :payroll_origin, value: "payroll_adjustment", class: 'form-control' %>
-              </div>
-          </td>
-          <td>
-            <div class="form-group" >
-              <%= f.text_field :data_source, value: "user_adjustment", class: 'form-control', readonly: true %>
             </div>
-          </td>
-          <td>
-              <%= f.submit "Adjust Payroll", class: 'btn btn-info' %>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+          </div>
+            <div class="col-md-3 col-sm-4 col-xs-12">
+            <%= f.submit "Add Payroll", class: 'btn btn-info' %>
+          </div>
+        </div>
   <% end %>
+  </ul>
 </div>

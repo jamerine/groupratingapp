@@ -3,7 +3,9 @@ class PolicyCalculationsController < ApplicationController
   def index
     @policy_calculations = PolicyCalculation.all
     @representatives = Representative.all
-    if params[:search].present?
+    if params[:search].present? && params[:representative_number].present?
+      @policy_calculations = PolicyCalculation.where(representative_number: params[:representative_number]).search(params[:search]).paginate(page: params[:page], per_page: 100)
+    elsif params[:search].present?
       @policy_calculations = PolicyCalculation.search(params[:search]).paginate(page: params[:page], per_page: 100)
     elsif params[:representative_number].present?
       @policy_calculations = PolicyCalculation.where(representative_number: params[:representative_number]).paginate(page: params[:page], per_page: 100)
