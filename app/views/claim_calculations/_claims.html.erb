@@ -1,31 +1,59 @@
-<div class="container">
-  <div class="table-responsive">
-    <table class="table">
-      <caption><h3>Claims</h3></caption>
-      <thead>
-        <tr>
-          <th>Claim Number</th>
-          <th>Injury Date</th>
-          <th>Manual Number</th>
-          <th>Unlimited Limited Loss</th>
-          <th>Modified Losses Group Reduced</th>
-          <th>Modified Losses Individual Reduced</th>
-        </tr>
+<div class="container text-center">
+  <br>
+  <h2><%= pluralize_without_count(claims.count, 'Claim') %></h2>
+  <ul class="list-group">
+    <div class="row list-group-item active hidden-sm hidden-xs ">
+      <div class="col-md-2 col-sm-4 col-xs-6 hidden-sm hidden-xs">
+        <h5>Claim Number</h5>
 
-      </thead>
-      <tbody>
-        <% claims.each do |claim| %>
-        <tr>
-          <!-- <td><%= link_to "#{claim.claim_number}", claim_calculation_path(claim.id) %></td> -->
-          <td><%= claim.claim_number %></td>
-          <td><%= claim.claim_injury_date %></td>
-          <td><%= claim.claim_manual_number %></td>
-          <td><%= number_to_currency(claim.claim_unlimited_limited_loss) %></td>
-          <td><%= number_to_currency(claim.claim_modified_losses_group_reduced) %></td>
-          <td><%= number_to_currency(claim.claim_modified_losses_individual_reduced) %></td>
-        </tr>
+      </div>
+      <div class="col-md-2 col-sm-4 col-xs-6 hidden-sm hidden-xs">
+        <h5>Injury Date</h5>
+
+      </div>
+      <div class="col-md-2 col-sm-4 col-xs-6 hidden-sm hidden-xs">
+        <h5>Manual Number</h5>
+
+      </div>
+      <div class="col-md-2 col-sm-4 col-xs-6 hidden-sm hidden-xs">
+        <h5>Unlimited Limited Loss</h5>
+
+      </div>
+      <div class="col-md-2 col-sm-4 col-xs-6 hidden-sm hidden-xs">
+        <h5>Modified Losses Group Reduced</h5>
+
+      </div>
+      <div class="col-md-2 col-sm-4 col-xs-6 hidden-sm hidden-xs">
+        <h5>Modified Losses Individual Reduced</h5>
+      </div>
+    </div>
+
+  <% claims.each do |claim| %>
+    <div class="row text-center list-group-item">
+      <div class="col-md-2 col-sm-12 col-xs-12 ">
+        <h5 class="hidden-md hidden-lg">Claim Number</h5>
+        <p><%= claim.claim_number %></p>
+      </div>
+      <div class="col-md-2 col-sm-4 col-xs-6 ">
+        <h5 class="hidden-md hidden-lg">Injury Date</h5>
+          <p><%= claim.claim_injury_date %></p>
+        </div>
+        <div class="col-md-2 col-sm-4 col-xs-6 ">
+          <h5 class="hidden-md hidden-lg">Manual Number</h5>
+          <p><%= claim.claim_manual_number %></p>
+        </div>
+        <div class="col-md-2 col-sm-4 col-xs-6 ">
+          <h5 class="hidden-md hidden-lg">Unlimited Loss</h5>
+          <p><%= number_to_currency(claim.claim_unlimited_limited_loss) %></p>
+        </div>
+        <div class="col-md-2 col-sm-4 col-xs-6 ">
+          <h5 class="hidden-md hidden-lg">Group Reduced</h5>
+          <p><%= number_to_currency(claim.claim_modified_losses_group_reduced) %></p>
+        </div>
+        <div class="col-md-2 col-sm-4 col-xs-6 ">
+          <h5 class="hidden-md hidden-lg">Individual Reduced</h5>
+          <p><%= number_to_currency(claim.claim_modified_losses_individual_reduced) %></p>
+        </div>
+      </div>
         <% end %>
-      </tbody>
-    </table>
-  </div>
 </div>
