@@ -29,135 +29,114 @@
     </div>
   </div>
 
+<div class="container text-center">
+    <h2>Policy Premium Projections</h2>
+    <div class="row text-center">
+      <div class="col-md-2 col-sm-4 col-xs-6">
+        <h5>Qualification</h5>
+        <p><%= @policy_calculation.group_rating_qualification %></p>
+      </div>
+      <div class="col-md-2 col-sm-4 col-xs-6 ">
+        <h5>Group Rating Tier</h5>
+        <p><%= @policy_calculation.group_rating_tier %></p>
+      </div>
+      <div class="col-md-2 col-sm-4 col-xs-6 ">
+        <h5>Industry Group</h5>
+        <p><%= @policy_calculation.policy_industry_group %></p>
+      </div>
+      <div class="col-md-2 col-sm-4 col-xs-6 ">
+        <h5>Group Number</h5>
+        <p><%= @policy_calculation.group_rating_group_number %></p>
+      </div>
+      <div class="col-md-2 col-sm-4 col-xs-6 ">
+        <h5>Current Payroll</h5>
+        <p><%= number_to_currency(@policy_calculation.policy_total_current_payroll) %></p>
+      </div>
+      <div class="col-md-2 col-sm-4 col-xs-6 ">
+        <h5>Standard Premium</h5>
+        <p><%= number_to_currency(@policy_calculation.policy_total_standard_premium) %></p>
+      </div>
+      <div class="col-md-2 col-sm-4 col-xs-6 ">
+        <h5>Individual Premium</h5>
+        <p><%= number_to_currency(@policy_calculation.policy_total_individual_premium) %></p>
+      </div>
+      <div class="col-md-2 col-sm-4 col-xs-6 ">
+        <h5>Group Premium</h5>
+        <p><%= number_to_currency(@policy_calculation.policy_total_group_premium) %></p>
+      </div>
+      <div class="col-md-2 col-sm-4 col-xs-6 ">
+        <h5>Group Savings</h5>
+        <p><%= number_to_currency(@policy_calculation.policy_total_group_savings) %></p>
+      </div>
+      <div class="col-md-2 col-sm-4 col-xs-6">
+        <h5>Group Fees</h5>
+        <p><%= number_to_currency(@policy_calculation.policy_group_fees) %></p>
+      </div>
+      <div class="col-md-2 col-sm-4 col-xs-6 ">
+        <h5>Group Dues</h5>
+        <p><%= number_to_currency(@policy_calculation.policy_group_dues) %></p>
+      </div>
+      <div class="col-md-2 col-sm-4 col-xs-6">
+        <h5>Total Cost</h5>
+        <p><%= number_to_currency(@policy_calculation.policy_total_costs) %></p>
+      </div>
+  </div>
+</div>
 
   <div class="container text-center">
-    <div class="table-responsive">
-      <table class="table">
-        <caption><h3>Policy Premium Projections</h3></caption>
-        <thead>
-          <tr>
-            <th>Status</th>
-            <th>Qualification</th>
-            <th>Group Rating Tier</th>
-            <th>Industry Group</th>
-            <th>Group Number</th>
-            <th>Current Payroll</th>
-            <th>Standard Premium</th>
-            <th>Individual Premium</th>
-            <th>Group Premium</th>
-            <th>Group Savings</th>
-            <th>Group Fees</th>
-            <th>Group Dues</th>
-            <th>Total Cost</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><%= @policy_calculation.policy_status %></td>
-            <td><%= @policy_calculation.group_rating_qualification %></td>
-            <td><%= @policy_calculation.group_rating_tier %></td>
-            <td><%= @policy_calculation.policy_industry_group %></td>
-            <td><%= @policy_calculation.group_rating_group_number %></td>
-            <td><%= number_to_currency(@policy_calculation.policy_total_current_payroll) %></td>
-            <td><%= number_to_currency(@policy_calculation.policy_total_standard_premium) %></td>
-            <td><%= number_to_currency(@policy_calculation.policy_total_individual_premium) %></td>
-            <td><%= number_to_currency(@policy_calculation.policy_total_group_premium) %></td>
-            <td><%= number_to_currency(@policy_calculation.policy_total_group_savings) %></td>
-            <td><%= number_to_currency(@policy_calculation.policy_group_fees) %></td>
-            <td><%= number_to_currency(@policy_calculation.policy_group_dues) %></td>
-            <td><%= number_to_currency(@policy_calculation.policy_total_costs) %></td>
-          </tr>
-        </tbody>
-      </table>
+        <h2>Policy Premium Projections</h2>
+    <div class="row text-center">
+      <div class="col-md-2 col-sm-4 col-xs-6">
+        <h5>Total Payroll</h5>
+        <p><%= number_to_currency(@policy_calculation.policy_total_four_year_payroll) %></p>
+      </div>
+      <div class="col-md-2 col-sm-4 col-xs-6">
+        <h5>Credibility Group</h5>
+        <p><%= @policy_calculation.policy_credibility_group %></p>
+      </div>
+      <div class="col-md-2 col-sm-4 col-xs-6">
+        <h5>Credibility %</h5>
+        <p><%= @policy_calculation.policy_credibility_percent %></p>
+      </div>
+      <div class="col-md-2 col-sm-4 col-xs-6">
+        <h5>Max Claim Value</h5>
+        <p><%= number_to_currency(@policy_calculation.policy_maximum_claim_value) %></p>
+      </div>
+      <div class="col-md-2 col-sm-4 col-xs-6">
+        <h5>TEL</h5>
+        <p><%= number_to_currency(@policy_calculation.policy_total_expected_losses) %></p>
+      </div>
+      <div class="col-md-2 col-sm-4 col-xs-6">
+        <h5>TLL</h5>
+        <p><%= number_to_currency(@policy_calculation.policy_total_limited_losses) %></p>
+      </div>
+      <div class="col-md-2 col-sm-4 col-xs-6">
+        <h5>Claim Count</h5>
+        <p><%= @policy_calculation.policy_total_claims_count %></p>
+      </div>
+      <div class="col-md-2 col-sm-4 col-xs-6">
+        <h5>Group TML</h5>
+        <p><%= number_to_currency(@policy_calculation.policy_total_modified_losses_group_reduced) %></p>
+      </div>
+      <div class="col-md-2 col-sm-4 col-xs-6">
+        <h5>Ind TML</h5>
+        <p><%= number_to_currency(@policy_calculation.policy_total_modified_losses_individual_reduced) %></p>
+      </div>
+      <div class="col-md-2 col-sm-4 col-xs-6">
+        <h5>Group Ratio</h5>
+        <p><%= @policy_calculation.policy_group_ratio %></p>
+      </div>
+      <div class="col-md-2 col-sm-4 col-xs-6">
+        <h5>Ind TM</h5>
+        <p><%= @policy_calculation.policy_individual_total_modifier %></p>
+      </div>
+      <div class="col-md-2 col-sm-4 col-xs-6">
+        <h5>Ind EMR</h5>
+        <p><%= @policy_calculation.policy_individual_experience_modified_rate %></p>
+      </div>
     </div>
-
   </div>
 
-
-  <div class="container text-center">
-    <div class="table-responsive">
-      <table class="table">
-        <caption align: "center"><h3>Policy Experience History</h3></caption>
-        <thead>
-          <tr>
-            <th>Total Payroll</th>
-            <th>Credibility Group</th>
-            <th>Credibility %</th>
-            <th>Max Claim Value</th>
-            <th>TEL</th>
-            <th>TLL</th>
-            <th>Claim Count</th>
-            <th>Group TML</th>
-            <th>Ind TML</th>
-            <th>Group Ratio</th>
-            <th>Ind TM</th>
-            <th>Ind EMR</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          <tr>
-            <td><%= number_to_currency(@policy_calculation.policy_total_four_year_payroll) %></td>
-            <td><%= @policy_calculation.policy_credibility_group %></td>
-            <td><%= @policy_calculation.policy_credibility_percent %></td>
-            <td><%= number_to_currency(@policy_calculation.policy_maximum_claim_value) %></td>
-            <td><%= number_to_currency(@policy_calculation.policy_total_expected_losses) %></td>
-            <td><%= number_to_currency(@policy_calculation.policy_total_limited_losses) %></td>
-            <td><%= @policy_calculation.policy_total_claims_count %></td>
-            <td><%= number_to_currency(@policy_calculation.policy_total_modified_losses_group_reduced) %></td>
-            <td><%= number_to_currency(@policy_calculation.policy_total_modified_losses_individual_reduced) %></td>
-            <td><%= @policy_calculation.policy_group_ratio %></td>
-            <td><%= @policy_calculation.policy_individual_total_modifier %></td>
-            <td><%= @policy_calculation.policy_individual_experience_modified_rate %></td>
-
-          </tr>
-        </tbody>
-
-      </table>
-    </div>
-
-  </div>
-
-  <!-- <div class="container">
-    <div class="table-responsive">
-      <table class="table">
-        <caption><h3>Manual Class</h3></caption>
-        <thead>
-          <tr>
-            <th>Manual Number</th>
-            <th>Industry Group</th>
-            <th>Four Year Payroll</th>
-            <th>Exp. Losses</th>
-            <th>Base Rate</th>
-            <th>Limited Losses</th>
-            <th>Current Payroll</th>
-            <th>IG Premium Ratio</th>
-            <th>Group Premium</th>
-            <th>Individual Premium</th>
-
-          </tr>
-
-        </thead>
-        <tbody>
-          <% @manual_class_calculations.each do |manual_class_calculation| %>
-          <tr>
-            <td><%= link_to "#{manual_class_calculation.manual_number}", manual_class_calculation_path(manual_class_calculation.id) %></td>
-            <td><%= manual_class_calculation.manual_class_industry_group %></td>
-            <td><%= number_to_currency(manual_class_calculation.manual_class_four_year_period_payroll) %></td>
-            <td><%= number_to_currency(manual_class_calculation.manual_class_expected_losses) %></td>
-            <td><%= manual_class_calculation.manual_class_base_rate %></td>
-            <td><%= number_to_currency(manual_class_calculation.manual_class_limited_losses) %></td>
-            <td><%= number_to_currency(manual_class_calculation.manual_class_current_estimated_payroll) %></td>
-            <td><%= manual_class_calculation.manual_class_industry_group_premium_percentage %></td>
-            <td><%= number_to_currency(manual_class_calculation.manual_class_estimated_group_premium) %></td>
-            <td><%= number_to_currency(manual_class_calculation.manual_class_estimated_individual_premium) %></td>
-          </tr>
-          <% end %>
-        </tbody>
-      </table>
-    </div>
-  </div> -->
-
-  <%= render partial: 'manual_class_calculations/manual_classes', locals: { manual_class_calculations: @manual_class_calculations} %>
+  <%= render partial: 'manual_class_calculations/manual_classes', locals: { manual_class_calculations: @manual_class_calculations, policy_calculation: @policy_calculation} %>
   <%= render partial: 'claim_calculations/claims', locals: { claims: @policy_calculation.claim_calculations } %>
 <% end %>

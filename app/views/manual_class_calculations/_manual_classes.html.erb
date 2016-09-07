@@ -1,38 +1,71 @@
-<div class="container">
-  <div class="table-responsive">
-    <table class="table">
-      <caption><h3>Manual Class</h3></caption>
-      <thead>
-        <tr>
-          <th>Manual Number</th>
-          <th>Industry Group</th>
-          <th>Four Year Payroll</th>
-          <th>Current Payroll</th>
-          <th>IG Premium Ratio</th>
-          <th>Group Premium</th>
-          <th>Individual Premium</th>
-          <th>Effective Date</th>
-          <th>Payroll Amount</th>
-        </tr>
+<div class="container text-center">
+  <br>
+  <h2><%= pluralize_without_count(manual_class_calculations.count, 'Manual Class') %></h2>
+  <ul class="list-group">
+    <div class="row list-group-item active hidden-sm hidden-xs ">
+      <div class="col-md-1 col-sm-4 col-xs-6 hidden-sm hidden-xs">
+        <h5>Manual Number</h5>
+      </div>
+      <div class="col-md-1 col-sm-4 col-xs-6 hidden-sm hidden-xs">
+        <h5>Industry Group</h5>
+      </div>
+      <div class="col-md-1 col-sm-4 col-xs-6 hidden-sm hidden-xs">
+        <h5>Four Year Payroll</h5>
+      </div>
+      <div class="col-md-1 col-sm-4 col-xs-6 hidden-sm hidden-xs">
+        <h5>Current Payroll</h5>
+      </div>
+      <div class="col-md-1 col-sm-4 col-xs-6 hidden-sm hidden-xs">
+        <h5>IG Premium Ratio</h5>
+      </div>
+      <div class="col-md-1 col-sm-4 col-xs-6 hidden-sm hidden-xs">
+        <h5>Group Premium</h5>
+      </div>
+      <div class="col-md-1 col-sm-4 col-xs-6 hidden-sm hidden-xs">
+        <h5>Individual Premium</h5>
+      </div>
+      <div class="col-md-2 col-sm-4 col-xs-6 hidden-sm hidden-xs">
+        <h5>Effective Date</h5>
+      </div>
+      <div class="col-md-2 col-sm-4 col-xs-6 hidden-sm hidden-xs">
+        <h5>Manual Class Payroll</h5>
+      </div>
+    </div>
 
-      </thead>
-      <tbody>
-        <% manual_class_calculations.order("manual_number asc").each do |manual_class_calculation| %>
-
-        <tr>
-          <div class="form-group" >
+  <% manual_class_calculations.order("manual_number asc").each do |manual_class_calculation| %>
+      <div class="row text-center list-group-item">
+          <div class="col-md-1 col-sm-12 col-xs-12">
+            <h5 class="hidden-md hidden-lg">Manual Number</h5>
+            <p><%= link_to "#{manual_class_calculation.manual_number}", manual_class_calculation_path(manual_class_calculation.id) %></p>
           </div>
-          <td><%= link_to "#{manual_class_calculation.manual_number}", manual_class_calculation_path(manual_class_calculation.id) %></td>
-          <td><%= manual_class_calculation.manual_class_industry_group %></td>
-          <td><%= number_to_currency(manual_class_calculation.manual_class_four_year_period_payroll) %></td>
-          <td><%= number_to_currency(manual_class_calculation.manual_class_current_estimated_payroll) %></td>
-          <td><%= manual_class_calculation.manual_class_industry_group_premium_percentage %></td>
-          <td><%= number_to_currency(manual_class_calculation.manual_class_estimated_group_premium) %></td>
-          <td><%= number_to_currency(manual_class_calculation.manual_class_estimated_individual_premium) %></td>
-          <%= render partial: 'payroll_calculations/form_2', locals: { payroll_calculation: @new_payroll_calculation, manual_class_calculation: manual_class_calculation} %>
-        </tr>
-        <% end %>
-      </tbody>
-    </table>
-  </div>
+          <div class="col-md-1 col-sm-4 col-xs-6">
+            <h5 class="hidden-md hidden-lg">Industry Group</h5>
+            <p><%= manual_class_calculation.manual_class_industry_group %></p>
+          </div>
+          <div class="col-md-1 col-sm-4 col-xs-6">
+            <h5 class="hidden-md hidden-lg">Four Year Payroll</h5>
+            <p><%= number_to_currency(manual_class_calculation.manual_class_four_year_period_payroll, precision: 0) %></p>
+          </div>
+          <div class="col-md-1 col-sm-4 col-xs-6">
+            <h5 class="hidden-md hidden-lg">Current Payroll</h5>
+            <p><%= number_to_currency(manual_class_calculation.manual_class_current_estimated_payroll, precision: 0) %></p>
+          </div>
+          <div class="col-md-1 col-sm-4 col-xs-6">
+            <h5 class="hidden-md hidden-lg">IG %</h5>
+            <p><%= manual_class_calculation.manual_class_industry_group_premium_percentage %></p>
+          </div>
+          <div class="col-md-1 col-sm-4 col-xs-6">
+            <h5 class="hidden-md hidden-lg">Est. Group Premium</h5>
+            <p><%= number_to_currency(manual_class_calculation.manual_class_estimated_group_premium) %></p>
+          </div>
+          <div class="col-md-1 col-sm-4 col-xs-6">
+            <h5 class="hidden-md hidden-lg">Est. Ind. Premium</h5>
+            <p><%= number_to_currency(manual_class_calculation.manual_class_estimated_individual_premium) %></p>
+          </div>
+          <div class="hidden-sm hidden-xs">
+            <%= render partial: 'payroll_calculations/form_2', locals: { payroll_calculation: @new_payroll_calculation, manual_class_calculation: manual_class_calculation}%>
+          </div>
+      </div>
+  <% end %>
+  </ul>
 </div>
