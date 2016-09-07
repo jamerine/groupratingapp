@@ -1,5 +1,4 @@
 <%= content_tag_for :div, @manual_class_calculation do %>
-
   <div class="container ">
     <div>
       <%= link_to "Back to Policy: #{ @policy_calculation.policy_number }", policy_calculation_path(@manual_class_calculation.policy_calculation_id), class: 'btn btn-default' %>
@@ -22,10 +21,6 @@
       </div>
     </div>
   </div>
-
-
-
-
   <div class="container">
     <h2>Manual Number: <%= @manual_class_calculation.manual_number %></h2>
   </div>
@@ -59,7 +54,6 @@
           </div>
     </div>
   </div>
-
     <div class="container text-center">
       <br>
           <h2>Manual Class Experience History</h2>
@@ -88,13 +82,8 @@
               <h5>Limited Losses</h5>
               <p><%= number_to_currency(@manual_class_calculation.manual_class_limited_losses) %></p>
             </div>
-
-
-
-
     </div>
   </div>
-
 
   <div class="container text-center">
     <br>
@@ -151,7 +140,5 @@
   </div>
 
 <%= render partial: 'payroll_calculations/form', locals: { payroll_calculation: @new_payroll_calculation, manual_class_calculation: @manual_class_calculation} %>
-
-
 
 <% end %>
