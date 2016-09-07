@@ -86,7 +86,7 @@ test:
 production:
   adapter: postgresql
   encoding: unicode
-  pool: 30
+  pool: <%= ENV["DB_POOL"] || ENV['RAILS_MAX_THREADS'] || 5 %>
   database: groupratingapp_production
   username: groupratingapp
   password: <%= ENV['GROUPRATINGAPP_DATABASE_PASSWORD'] %>
