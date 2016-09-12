@@ -91,6 +91,7 @@ class Step3Proc < ActiveRecord::Migration
 
 
         INSERT INTO exception_table_policy_combined_request_payroll_infos (
+          representative_number,
           predecessor_policy_type,
           predecessor_policy_number,
           successor_policy_type,
@@ -104,6 +105,7 @@ class Step3Proc < ActiveRecord::Migration
           updated_at
         )
          (SELECT DISTINCT
+             b.representative_number,
              b.predecessor_policy_type,
              b.predecessor_policy_number,
              b.successor_policy_type,
@@ -118,8 +120,9 @@ class Step3Proc < ActiveRecord::Migration
            FROM public.process_payroll_breakdown_by_manual_classes a
            Right Join public.pcomb_detail_records b
            ON a.policy_number = b.predecessor_policy_number
-           Where b.transfer_type = 'FC' and a.representative_number is null
+           Where b.transfer_type = 'FC' and a.representative_number is null and b.transfer_creation_date >= experience_period_lower_date
            GROUP BY
+             b.representative_number,
              b.predecessor_policy_type,
              b.predecessor_policy_number,
              b.successor_policy_type,

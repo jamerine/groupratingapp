@@ -1,12 +1,125 @@
 <%= content_tag_for :div, @group_rating do %>
-  <div class="container">
-
-    <h1 class="text-center">Group Rating id: <%= @group_rating.id %></h1>
-    <h3 class="text-center">Group Rating Process Rep: <%= @group_rating.process_representative %></h3>
-    <h3 class="text-center">Group Rating Experience Period Lower Date: <%= @group_rating.experience_period_lower_date %></h3>
-    <h3 class="text-center">Group Rating Experience Period Upper Date: <%= @group_rating.experience_period_upper_date %></h3>
-    <h3 class="text-center">Group Rating Current Payroll Period Lower Date: <%= @group_rating.current_payroll_period_lower_date %></h3>
-    <h3 class="text-center">Status: <%= @group_rating.status %></h3>
+  <div class="container text-center">
+    <div class="row">
+      <div class="col-md-12">
+        <h2><%= @representative.abbreviated_name %> </h2>
+        <p></p>
+      </div>
+      <div class="col-md-6">
+        <h4>Import Status</h4>
+          <p><%= @import.import_status %></p>
+      </div>
+      <div class="col-md-6">
+        <h4>Group Rating Status</h4>
+          <p><%= @group_rating.status %></p>
+      </div>
+      <div class="col-md-4">
+        <h4>Experience Period Lower Date</h4>
+          <p><%= @group_rating.experience_period_lower_date %></p>
+      </div>
+      <div class="col-md-4">
+        <h4>Group Rating Experience Period Upper Date</h4>
+          <p><%= @group_rating.experience_period_upper_date %></p>
+      </div>
+      <div class="col-md-4">
+        <h4>Current Payroll Period Lower Date</h4>
+          <p><%= @group_rating.current_payroll_period_lower_date %></p>
+      </div>
+    </div>
     <%= link_to "Delete Group Rating", @group_rating, method: :delete %>
+  </div>
+
+  <div class="container">
+    <table class="table">
+      <tr>
+        <th>File Name</th>
+        <th>Row Count</th>
+      </tr>
+      <tr>
+        <td>Democ</td>
+        <td><%= @import.democs_count %></td>
+      </tr>
+      <tr>
+        <td>Mrcls</td>
+        <td><%= @import.mrcls_count %></td>
+      </tr>
+      <tr>
+        <td>Mremp</td>
+        <td><%= @import.mremps_count %></td>
+      </tr>
+      <tr>
+        <td>Pcomb</td>
+        <td><%= @import.pcombs_count %></td>
+      </tr>
+      <tr>
+        <td>Phmgn</td>
+        <td><%= @import.phmgns_count %></td>
+      </tr>
+      <tr>
+        <td>Sc220</td>
+        <td><%= @import.sc220s_count %></td>
+      </tr>
+      <tr>
+        <td>Sc230</td>
+        <td><%= @import.sc230s_count %></td>
+      </tr>
+      <tr>
+        <td>Democ Detail Records</td>
+        <td><%= @import.democ_detail_records_count %></td>
+      </tr>
+      <tr>
+        <td>Mrcls Detail Records</td>
+        <td><%= @import.mrcl_detail_records_count %></td>
+      </tr>
+      <tr>
+        <td>Mremp Employee Experience Policy Level</td>
+        <td><%= @import.mremp_employee_experience_policy_levels_count %></td>
+      </tr>
+      <tr>
+        <td>Mremp Employee Experience Manual Class Level</td>
+        <td><%= @import.mremp_employee_experience_manual_class_levels_count %></td>
+      </tr>
+      <tr>
+        <td>Mremp Employee Experience Claims Level</td>
+        <td><%= @import.mremp_employee_experience_claim_levels_count %></td>
+      </tr>
+      <tr>
+        <td>Pcomb Detail Records</td>
+        <td><%= @import.pcomb_detail_records_count %></td>
+      </tr>
+      <tr>
+        <td>Phmgn Detail Records</td>
+        <td><%= @import.phmgn_detail_records_count %></td>
+      </tr>
+      <tr>
+        <td>SC220 Record 1s</td>
+        <td><%= @import.sc220_rec1_employer_demographics_count %></td>
+      </tr>
+      <tr>
+        <td>SC220 Record 2s</td>
+        <td><%= @import.sc220_rec2_employer_manual_level_payrolls_count %></td>
+      </tr>
+      <tr>
+        <td>SC220 Record 3s</td>
+        <td><%= @import.sc220_rec3_employer_ar_transactions_count %></td>
+      </tr>
+      <tr>
+        <td>SC220 Record 4s</td>
+        <td><%= @import.sc220_rec4_policy_not_founds_count %></td>
+      </tr>
+      <tr>
+        <td>SC230 Record 1s</td>
+        <td><%= @import.sc230_employer_demographics_count %></td>
+      </tr>
+      <tr>
+        <td>SC230 Record 2s</td>
+        <td><%= @import.sc230_claim_medical_payments_count %></td>
+      </tr>
+      <tr>
+        <td>SC230 Record 3s</td>
+        <td><%= @import.sc230_claim_indemnity_awards_count %></td>
+      </tr>
+    </table>
+
   </div>
 <% end %>

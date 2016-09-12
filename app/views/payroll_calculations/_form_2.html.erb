@@ -1,5 +1,5 @@
 <%= form_for payroll_calculation do |f| %>
-          <%= f.hidden_field :manual_class_calculation_id, value: "#{manual_class_calculation.id}" %>
+         <%= f.hidden_field :manual_class_calculation_id, value: "#{manual_class_calculation.id}" %>
           <%= f.hidden_field :manual_number, value: "#{manual_class_calculation.manual_number}" %>
           <%= f.hidden_field :policy_number, value: "#{manual_class_calculation.policy_number}" %>
           <%= f.hidden_field :representative_number, value: "#{manual_class_calculation.representative_number}" %>

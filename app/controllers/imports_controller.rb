@@ -128,6 +128,6 @@ class ImportsController < ApplicationController
   private
 
   def import_params
-    params.require(:import).permit(:process_representative, :import_status, :parse_status, :representative_id)
+    params.require(:import).permit(:process_representative, :import_status, :parse_status, :representative_id, :group_rating_id)
   end
 end

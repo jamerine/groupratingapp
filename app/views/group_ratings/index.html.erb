@@ -8,7 +8,8 @@
       <thead>
         <tr>
           <th>Representative Name</th>
-          <th>Group Rating Step</th>
+          <th>Import Status</th>
+          <th>Group Rating Status</th>
           <th>Run Time</th>
           <th>Status Updated</th>
           <th>View</th>
@@ -18,6 +19,7 @@
         <% @group_ratings.order("id desc").each do |group_rating| %>
         <tr>
           <td><%= Representative.find(group_rating.representative_id).abbreviated_name %> </td>
+          <td><%= Import.find_by(group_rating_id: group_rating.id).import_status %> </td></td>
           <td><%= group_rating.status %> </td>
           <td><%= group_rating.created_at.in_time_zone("America/New_York").strftime("%m/%d/%y @ %I:%M %p") %> </td>
           <td><%= group_rating.updated_at.in_time_zone("America/New_York").strftime("%m/%d/%y @ %I:%M %p") %> </td>

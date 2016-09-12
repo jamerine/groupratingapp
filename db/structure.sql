@@ -2180,6 +2180,7 @@ CREATE FUNCTION proc_step_3(process_representative integer, experience_period_lo
 
 
         INSERT INTO exception_table_policy_combined_request_payroll_infos (
+          representative_number,
           predecessor_policy_type,
           predecessor_policy_number,
           successor_policy_type,
@@ -2193,6 +2194,7 @@ CREATE FUNCTION proc_step_3(process_representative integer, experience_period_lo
           updated_at
         )
          (SELECT DISTINCT
+             b.representative_number,
              b.predecessor_policy_type,
              b.predecessor_policy_number,
              b.successor_policy_type,
@@ -2207,8 +2209,9 @@ CREATE FUNCTION proc_step_3(process_representative integer, experience_period_lo
            FROM public.process_payroll_breakdown_by_manual_classes a
            Right Join public.pcomb_detail_records b
            ON a.policy_number = b.predecessor_policy_number
-           Where b.transfer_type = 'FC' and a.representative_number is null
+           Where b.transfer_type = 'FC' and a.representative_number is null and b.transfer_creation_date >= experience_period_lower_date
            GROUP BY
+             b.representative_number,
              b.predecessor_policy_type,
              b.predecessor_policy_number,
              b.successor_policy_type,
@@ -4417,6 +4420,7 @@ ALTER SEQUENCE democs_id_seq OWNED BY democs.id;
 
 CREATE TABLE exception_table_policy_combined_request_payroll_infos (
     id integer NOT NULL,
+    representative_number character varying,
     predecessor_policy_type character varying,
     predecessor_policy_number integer,
     successor_policy_type character varying,
@@ -4791,6 +4795,7 @@ ALTER SEQUENCE group_ratings_id_seq OWNED BY group_ratings.id;
 CREATE TABLE imports (
     id integer NOT NULL,
     process_representative integer,
+    group_rating_id integer,
     import_status text,
     parse_status text,
     democs_count integer,
@@ -7428,6 +7433,13 @@ CREATE INDEX index_group_ratings_on_representative_id ON group_ratings USING btr
 
 
 --
+-- Name: index_imports_on_group_rating_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_imports_on_group_rating_id ON imports USING btree (group_rating_id);
+
+
+--
 -- Name: index_imports_on_representative_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -7576,6 +7588,14 @@ ALTER TABLE ONLY imports
 
 ALTER TABLE ONLY group_ratings
     ADD CONSTRAINT fk_rails_35addb0042 FOREIGN KEY (representative_id) REFERENCES representatives(id);
+
+
+--
+-- Name: fk_rails_8b39e94061; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY imports
+    ADD CONSTRAINT fk_rails_8b39e94061 FOREIGN KEY (group_rating_id) REFERENCES group_ratings(id);
 
 
 --

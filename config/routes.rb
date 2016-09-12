@@ -4,12 +4,12 @@ require 'sidekiq/web'
 
 Rails.application.routes.draw do
 
-  devise_for :users
 
   # mount Resque::Server.new, at: "/resque"
   # ...
   mount Sidekiq::Web, at: '/sidekiq'
 
+  devise_for :users
 
   resources :imports do
     collection { delete :destroy }
@@ -30,6 +30,10 @@ Rails.application.routes.draw do
   resources :policy_calculations do
     collection {get 'create_policy_objects'}
 
+  end
+
+  resources :representatives do
+    post :fee_calculations
   end
 
 
