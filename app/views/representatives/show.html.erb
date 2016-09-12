@@ -1,0 +1,19 @@
+<%= content_tag_for :div, @representative do %>
+  <div class="container">
+    <%= link_to 'Return to All Representatives', representatives_path, class: 'btn btn-default' %>
+
+
+    <div class="jumbotron text-center">
+      <div class="row">
+          <h5>Representative Number:</h5>
+          <h3><%= @representative.representative_number %></h3>
+          <h5>Representative:</h5>
+          <h3><%= @representative.company_name %></h3>
+          <h5>abbreviated Name:</h5>
+          <h3><%= @representative.abbreviated_name %></h3>
+          <%= link_to 'Edit', edit_representative_path(@representative.id) %>
+      </div>
+    </div>
+    <%= link_to 'Calculate fees', representative_fee_calculations_path(@representative.id), method: :post  %>
+  </div>
+<% end %>
