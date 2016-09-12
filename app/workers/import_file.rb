@@ -2,7 +2,7 @@ class ImportFile
   include Sidekiq::Worker
   sidekiq_options queue: :import_file
 
-  def perform(url, table_name, import_id)
+  def perform(url, table_name, import_id, group_rating_id)
     time1 = Time.new
     puts "Start Time: " + time1.inspect
       conn = ActiveRecord::Base.connection
@@ -63,9 +63,20 @@ class ImportFile
       end
       @import.save
 
-      # unless @import.sc230s_count.nil? || @import.sc230_employer_demographics_count.nil? || @import.sc230_claim_medical_payments_count.nil? || @import.sc230_claim_indemnity_awards_count.nil? || @import.sc220s_count.nil? || @import.sc220_rec1_employer_demographics_count.nil? || @import.sc220_rec2_employer_manual_level_payrolls_count.nil? || @import.sc220_rec3_employer_ar_transactions_count.nil? || @import.democs_count.nil? || @import.democ_detail_records_count.nil? || @import.mrcls_count.nil? || @import.mrcl_detail_records_count.nil? || @import.mremps_count.nil? || @import.mremp_employee_experience_policy_levels_count.nil? || @import.mremp_employee_experience_manual_class_levels_count.nil? || @import.mremp_employee_experience_claim_levels_count.nil? || @import.pcombs_count.nil? || @import.pcomb_detail_records_count.nil? || @import.phmgns_count.nil? || @import.phmgn_detail_records_count.nil?
-      #   puts "Hello Bro"
-      # end
+      if
+        (!@import.sc230s_count.nil? || !@import.sc230_employer_demographics_count.nil? || !@import.sc230_claim_medical_payments_count.nil? || !@import.sc230_claim_indemnity_awards_count.nil?) &&
+        (!@import.sc220s_count.nil? || !@import.sc220_rec1_employer_demographics_count.nil? || !@import.sc220_rec2_employer_manual_level_payrolls_count.nil? ||    !@import.sc220_rec3_employer_ar_transactions_count.nil?) &&
+        (!@import.democs_count.nil? || !@import.democ_detail_records_count.nil?) &&
+        (!@import.mrcls_count.nil? || !@import.mrcl_detail_records_count.nil?) &&
+        (!@import.mremps_count.nil? || !@import.mremp_employee_experience_policy_levels_count.nil? || !@import.mremp_employee_experience_manual_class_levels_count.nil? ||
+        !@import.mremp_employee_experience_claim_levels_count.nil?) &&
+        (!@import.pcombs_count.nil? || !@import.pcomb_detail_records_count.nil?) &&
+        (!@import.phmgns_count.nil? || !@import.phmgn_detail_records_count.nil?)
+          @import.import_status = "Completed"
+          @import.save
+          @group_rating = GroupRating.find(group_rating_id)
+          GroupRatingStepOne.perform_async("1", @group_rating.process_representative, @group_rating.experience_period_lower_date, @group_rating.experience_period_upper_date, @group_rating.current_payroll_period_lower_date, @group_rating.id)
+      end
 
 
 

@@ -1,0 +1,29 @@
+<div class="container">
+  <div class="jumbotron">
+    <h1>Representatives for Group Rating</h1>
+  </div>
+
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Id</th>
+          <th>Representative Number</th>
+          <th>Company Name</th>
+          <th>Abbreviated Name</th>
+          <th>View</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @representatives.order("id asc").each do |rep| %>
+        <tr>
+          <td><%= rep.id %> </td>
+          <td><%= rep.representative_number %> </td>
+          <td><%= rep.company_name %> </td>
+          <td><%= rep.abbreviated_name %> </td>
+          <td><%= link_to 'View Representative', representative_path(rep.id) %></td>
+        </tr>
+        <% end %>
+      </tbody>
+    </table>
+</div>

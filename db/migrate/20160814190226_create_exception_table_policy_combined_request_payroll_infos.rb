@@ -1,6 +1,7 @@
 class CreateExceptionTablePolicyCombinedRequestPayrollInfos < ActiveRecord::Migration
   def change
     create_table :exception_table_policy_combined_request_payroll_infos do |t|
+      t.string :representative_number
       t.string :predecessor_policy_type
       t.integer :predecessor_policy_number
       t.string :successor_policy_type
