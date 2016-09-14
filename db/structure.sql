@@ -82,11 +82,11 @@ CREATE FUNCTION proc_process_flat_democs() RETURNS void
     claim_rating_plan_indicator,
     claim_status,
     claim_status_effective_date,
-    --claimant_name,
+    claimant_name,
     claim_manual_number,
     claim_sub_manual_number,
     claim_type,
-    --claimant_date_of_birth,
+    claimant_date_of_birth,
     claimant_date_of_death,
     claim_activity_status,
     claim_activity_status_effective_date,
@@ -138,13 +138,13 @@ CREATE FUNCTION proc_process_flat_democs() RETURNS void
     case when substring(single_rec,83,8) > '00000000' THEN to_date(substring(single_rec,83,8), 'YYYYMMDD')
       else null
     end,  /*  claim_status_effective_date  */
-    -- substring(single_rec,91,20),   /*  claimant_name  */
+     substring(single_rec,91,20),   /*  claimant_name  */
     cast_to_int(substring(single_rec,111,4)),   /*  claim_manual_number  */
     substring(single_rec,115,2),   /*  claim_sub_manual_number  */
     substring(single_rec,117,4),   /*  claim_type  */
-    -- case when substring(single_rec,121,8) > '00000000' THEN to_date(substring(single_rec,121,8), 'YYYYMMDD')
-    --   else null
-    -- end,  /*  claimant_date_of_birth  */
+     case when substring(single_rec,121,8) > '00000000' THEN to_date(substring(single_rec,121,8), 'YYYYMMDD')
+      else null
+     end,  /*  claimant_date_of_birth  */
     case when substring(single_rec,129,8) > '00000000' THEN to_date(substring(single_rec,129,8), 'YYYYMMDD')
       else null
     end, /*  claimant_date_of_death  */
@@ -925,11 +925,11 @@ Insert Into sc220_rec1_employer_demographics (
           case when substring(single_rec,747,8) > '00000000' THEN to_date(substring(single_rec,747,8), 'MMDDYYYY')
             else null
           end,    -- n6th_coverage_end_date date,
-          substring(single_rec,755,12)::numeric/100,   -- regular_balance_amount char(13),
-          substring(single_rec,768,12)::numeric/100,   -- attorney_general_balance_amount char(13),
-          substring(single_rec,781,12)::numeric/100,   -- appealed_balance_amount char(13),
-          substring(single_rec,794,12)::numeric/100,   -- pending_balance_amount char(13),
-          substring(single_rec,807,10)::numeric/100,   -- advance_deposit_amount numeric
+          cast_to_int(substring(single_rec,755,12)),   -- regular_balance_amount char(13),
+          cast_to_int(substring(single_rec,768,12)),   -- attorney_general_balance_amount char(13),
+          cast_to_int(substring(single_rec,781,12)),   -- appealed_balance_amount char(13),
+          cast_to_int(substring(single_rec,794,12)),   -- pending_balance_amount char(13),
+          cast_to_int(substring(single_rec,807,10)),   -- advance_deposit_amount numeric
           current_timestamp::timestamp as created_at,
           current_timestamp::timestamp as updated_at
 from sc220s where substring(single_rec,11,1) = '1');
@@ -1524,7 +1524,7 @@ CREATE FUNCTION proc_process_flat_sc230s() RETURNS void
 
 CREATE FUNCTION proc_step_1(process_representative integer, experience_period_lower_date date, experience_period_upper_date date, current_payroll_period_lower_date date) RETURNS void
     LANGUAGE plpgsql
-    AS $$
+    AS $_$
 
         DECLARE
           run_date timestamp := LOCALTIMESTAMP;
@@ -1573,13 +1573,13 @@ CREATE FUNCTION proc_step_1(process_representative integer, experience_period_lo
           successor_policy_number,
           currently_assigned_representative_number,
           federal_identification_number,
-          business_name,
-          trading_as_name,
-          in_care_name_contact_name,
-          address_1,
-          address_2,
-          city,
-          state,
+          REGEXP_REPLACE(business_name, '\s+$', ''),
+          REGEXP_REPLACE(trading_as_name, '\s+$', ''),
+          REGEXP_REPLACE(in_care_name_contact_name, '\s+$', ''),
+          REGEXP_REPLACE(address_1, '\s+$', ''),
+          REGEXP_REPLACE(address_2, '\s+$', ''),
+          REGEXP_REPLACE(city, '\s+$', ''),
+          REGEXP_REPLACE(state, '\s+$', ''),
           zip_code,
           zip_code_plus_4,
           country_code,
@@ -1848,7 +1848,7 @@ CREATE FUNCTION proc_step_1(process_representative integer, experience_period_lo
         WHERE edi.policy_number = t2.max_policy_number;
 
         end;
-          $$;
+          $_$;
 
 
 --
@@ -2420,7 +2420,7 @@ CREATE FUNCTION proc_step_3(process_representative integer, experience_period_lo
 
         -- STEP 3D -- TERMINATE POLICY COMBINATIONS LEASES --
         -- Labor lease TERMINATE payroll combinations
-        -- Will  the designated payroll amount for the manual class for the designated
+        -- Will add the designated payroll amount for the manual class for the designated
         -- payroll period from the predecessor_policy_number to the successor_policy_number.
 
         -- Only add the predecessor_policy_number
@@ -2717,8 +2717,7 @@ CREATE FUNCTION proc_step_3(process_representative integer, experience_period_lo
           run_date as created_at,
           run_date as updated_at
         FROM public.process_policy_combination_lease_terminations
-        WHERE predecessor_policy_number not in (SELECT policy_number FROM public.bwc_codes_peo_lists)
-        and labor_lease_type != 'LFULL' and representative_number = process_representative
+        WHERE labor_lease_type != 'LFULL' and representative_number = process_representative
         );
 
 
@@ -3331,6 +3330,9 @@ CREATE FUNCTION proc_step_6(process_representative integer, experience_period_lo
         claim_handicap_percent,
         claim_handicap_percent_effective_date,
         claim_manual_number,
+        claimant_name,
+        claimant_date_of_birth,
+        claimant_date_of_death,
         claim_medical_paid,
         claim_mira_medical_reserve_amount,
         claim_mira_non_reducible_indemnity_paid,
@@ -3360,6 +3362,9 @@ CREATE FUNCTION proc_step_6(process_representative integer, experience_period_lo
           round(a.claim_handicap_percent::numeric/100,2),
           a.claim_handicap_percent_effective_date,
           a.claim_manual_number,
+          a.claimant_name,
+          a.claimant_date_of_birth,
+          a.claimant_date_of_death,
           a.claim_medical_paid,
           a.claim_mira_medical_reserve_amount,
           a.claim_mira_non_reducible_indemnity_paid,
@@ -4267,6 +4272,9 @@ CREATE TABLE claim_calculations (
     claim_injury_date date,
     claim_handicap_percent double precision,
     claim_handicap_percent_effective_date date,
+    claimant_date_of_death date,
+    claimant_date_of_birth date,
+    claimant_name character varying,
     claim_manual_number integer,
     claim_medical_paid double precision,
     claim_mira_medical_reserve_amount double precision,
@@ -4325,6 +4333,7 @@ CREATE TABLE democ_detail_records (
     valid_policy_number character varying,
     current_policy_status character varying,
     current_policy_status_effective_date date,
+    claimant_name character varying,
     policy_year integer,
     policy_year_rating_plan character varying,
     claim_indicator character varying,
@@ -4339,6 +4348,7 @@ CREATE TABLE democ_detail_records (
     claim_sub_manual_number character varying,
     claim_type character varying,
     claimant_date_of_death date,
+    claimant_date_of_birth date,
     claim_activity_status character varying,
     claim_activity_status_effective_date date,
     settled_claim character varying,
@@ -4466,6 +4476,9 @@ CREATE TABLE final_claim_cost_calculation_tables (
     claim_number character varying,
     claim_injury_date date,
     claim_handicap_percent double precision,
+    claimant_name character varying,
+    claimant_date_of_birth date,
+    claimant_date_of_death date,
     claim_handicap_percent_effective_date date,
     claim_manual_number integer,
     claim_medical_paid double precision,
