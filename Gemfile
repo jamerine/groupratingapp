@@ -50,6 +50,10 @@ gem 'sidekiq'
 
 gem 'sinatra', :require => false
 
+
+gem 'rubyzip'
+
+
 # Use Unicorn as the app server
 # gem 'unicorn'
 
@@ -59,6 +63,10 @@ gem 'sinatra', :require => false
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug'
+
+  gem 'rspec-rails', '~> 3.5'
+  gem 'shoulda'
+  gem 'factory_girl_rails', '~> 4.0'
 end
 
 group :development do

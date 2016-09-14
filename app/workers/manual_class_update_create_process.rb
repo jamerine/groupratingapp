@@ -3,7 +3,7 @@ class ManualClassUpdateCreateProcess
 
     sidekiq_options queue: :manual_class_update_create_process
 
-  def perform(group_rating_id)
+  def perform(group_rating_id, representative_id)
     @group_rating = GroupRating.find_by(id: group_rating_id)
     @group_rating.status = "Manual Classes Updating"
     @group_rating.save
@@ -33,7 +33,8 @@ class ManualClassUpdateCreateProcess
             man_class_proj.manual_class_standard_premium,
             man_class_proj.manual_class_estimated_group_premium,
             man_class_proj.manual_class_estimated_individual_premium,
-            man_class_proj.data_source)
+            man_class_proj.data_source,
+            representative_id)
           end
         end
     end

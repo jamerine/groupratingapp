@@ -2,7 +2,6 @@ class PolicyCalculation < ActiveRecord::Base
 
   has_many :manual_class_calculations, dependent: :destroy
   has_many :claim_calculations, dependent: :destroy
-
   belongs_to :representative
 
   def self.update_or_create(attributes)
@@ -35,5 +34,17 @@ class PolicyCalculation < ActiveRecord::Base
       end
   end
 
+
+  def self.to_csv
+    attributes = self.column_names
+
+    CSV.generate(headers: true) do |csv|
+      csv << attributes
+
+      all.each do |policy|
+        csv << attributes.map{ |attr| policy.send(attr) }
+      end
+    end
+  end
 
 end

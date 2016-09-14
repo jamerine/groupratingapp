@@ -11,6 +11,7 @@ class CreateDemocDetailRecords < ActiveRecord::Migration
         t.string :valid_policy_number
         t.string :current_policy_status
         t.date :current_policy_status_effective_date
+        t.string :claimant_name
         t.integer :policy_year
         t.string :policy_year_rating_plan
         t.string :claim_indicator
@@ -25,6 +26,7 @@ class CreateDemocDetailRecords < ActiveRecord::Migration
         t.string :claim_sub_manual_number
         t.string :claim_type
         t.date :claimant_date_of_death
+        t.date :claimant_date_of_birth
         t.string :claim_activity_status
         t.date :claim_activity_status_effective_date
         t.string :settled_claim

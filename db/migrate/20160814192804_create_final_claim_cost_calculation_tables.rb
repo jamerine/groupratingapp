@@ -8,6 +8,9 @@ class CreateFinalClaimCostCalculationTables < ActiveRecord::Migration
       t.string :claim_number
       t.date :claim_injury_date
       t.float :claim_handicap_percent
+      t.string :claimant_name
+      t.date :claimant_date_of_birth
+      t.date :claimant_date_of_death
       t.date :claim_handicap_percent_effective_date
       t.integer :claim_manual_number
       t.float :claim_medical_paid
