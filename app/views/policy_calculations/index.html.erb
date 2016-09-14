@@ -14,6 +14,8 @@
       <%= submit_tag "Search", name: nil, class: 'btn btn-primary' %>
     </div>
   <% end %>
+
+
   <div>
     <%= will_paginate @policy_calculations %>
     <table class="table table-hover">
@@ -22,10 +24,9 @@
           <th>Policy Number</th>
           <th>Rep Name</th>
           <th>Status</th>
-          <th>Group Tier</th>
-          <th>Industry Group</th>
+          <th>Business Name</th>
           <th>Current Payroll</th>
-          <th>Est. Premium</th>
+          <th>Estimated Premium</th>
           <th>Updated Date</th>
         </tr>
       </thead>
@@ -35,8 +36,7 @@
           <th scope="row"> <%= link_to "#{policy_calculation.policy_number}", policy_calculation_path(policy_calculation.id), class: 'btn btn-info' %></th>
           <td><%= @representatives.find(policy_calculation.representative_id).abbreviated_name %> </td>
           <td><%= policy_calculation.policy_status %> </td>
-          <td><%= policy_calculation.group_rating_tier %> </td>
-          <td><%= policy_calculation.policy_industry_group %> </td>
+          <td><%= policy_calculation.business_name.titleize %> </td>
           <td><%= number_to_currency(policy_calculation.policy_total_current_payroll) %> </td>
           <td><%= number_to_currency(policy_calculation.policy_total_standard_premium) %> </td>
           <td><%= policy_calculation.updated_at.in_time_zone("America/New_York").strftime("%m/%d/%y @ %I:%M %p") %> </td>

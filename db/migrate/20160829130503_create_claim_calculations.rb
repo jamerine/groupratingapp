@@ -10,6 +10,9 @@ class CreateClaimCalculations < ActiveRecord::Migration
       t.date :claim_injury_date
       t.float :claim_handicap_percent
       t.date :claim_handicap_percent_effective_date
+      t.date :claimant_date_of_death
+      t.date :claimant_date_of_birth
+      t.string :claimant_name
       t.integer :claim_manual_number
       t.float :claim_medical_paid
       t.float :claim_mira_medical_reserve_amount
@@ -28,7 +31,7 @@ class CreateClaimCalculations < ActiveRecord::Migration
       t.float :claim_modified_losses_group_reduced
       t.float :claim_modified_losses_individual_reduced
       t.string :data_source
-      
+
       t.timestamps null: false
     end
   end

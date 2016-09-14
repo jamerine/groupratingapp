@@ -105,12 +105,6 @@ class ManualClassCalculation < ActiveRecord::Base
 
    self.recalculate_premium
 
-
-
-
-
-# ######
-
   end
 
   def recalculate_premium
@@ -203,5 +197,21 @@ class ManualClassCalculation < ActiveRecord::Base
 
   @policy_calculation.update_attributes(policy_total_individual_premium: policy_total_individual_premium, policy_total_group_premium: policy_total_group_premium)
   end
+
+
+
+
+  def self.to_csv
+    attributes = self.column_names
+
+    CSV.generate(headers: true) do |csv|
+      csv << attributes
+
+      all.each do |manual_class|
+        csv << attributes.map{ |attr| manual_class.send(attr) }
+      end
+    end
+  end
+
 
 end

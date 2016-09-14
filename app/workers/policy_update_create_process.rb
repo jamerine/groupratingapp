@@ -73,7 +73,8 @@ class PolicyUpdateCreateProcess
         )
     end
 
-    ManualClassUpdateCreateProcess.perform_async(group_rating_id)
+
+    ManualClassUpdateCreateProcess.perform_async(group_rating_id, @group_rating.representative_id)
 
   end
 
