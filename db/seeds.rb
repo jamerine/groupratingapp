@@ -27,10 +27,11 @@
     { representative_number: 1796, abbreviated_name: 'MAAG' , company_name: 'Maag'},
     { representative_number: 1740, abbreviated_name: 'MATRIX', company_name: 'Matrix' },
     { representative_number: 20634, abbreviated_name: 'OBRIEN', company_name: "Dan O'Brien" },
-    { representative_number: 217395, abbreviated_name: 'RCOC' },
-    { representative_number: 219952, abbreviated_name: 'SCLLC' },
+    { representative_number: 217395, abbreviated_name: 'RCOC', company_name: 'Robinson Curphey'  },
+    { representative_number: 219952, abbreviated_name: 'SCLLC', company_name: 'Tom Stefanik'  },
     { representative_number: 218961, abbreviated_name: 'TRIDENT', company_name: 'Trident' },
-    { representative_number: 217351, abbreviated_name: 'UNITED'},
-    { representative_number: 21152, abbreviated_name: 'WHPCB' }])
+    { representative_number: 217351, abbreviated_name: 'UNITED', company_name: 'United Corp' },
+    { representative_number: 21152, abbreviated_name: 'WHPCB', company_name: 'Wickens Herzer'  }])
 
 User.create({email: 'jason@dittoh.com', password: 'Jamrine08'})
+User.create({email: 'paul@dittoh.com', password: 'password'})

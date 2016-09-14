@@ -24,7 +24,8 @@ class ManualClassUpdateCreate
     manual_class_standard_premium,
     manual_class_estimated_group_premium,
     manual_class_estimated_individual_premium,
-    data_source
+    data_source,
+    representative_id
     )
       ManualClassCalculation.where(policy_number: policy_number, manual_number: manual_number, representative_number: representative_number).update_or_create(
         representative_number: representative_number,
