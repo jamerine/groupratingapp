@@ -33,11 +33,11 @@ $BODY$
     claim_rating_plan_indicator,
     claim_status,
     claim_status_effective_date,
-    --claimant_name,
+    claimant_name,
     claim_manual_number,
     claim_sub_manual_number,
     claim_type,
-    --claimant_date_of_birth,
+    claimant_date_of_birth,
     claimant_date_of_death,
     claim_activity_status,
     claim_activity_status_effective_date,
@@ -89,13 +89,13 @@ $BODY$
     case when substring(single_rec,83,8) > '00000000' THEN to_date(substring(single_rec,83,8), 'YYYYMMDD')
       else null
     end,  /*  claim_status_effective_date  */
-    -- substring(single_rec,91,20),   /*  claimant_name  */
+     substring(single_rec,91,20),   /*  claimant_name  */
     cast_to_int(substring(single_rec,111,4)),   /*  claim_manual_number  */
     substring(single_rec,115,2),   /*  claim_sub_manual_number  */
     substring(single_rec,117,4),   /*  claim_type  */
-    -- case when substring(single_rec,121,8) > '00000000' THEN to_date(substring(single_rec,121,8), 'YYYYMMDD')
-    --   else null
-    -- end,  /*  claimant_date_of_birth  */
+     case when substring(single_rec,121,8) > '00000000' THEN to_date(substring(single_rec,121,8), 'YYYYMMDD')
+      else null
+     end,  /*  claimant_date_of_birth  */
     case when substring(single_rec,129,8) > '00000000' THEN to_date(substring(single_rec,129,8), 'YYYYMMDD')
       else null
     end, /*  claimant_date_of_death  */

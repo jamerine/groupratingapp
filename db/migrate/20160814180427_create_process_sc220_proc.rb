@@ -275,11 +275,11 @@ Insert Into sc220_rec1_employer_demographics (
           case when substring(single_rec,747,8) > '00000000' THEN to_date(substring(single_rec,747,8), 'MMDDYYYY')
             else null
           end,    -- n6th_coverage_end_date date,
-          substring(single_rec,755,12)::numeric/100,   -- regular_balance_amount char(13),
-          substring(single_rec,768,12)::numeric/100,   -- attorney_general_balance_amount char(13),
-          substring(single_rec,781,12)::numeric/100,   -- appealed_balance_amount char(13),
-          substring(single_rec,794,12)::numeric/100,   -- pending_balance_amount char(13),
-          substring(single_rec,807,10)::numeric/100,   -- advance_deposit_amount numeric
+          cast_to_int(substring(single_rec,755,12)),   -- regular_balance_amount char(13),
+          cast_to_int(substring(single_rec,768,12)),   -- attorney_general_balance_amount char(13),
+          cast_to_int(substring(single_rec,781,12)),   -- appealed_balance_amount char(13),
+          cast_to_int(substring(single_rec,794,12)),   -- pending_balance_amount char(13),
+          cast_to_int(substring(single_rec,807,10)),   -- advance_deposit_amount numeric
           current_timestamp::timestamp as created_at,
           current_timestamp::timestamp as updated_at
 from sc220s where substring(single_rec,11,1) = '1');

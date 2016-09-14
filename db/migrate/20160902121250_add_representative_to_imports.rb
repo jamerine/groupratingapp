@@ -1,4 +1,4 @@
-class AddReferenceToImports < ActiveRecord::Migration
+class AddRepresentativeToImports < ActiveRecord::Migration
   def change
     add_reference :imports, :representative, index: true
     add_foreign_key :imports, :representatives

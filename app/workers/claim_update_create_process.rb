@@ -16,6 +16,9 @@ class ClaimUpdateCreateProcess
               claim.claim_injury_date,
               claim.claim_handicap_percent,
               claim.claim_handicap_percent_effective_date,
+              claim.claimant_name,
+              claim.claimant_date_of_birth,
+              claim.claimant_date_of_death,
               claim.claim_manual_number,
               claim.claim_medical_paid,
               claim.claim_mira_medical_reserve_amount,
@@ -38,7 +41,7 @@ class ClaimUpdateCreateProcess
         end
     end
     @group_rating = GroupRating.find_by(id: group_rating_id)
-    @group_rating.status = "Claims Completed"
+    @group_rating.status = "Completed"
     @group_rating.save
   end
 end

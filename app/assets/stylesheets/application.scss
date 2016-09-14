@@ -26,3 +26,9 @@
 .dropdown-toggle {
   width: 25%;
 }
+
+.navbar-default .navbar-header .navbar-brand {
+  background: image-url("logo.png") center / contain no-repeat;
+  width: 150px;
+  margin-left: 25px;
+}

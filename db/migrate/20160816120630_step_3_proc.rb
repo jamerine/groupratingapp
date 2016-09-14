@@ -331,7 +331,7 @@ class Step3Proc < ActiveRecord::Migration
 
         -- STEP 3D -- TERMINATE POLICY COMBINATIONS LEASES --
         -- Labor lease TERMINATE payroll combinations
-        -- Will  the designated payroll amount for the manual class for the designated
+        -- Will add the designated payroll amount for the manual class for the designated
         -- payroll period from the predecessor_policy_number to the successor_policy_number.
 
         -- Only add the predecessor_policy_number
@@ -628,8 +628,7 @@ class Step3Proc < ActiveRecord::Migration
           run_date as created_at,
           run_date as updated_at
         FROM public.process_policy_combination_lease_terminations
-        WHERE predecessor_policy_number not in (SELECT policy_number FROM public.bwc_codes_peo_lists)
-        and labor_lease_type != 'LFULL' and representative_number = process_representative
+        WHERE labor_lease_type != 'LFULL' and representative_number = process_representative
         );
 
 

@@ -11,9 +11,46 @@
           <h3><%= @representative.company_name %></h3>
           <h5>abbreviated Name:</h5>
           <h3><%= @representative.abbreviated_name %></h3>
-          <%= link_to 'Edit', edit_representative_path(@representative.id) %>
+          <%= link_to "Policy Export", representative_path(params[:id], format: "csv"), class: 'btn btn-default' %>
+          <%= link_to "Manual Class Export", representative_export_manual_classes_path(params[:id], format: "csv"), class: 'btn btn-default' %>
       </div>
     </div>
-    <%= link_to 'Calculate fees', representative_fee_calculations_path(@representative.id), method: :post  %>
   </div>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12 text-center">
+        <h1>Group Rating Details</h1>
+      </div>
+      <div class="col-md-2">
+        <h4>Last Run Date</h4>
+        <p><%= @newest_group_rating.updated_at.in_time_zone("America/New_York").strftime("%m/%d/%y @ %I:%M %p")  %></p>
+      </div>
+      <div class="col-md-2">
+        <h4>Status</h4>
+        <p><%= @newest_group_rating.status  %></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-md-2">
+        <h5>Total Group Ratings</h5>
+        <%= @group_ratings.count %>
+      </div>
+      <div class="col-md-2">
+        <h5>Total Policies</h5>
+        <%= @policy_calculations.count %>
+      </div>
+      <div class="col-md-2">
+        <h5>Total Manual Class Calculations</h5>
+        <%= @manual_class_calculations.count %>
+      </div>
+
+    </div>
+  </div>
+
+
+
 <% end %>
