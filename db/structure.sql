@@ -2943,21 +2943,21 @@ CREATE FUNCTION proc_step_4(process_representative integer, experience_period_lo
               updated_at
             )
             (
-              SELECT
-                a.representative_number,
-                a.policy_number,
-                a.manual_number,
-                SUM(a.manual_class_payroll) as manual_class_four_year_period_payroll,
-                'bwc' as data_source,
-                run_date as created_at,
-                run_date as updated_at
-              FROM public.process_payroll_all_transactions_breakdown_by_manual_classes a
-              Left Join public.final_employer_demographics_informations edi
-              ON a.policy_number = edi.policy_number
-              WHERE (a.manual_class_effective_date BETWEEN experience_period_lower_date and experience_period_upper_date) -- date range for experience_period
-                and (a.payroll_origin = 'partial_transfer' or a.payroll_origin = 'lease_terminated' and a.payroll_origin = 'partial_to_full_lease' or  a.payroll_origin = 'full_transfer' )
-                and a.representative_number = process_representative
-              GROUP BY a.representative_number, a.policy_number, a.manual_number
+            SELECT
+              a.representative_number,
+              a.policy_number,
+              a.manual_number,
+              SUM(a.manual_class_payroll) as manual_class_four_year_period_payroll,
+              'bwc' as data_source,
+              run_date as created_at,
+              run_date as updated_at
+            FROM public.process_payroll_all_transactions_breakdown_by_manual_classes a
+            Left Join public.final_employer_demographics_informations edi
+            ON a.policy_number = edi.policy_number
+            WHERE (a.manual_class_effective_date BETWEEN experience_period_lower_date and experience_period_upper_date)
+            and a.representative_number = process_representative -- date range for experience_period
+              and (a.payroll_origin != 'payroll' and a.payroll_origin != 'manual_reclass' and a.payroll_origin != 'payroll_adjustment')
+            GROUP BY a.representative_number, a.policy_number, a.manual_number
             );
 
 
