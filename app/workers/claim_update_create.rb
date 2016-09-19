@@ -46,7 +46,7 @@ class ClaimUpdateCreate
             claim_handicap_percent_effective_date: claim_handicap_percent_effective_date,
             claimant_name: claimant_name,
             claimant_date_of_death: claimant_date_of_death,
-            claimant_date_of_death: claimant_date_of_birth,
+            claimant_date_of_birth: claimant_date_of_birth,
             claim_manual_number: claim_manual_number,
             claim_medical_paid: claim_medical_paid,
             claim_mira_medical_reserve_amount: claim_mira_medical_reserve_amount,
