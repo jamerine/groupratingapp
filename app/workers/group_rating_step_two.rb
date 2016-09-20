@@ -12,8 +12,7 @@
       @group_rating.status = "Step #{step} Completed"
     @group_rating.save
 
-    GroupRatingStepThree.perform_async("3",@group_rating.process_representative, @group_rating.experience_period_lower_date, @group_rating.experience_period_upper_date, @group_rating.current_payroll_period_lower_date, @group_rating.id)
-
+    GroupRatingStepTwoPartial.perform_async("3",@group_rating.process_representative, @group_rating.experience_period_lower_date, @group_rating.experience_period_upper_date, @group_rating.current_payroll_period_lower_date, @group_rating.id)
 
   end
 
