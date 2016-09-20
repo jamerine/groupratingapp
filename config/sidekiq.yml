@@ -2,7 +2,7 @@ development:
   :concurrency: 5
 production:
   :concurrency: 20
-  
+
 :queues:
   - default
   - import_file
@@ -10,6 +10,7 @@ production:
   - parse_file
   - group_rating_step_one
   - group_rating_step_two
+  - group_rating_step_two_partial
   - group_rating_step_three
   - group_rating_step_four
   - group_rating_step_five

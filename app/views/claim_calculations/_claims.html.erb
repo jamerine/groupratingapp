@@ -13,8 +13,10 @@
         <h5>Injury Date</h5>
       </div>
       <div class="col-md-1 col-sm-4 col-xs-6 hidden-sm hidden-xs">
+        <h5>Handicap Percent</h5>
+      </div>
+      <div class="col-md-1 col-sm-4 col-xs-6 hidden-sm hidden-xs">
         <h5>Manual Number</h5>
-
       </div>
       <div class="col-md-1 col-sm-4 col-xs-6 hidden-sm hidden-xs">
         <h5>Unlimited Limited Loss</h5>
@@ -43,6 +45,10 @@
         <h5 class="hidden-md hidden-lg">Injury Date</h5>
           <p><%= claim.claim_injury_date %></p>
         </div>
+      <div class="col-md-1 col-sm-4 col-xs-6 ">
+        <h5 class="hidden-md hidden-lg">Handicap Percent</h5>
+          <p><%=  number_to_percentage(claim.claim_handicap_percent * 100, precision: 0) %></p>
+      </div>
         <div class="col-md-1 col-sm-4 col-xs-6 ">
           <h5 class="hidden-md hidden-lg">Manual Number</h5>
           <p><%= claim.claim_manual_number %></p>
