@@ -4,9 +4,9 @@ class CreateProcessPolicyCombinationLeaseTerminations < ActiveRecord::Migration
       t.integer :representative_number
       t.string :valid_policy_number
       t.string :policy_combinations
-      t.string :predecessor_policy_type
+      t.integer :predecessor_policy_type
       t.integer :predecessor_policy_number
-      t.string :successor_policy_type
+      t.integer :successor_policy_type
       t.integer :successor_policy_number
       t.string :transfer_type
       t.date :transfer_effective_date

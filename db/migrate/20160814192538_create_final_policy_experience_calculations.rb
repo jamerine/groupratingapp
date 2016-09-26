@@ -2,6 +2,7 @@ class CreateFinalPolicyExperienceCalculations < ActiveRecord::Migration
   def change
     create_table :final_policy_experience_calculations do |t|
       t.integer :representative_number
+      t.integer :policy_type
       t.integer :policy_number
       t.index [:policy_number, :representative_number], name: 'index_pol_exp_pol_num_and_man_num_rep'
       t.string :policy_group_number

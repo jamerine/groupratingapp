@@ -20,6 +20,7 @@ class Step4Proc < ActiveRecord::Migration
         INSERT INTO final_manual_class_four_year_payroll_and_exp_losses
           (
             representative_number,
+            policy_type,
             policy_number,
             manual_number,
             data_source,
@@ -29,6 +30,7 @@ class Step4Proc < ActiveRecord::Migration
           (
             SELECT
             a.representative_number,
+            a.policy_type,
             a.policy_number,
             b.manual_number,
             'bwc' as data_source,
@@ -39,6 +41,7 @@ class Step4Proc < ActiveRecord::Migration
           ON a.policy_number = b.policy_number
           WHERE b.manual_class_effective_date >= experience_period_lower_date and b.manual_class_effective_date <= experience_period_upper_date and a.representative_number = process_representative
           GROUP BY a.representative_number,
+            a.policy_type,
             a.policy_number,
             b.manual_number
           );
@@ -54,6 +57,7 @@ class Step4Proc < ActiveRecord::Migration
           INSERT INTO process_manual_class_four_year_payroll_with_conditions
           (
             representative_number,
+            policy_type,
             policy_number,
             manual_number,
             manual_class_four_year_period_payroll,
@@ -64,6 +68,7 @@ class Step4Proc < ActiveRecord::Migration
           (
             SELECT
               a.representative_number,
+              a.policy_type,
               a.policy_number,
               a.manual_number,
               SUM(a.manual_class_payroll) as manual_class_four_year_period_payroll,
@@ -76,12 +81,13 @@ class Step4Proc < ActiveRecord::Migration
             WHERE (a.manual_class_effective_date BETWEEN experience_period_lower_date and experience_period_upper_date)
             and a.representative_number = process_representative -- date range for experience_period
               and (a.payroll_origin = 'payroll' or a.payroll_origin = 'manual_reclass' or a.payroll_origin = 'payroll_adjustment') and (a.manual_class_effective_date >= edi.policy_creation_date )
-            GROUP BY a.representative_number, a.policy_number, a.manual_number
+            GROUP BY a.representative_number, a.policy_type, a.policy_number, a.manual_number
           );
 
             INSERT INTO process_manual_class_four_year_payroll_without_conditions
             (
               representative_number,
+              policy_type,
               policy_number,
               manual_number,
               manual_class_four_year_period_payroll,
@@ -92,6 +98,7 @@ class Step4Proc < ActiveRecord::Migration
             (
             SELECT
               a.representative_number,
+              a.policy_type,
               a.policy_number,
               a.manual_number,
               SUM(a.manual_class_payroll) as manual_class_four_year_period_payroll,
@@ -104,7 +111,7 @@ class Step4Proc < ActiveRecord::Migration
             WHERE (a.manual_class_effective_date BETWEEN experience_period_lower_date and experience_period_upper_date)
             and a.representative_number = process_representative -- date range for experience_period
               and (a.payroll_origin != 'payroll' and a.payroll_origin != 'manual_reclass' and a.payroll_origin != 'payroll_adjustment')
-            GROUP BY a.representative_number, a.policy_number, a.manual_number
+            GROUP BY a.representative_number, a.policy_type, a.policy_number, a.manual_number
             );
 
 
@@ -141,6 +148,7 @@ class Step4Proc < ActiveRecord::Migration
          FROM
          (  SELECT
              a.representative_number,
+             a.policy_type,
              a.policy_number,
              a.manual_number,
              b.expected_loss_rate as manual_class_expected_loss_rate,
@@ -172,6 +180,7 @@ class Step4Proc < ActiveRecord::Migration
         -- Insert all policy_numbers and manual_numbers that are associated with a PEO LEASE
         INSERT INTO public.process_policy_experience_period_peos (
           representative_number,
+          policy_type,
           policy_number,
           data_source,
           created_at,
@@ -180,6 +189,7 @@ class Step4Proc < ActiveRecord::Migration
         (
           SELECT DISTINCT
                representative_number,
+               predecessor_policy_type as policy_type,
                predecessor_policy_number as policy_number,
                'bwc' as data_source,
                run_date as created_at,

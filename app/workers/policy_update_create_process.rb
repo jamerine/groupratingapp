@@ -14,6 +14,7 @@ class PolicyUpdateCreateProcess
         representative_id = Representative.find_by(representative_number: policy_exp.representative_number).id
         PolicyUpdateCreate.perform_async(
         policy_exp.representative_number,
+        policy_exp.policy_type,
         policy_exp.policy_number,
         policy_exp.policy_group_number,
         policy_exp.policy_status,

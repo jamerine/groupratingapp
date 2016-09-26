@@ -20,6 +20,7 @@ class Step1Proc < ActiveRecord::Migration
 
         INSERT INTO final_employer_demographics_informations (
           representative_number,
+          policy_type,
           policy_number,
           successor_policy_number,
           currently_assigned_representative_number,
@@ -52,6 +53,7 @@ class Step1Proc < ActiveRecord::Migration
 
         (Select
           representative_number,
+          policy_type,
           policy_number,
           successor_policy_number,
           currently_assigned_representative_number,
@@ -92,6 +94,7 @@ class Step1Proc < ActiveRecord::Migration
         Insert into process_policy_coverage_status_histories
         (
           representative_number,
+           policy_type,
            policy_number,
            coverage_effective_date,
            coverage_end_date,
@@ -103,6 +106,7 @@ class Step1Proc < ActiveRecord::Migration
 
         (SELECT
         representative_number,
+        policy_type,
         policy_number,
         coverage_effective_date,
         coverage_end_date,
@@ -117,6 +121,7 @@ class Step1Proc < ActiveRecord::Migration
         Insert into process_policy_coverage_status_histories
         (
           representative_number,
+          policy_type,
            policy_number,
            coverage_effective_date,
            coverage_end_date,
@@ -127,6 +132,7 @@ class Step1Proc < ActiveRecord::Migration
         )
         (SELECT
         representative_number,
+        policy_type,
         policy_number,
         n2nd_coverage_effective_date,
         n2nd_coverage_end_date,
@@ -142,6 +148,7 @@ class Step1Proc < ActiveRecord::Migration
         Insert into process_policy_coverage_status_histories
         (
           representative_number,
+           policy_type,
            policy_number,
            coverage_effective_date,
            coverage_end_date,
@@ -152,6 +159,7 @@ class Step1Proc < ActiveRecord::Migration
         )
         (SELECT
         representative_number,
+         policy_type,
         policy_number,
         n3rd_coverage_effective_date,
         n3rd_coverage_end_date,
@@ -167,6 +175,7 @@ class Step1Proc < ActiveRecord::Migration
         Insert into process_policy_coverage_status_histories
         (
           representative_number,
+           policy_type,
            policy_number,
            coverage_effective_date,
            coverage_end_date,
@@ -177,6 +186,7 @@ class Step1Proc < ActiveRecord::Migration
         )
         (SELECT
         representative_number,
+         policy_type,
         policy_number,
         n4th_coverage_effective_date,
         n4th_coverage_end_date,
@@ -192,6 +202,7 @@ class Step1Proc < ActiveRecord::Migration
         Insert into process_policy_coverage_status_histories
         (
           representative_number,
+           policy_type,
            policy_number,
            coverage_effective_date,
            coverage_end_date,
@@ -202,6 +213,7 @@ class Step1Proc < ActiveRecord::Migration
         )
         (SELECT
         representative_number,
+         policy_type,
         policy_number,
         n5th_coverage_effective_date,
         n5th_coverage_end_date,
@@ -218,6 +230,7 @@ class Step1Proc < ActiveRecord::Migration
         Insert into process_policy_coverage_status_histories
         (
           representative_number,
+           policy_type,
            policy_number,
            coverage_effective_date,
            coverage_end_date,
@@ -229,6 +242,7 @@ class Step1Proc < ActiveRecord::Migration
 
         (SELECT
         representative_number,
+         policy_type,
         policy_number,
         n6th_coverage_effective_date,
         n6th_coverage_end_date,
@@ -244,6 +258,7 @@ class Step1Proc < ActiveRecord::Migration
         Update public.process_policy_coverage_status_histories pcsh set (lapse_days, updated_at) = (t2.lapse_days, t2.updated_at)
         FROM
         (SELECT a.representative_number,
+         policy_type,
           a.policy_number,
           a.coverage_effective_date,
           a.coverage_end_date,
@@ -261,6 +276,7 @@ class Step1Proc < ActiveRecord::Migration
         Update public.process_policy_coverage_status_histories pcsh set (lapse_days, updated_at) = (t2.lapse_days, t2.updated_at)
         FROM
         (SELECT a.representative_number,
+         policy_type,
           a.policy_number,
           a.coverage_effective_date,
           a.coverage_end_date,

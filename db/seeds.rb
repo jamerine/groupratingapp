@@ -19,6 +19,7 @@
 
   representatives = Representative.create([
     { representative_number: 219406, abbreviated_name: 'ARM', company_name: 'Alternative Risk Management' },
+    { representative_number: 218265, abbreviated_name: 'COSE', company_name: 'Council of Smaller Enterprises' },
     { representative_number: 217564, abbreviated_name: 'ECP', company_name: 'Employers Choice Plus' },
     { representative_number: 218373, abbreviated_name: 'ERSCO', company_name: 'Employer Risk Solutions Company' },
     { representative_number: 1714, abbreviated_name: 'GCADA', company_name: 'Greater Cleveland Automobile Dealers' },
@@ -26,13 +27,16 @@
     { representative_number: 217381, abbreviated_name: 'GMSPRO', company_name: 'Group Management Services' },
     { representative_number: 1796, abbreviated_name: 'MAAG' , company_name: 'Maag'},
     { representative_number: 1740, abbreviated_name: 'MATRIX', company_name: 'Matrix' },
-    { representative_number: 1633, abbreviated_name: 'MM', company_name: 'Minute Man HR' },
+    { representative_number: 1633, abbreviated_name: 'MMHR', company_name: 'Minute Man HR' },
+    { representative_number: 219313, abbreviated_name: 'MMS', company_name: 'Minute Men Select' },
     { representative_number: 20634, abbreviated_name: 'OBRIEN', company_name: "Dan O'Brien" },
     { representative_number: 217395, abbreviated_name: 'RCOC', company_name: 'Robinson Curphey'  },
     { representative_number: 219952, abbreviated_name: 'SCLLC', company_name: 'Tom Stefanik'  },
     { representative_number: 218961, abbreviated_name: 'TRIDENT', company_name: 'Trident' },
     { representative_number: 217351, abbreviated_name: 'UNITED', company_name: 'United Corp' },
-    { representative_number: 21152, abbreviated_name: 'WHPCB', company_name: 'Wickens Herzer'  }])
+    { representative_number: 21152, abbreviated_name: 'WHPCB', company_name: 'Wickens Herzer'  }
+
+    ])
 
 User.create({email: 'jason@dittoh.com', password: 'Jamrine08'})
 User.create({email: 'paul@dittoh.com', password: 'password'})

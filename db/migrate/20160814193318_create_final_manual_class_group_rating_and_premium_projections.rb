@@ -2,6 +2,7 @@ class CreateFinalManualClassGroupRatingAndPremiumProjections < ActiveRecord::Mig
   def change
       create_table :final_manual_class_group_rating_and_premium_projections do |t|
       t.integer :representative_number
+      t.integer :policy_type
       t.integer :policy_number
       t.integer :manual_number
       t.index [:policy_number, :manual_number, :representative_number], name: 'index_fin_man_pr_pol_num_and_man_num_rep'

@@ -20,6 +20,7 @@ class Step8Proc < ActiveRecord::Migration
       Insert into final_policy_group_rating_and_premium_projections
       (
         representative_number,
+        policy_type,
         policy_number,
         policy_status,
         data_source,
@@ -28,6 +29,7 @@ class Step8Proc < ActiveRecord::Migration
       )
       (Select
         representative_number,
+        policy_type,
         policy_number,
         policy_status,
         'bwc' as data_source,
@@ -44,6 +46,7 @@ class Step8Proc < ActiveRecord::Migration
       INSERT INTO final_manual_class_group_rating_and_premium_projections
       (
         representative_number,
+        policy_type,
         policy_number,
         manual_number,
         -- ADD ALL INDUSTRY_GROUP'S PAYROLL WITHIN A POLICY_NUMBER SURE TO UPDATE THIS AFTER GOING AF
@@ -56,6 +59,7 @@ class Step8Proc < ActiveRecord::Migration
       (
         SELECT
           a.representative_number,
+          a.policy_type,
           a.policy_number,
           a.manual_number,
           round(sum(a.manual_class_payroll)::numeric,2) as manual_class_current_estimated_payroll,
@@ -64,7 +68,7 @@ class Step8Proc < ActiveRecord::Migration
           run_date as updated_at
         FROM public.process_payroll_all_transactions_breakdown_by_manual_classes a
         WHERE (a.manual_class_effective_date >= current_payroll_period_lower_date) and a.representative_number = process_representative
-        GROUP BY a.representative_number, a.policy_number, a.manual_number
+        GROUP BY a.representative_number, a.policy_type, a.policy_number, a.manual_number
       );
 
 
