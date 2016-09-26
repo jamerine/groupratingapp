@@ -315,11 +315,13 @@ class Step3Proc < ActiveRecord::Migration
 
         --  UPDATE PEO LIST file from list of PEO Transfers.
         INSERT INTO bwc_codes_peo_lists (
+        policy_type,
         policy_number,
         updated_at
         )
         (
         SELECT DISTINCT
+           successor_policy_type,
            successor_policy_number,
            run_date as updated_at
         FROM public.process_policy_combine_partial_to_full_leases
@@ -424,7 +426,9 @@ class Step3Proc < ActiveRecord::Migration
 
         INSERT INTO process_payroll_all_transactions_breakdown_by_manual_classes (
           representative_number,
+          policy_type,
           policy_number,
+          manual_type,
           manual_number,
           manual_class_effective_date,
           manual_class_payroll,
@@ -438,7 +442,9 @@ class Step3Proc < ActiveRecord::Migration
         -- Payroll breakdown by manual_class
 
         (SELECT representative_number,
+        policy_type,
         policy_number,
+        manual_type,
         manual_number,
         manual_class_effective_date,
         manual_class_payroll,
@@ -455,7 +461,9 @@ class Step3Proc < ActiveRecord::Migration
         -- Payroll combination - Full Transfer -- Positive
         INSERT INTO process_payroll_all_transactions_breakdown_by_manual_classes (
           representative_number,
+          policy_type,
           policy_number,
+          manual_type,
           manual_number,
           manual_class_effective_date,
           manual_class_payroll,
@@ -465,7 +473,9 @@ class Step3Proc < ActiveRecord::Migration
           updated_at
         )
         (SELECT representative_number,
+        successor_policy_type as "policy_type",
         successor_policy_number as "policy_number",
+        manual_type,
         manual_number,
         manual_class_effective_date,
         manual_class_payroll,
@@ -480,7 +490,9 @@ class Step3Proc < ActiveRecord::Migration
         -- Payroll combination - Full Transfer -- Negative
         INSERT INTO process_payroll_all_transactions_breakdown_by_manual_classes (
           representative_number,
+          policy_type,
           policy_number,
+          manual_type,
           manual_number,
           manual_class_effective_date,
           manual_class_payroll,
@@ -490,7 +502,9 @@ class Step3Proc < ActiveRecord::Migration
           updated_at
         )
         (SELECT representative_number,
+        predecessor_policy_type as "policy_type",
         predecessor_policy_number as "policy_number",
+        manual_type,
         manual_number,
         manual_class_effective_date,
         (- manual_class_payroll),
@@ -506,7 +520,9 @@ class Step3Proc < ActiveRecord::Migration
         -- Payroll combination - Partial Transfer -- No Lease -- Positive
         INSERT INTO process_payroll_all_transactions_breakdown_by_manual_classes (
           representative_number,
+          policy_type,
           policy_number,
+          manual_type,
           manual_number,
           manual_class_effective_date,
           manual_class_payroll,
@@ -516,7 +532,9 @@ class Step3Proc < ActiveRecord::Migration
           updated_at
         )
         (SELECT representative_number,
+        successor_policy_type as "policy_type",
         successor_policy_number as "policy_number",
+        manual_coverage_type as manual_type,
         ncci_manual_number as "manual_number",
         payroll_reporting_period_from_date as "manual_class_effective_date",
         manual_payroll as "manual_payroll",
@@ -530,7 +548,9 @@ class Step3Proc < ActiveRecord::Migration
 
         INSERT INTO process_payroll_all_transactions_breakdown_by_manual_classes (
           representative_number,
+          policy_type,
           policy_number,
+          manual_type,
           manual_number,
           manual_class_effective_date,
           manual_class_payroll,
@@ -540,7 +560,9 @@ class Step3Proc < ActiveRecord::Migration
           updated_at
         )
         (SELECT representative_number,
+        predecessor_policy_type as "policy_type",
         predecessor_policy_number as "policy_number",
+        manual_coverage_type as manual_type,
         ncci_manual_number as "manual_number",
         payroll_reporting_period_from_date as "manual_class_effective_date",
         (-manual_payroll) as "manual_payroll",
@@ -556,7 +578,9 @@ class Step3Proc < ActiveRecord::Migration
         -- Payroll Combination - Partial to Full Lease -- Positive
         INSERT INTO process_payroll_all_transactions_breakdown_by_manual_classes (
           representative_number,
+          policy_type,
           policy_number,
+          manual_type,
           manual_number,
           manual_class_effective_date,
           manual_class_payroll,
@@ -566,7 +590,9 @@ class Step3Proc < ActiveRecord::Migration
           updated_at
         )
         (SELECT representative_number,
+          successor_policy_type as "policy_type",
           successor_policy_number as "policy_number",
+          manual_coverage_type as manual_type,
           ncci_manual_number as "manual_number",
           payroll_reporting_period_from_date as "manual_class_effective_date",
           manual_payroll as "manual_payroll",
@@ -582,7 +608,9 @@ class Step3Proc < ActiveRecord::Migration
         -- Payroll Combination - Partial to Full Lease -- Negative
         INSERT INTO process_payroll_all_transactions_breakdown_by_manual_classes (
           representative_number,
+          policy_type,
           policy_number,
+          manual_type,
           manual_number,
           manual_class_effective_date,
           manual_class_payroll,
@@ -592,7 +620,9 @@ class Step3Proc < ActiveRecord::Migration
           updated_at
         )
         (SELECT representative_number,
+          predecessor_policy_type as "policy_type",
           predecessor_policy_number as "policy_number",
+          manual_coverage_type as manual_type,
           ncci_manual_number as "manual_number",
           payroll_reporting_period_from_date as "manual_class_effective_date",
           (-manual_payroll) as "manual_payroll",
@@ -609,7 +639,9 @@ class Step3Proc < ActiveRecord::Migration
         -- Payroll Combinaton - Lease Termination -- Postive
         INSERT INTO process_payroll_all_transactions_breakdown_by_manual_classes (
           representative_number,
+          policy_type,
           policy_number,
+          manual_type,
           manual_number,
           manual_class_effective_date,
           manual_class_payroll,
@@ -619,7 +651,9 @@ class Step3Proc < ActiveRecord::Migration
           updated_at
         )
         (SELECT representative_number,
+          successor_policy_type as "policy_type",
           successor_policy_number as "policy_number",
+          manual_coverage_type as manual_type,
           ncci_manual_number as "manual_number",
           payroll_reporting_period_from_date as "manual_class_effective_date",
           manual_payroll as "manual_payroll",
@@ -637,7 +671,9 @@ class Step3Proc < ActiveRecord::Migration
         -- Payroll Combinaton - Lease Termination -- Negative
         INSERT INTO process_payroll_all_transactions_breakdown_by_manual_classes (
           representative_number,
+          policy_type,
           policy_number,
+          manual_type,
           manual_number,
           manual_class_effective_date,
           manual_class_payroll,
@@ -647,7 +683,9 @@ class Step3Proc < ActiveRecord::Migration
           updated_at
         )
         (SELECT representative_number,
+        predecessor_policy_type as "policy_type",
         predecessor_policy_number as "policy_number",
+        manual_coverage_type as manual_type,
         ncci_manual_number as "manual_number",
         payroll_reporting_period_from_date as "manual_class_effective_date",
         (-manual_payroll) as "manual_payroll",
@@ -670,9 +708,11 @@ class Step3Proc < ActiveRecord::Migration
 
         INSERT INTO process_manual_reclass_tables (
             representative_number,
+            policy_type,
             policy_number,
             re_classed_from_manual_number,
             re_classed_to_manual_number,
+            reclass_manual_coverage_type,
             reclass_creation_date,
             payroll_reporting_period_from_date,
             payroll_reporting_period_to_date,
@@ -684,9 +724,11 @@ class Step3Proc < ActiveRecord::Migration
         )
         (Select
             representative_number,
+            policy_type,
             policy_number,
             re_classed_from_manual_number,
             re_classed_to_manual_number,
+            reclass_manual_coverage_type,
             reclass_creation_date,
             payroll_reporting_period_from_date,
             payroll_reporting_period_to_date,
@@ -711,7 +753,9 @@ class Step3Proc < ActiveRecord::Migration
 
         INSERT INTO process_payroll_all_transactions_breakdown_by_manual_classes (
           representative_number,
+          policy_type,
           policy_number,
+          manual_type,
           manual_number,
           manual_class_effective_date,
           manual_class_payroll,
@@ -723,7 +767,9 @@ class Step3Proc < ActiveRecord::Migration
         --  payroll deducted from the manual class that is being reclassed
         (Select
             representative_number,
+            policy_type,
             policy_number as "policy_number",
+            reclass_manual_coverage_type as manual_type,
             re_classed_from_manual_number as "manual_number",
             payroll_reporting_period_from_date as "payroll_reporting_period_from_date",
             (-re_classed_to_manual_payroll_total) as "manual_payroll",
@@ -738,8 +784,10 @@ class Step3Proc < ActiveRecord::Migration
         -- payroll added to new payroll manual class
         INSERT INTO process_payroll_all_transactions_breakdown_by_manual_classes (
           representative_number,
+          policy_type,
           policy_number,
           manual_number,
+          manual_type,
           manual_class_effective_date,
           manual_class_payroll,
           payroll_origin,
@@ -749,8 +797,10 @@ class Step3Proc < ActiveRecord::Migration
         )
         (Select
             representative_number,
+            policy_type,
             policy_number as "policy_number",
             re_classed_to_manual_number as "manual_number",
+            reclass_manual_coverage_type as manual_type,
             payroll_reporting_period_from_date as "payroll_reporting_period_from_date",
             (re_classed_to_manual_payroll_total) as "manual_payroll",
             'manual_reclass' as payroll_origin,
@@ -760,8 +810,16 @@ class Step3Proc < ActiveRecord::Migration
         FROM public.process_manual_reclass_tables
         where representative_number = process_representative
         );
-        end;
 
+        DELETE FROM public.process_payroll_all_transactions_breakdown_by_manual_classes
+        WHERE id IN (SELECT id
+              FROM (SELECT id,
+                             ROW_NUMBER() OVER (partition BY representative_number, policy_type, policy_number, manual_type, manual_number, manual_class_effective_date,
+       manual_class_payroll, data_source, created_at,
+       updated_at ORDER BY id) AS rnum
+                     FROM public.process_payroll_all_transactions_breakdown_by_manual_classes) t
+              WHERE t.rnum > 1);
+      end;
           $BODY$
           LANGUAGE plpgsql;
 

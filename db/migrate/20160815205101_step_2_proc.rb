@@ -240,6 +240,13 @@ class Step2Proc < ActiveRecord::Migration
           manual_number ASC,
           manual_class_effective_date ASC;
 
+          DELETE FROM public.process_payroll_breakdown_by_manual_classes
+          WHERE id IN (SELECT id
+                FROM (SELECT id,
+                               ROW_NUMBER() OVER (partition BY policy_type, policy_number, manual_number, manual_type, manual_class_effective_date, manual_class_rate, manual_class_payroll, manual_class_premium, payroll_origin, data_source, created_at, updated_at ORDER BY id) AS rnum
+                       FROM public.process_payroll_breakdown_by_manual_classes) t
+                WHERE t.rnum > 1);
+
       end;
 
         $BODY$

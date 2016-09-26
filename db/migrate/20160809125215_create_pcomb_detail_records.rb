@@ -10,11 +10,11 @@ class CreatePcombDetailRecords < ActiveRecord::Migration
       t.integer :business_sequence_number
       t.string :valid_policy_number
       t.string :policy_combinations
-      t.string :predecessor_policy_type
+      t.integer :predecessor_policy_type
       t.integer :predecessor_policy_number
       t.string :predecessor_filler
       t.string :predecessor_business_sequence_number
-      t.string :successor_policy_type
+      t.integer :successor_policy_type
       t.integer :successor_policy_number
       t.string :successor_filler
       t.string :successor_business_sequence_number
