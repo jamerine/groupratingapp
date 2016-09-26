@@ -22,12 +22,14 @@ class Step5Proc < ActiveRecord::Migration
       INSERT INTO public.final_policy_experience_calculations
       (
       representative_number,
+      policy_type,
       policy_number,
       data_source,
       created_at,
       updated_at
       )
       (SELECT DISTINCT representative_number,
+             policy_type,
              policy_number,
              'bwc' as data_source,
              run_date as created_at,

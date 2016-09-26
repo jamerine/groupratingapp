@@ -49,11 +49,11 @@ class CreateProcessPcombProc < ActiveRecord::Migration
               cast_to_int(substring(single_rec,24,3)),   /*  business_sequence_number  */
               substring(single_rec,27,1),   /*  valid_policy_number  */
               substring(single_rec,28,1),   /*  policy_combinations  */
-              substring(single_rec,29,1),   /*  predecessor_policy_type  */
+              cast_to_int(substring(single_rec,29,1)),   /*  predecessor_policy_type  */
               cast_to_int(substring(single_rec,30,7)),   /*  predecessor_policy_sequence_number  */
               substring(single_rec,37,1),   /*  predecessor_filler  */
               substring(single_rec,38,3),   /*  predecessor_business_sequence_number  */
-              substring(single_rec,41,1),   /*  successor_policy_type  */
+              cast_to_int(substring(single_rec,41,1)),   /*  successor_policy_type  */
               cast_to_int(substring(single_rec,42,7)),   /*  successor_policy_sequence_number  */
               substring(single_rec,49,1),   /*  successor_filler  */
               substring(single_rec,50,3),   /*  successor_business_sequence_number  */
