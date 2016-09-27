@@ -5,11 +5,14 @@ require 'sidekiq/web'
 Rails.application.routes.draw do
 
 
+
   # mount Resque::Server.new, at: "/resque"
   # ...
   mount Sidekiq::Web, at: '/sidekiq'
 
   devise_for :users
+
+  resources :accounts
 
   resources :imports do
     collection { delete :destroy }

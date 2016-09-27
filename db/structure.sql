@@ -4087,6 +4087,56 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
+-- Name: accounts; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE accounts (
+    id integer NOT NULL,
+    representative_id integer,
+    name character varying,
+    policy_number_entered integer,
+    street_address character varying,
+    street_address_2 character varying,
+    city character varying,
+    state character varying,
+    zip_code character varying,
+    business_phone_number bigint,
+    business_email_address character varying,
+    website_url character varying,
+    group_fees double precision,
+    group_dues double precision,
+    total_costs double precision,
+    status integer DEFAULT 0,
+    federal_identification_number character varying,
+    cycle_date date,
+    request_date date,
+    quarterly_request boolean,
+    weekly_request boolean,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: accounts_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE accounts_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: accounts_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE accounts_id_seq OWNED BY accounts.id;
+
+
+--
 -- Name: bwc_codes_base_rates_exp_loss_rates; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -5552,7 +5602,8 @@ CREATE TABLE policy_calculations (
     data_source character varying,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    representative_id integer
+    representative_id integer,
+    account_id integer
 );
 
 
@@ -6702,6 +6753,13 @@ ALTER SEQUENCE users_id_seq OWNED BY users.id;
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY accounts ALTER COLUMN id SET DEFAULT nextval('accounts_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY bwc_codes_base_rates_exp_loss_rates ALTER COLUMN id SET DEFAULT nextval('bwc_codes_base_rates_exp_loss_rates_id_seq'::regclass);
 
 
@@ -7074,6 +7132,14 @@ ALTER TABLE ONLY sc230s ALTER COLUMN id SET DEFAULT nextval('sc230s_id_seq'::reg
 --
 
 ALTER TABLE ONLY users ALTER COLUMN id SET DEFAULT nextval('users_id_seq'::regclass);
+
+
+--
+-- Name: accounts_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY accounts
+    ADD CONSTRAINT accounts_pkey PRIMARY KEY (id);
 
 
 --
@@ -7509,6 +7575,13 @@ ALTER TABLE ONLY users
 
 
 --
+-- Name: index_accounts_on_representative_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_accounts_on_representative_id ON accounts USING btree (representative_id);
+
+
+--
 -- Name: index_bwc_codes_policy_effective_dates_on_policy_number; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -7621,6 +7694,13 @@ CREATE INDEX index_pol_prem_pol_num_and_rep ON final_policy_group_rating_and_pre
 
 
 --
+-- Name: index_policy_calculations_on_account_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_policy_calculations_on_account_id ON policy_calculations USING btree (account_id);
+
+
+--
 -- Name: index_policy_calculations_on_pol_num; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -7692,6 +7772,14 @@ ALTER TABLE ONLY manual_class_calculations
 
 
 --
+-- Name: fk_rails_05a693ad72; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY accounts
+    ADD CONSTRAINT fk_rails_05a693ad72 FOREIGN KEY (representative_id) REFERENCES representatives(id);
+
+
+--
 -- Name: fk_rails_0c7708bfbc; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -7713,6 +7801,14 @@ ALTER TABLE ONLY imports
 
 ALTER TABLE ONLY group_ratings
     ADD CONSTRAINT fk_rails_35addb0042 FOREIGN KEY (representative_id) REFERENCES representatives(id);
+
+
+--
+-- Name: fk_rails_3fd03272a6; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY policy_calculations
+    ADD CONSTRAINT fk_rails_3fd03272a6 FOREIGN KEY (account_id) REFERENCES accounts(id);
 
 
 --
@@ -7892,4 +7988,8 @@ INSERT INTO schema_migrations (version) VALUES ('20160902120955');
 INSERT INTO schema_migrations (version) VALUES ('20160902121250');
 
 INSERT INTO schema_migrations (version) VALUES ('20160902121319');
+
+INSERT INTO schema_migrations (version) VALUES ('20160926143428');
+
+INSERT INTO schema_migrations (version) VALUES ('20160926150157');
 

@@ -3,6 +3,7 @@ class PolicyCalculation < ActiveRecord::Base
   has_many :manual_class_calculations, dependent: :destroy
   has_many :claim_calculations, dependent: :destroy
   belongs_to :representative
+  belongs_to :account
 
   def self.update_or_create(attributes)
     assign_or_new(attributes).save
