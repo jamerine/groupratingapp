@@ -5,8 +5,11 @@
     </div>
   </div>
 
-  <div class="container">
+  <div class="container jumbotron">
       <div class="row">
+        <div class="col-md-12">
+          <%= link_to "Edit Account Info", edit_account_path(params[:id]), class: 'btn btn-primary' %>
+        </div>
         <div class="col-md-4">
           <p>Account:</p>
           <h3><%= @account.name %></h3>
@@ -20,9 +23,7 @@
           <p>Status:</p>
           <h3><%= @account.status.humanize %></h3>
         </div>
-        <div class="col-md-2">
-          <%= link_to "Edit", edit_account_path(params[:id]), class: 'btn btn-primary' %>
-        </div>
+
       </div>
 
     <br>
@@ -48,6 +49,69 @@
     </div>
   </div>
   <br>
+
+
+  <div class="container">
+    <h3>Product Details</h3>
+    <div class="row">
+      <div class="col-md-2">
+        <h5>Product Name</h5>
+        <p>Group Rating</p>
+      </div>
+      <div class="col-md-2">
+        <h5>Qualification</h5>
+        <p>Approved</p>
+      </div>
+      <div class="col-md-2">
+        <h5>Fee</h5>
+        <p>$100.00</p>
+      </div>
+      <div class="col-md-2">
+        <h5>Dues</h5>
+        <p>$1000.00</p>
+      </div>
+      <div class="col-md-2">
+        <h5>Total Cost</h5>
+        <p>$1100.00</p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-2">
+        <p>Group Retro</p>
+      </div>
+      <div class="col-md-2">
+        <p>Declined</p>
+      </div>
+      <div class="col-md-2">
+        <p>-</p>
+      </div>
+      <div class="col-md-2">
+        <p>-</p>
+      </div>
+      <div class="col-md-2">
+        <p>-</p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-2">
+        <p>One Claim Program</p>
+      </div>
+      <div class="col-md-2">
+        <p>Declined</p>
+      </div>
+      <div class="col-md-2">
+        <p>-</p>
+      </div>
+      <div class="col-md-2">
+        <p>-</p>
+      </div>
+      <div class="col-md-2">
+        <p>-</p>
+      </div>
+    </div>
+  </div>
+
+
 
 <%= render partial: 'policy_calculations/policy_snapshot', locals: { policy_calculation: @policy_calculation } %>
 

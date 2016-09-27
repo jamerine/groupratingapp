@@ -231,7 +231,7 @@ class Step8Proc < ActiveRecord::Migration
          SELECT
          a.policy_number as policy_number,
          a.manual_number as manual_number,
-         (a.manual_class_base_rate * plec.policy_individual_experience_modified_rate) as manual_class_modification_rate,
+         round((a.manual_class_base_rate * plec.policy_individual_experience_modified_rate)::numeric,4) as manual_class_modification_rate,
          run_date as updated_at
            FROM public.final_manual_class_group_rating_and_premium_projections a
            LEFT JOIN public.final_policy_experience_calculations plec
@@ -245,8 +245,8 @@ class Step8Proc < ActiveRecord::Migration
       -- update Individual Total Rate
       UPDATE public.final_manual_class_group_rating_and_premium_projections mcgr SET
       (manual_class_individual_total_rate) =
-      ( manual_class_modification_rate *  (1 + (SELECT value from public.bwc_codes_constant_values
-      where name = 'administrative_rate' and completed_date is null)));
+      (round((manual_class_modification_rate *  (1 + (SELECT value from public.bwc_codes_constant_values
+      where name = 'administrative_rate' and completed_date is null)))::numeric,6));
 
 
 
