@@ -48,4 +48,5 @@ class PolicyCalculation < ActiveRecord::Base
     end
   end
 
+
 end

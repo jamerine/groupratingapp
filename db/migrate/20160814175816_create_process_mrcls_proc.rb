@@ -34,14 +34,21 @@ class CreateProcessMrclsProc < ActiveRecord::Migration
        cast_to_int(substring(single_rec,8,2)),   /*  representative_type  */
        cast_to_int(substring(single_rec,10,2)),   /*  record_type  */
        cast_to_int(substring(single_rec,12,3)),   /*  requestor_number  */
-       cast_to_int(substring(single_rec,15,1)),   /*  policy_type  */
-       cast_to_int(substring(single_rec,16,7)),   /*  policy_sequence_number  */
+       CASE WHEN cast_to_int(substring(single_rec,15,1)) = 0 THEN 'private_state_fund'
+            WHEN cast_to_int(substring(single_rec,15,1)) = 1 THEN 'public_state_fund'
+            WHEN cast_to_int(substring(single_rec,15,1)) = 2 THEN 'private_self_insured'
+            WHEN cast_to_int(substring(single_rec,15,1)) = 3 THEN 'public_app_fund'
+            ELSE substring(single_rec,15,1)
+            END,   /*  policy_type  */
+       cast_to_int(substring(single_rec,15,1) || substring(single_rec,16,7)),   /*  policy_number  */
        cast_to_int(substring(single_rec,24,3)),   /*  business_sequence_number  */
        substring(single_rec,27,1),   /*  valid_policy_number  */
        substring(single_rec,28,1),   /*  manual_reclassifications  */
        cast_to_int(substring(single_rec,29,5)),   /*  re-classed_from_manual_number  */
        cast_to_int(substring(single_rec,34,5)),   /*  re-classed_to_manual_number  */
-       substring(single_rec,39,3),   /*  reclass_manual_coverage_type  */
+       CASE WHEN substring(single_rec,39,3) LIKE 'SUP' THEN 'SN'
+            WHEN substring(single_rec,39,3) LIKE 'REG' THEN 'RN'
+            ELSE substring(single_rec,39,3) END,   /*  reclass_manual_coverage_type  */
        case when substring(single_rec,42,8) > '0' THEN to_date(substring(single_rec,42,8), 'YYYYMMDD')
          else null
        end,  /*  reclass_creation_date  */

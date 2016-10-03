@@ -3,7 +3,7 @@ class CreateSc230ClaimMedicalPayments < ActiveRecord::Migration
     create_table :sc230_claim_medical_payments do |t|
         t.integer :representative_number
         t.integer :representative_type
-        t.integer :policy_type
+        t.string :policy_type
         t.integer :policy_number
         t.integer :business_sequence_number
         t.integer :claim_manual_number

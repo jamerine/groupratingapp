@@ -2,7 +2,7 @@ class CreateClaimCalculations < ActiveRecord::Migration
   def change
     create_table :claim_calculations do |t|
       t.integer :representative_number
-      t.integer :policy_type
+      t.string :policy_type
       t.integer :policy_number
       t.references :policy_calculation, index: true, foreign_key: true
       t.index [:policy_number, :claim_number], name: 'index_claim_calc_on_pol_num_and_claim_num'
