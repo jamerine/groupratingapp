@@ -2,7 +2,7 @@ class CreateProcessPolicyCoverageStatusHistories < ActiveRecord::Migration
   def change
     create_table :process_policy_coverage_status_histories do |t|
       t.integer :representative_number
-      t.integer :policy_type
+      t.string :policy_type
       t.integer :policy_number
       t.index :policy_number
       t.date :coverage_effective_date

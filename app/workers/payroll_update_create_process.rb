@@ -12,7 +12,9 @@ class PayrollUpdateCreateProcess
       unless @manual_class_calculation.nil? || payroll_transaction.id.nil? || payroll_transaction.manual_number == 0
         PayrollUpdateCreate.perform_async(
         payroll_transaction.representative_number,
+        payroll_transaction.policy_type,
         payroll_transaction.policy_number,
+        payroll_transaction.manual_type,
         payroll_transaction.manual_number,
         @manual_class_calculation.id,
         payroll_transaction.manual_class_effective_date,

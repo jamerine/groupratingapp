@@ -3,7 +3,7 @@ class CreateMrempEmployeeExperienceClaimLevels < ActiveRecord::Migration
     create_table :mremp_employee_experience_claim_levels do |t|
       t.integer :representative_number
       t.integer :representative_type
-      t.integer :policy_type
+      t.string :policy_type
       t.integer :policy_number
       t.integer :business_sequence_number
       t.integer :record_type
@@ -23,7 +23,7 @@ class CreateMrempEmployeeExperienceClaimLevels < ActiveRecord::Migration
       t.string :claim_surplus_type
       t.string :claim_handicap_percent
       t.string :claim_over_policy_max_value_indicator
-      
+
       t.timestamps null: false
     end
   end

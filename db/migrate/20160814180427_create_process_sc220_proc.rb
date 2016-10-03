@@ -131,8 +131,13 @@ Insert Into sc220_rec1_employer_demographics (
           substring(single_rec,9,2),      -- description_ar char(2),
           cast_to_int(substring(single_rec,11,1)),     -- record_type char(1),
           cast_to_int(substring(single_rec,12,3)),     -- request_type char(3),
-          cast_to_int(substring(single_rec,15,1)),     -- policy_type char(1),
-          cast_to_int(substring(single_rec,16,7)),     -- policy_number char(7),
+          CASE WHEN cast_to_int(substring(single_rec,15,1)) = 0 THEN 'private_state_fund'
+               WHEN cast_to_int(substring(single_rec,15,1)) = 1 THEN 'public_state_fund'
+               WHEN cast_to_int(substring(single_rec,15,1)) = 2 THEN 'private_self_insured'
+               WHEN cast_to_int(substring(single_rec,15,1)) = 3 THEN 'public_app_fund'
+               ELSE substring(single_rec,15,1)
+               END,   /*  policy_type  */
+          cast_to_int(substring(single_rec,15,1) || substring(single_rec,16,7)),   /*  policy_number  */
           cast_to_int(substring(single_rec,23,3)),     -- business_sequence_number char(3),
           substring(single_rec,26,11),    -- federal_identification_number numeric,
           substring(single_rec,37,40),    -- business_name char(40),
@@ -353,8 +358,13 @@ Insert Into sc220_rec2_employer_manual_level_payrolls
           substring(single_rec,9,2),       -- description_ar
           cast_to_int(substring(single_rec,11,1)),      -- record_type
           cast_to_int(substring(single_rec,12,3)),      -- request_type
-          cast_to_int(substring(single_rec,15,1)),      -- policy_type
-          cast_to_int(substring(single_rec,16,7)),      -- policy_number
+          CASE WHEN cast_to_int(substring(single_rec,15,1)) = 0 THEN 'private_state_fund'
+               WHEN cast_to_int(substring(single_rec,15,1)) = 1 THEN 'public_state_fund'
+               WHEN cast_to_int(substring(single_rec,15,1)) = 2 THEN 'private_self_insured'
+               WHEN cast_to_int(substring(single_rec,15,1)) = 3 THEN 'public_app_fund'
+               ELSE substring(single_rec,15,1)
+               END,   /*  policy_type  */
+          cast_to_int(substring(single_rec,15,1) || substring(single_rec,16,7)),   /*  policy_number  */
           cast_to_int(substring(single_rec,23,3)),      -- business_sequence_number
           cast_to_int(substring(single_rec,26,6)),      -- manual_number
           substring(single_rec,32,2),      -- manual_type
@@ -545,8 +555,13 @@ INSERT INTO sc220_rec3_employer_ar_transactions
     substring(single_rec,9,2),       -- descriptionar
     cast_to_int(substring(single_rec,11,1)),      -- record_type
     cast_to_int(substring(single_rec,12,3)),      -- request_type
-    cast_to_int(substring(single_rec,15,1)),     -- policy_type char(1),
-    cast_to_int(substring(single_rec,16,7)),     -- policy_number char(7),
+    CASE WHEN cast_to_int(substring(single_rec,15,1)) = 0 THEN 'private_state_fund'
+         WHEN cast_to_int(substring(single_rec,15,1)) = 1 THEN 'public_state_fund'
+         WHEN cast_to_int(substring(single_rec,15,1)) = 2 THEN 'private_self_insured'
+         WHEN cast_to_int(substring(single_rec,15,1)) = 3 THEN 'public_app_fund'
+         ELSE substring(single_rec,15,1)
+         END,   /*  policy_type  */
+    cast_to_int(substring(single_rec,15,1) || substring(single_rec,16,7)),   /*  policy_number  */
     cast_to_int(substring(single_rec,23,3)),      -- business_sequence_number
     case when substring(single_rec,26,8) > '00000000' THEN to_date(substring(single_rec,26,8), 'MMDDYYYY')
       else null
@@ -693,8 +708,13 @@ Insert Into sc220_rec4_policy_not_founds
     substring(single_rec,9,2),       -- description
     cast_to_int(substring(single_rec,11,1)),      -- record_type
     cast_to_int(substring(single_rec,12,3)),      -- request_type
-    cast_to_int(substring(single_rec,15,1)),     -- policy_type char(1),
-    cast_to_int(substring(single_rec,16,7)),     -- policy_number char(7),
+    CASE WHEN cast_to_int(substring(single_rec,15,1)) = 0 THEN 'private_state_fund'
+         WHEN cast_to_int(substring(single_rec,15,1)) = 1 THEN 'public_state_fund'
+         WHEN cast_to_int(substring(single_rec,15,1)) = 2 THEN 'private_self_insured'
+         WHEN cast_to_int(substring(single_rec,15,1)) = 3 THEN 'public_app_fund'
+         ELSE substring(single_rec,15,1)
+         END,   /*  policy_type  */
+    cast_to_int(substring(single_rec,15,1) || substring(single_rec,16,7)),   /*  policy_number  */
     cast_to_int(substring(single_rec,23,3)),      -- business_sequence_number
     substring(single_rec,26,25),     -- error_message
     current_timestamp::timestamp as created_at,

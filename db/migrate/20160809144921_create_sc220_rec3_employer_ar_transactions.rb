@@ -6,7 +6,7 @@ class CreateSc220Rec3EmployerArTransactions < ActiveRecord::Migration
       t.string :descriptionar
       t.integer :record_type
       t.integer :request_type
-      t.integer :policy_type
+      t.string :policy_type
       t.integer :policy_number
       t.integer :business_sequence_number
       t.date :trans_date
