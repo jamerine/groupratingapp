@@ -2,7 +2,7 @@ class CreateProcessPayrollAllTransactionsBreakdownByManualClasses < ActiveRecord
   def change
     create_table :process_payroll_all_transactions_breakdown_by_manual_classes do |t|
       t.integer :representative_number
-      t.integer :policy_type
+      t.string :policy_type
       t.integer :policy_number
       t.string :manual_type
       t.integer :manual_number

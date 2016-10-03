@@ -2,7 +2,7 @@ class CreatePolicyCalculations < ActiveRecord::Migration
   def change
     create_table :policy_calculations do |t|
       t.integer :representative_number
-      t.integer :policy_type
+      t.string :policy_type
       t.integer :policy_number
       t.index :policy_number, name: 'index_policy_calculations_on_pol_num'
       t.string :policy_group_number

@@ -2,7 +2,7 @@ class CreateFinalEmployerDemographicsInformations < ActiveRecord::Migration
   def change
     create_table :final_employer_demographics_informations do |t|
       t.integer :representative_number
-      t.integer :policy_type
+      t.string :policy_type
       t.integer :policy_number
       t.index [:policy_number, :representative_number], name: 'index_emp_demo_pol_num_and_man_num'
       t.integer :successor_policy_number

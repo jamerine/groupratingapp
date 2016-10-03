@@ -22,6 +22,7 @@
       <thead>
         <tr>
           <th>Policy Number</th>
+          <th>Policy Type</th>
           <th>Rep Name</th>
           <th>Status</th>
           <th>Business Name</th>
@@ -34,6 +35,7 @@
         <% @policy_calculations.order("representative_id, policy_number asc").each do |policy_calculation| %>
         <tr>
           <th scope="row"> <%= link_to "#{policy_calculation.policy_number}", policy_calculation_path(policy_calculation.id), class: 'btn btn-info' %></th>
+          <td><%= policy_calculation.policy_type.humanize %> </td>
           <td><%= @representatives.find(policy_calculation.representative_id).abbreviated_name %> </td>
           <td><%= policy_calculation.policy_status %> </td>
           <td><%= policy_calculation.business_name.titleize %> </td>

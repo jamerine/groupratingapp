@@ -3,7 +3,7 @@ class CreateMrempEmployeeExperiencePolicyLevels < ActiveRecord::Migration
     create_table :mremp_employee_experience_policy_levels do |t|
         t.integer :representative_number
         t.integer :representative_type
-        t.integer :policy_type
+        t.string :policy_type
         t.integer :policy_number
         t.integer :business_sequence_number
         t.integer :record_type

@@ -2,7 +2,7 @@ class CreateProcessManualReclassTables < ActiveRecord::Migration
   def change
     create_table :process_manual_reclass_tables do |t|
       t.integer :representative_number
-      t.integer :policy_type
+      t.string :policy_type
       t.integer :policy_number
       t.integer :re_classed_from_manual_number
       t.integer :re_classed_to_manual_number

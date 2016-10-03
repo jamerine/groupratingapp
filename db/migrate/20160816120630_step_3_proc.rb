@@ -152,9 +152,6 @@ class Step3Proc < ActiveRecord::Migration
         -- If it is a Self Insured PEO [policy_type 2] we will not transfer any of the payroll or anything from the policy combined, but we will keep them eligable for group rating.
 
 
-
-
-
         INSERT INTO process_policy_combine_partial_transfer_no_leases (
             representative_number,
             valid_policy_number,

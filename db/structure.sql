@@ -116,8 +116,13 @@ CREATE FUNCTION proc_process_flat_democs() RETURNS void
     cast_to_int(substring(single_rec,8,2)),   /*  representative_type  */
     cast_to_int(substring(single_rec,10,2)),   /*  record_type  */
     cast_to_int(substring(single_rec,12,3)),   /*  requestor_number  */
-    cast_to_int(substring(single_rec,15,1)),   /*  policy_type  */
-    cast_to_int(substring(single_rec,16,7)),   /*  policy_number  */
+    CASE WHEN cast_to_int(substring(single_rec,15,1)) = 0 THEN 'private_state_fund'
+         WHEN cast_to_int(substring(single_rec,15,1)) = 1 THEN 'public_state_fund'
+         WHEN cast_to_int(substring(single_rec,15,1)) = 2 THEN 'private_self_insured'
+         WHEN cast_to_int(substring(single_rec,15,1)) = 3 THEN 'public_app_fund'
+         ELSE substring(single_rec,15,1)
+         END,   /*  policy_type  */
+    cast_to_int(substring(single_rec,15,1) || substring(single_rec,16,7)),   /*  policy_number  */
     cast_to_int(substring(single_rec,24,3)),   /*  business_sequence_number  */
     substring(single_rec,27,1),   /*  valid_policy_number  */
     substring(single_rec,28,5),   /*  current_policy_status  */
@@ -236,14 +241,21 @@ CREATE FUNCTION proc_process_flat_mrcls() RETURNS void
        cast_to_int(substring(single_rec,8,2)),   /*  representative_type  */
        cast_to_int(substring(single_rec,10,2)),   /*  record_type  */
        cast_to_int(substring(single_rec,12,3)),   /*  requestor_number  */
-       cast_to_int(substring(single_rec,15,1)),   /*  policy_type  */
-       cast_to_int(substring(single_rec,16,7)),   /*  policy_sequence_number  */
+       CASE WHEN cast_to_int(substring(single_rec,15,1)) = 0 THEN 'private_state_fund'
+            WHEN cast_to_int(substring(single_rec,15,1)) = 1 THEN 'public_state_fund'
+            WHEN cast_to_int(substring(single_rec,15,1)) = 2 THEN 'private_self_insured'
+            WHEN cast_to_int(substring(single_rec,15,1)) = 3 THEN 'public_app_fund'
+            ELSE substring(single_rec,15,1)
+            END,   /*  policy_type  */
+       cast_to_int(substring(single_rec,15,1) || substring(single_rec,16,7)),   /*  policy_number  */
        cast_to_int(substring(single_rec,24,3)),   /*  business_sequence_number  */
        substring(single_rec,27,1),   /*  valid_policy_number  */
        substring(single_rec,28,1),   /*  manual_reclassifications  */
        cast_to_int(substring(single_rec,29,5)),   /*  re-classed_from_manual_number  */
        cast_to_int(substring(single_rec,34,5)),   /*  re-classed_to_manual_number  */
-       substring(single_rec,39,3),   /*  reclass_manual_coverage_type  */
+       CASE WHEN substring(single_rec,39,3) LIKE 'SUP' THEN 'SN'
+            WHEN substring(single_rec,39,3) LIKE 'REG' THEN 'RN'
+            ELSE substring(single_rec,39,3) END,   /*  reclass_manual_coverage_type  */
        case when substring(single_rec,42,8) > '0' THEN to_date(substring(single_rec,42,8), 'YYYYMMDD')
          else null
        end,  /*  reclass_creation_date  */
@@ -322,8 +334,13 @@ CREATE FUNCTION proc_process_flat_mremps() RETURNS void
       (select
         cast_to_int(substring(single_rec,1,6)),  /* representative_number */
                 cast_to_int(substring(single_rec,8,2)),  /* representative_type */
-                cast_to_int(substring(single_rec,10,1)),  /* policy_type */
-                cast_to_int(substring(single_rec,11,7)),  /* policy_number  */
+                CASE WHEN cast_to_int(substring(single_rec,10,1)) = 0 THEN 'private_state_fund'
+                     WHEN cast_to_int(substring(single_rec,10,1)) = 1 THEN 'public_state_fund'
+                     WHEN cast_to_int(substring(single_rec,10,1)) = 2 THEN 'private_self_insured'
+                     WHEN cast_to_int(substring(single_rec,10,1)) = 3 THEN 'public_app_fund'
+                     ELSE substring(single_rec,10,1)
+                     END,   /*  policy_type  */
+                cast_to_int(substring(single_rec,10,1) || substring(single_rec,11,7)),   /*  policy_number  */
                 cast_to_int(substring(single_rec,19,3)),  /* business_number  */
                 cast_to_int(substring(single_rec,22,2)),  /* record_type  */
                 cast_to_int(substring(single_rec,24,4)),  /* manual_number,  */
@@ -524,17 +541,32 @@ CREATE FUNCTION proc_process_flat_pcombs() RETURNS void
               cast_to_int(substring(single_rec,8,2)),   /*  representative_type  */
               cast_to_int(substring(single_rec,10,2)),   /*  record_type  */
               cast_to_int(substring(single_rec,12,3)),   /*  requestor_number  */
-              cast_to_int(substring(single_rec,15,1)),   /*  policy_type  */
-              cast_to_int(substring(single_rec,16,7)),   /*  policy_sequence_number  */
+              CASE WHEN cast_to_int(substring(single_rec,15,1)) = 0 THEN 'private_state_fund'
+                   WHEN cast_to_int(substring(single_rec,15,1)) = 1 THEN 'public_state_fund'
+                   WHEN cast_to_int(substring(single_rec,15,1)) = 2 THEN 'private_self_insured'
+                   WHEN cast_to_int(substring(single_rec,15,1)) = 3 THEN 'public_app_fund'
+                   ELSE substring(single_rec,15,1)
+                   END,   /*  policy_type  */
+              cast_to_int(substring(single_rec,15,1) || substring(single_rec,16,7)),   /*  policy_number  */
               cast_to_int(substring(single_rec,24,3)),   /*  business_sequence_number  */
               substring(single_rec,27,1),   /*  valid_policy_number  */
               substring(single_rec,28,1),   /*  policy_combinations  */
-              cast_to_int(substring(single_rec,29,1)),   /*  predecessor_policy_type  */
-              cast_to_int(substring(single_rec,30,7)),   /*  predecessor_policy_sequence_number  */
+              CASE WHEN cast_to_int(substring(single_rec,29,1)) = 0 THEN 'private_state_fund'
+                   WHEN cast_to_int(substring(single_rec,29,1)) = 1 THEN 'public_state_fund'
+                   WHEN cast_to_int(substring(single_rec,29,1)) = 2 THEN 'private_self_insured'
+                   WHEN cast_to_int(substring(single_rec,29,1)) = 3 THEN 'public_app_fund'
+                   ELSE substring(single_rec,29,1)
+                   END,   /*  policy_type  */
+              cast_to_int(substring(single_rec,29,1) || substring(single_rec,30,7)),   /*  policy_number  */
               substring(single_rec,37,1),   /*  predecessor_filler  */
               substring(single_rec,38,3),   /*  predecessor_business_sequence_number  */
-              cast_to_int(substring(single_rec,41,1)),   /*  successor_policy_type  */
-              cast_to_int(substring(single_rec,42,7)),   /*  successor_policy_sequence_number  */
+              CASE WHEN cast_to_int(substring(single_rec,41,1)) = 0 THEN 'private_state_fund'
+                   WHEN cast_to_int(substring(single_rec,41,1)) = 1 THEN 'public_state_fund'
+                   WHEN cast_to_int(substring(single_rec,41,1)) = 2 THEN 'private_self_insured'
+                   WHEN cast_to_int(substring(single_rec,41,1)) = 3 THEN 'public_app_fund'
+                   ELSE substring(single_rec,41,1)
+                   END,   /*  policy_type  */
+              cast_to_int(substring(single_rec,41,1) || substring(single_rec,42,7)),   /*  policy_number  */
               substring(single_rec,49,1),   /*  successor_filler  */
               substring(single_rec,50,3),   /*  successor_business_sequence_number  */
               substring(single_rec,53,2),   /*  transfer_type  */
@@ -548,7 +580,9 @@ CREATE FUNCTION proc_process_flat_pcombs() RETURNS void
               substring(single_rec,72,5),   /*  labor_lease_type  */
               substring(single_rec,77,1),   /*  partial_transfer_payroll_movement  */
               cast_to_int( substring(single_rec,78,5)),   /*  ncci_manual_number  */
-              substring(single_rec,83,3),   /*  manual_coverage_type  */
+              Case when substring(single_rec,83,3) LIKE 'SUP' then 'SN'
+                WHEN substring(single_rec,83,3) LIKE 'REG' then 'RN'
+                ELSE substring(single_rec,83,3) END,   /*  manual_coverage_type  */
               case when substring(single_rec,86,8) > '00000000' THEN to_date(substring(single_rec,86,8), 'YYYYMMDD')
                 else null
               end,   /*  payroll_reporting_period_from_date  */
@@ -610,8 +644,13 @@ CREATE FUNCTION proc_process_flat_phmgns() RETURNS void
               cast_to_int(substring(single_rec,8,2)),   /*  representative_type  */
               cast_to_int(substring(single_rec,10,2)),   /*  record_type  */
               cast_to_int(substring(single_rec,12,3)),   /*  requestor_number  */
-              cast_to_int(substring(single_rec,15,1)),   /*  policy_type  */
-              cast_to_int(substring(single_rec,16,7)),   /*  policy_sequence_number  */
+              CASE WHEN cast_to_int(substring(single_rec,15,1)) = 0 THEN 'private_state_fund'
+                   WHEN cast_to_int(substring(single_rec,15,1)) = 1 THEN 'public_state_fund'
+                   WHEN cast_to_int(substring(single_rec,15,1)) = 2 THEN 'private_self_insured'
+                   WHEN cast_to_int(substring(single_rec,15,1)) = 3 THEN 'public_app_fund'
+                   ELSE substring(single_rec,15,1)
+                   END,   /*  policy_type  */
+              cast_to_int(substring(single_rec,15,1) || substring(single_rec,16,7)),   /*  policy_number  */
               cast_to_int(substring(single_rec,24,3)),   /*  business_sequence_number  */
               substring(single_rec,27,1),   /*  valid_policy_number  */
               substring(single_rec,28,1),   /*  experience_payroll_premium_information  */
@@ -781,8 +820,13 @@ Insert Into sc220_rec1_employer_demographics (
           substring(single_rec,9,2),      -- description_ar char(2),
           cast_to_int(substring(single_rec,11,1)),     -- record_type char(1),
           cast_to_int(substring(single_rec,12,3)),     -- request_type char(3),
-          cast_to_int(substring(single_rec,15,1)),     -- policy_type char(1),
-          cast_to_int(substring(single_rec,16,7)),     -- policy_number char(7),
+          CASE WHEN cast_to_int(substring(single_rec,15,1)) = 0 THEN 'private_state_fund'
+               WHEN cast_to_int(substring(single_rec,15,1)) = 1 THEN 'public_state_fund'
+               WHEN cast_to_int(substring(single_rec,15,1)) = 2 THEN 'private_self_insured'
+               WHEN cast_to_int(substring(single_rec,15,1)) = 3 THEN 'public_app_fund'
+               ELSE substring(single_rec,15,1)
+               END,   /*  policy_type  */
+          cast_to_int(substring(single_rec,15,1) || substring(single_rec,16,7)),   /*  policy_number  */
           cast_to_int(substring(single_rec,23,3)),     -- business_sequence_number char(3),
           substring(single_rec,26,11),    -- federal_identification_number numeric,
           substring(single_rec,37,40),    -- business_name char(40),
@@ -1003,8 +1047,13 @@ Insert Into sc220_rec2_employer_manual_level_payrolls
           substring(single_rec,9,2),       -- description_ar
           cast_to_int(substring(single_rec,11,1)),      -- record_type
           cast_to_int(substring(single_rec,12,3)),      -- request_type
-          cast_to_int(substring(single_rec,15,1)),      -- policy_type
-          cast_to_int(substring(single_rec,16,7)),      -- policy_number
+          CASE WHEN cast_to_int(substring(single_rec,15,1)) = 0 THEN 'private_state_fund'
+               WHEN cast_to_int(substring(single_rec,15,1)) = 1 THEN 'public_state_fund'
+               WHEN cast_to_int(substring(single_rec,15,1)) = 2 THEN 'private_self_insured'
+               WHEN cast_to_int(substring(single_rec,15,1)) = 3 THEN 'public_app_fund'
+               ELSE substring(single_rec,15,1)
+               END,   /*  policy_type  */
+          cast_to_int(substring(single_rec,15,1) || substring(single_rec,16,7)),   /*  policy_number  */
           cast_to_int(substring(single_rec,23,3)),      -- business_sequence_number
           cast_to_int(substring(single_rec,26,6)),      -- manual_number
           substring(single_rec,32,2),      -- manual_type
@@ -1195,8 +1244,13 @@ INSERT INTO sc220_rec3_employer_ar_transactions
     substring(single_rec,9,2),       -- descriptionar
     cast_to_int(substring(single_rec,11,1)),      -- record_type
     cast_to_int(substring(single_rec,12,3)),      -- request_type
-    cast_to_int(substring(single_rec,15,1)),     -- policy_type char(1),
-    cast_to_int(substring(single_rec,16,7)),     -- policy_number char(7),
+    CASE WHEN cast_to_int(substring(single_rec,15,1)) = 0 THEN 'private_state_fund'
+         WHEN cast_to_int(substring(single_rec,15,1)) = 1 THEN 'public_state_fund'
+         WHEN cast_to_int(substring(single_rec,15,1)) = 2 THEN 'private_self_insured'
+         WHEN cast_to_int(substring(single_rec,15,1)) = 3 THEN 'public_app_fund'
+         ELSE substring(single_rec,15,1)
+         END,   /*  policy_type  */
+    cast_to_int(substring(single_rec,15,1) || substring(single_rec,16,7)),   /*  policy_number  */
     cast_to_int(substring(single_rec,23,3)),      -- business_sequence_number
     case when substring(single_rec,26,8) > '00000000' THEN to_date(substring(single_rec,26,8), 'MMDDYYYY')
       else null
@@ -1343,8 +1397,13 @@ Insert Into sc220_rec4_policy_not_founds
     substring(single_rec,9,2),       -- description
     cast_to_int(substring(single_rec,11,1)),      -- record_type
     cast_to_int(substring(single_rec,12,3)),      -- request_type
-    cast_to_int(substring(single_rec,15,1)),     -- policy_type char(1),
-    cast_to_int(substring(single_rec,16,7)),     -- policy_number char(7),
+    CASE WHEN cast_to_int(substring(single_rec,15,1)) = 0 THEN 'private_state_fund'
+         WHEN cast_to_int(substring(single_rec,15,1)) = 1 THEN 'public_state_fund'
+         WHEN cast_to_int(substring(single_rec,15,1)) = 2 THEN 'private_self_insured'
+         WHEN cast_to_int(substring(single_rec,15,1)) = 3 THEN 'public_app_fund'
+         ELSE substring(single_rec,15,1)
+         END,   /*  policy_type  */
+    cast_to_int(substring(single_rec,15,1) || substring(single_rec,16,7)),   /*  policy_number  */
     cast_to_int(substring(single_rec,23,3)),      -- business_sequence_number
     substring(single_rec,26,25),     -- error_message
     current_timestamp::timestamp as created_at,
@@ -1389,8 +1448,13 @@ CREATE FUNCTION proc_process_flat_sc230s() RETURNS void
     )
     (select cast_to_int(substring(single_rec,1,6)),   /*  representative_number  */
             cast_to_int(substring(single_rec,8,2)),   /*  representative_type  */
-            cast_to_int(substring(single_rec,10,1)),   /*  policy_type  */
-            cast_to_int(substring(single_rec,11,7)),   /*  policy_sequence_number  */
+            CASE WHEN cast_to_int(substring(single_rec,10,1)) = 0 THEN 'private_state_fund'
+                 WHEN cast_to_int(substring(single_rec,10,1)) = 1 THEN 'public_state_fund'
+                 WHEN cast_to_int(substring(single_rec,10,1)) = 2 THEN 'private_self_insured'
+                 WHEN cast_to_int(substring(single_rec,10,1)) = 3 THEN 'public_app_fund'
+                 ELSE substring(single_rec,10,1)
+                 END,   /*  policy_type  */
+            cast_to_int(substring(single_rec,10,1) || substring(single_rec,11,7)),   /*  policy_number  */
             cast_to_int(substring(single_rec,19,3)),   /*  business_sequence_number  */
             cast_to_int(substring(single_rec,22,4)),   /*  claim_manual_number  */
             substring(single_rec,26,2),   /*  record_type  */
@@ -2262,9 +2326,6 @@ CREATE FUNCTION proc_step_3(process_representative integer, experience_period_lo
         -- If it is a State Fund PEO [will create a custom table to query against for a list of the PEOs], we want to only transfer payroll from [+ transfer] predecessor_policy_number (client) to the (successor_policy_number) State Fund PEO .  We will not do the [- transfer] away from the predecessor_policy_number (client). ALSO mark the policy number as not eligable for group rating.
 
         -- If it is a Self Insured PEO [policy_type 2] we will not transfer any of the payroll or anything from the policy combined, but we will keep them eligable for group rating.
-
-
-
 
 
         INSERT INTO process_policy_combine_partial_transfer_no_leases (
@@ -4348,7 +4409,7 @@ ALTER SEQUENCE bwc_codes_ncci_manual_classes_id_seq OWNED BY bwc_codes_ncci_manu
 
 CREATE TABLE bwc_codes_peo_lists (
     id integer NOT NULL,
-    policy_type integer,
+    policy_type character varying,
     policy_number integer,
     created_at timestamp without time zone,
     updated_at timestamp without time zone
@@ -4413,7 +4474,7 @@ ALTER SEQUENCE bwc_codes_policy_effective_dates_id_seq OWNED BY bwc_codes_policy
 CREATE TABLE claim_calculations (
     id integer NOT NULL,
     representative_number integer,
-    policy_type integer,
+    policy_type character varying,
     policy_number integer,
     policy_calculation_id integer,
     claim_number character varying,
@@ -4475,7 +4536,7 @@ CREATE TABLE democ_detail_records (
     representative_type integer,
     record_type integer,
     requestor_number integer,
-    policy_type integer,
+    policy_type character varying,
     policy_number integer,
     business_sequence_number integer,
     valid_policy_number character varying,
@@ -4579,9 +4640,9 @@ ALTER SEQUENCE democs_id_seq OWNED BY democs.id;
 CREATE TABLE exception_table_policy_combined_request_payroll_infos (
     id integer NOT NULL,
     representative_number character varying,
-    predecessor_policy_type integer,
+    predecessor_policy_type character varying,
     predecessor_policy_number integer,
-    successor_policy_type integer,
+    successor_policy_type character varying,
     successor_policy_number integer,
     transfer_type character varying,
     transfer_effective_date date,
@@ -4619,7 +4680,7 @@ ALTER SEQUENCE exception_table_policy_combined_request_payroll_infos_id_seq OWNE
 CREATE TABLE final_claim_cost_calculation_tables (
     id integer NOT NULL,
     representative_number integer,
-    policy_type integer,
+    policy_type character varying,
     policy_number integer,
     claim_number character varying,
     claim_injury_date date,
@@ -4677,7 +4738,7 @@ ALTER SEQUENCE final_claim_cost_calculation_tables_id_seq OWNED BY final_claim_c
 CREATE TABLE final_employer_demographics_informations (
     id integer NOT NULL,
     representative_number integer,
-    policy_type integer,
+    policy_type character varying,
     policy_number integer,
     successor_policy_number integer,
     currently_assigned_representative_number integer,
@@ -4738,7 +4799,7 @@ ALTER SEQUENCE final_employer_demographics_informations_id_seq OWNED BY final_em
 CREATE TABLE final_manual_class_four_year_payroll_and_exp_losses (
     id integer NOT NULL,
     representative_number integer,
-    policy_type integer,
+    policy_type character varying,
     policy_number integer,
     manual_number integer,
     manual_class_four_year_period_payroll double precision,
@@ -4780,7 +4841,7 @@ ALTER SEQUENCE final_manual_class_four_year_payroll_and_exp_losses_id_seq OWNED 
 CREATE TABLE final_manual_class_group_rating_and_premium_projections (
     id integer NOT NULL,
     representative_number integer,
-    policy_type integer,
+    policy_type character varying,
     policy_number integer,
     manual_number integer,
     manual_class_industry_group integer,
@@ -4826,7 +4887,7 @@ ALTER SEQUENCE final_manual_class_group_rating_and_premium_projections_id_seq OW
 CREATE TABLE final_policy_experience_calculations (
     id integer NOT NULL,
     representative_number integer,
-    policy_type integer,
+    policy_type character varying,
     policy_number integer,
     policy_group_number character varying,
     policy_status character varying,
@@ -4874,7 +4935,7 @@ ALTER SEQUENCE final_policy_experience_calculations_id_seq OWNED BY final_policy
 CREATE TABLE final_policy_group_rating_and_premium_projections (
     id integer NOT NULL,
     representative_number integer,
-    policy_type integer,
+    policy_type character varying,
     policy_number integer,
     policy_industry_group integer,
     policy_status character varying,
@@ -5019,6 +5080,7 @@ CREATE TABLE manual_class_calculations (
     representative_number integer,
     policy_calculation_id integer,
     policy_number integer,
+    manual_type integer,
     manual_number integer,
     manual_class_four_year_period_payroll double precision,
     manual_class_expected_loss_rate double precision,
@@ -5071,7 +5133,7 @@ CREATE TABLE mrcl_detail_records (
     representative_type integer,
     record_type integer,
     requestor_number integer,
-    policy_type integer,
+    policy_type character varying,
     policy_number integer,
     business_sequence_number integer,
     valid_policy_number character varying,
@@ -5145,7 +5207,7 @@ CREATE TABLE mremp_employee_experience_claim_levels (
     id integer NOT NULL,
     representative_number integer,
     representative_type integer,
-    policy_type integer,
+    policy_type character varying,
     policy_number integer,
     business_sequence_number integer,
     record_type integer,
@@ -5197,7 +5259,7 @@ CREATE TABLE mremp_employee_experience_manual_class_levels (
     id integer NOT NULL,
     representative_number integer,
     representative_type integer,
-    policy_type integer,
+    policy_type character varying,
     policy_number integer,
     business_sequence_number integer,
     record_type integer,
@@ -5245,7 +5307,7 @@ CREATE TABLE mremp_employee_experience_policy_levels (
     id integer NOT NULL,
     representative_number integer,
     representative_type integer,
-    policy_type integer,
+    policy_type character varying,
     policy_number integer,
     business_sequence_number integer,
     record_type integer,
@@ -5340,7 +5402,9 @@ ALTER SEQUENCE mremps_id_seq OWNED BY mremps.id;
 CREATE TABLE payroll_calculations (
     id integer NOT NULL,
     representative_number integer,
+    policy_type character varying,
     policy_number integer,
+    manual_type integer,
     manual_number integer,
     manual_class_calculation_id integer,
     manual_class_effective_date date,
@@ -5382,16 +5446,16 @@ CREATE TABLE pcomb_detail_records (
     representative_type integer,
     record_type integer,
     requestor_number integer,
-    policy_type integer,
+    policy_type character varying,
     policy_number integer,
     business_sequence_number integer,
     valid_policy_number character varying,
     policy_combinations character varying,
-    predecessor_policy_type integer,
+    predecessor_policy_type character varying,
     predecessor_policy_number integer,
     predecessor_filler character varying,
     predecessor_business_sequence_number character varying,
-    successor_policy_type integer,
+    successor_policy_type character varying,
     successor_policy_number integer,
     successor_filler character varying,
     successor_business_sequence_number character varying,
@@ -5469,7 +5533,7 @@ CREATE TABLE phmgn_detail_records (
     representative_type integer,
     record_type integer,
     requestor_number integer,
-    policy_type integer,
+    policy_type character varying,
     policy_number integer,
     business_sequence_number integer,
     valid_policy_number character varying,
@@ -5544,7 +5608,7 @@ ALTER SEQUENCE phmgns_id_seq OWNED BY phmgns.id;
 CREATE TABLE policy_calculations (
     id integer NOT NULL,
     representative_number integer,
-    policy_type integer,
+    policy_type character varying,
     policy_number integer,
     policy_group_number character varying,
     policy_status character varying,
@@ -5633,7 +5697,7 @@ ALTER SEQUENCE policy_calculations_id_seq OWNED BY policy_calculations.id;
 CREATE TABLE process_manual_class_four_year_payroll_with_conditions (
     id integer NOT NULL,
     representative_number integer,
-    policy_type integer,
+    policy_type character varying,
     policy_number integer,
     manual_number integer,
     manual_class_four_year_period_payroll double precision,
@@ -5668,7 +5732,7 @@ ALTER SEQUENCE process_manual_class_four_year_payroll_with_conditions_id_seq OWN
 
 CREATE TABLE process_manual_class_four_year_payroll_without_conditions (
     representative_number integer,
-    policy_type integer,
+    policy_type character varying,
     policy_number integer,
     manual_number integer,
     manual_class_four_year_period_payroll double precision,
@@ -5685,7 +5749,7 @@ CREATE TABLE process_manual_class_four_year_payroll_without_conditions (
 CREATE TABLE process_manual_reclass_tables (
     id integer NOT NULL,
     representative_number integer,
-    policy_type integer,
+    policy_type character varying,
     policy_number integer,
     re_classed_from_manual_number integer,
     re_classed_to_manual_number integer,
@@ -5727,7 +5791,7 @@ ALTER SEQUENCE process_manual_reclass_tables_id_seq OWNED BY process_manual_recl
 CREATE TABLE process_payroll_all_transactions_breakdown_by_manual_classes (
     id integer NOT NULL,
     representative_number integer,
-    policy_type integer,
+    policy_type character varying,
     policy_number integer,
     manual_type character varying,
     manual_number integer,
@@ -5766,7 +5830,7 @@ ALTER SEQUENCE process_payroll_all_transactions_breakdown_by_manual_cla_id_seq O
 CREATE TABLE process_payroll_breakdown_by_manual_classes (
     id integer NOT NULL,
     representative_number integer,
-    policy_type integer,
+    policy_type character varying,
     policy_number integer,
     manual_number integer,
     manual_type character varying,
@@ -5809,9 +5873,9 @@ CREATE TABLE process_policy_combination_lease_terminations (
     representative_number integer,
     valid_policy_number character varying,
     policy_combinations character varying,
-    predecessor_policy_type integer,
+    predecessor_policy_type character varying,
     predecessor_policy_number integer,
-    successor_policy_type integer,
+    successor_policy_type character varying,
     successor_policy_number integer,
     transfer_type character varying,
     transfer_effective_date date,
@@ -5857,16 +5921,16 @@ ALTER SEQUENCE process_policy_combination_lease_terminations_id_seq OWNED BY pro
 CREATE TABLE process_policy_combine_full_transfers (
     id integer NOT NULL,
     representative_number integer,
-    policy_type integer,
+    policy_type character varying,
     manual_number integer,
     manual_type character varying,
     manual_class_effective_date date,
     manual_class_rate double precision,
     manual_class_payroll double precision,
     manual_class_premium double precision,
-    predecessor_policy_type integer,
+    predecessor_policy_type character varying,
     predecessor_policy_number integer,
-    successor_policy_type integer,
+    successor_policy_type character varying,
     successor_policy_number integer,
     transfer_type character varying,
     transfer_effective_date date,
@@ -5906,9 +5970,9 @@ CREATE TABLE process_policy_combine_partial_to_full_leases (
     representative_number integer,
     valid_policy_number character varying,
     policy_combinations character varying,
-    predecessor_policy_type integer,
+    predecessor_policy_type character varying,
     predecessor_policy_number integer,
-    successor_policy_type integer,
+    successor_policy_type character varying,
     successor_policy_number integer,
     transfer_type character varying,
     transfer_effective_date date,
@@ -5956,9 +6020,9 @@ CREATE TABLE process_policy_combine_partial_transfer_no_leases (
     representative_number integer,
     valid_policy_number character varying,
     policy_combinations character varying,
-    predecessor_policy_type integer,
+    predecessor_policy_type character varying,
     predecessor_policy_number integer,
-    successor_policy_type integer,
+    successor_policy_type character varying,
     successor_policy_number integer,
     transfer_type character varying,
     transfer_effective_date date,
@@ -6004,7 +6068,7 @@ ALTER SEQUENCE process_policy_combine_partial_transfer_no_leases_id_seq OWNED BY
 CREATE TABLE process_policy_coverage_status_histories (
     id integer NOT NULL,
     representative_number integer,
-    policy_type integer,
+    policy_type character varying,
     policy_number integer,
     coverage_effective_date date,
     coverage_end_date date,
@@ -6042,7 +6106,7 @@ ALTER SEQUENCE process_policy_coverage_status_histories_id_seq OWNED BY process_
 CREATE TABLE process_policy_experience_period_peos (
     id integer NOT NULL,
     representative_number integer,
-    policy_type integer,
+    policy_type character varying,
     policy_number integer,
     manual_class_sf_peo_lease_effective_date date,
     manual_class_sf_peo_lease_termination_date date,
@@ -6119,7 +6183,7 @@ CREATE TABLE sc220_rec1_employer_demographics (
     description_ar character varying,
     record_type integer,
     request_type integer,
-    policy_type integer,
+    policy_type character varying,
     policy_number integer,
     business_sequence_number integer,
     federal_identification_number character varying,
@@ -6256,7 +6320,7 @@ CREATE TABLE sc220_rec2_employer_manual_level_payrolls (
     description_ar character varying,
     record_type integer,
     request_type integer,
-    policy_type integer,
+    policy_type character varying,
     policy_number integer,
     business_sequence_number integer,
     manual_number integer,
@@ -6344,7 +6408,7 @@ CREATE TABLE sc220_rec3_employer_ar_transactions (
     descriptionar character varying,
     record_type integer,
     request_type integer,
-    policy_type integer,
+    policy_type character varying,
     policy_number integer,
     business_sequence_number integer,
     trans_date date,
@@ -6472,7 +6536,7 @@ CREATE TABLE sc220_rec4_policy_not_founds (
     description character varying,
     record_type integer,
     request_type integer,
-    policy_type integer,
+    policy_type character varying,
     policy_number integer,
     business_sequence_number integer,
     error_message character varying,
@@ -6537,7 +6601,7 @@ CREATE TABLE sc230_claim_indemnity_awards (
     id integer NOT NULL,
     representative_number integer,
     representative_type integer,
-    policy_type integer,
+    policy_type character varying,
     policy_number integer,
     business_sequence_number integer,
     claim_manual_number integer,
@@ -6586,7 +6650,7 @@ CREATE TABLE sc230_claim_medical_payments (
     id integer NOT NULL,
     representative_number integer,
     representative_type integer,
-    policy_type integer,
+    policy_type character varying,
     policy_number integer,
     business_sequence_number integer,
     claim_manual_number integer,
@@ -6635,7 +6699,7 @@ CREATE TABLE sc230_employer_demographics (
     id integer NOT NULL,
     representative_number integer,
     representative_type integer,
-    policy_type integer,
+    policy_type character varying,
     policy_number integer,
     business_sequence_number integer,
     claim_manual_number integer,

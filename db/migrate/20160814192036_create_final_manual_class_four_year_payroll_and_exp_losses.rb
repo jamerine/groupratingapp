@@ -2,7 +2,7 @@ class CreateFinalManualClassFourYearPayrollAndExpLosses < ActiveRecord::Migratio
   def change
     create_table :final_manual_class_four_year_payroll_and_exp_losses do |t|
       t.integer :representative_number
-      t.integer :policy_type
+      t.string :policy_type
       t.integer :policy_number
       t.integer :manual_number
       t.index [:policy_number, :manual_number, :representative_number], name: 'index_man_pr_pol_num_and_man_num_rep'

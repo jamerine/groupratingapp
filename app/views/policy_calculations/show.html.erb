@@ -7,9 +7,11 @@
       <div class="row">
         <div class="col-md-3">
           <h5>Policy Number:</h5>
-          <h3><%= @policy_calculation.policy_number %></h3>
+          <h4><%= @policy_calculation.policy_number %></h4>
+          <h5>Policy Type:</h5>
+          <h4><%= @policy_calculation.policy_type.humanize %></h4>
           <h5>Policy Status:</h5>
-          <h3><%= @policy_calculation.current_policy_status %></h3>
+          <h4><%= @policy_calculation.current_policy_status %></h4>
         </div>
 
         <div class="col-md-6">

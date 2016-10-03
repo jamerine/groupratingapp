@@ -27,8 +27,13 @@ class CreateProcessSc230Proc < ActiveRecord::Migration
     )
     (select cast_to_int(substring(single_rec,1,6)),   /*  representative_number  */
             cast_to_int(substring(single_rec,8,2)),   /*  representative_type  */
-            cast_to_int(substring(single_rec,10,1)),   /*  policy_type  */
-            cast_to_int(substring(single_rec,11,7)),   /*  policy_sequence_number  */
+            CASE WHEN cast_to_int(substring(single_rec,10,1)) = 0 THEN 'private_state_fund'
+                 WHEN cast_to_int(substring(single_rec,10,1)) = 1 THEN 'public_state_fund'
+                 WHEN cast_to_int(substring(single_rec,10,1)) = 2 THEN 'private_self_insured'
+                 WHEN cast_to_int(substring(single_rec,10,1)) = 3 THEN 'public_app_fund'
+                 ELSE substring(single_rec,10,1)
+                 END,   /*  policy_type  */
+            cast_to_int(substring(single_rec,10,1) || substring(single_rec,11,7)),   /*  policy_number  */
             cast_to_int(substring(single_rec,19,3)),   /*  business_sequence_number  */
             cast_to_int(substring(single_rec,22,4)),   /*  claim_manual_number  */
             substring(single_rec,26,2),   /*  record_type  */
