@@ -12,6 +12,11 @@ class CreateAccounts < ActiveRecord::Migration
       t.bigint    :business_phone_number
       t.string    :business_email_address
       t.string    :website_url
+      t.string    :group_rating_qualification
+      t.float     :group_rating_tier
+      t.integer   :group_rating_group_number
+      t.float     :group_premium
+      t.float     :group_savings
       t.float     :group_fees
       t.float     :group_dues
       t.float     :total_costs
@@ -21,7 +26,7 @@ class CreateAccounts < ActiveRecord::Migration
       t.date      :request_date
       t.boolean   :quarterly_request
       t.boolean   :weekly_request
-
+      t.boolean   :ac3_approval
 
       t.timestamps null: false
     end

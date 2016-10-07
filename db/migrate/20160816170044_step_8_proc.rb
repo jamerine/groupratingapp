@@ -245,7 +245,7 @@ class Step8Proc < ActiveRecord::Migration
       -- update Individual Total Rate
       UPDATE public.final_manual_class_group_rating_and_premium_projections mcgr SET
       (manual_class_individual_total_rate) =
-      (round((manual_class_modification_rate *  (1 + (SELECT value from public.bwc_codes_constant_values
+      (round((manual_class_modification_rate *  (1 + (SELECT rate from public.bwc_codes_constant_values
       where name = 'administrative_rate' and completed_date is null)))::numeric,6));
 
 
@@ -320,7 +320,7 @@ class Step8Proc < ActiveRecord::Migration
       (
         SELECT a.policy_number as policy_number,
           a.manual_number as manual_number,
-          ((1+ b.group_rating_tier) * a.manual_class_base_rate * (1 + (SELECT value from public.bwc_codes_constant_values
+          ((1+ b.group_rating_tier) * a.manual_class_base_rate * (1 + (SELECT rate from public.bwc_codes_constant_values
           where name = 'administrative_rate' and completed_date is null))) as manual_class_group_total_rate,
           run_date as updated_at
         FROM public.final_manual_class_group_rating_and_premium_projections a
@@ -333,15 +333,16 @@ class Step8Proc < ActiveRecord::Migration
 
 
       --Update Premium Values
-      UPDATE public.final_manual_class_group_rating_and_premium_projections mcgr SET
-      (
-      manual_class_estimated_group_premium,
-      manual_class_estimated_individual_premium) =
-      (
-      manual_class_current_estimated_payroll * manual_class_group_total_rate
-      ,
-      manual_class_current_estimated_payroll * manual_class_individual_total_rate
-      );
+           UPDATE public.final_manual_class_group_rating_and_premium_projections mcgr SET
+           (
+           manual_class_estimated_group_premium,
+           manual_class_estimated_individual_premium) =
+           (
+           manual_class_current_estimated_payroll * manual_class_group_total_rate
+           ,
+           manual_class_current_estimated_payroll * manual_class_individual_total_rate
+           );
+
 
       UPDATE public.final_policy_group_rating_and_premium_projections pgr SET (policy_total_individual_premium, policy_total_group_premium, updated_at) = (t1.policy_total_individual_premium, t1.policy_total_group_premium, t1.updated_at)
       FROM

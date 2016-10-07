@@ -8,7 +8,7 @@ class BwcCodesConstantValue < ActiveRecord::Base
     # Democ.transaction do
       conn = ActiveRecord::Base.connection
       rc = conn.raw_connection
-      rc.exec("COPY bwc_codes_constant_values (name, value, start_date) FROM STDIN WITH CSV")
+      rc.exec("COPY bwc_codes_constant_values (name, rate, start_date) FROM STDIN WITH CSV")
 
       file = open(url)
       while !file.eof?

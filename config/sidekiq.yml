@@ -17,6 +17,9 @@ production:
   - group_rating_step_six
   - group_rating_step_seven
   - group_rating_step_eight
+  - predecessor_account_update_create_process
+  - account_group_rating_process
+  - account_group_rating_calc
   - policy_update_create
   - policy_update_create_process
   - manual_class_update_create

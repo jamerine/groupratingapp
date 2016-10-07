@@ -12,6 +12,9 @@
       @group_rating.status = "Step #{step} Completed"
     @group_rating.save
 
+    predecessor_policies = ExceptionTablePolicyCombinedRequestPayrollInfo.all
+
+    PredecessorAccountUpdateCreateProcess.perform_async(@group_rating.id)
     PolicyUpdateCreateProcess.perform_async(@group_rating.id)
   end
 

@@ -3301,7 +3301,7 @@ CREATE FUNCTION proc_step_5(process_representative integer, experience_period_lo
              'bwc' as data_source,
              run_date as created_at,
              run_date as updated_at
-       FROM final_manual_class_four_year_payroll_and_exp_losses
+       FROM final_employer_demographics_informations
        where representative_number = process_representative
        );
 
@@ -4014,7 +4014,7 @@ CREATE FUNCTION proc_step_8(process_representative integer, experience_period_lo
       -- update Individual Total Rate
       UPDATE public.final_manual_class_group_rating_and_premium_projections mcgr SET
       (manual_class_individual_total_rate) =
-      (round((manual_class_modification_rate *  (1 + (SELECT value from public.bwc_codes_constant_values
+      (round((manual_class_modification_rate *  (1 + (SELECT rate from public.bwc_codes_constant_values
       where name = 'administrative_rate' and completed_date is null)))::numeric,6));
 
 
@@ -4089,7 +4089,7 @@ CREATE FUNCTION proc_step_8(process_representative integer, experience_period_lo
       (
         SELECT a.policy_number as policy_number,
           a.manual_number as manual_number,
-          ((1+ b.group_rating_tier) * a.manual_class_base_rate * (1 + (SELECT value from public.bwc_codes_constant_values
+          ((1+ b.group_rating_tier) * a.manual_class_base_rate * (1 + (SELECT rate from public.bwc_codes_constant_values
           where name = 'administrative_rate' and completed_date is null))) as manual_class_group_total_rate,
           run_date as updated_at
         FROM public.final_manual_class_group_rating_and_premium_projections a
@@ -4102,15 +4102,16 @@ CREATE FUNCTION proc_step_8(process_representative integer, experience_period_lo
 
 
       --Update Premium Values
-      UPDATE public.final_manual_class_group_rating_and_premium_projections mcgr SET
-      (
-      manual_class_estimated_group_premium,
-      manual_class_estimated_individual_premium) =
-      (
-      manual_class_current_estimated_payroll * manual_class_group_total_rate
-      ,
-      manual_class_current_estimated_payroll * manual_class_individual_total_rate
-      );
+           UPDATE public.final_manual_class_group_rating_and_premium_projections mcgr SET
+           (
+           manual_class_estimated_group_premium,
+           manual_class_estimated_individual_premium) =
+           (
+           manual_class_current_estimated_payroll * manual_class_group_total_rate
+           ,
+           manual_class_current_estimated_payroll * manual_class_individual_total_rate
+           );
+
 
       UPDATE public.final_policy_group_rating_and_premium_projections pgr SET (policy_total_individual_premium, policy_total_group_premium, updated_at) = (t1.policy_total_individual_premium, t1.policy_total_group_premium, t1.updated_at)
       FROM
@@ -4164,6 +4165,11 @@ CREATE TABLE accounts (
     business_phone_number bigint,
     business_email_address character varying,
     website_url character varying,
+    group_rating_qualification character varying,
+    group_rating_tier double precision,
+    group_rating_group_number integer,
+    group_premium double precision,
+    group_savings double precision,
     group_fees double precision,
     group_dues double precision,
     total_costs double precision,
@@ -4173,6 +4179,7 @@ CREATE TABLE accounts (
     request_date date,
     quarterly_request boolean,
     weekly_request boolean,
+    ac3_approval boolean,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
 );
@@ -4237,7 +4244,7 @@ ALTER SEQUENCE bwc_codes_base_rates_exp_loss_rates_id_seq OWNED BY bwc_codes_bas
 CREATE TABLE bwc_codes_constant_values (
     id integer NOT NULL,
     name character varying,
-    value double precision,
+    rate double precision,
     start_date date,
     completed_date date,
     created_at timestamp without time zone,

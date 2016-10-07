@@ -19,21 +19,6 @@ class PolicyCalculation < ActiveRecord::Base
     where("policy_number = ?", "#{search}")
   end
 
-  def fee_calculation
-      if self.policy_total_individual_premium.nil? || self.policy_total_group_savings.nil? || self.representative_number != 219406
-        return
-      end
-      if self.group_rating_tier.nil?
-        fee = (self.policy_total_individual_premium * 0.035)
-        self.update_attribute(:policy_group_fees, fee)
-      elsif self.group_rating_tier < -0.35
-        fee = (self.policy_total_group_savings * 0.0415)
-        self.update_attribute(:policy_group_fees, fee)
-      else
-        fee = (self.policy_total_individual_premium * 0.0275)
-        self.update_attribute(:policy_group_fees, fee)
-      end
-  end
 
 
   def self.to_csv
