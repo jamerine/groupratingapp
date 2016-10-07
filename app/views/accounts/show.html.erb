@@ -9,7 +9,9 @@
       <div class="row">
         <div class="col-md-12">
           <%= link_to "Edit Account Info", edit_account_path(params[:id]), class: 'btn btn-primary' %>
+
         </div>
+
         <div class="col-md-4">
           <p>Account:</p>
           <h3><%= @account.name %></h3>
@@ -52,6 +54,7 @@
 
 
   <div class="container">
+    <%= link_to "Calc Group Rating", account_group_rating_calc_path(params[:id]), class: 'btn btn-primary', method: :post %>
     <div class="row">
       <h3>Group Rating Information</h3>
       <div class="col-md-2">

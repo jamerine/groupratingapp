@@ -12,7 +12,9 @@ Rails.application.routes.draw do
 
   devise_for :users
 
-  resources :accounts
+  resources :accounts do
+    post :group_rating_calc
+  end
 
   resources :imports do
     collection { delete :destroy }

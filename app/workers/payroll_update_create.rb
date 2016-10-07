@@ -27,7 +27,7 @@ class PayrollUpdateCreate
         representative_number: representative_number,
         policy_type: policy_number,
         policy_number: policy_number,
-        manual_type: manual_number,
+        manual_type: manual_type,
         manual_number: manual_number,
         manual_class_calculation_id: manual_class_calculation_id,
         manual_class_effective_date: manual_class_effective_date,
