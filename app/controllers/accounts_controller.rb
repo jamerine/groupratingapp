@@ -68,6 +68,17 @@ class AccountsController < ApplicationController
   end
 
 
+  def group_rating_calc
+    @account = Account.find(params[:account_id])
+    if @account.group_rating
+      flash[:notice] = "Account's group rating calculation was successful."
+      redirect_to @account
+    else
+      flash[:alert] = "There was an error calculating group rating"
+    end
+  end
+
+
   private
 
   def account_params
