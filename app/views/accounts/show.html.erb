@@ -52,63 +52,40 @@
 
 
   <div class="container">
-    <h3>Product Details</h3>
     <div class="row">
+      <h3>Group Rating Information</h3>
       <div class="col-md-2">
-        <h5>Product Name</h5>
-        <p>Group Rating</p>
+        <p>Qualification:</p>
+        <h5><%= @account.group_rating_qualification %></h5>
       </div>
       <div class="col-md-2">
-        <h5>Qualification</h5>
-        <p>Approved</p>
+        <p>Discount Tier:</p>
+        <h5><%= @account.group_rating_tier %></h5>
       </div>
       <div class="col-md-2">
-        <h5>Fee</h5>
-        <p>$100.00</p>
+        <p>Group Number:</p>
+        <h5><%= @account.group_rating_group_number %></h5>
       </div>
       <div class="col-md-2">
-        <h5>Dues</h5>
-        <p>$1000.00</p>
+        <p>Premium:</p>
+        <h5><%= number_to_currency(@account.group_premium) %></h5>
       </div>
       <div class="col-md-2">
-        <h5>Total Cost</h5>
-        <p>$1100.00</p>
+        <p>Savings:</p>
+        <h5><%= number_to_currency(@account.group_savings) %></h5>
       </div>
+      <div class="col-md-2">
+        <p>Fees:</p>
+        <h5><%= number_to_currency(@account.group_fees) %></h5>
+      </div>
+      <div class="col-md-2">
+        <p>Dues:</p>
+        <h5><%= number_to_currency(@account.group_dues) %></h5>
+      </div>
+
     </div>
-    <div class="row">
-      <div class="col-md-2">
-        <p>Group Retro</p>
-      </div>
-      <div class="col-md-2">
-        <p>Declined</p>
-      </div>
-      <div class="col-md-2">
-        <p>-</p>
-      </div>
-      <div class="col-md-2">
-        <p>-</p>
-      </div>
-      <div class="col-md-2">
-        <p>-</p>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-2">
-        <p>One Claim Program</p>
-      </div>
-      <div class="col-md-2">
-        <p>Declined</p>
-      </div>
-      <div class="col-md-2">
-        <p>-</p>
-      </div>
-      <div class="col-md-2">
-        <p>-</p>
-      </div>
-      <div class="col-md-2">
-        <p>-</p>
-      </div>
-    </div>
+
+
   </div>
 
 

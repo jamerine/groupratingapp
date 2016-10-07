@@ -16,6 +16,7 @@ class PolicyCalculationsController < ApplicationController
 
   def show
     @policy_calculation = PolicyCalculation.find(params[:id])
+    @account = Account.find(@policy_calculation.account_id)
     @policy_demographics = FinalEmployerDemographicsInformation.find_by(policy_number: @policy_calculation.policy_number)
     @manual_class_calculations = ManualClassCalculation.where(policy_calculation_id: @policy_calculation.id)
     @representative = Representative.find(@policy_calculation.representative_id)

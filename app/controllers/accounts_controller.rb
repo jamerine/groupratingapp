@@ -1,7 +1,18 @@
 class AccountsController < ApplicationController
   def index
-    @accounts = Account.all.paginate(page: params[:page], per_page: 100)
-    @representatives = Representative
+    @accounts = Account.all
+    @representatives = Representative.all
+    if params[:search].present? && params[:representative_number].present?
+      @representative = Representative.find_by(representative_number: params[:representative_number])
+      @accounts = Account.where(representative_id: @representative.id).search(params[:search]).paginate(page: params[:page], per_page: 100)
+    elsif params[:search].present?
+      @accounts = Account.search(params[:search]).paginate(page: params[:page], per_page: 100)
+    elsif params[:representative_number].present?
+      @representative = Representative.find_by(representative_number: params[:representative_number])
+      @accounts = Account.where(representative_id: @representative.id).paginate(page: params[:page], per_page: 100)
+    else
+      @accounts = Account.all.paginate(page: params[:page], per_page: 100)
+    end
   end
 
   def new
@@ -60,7 +71,7 @@ class AccountsController < ApplicationController
   private
 
   def account_params
-    params.require(:account).permit(:representative_id, :name, :policy_number_entered, :street_address, :street_address_2, :city, :state, :zip_code, :business_phone_number, :business_email_address, :website_url, :group_fees, :group_dues, :total_costs, :status, :federal_identification_number, :cycle_date, :request_date, :quarterly_request, :weekly_request)
+    params.require(:account).permit(:representative_id, :name, :policy_number_entered, :street_address, :street_address_2, :city, :state, :zip_code, :business_phone_number, :business_email_address, :website_url, :group_fees, :group_dues, :total_costs, :status, :federal_identification_number, :cycle_date, :request_date, :quarterly_request, :weekly_request, :ac3_approval)
   end
 
 
