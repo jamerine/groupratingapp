@@ -34,7 +34,7 @@ class Step5Proc < ActiveRecord::Migration
              'bwc' as data_source,
              run_date as created_at,
              run_date as updated_at
-       FROM final_manual_class_four_year_payroll_and_exp_losses
+       FROM final_employer_demographics_informations
        where representative_number = process_representative
        );
 

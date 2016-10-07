@@ -4,7 +4,7 @@
       <h3>Policy Information</h3>
       <div class="col-md-2">
         <h5>Policy Number</h5>
-        <p><%= link_to "#{policy_calculation.policy_number}", policy_calculation_path(@policy_calculation.id)%></p>
+        <p><%= link_to "#{policy_calculation.policy_number}", policy_calculation_path(@policy_calculation.id), class: 'btn btn-primary '%></p>
       </div>
       <div class="col-md-2">
         <h5>Policy Status</h5>
@@ -23,8 +23,8 @@
         <p><%= number_to_currency(policy_calculation.policy_total_current_payroll, precision: 0) %></p>
       </div>
       <div class="col-md-2">
-        <h5>Payroll Experience</h5>
-        <p><%= number_to_currency(policy_calculation.policy_total_four_year_payroll, precision: 0) %></p>
+        <h5>Individual Premium</h5>
+        <p><%= number_to_currency(policy_calculation.policy_total_individual_premium, precision: 0) %></p>
       </div>
     </div>
   </div>

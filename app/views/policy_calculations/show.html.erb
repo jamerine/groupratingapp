@@ -1,6 +1,6 @@
 <%= content_tag_for :div, @policy_calculation do %>
   <div class="container">
-    <%= link_to 'Return to All Policies', policy_calculations_path, class: 'btn btn-default' %>
+    <%= link_to 'Return to Account', account_path(@account.id), class: 'btn btn-default' %>
 
 
     <div class="jumbotron text-center">
@@ -34,53 +34,21 @@
 <div class="container text-center">
     <h2>Policy Premium Projections</h2>
     <div class="row text-center">
-      <div class="col-md-2 col-sm-4 col-xs-6">
-        <h5>Qualification</h5>
-        <p><%= @policy_calculation.group_rating_qualification %></p>
-      </div>
-      <div class="col-md-2 col-sm-4 col-xs-6 ">
-        <h5>Group Rating Tier</h5>
-        <p><%= @policy_calculation.group_rating_tier %></p>
-      </div>
-      <div class="col-md-2 col-sm-4 col-xs-6 ">
+      <div class="col-md-3 col-sm-4 col-xs-6 ">
         <h5>Industry Group</h5>
         <p><%= @policy_calculation.policy_industry_group %></p>
       </div>
-      <div class="col-md-2 col-sm-4 col-xs-6 ">
-        <h5>Group Number</h5>
-        <p><%= @policy_calculation.group_rating_group_number %></p>
-      </div>
-      <div class="col-md-2 col-sm-4 col-xs-6 ">
+      <div class="col-md-3 col-sm-4 col-xs-6 ">
         <h5>Current Payroll</h5>
         <p><%= number_to_currency(@policy_calculation.policy_total_current_payroll) %></p>
       </div>
-      <div class="col-md-2 col-sm-4 col-xs-6 ">
+      <div class="col-md-3 col-sm-4 col-xs-6 ">
         <h5>Standard Premium</h5>
         <p><%= number_to_currency(@policy_calculation.policy_total_standard_premium) %></p>
       </div>
-      <div class="col-md-2 col-sm-4 col-xs-6 ">
+      <div class="col-md-3 col-sm-4 col-xs-6 ">
         <h5>Individual Premium</h5>
         <p><%= number_to_currency(@policy_calculation.policy_total_individual_premium) %></p>
-      </div>
-      <div class="col-md-2 col-sm-4 col-xs-6 ">
-        <h5>Group Premium</h5>
-        <p><%= number_to_currency(@policy_calculation.policy_total_group_premium) %></p>
-      </div>
-      <div class="col-md-2 col-sm-4 col-xs-6 ">
-        <h5>Group Savings</h5>
-        <p><%= number_to_currency(@policy_calculation.policy_total_group_savings) %></p>
-      </div>
-      <div class="col-md-2 col-sm-4 col-xs-6">
-        <h5>Group Fees</h5>
-        <p><%= number_to_currency(@policy_calculation.policy_group_fees) %></p>
-      </div>
-      <div class="col-md-2 col-sm-4 col-xs-6 ">
-        <h5>Group Dues</h5>
-        <p><%= number_to_currency(@policy_calculation.policy_group_dues) %></p>
-      </div>
-      <div class="col-md-2 col-sm-4 col-xs-6">
-        <h5>Total Cost</h5>
-        <p><%= number_to_currency(@policy_calculation.policy_total_costs) %></p>
       </div>
   </div>
 </div>

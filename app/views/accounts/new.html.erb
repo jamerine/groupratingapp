@@ -1,74 +1,84 @@
+<%= form_for @account do |f| %>
 <div class="container">
   <div class="jumbotron text-center">
     <h1>New Account</h1>
-    <div>
-      <%= form_for @account do |f| %>
 
-          <div class="form-group" >
-            <%= f.label :representative %>
-            <%= f.select(:representative_id, options_from_collection_for_select(@representatives, :id, :abbreviated_name)) %>
-          </div>
 
-          <div class="form-group" >
-            <%= f.label :policy_number_entered %>
-            <%= f.number_field :policy_number_entered, class: "form-control" %>
-          </div>
+      <div class="row">
 
-          <div class="form-group" >
-            <%= f.label :name %>
-            <%= f.text_field :name, class: "form-control" %>
-          </div>
 
-          <div class="form-group" >
-            <%= f.label :street_address %>
-            <%= f.text_field :street_address, class: "form-control" %>
-          </div>
+      <div class="form-group col-md-12" >
+        <%= f.label :representative %>
+        <%= f.collection_select(:representative_id, @representatives, :id, :abbreviated_name, class: "form-control ")%>
+      </div>
 
-          <div class="form-group" >
-            <%= f.label :status %>
-            <%= f.select :status, options_for_select(@statuses.collect { |s| [s[0].humanize, s[0]] }, selected: @account.status), {} , class: "form-control" %>
-          </div>
+      <div class="form-group col-md-12" >
+        <%= f.label :ac3_approval %>
+        <%= f.check_box :ac3_approval%>
+      </div>
 
-          <div class="form-group" >
-            <%= f.label :street_address_2 %>
-            <%= f.text_field :street_address_2, class: "form-control" %>
-          </div>
+      <div class="form-group col-md-4  " >
+        <%= f.label :name %>
+        <%= f.text_field :name, class: "form-control" %>
+      </div>
 
-          <div class="form-group" >
-            <%= f.label :city %>
-            <%= f.text_field :city, class: "form-control" %>
-          </div>
+      <div class="form-group col-md-4" >
+        <%= f.label 'Policy Number' %>
+        <%= f.number_field :policy_number_entered, class: "form-control" %>
+      </div>
 
-          <div class="form-group" >
-            <%= f.label :state %>
-            <%= f.text_field :state, class: "form-control" %>
-          </div>
+      <div class="form-group col-md-4 " >
+        <%= f.label :status %>
+        <%= f.select :status, options_for_select(@statuses.collect { |s| [s[0].humanize, s[0]] }, selected: @account.status), {} , class: "form-control" %>
+      </div>
 
-          <div class="form-group" >
-            <%= f.label :zip_code %>
-            <%= f.text_field :zip_code, class: "form-control" %>
-          </div>
 
-          <div class="form-group" >
-            <%= f.label :business_phone_number %>
-            <%= f.phone_field :business_phone_number, class: "form-control" %>
-          </div>
+      <div class="form-group col-md-6" >
+        <%= f.label :street_address %>
+        <%= f.text_field :street_address, class: "form-control" %>
+      </div>
 
-          <div class="form-group" >
-            <%= f.label :business_email_address  %>
-            <%= f.email_field :business_email_address, class: "form-control" %>
-          </div>
+      <div class="form-group col-md-6" >
+        <%= f.label :street_address_2 %>
+        <%= f.text_field :street_address_2, class: "form-control" %>
+      </div>
 
-          <div class="form-group" >
-            <%= f.label :website_url  %>
-            <%= f.url_field :website_url, class: "form-control" %>
-          </div>
+      <div class="form-group col-md-4" >
+        <%= f.label :city %>
+        <%= f.text_field :city, class: "form-control" %>
+      </div>
 
-          <%= f.submit 'Create Account', class: 'btn btn-info' %>
+      <div class="form-group col-md-4" >
+        <%= f.label :state %>
+        <%= f.text_field :state, class: "form-control" %>
+      </div>
 
-      <% end %>
+      <div class="form-group col-md-4" >
+        <%= f.label :zip_code %>
+        <%= f.text_field :zip_code, class: "form-control" %>
+      </div>
+
+      <div class="form-group col-md-4" >
+        <%= f.label :business_phone_number %>
+        <%= f.phone_field :business_phone_number, class: "form-control" %>
+      </div>
+
+      <div class="form-group col-md-4" >
+        <%= f.label :business_email_address  %>
+        <%= f.email_field :business_email_address, class: "form-control" %>
+      </div>
+
+      <div class="form-group col-md-4" >
+        <%= f.label :website_url  %>
+        <%= f.url_field :website_url, class: "form-control" %>
+      </div>
+
+      <div class="form-group col-md-4  col-md-offset-4" >
+        <%= f.submit 'Create Account', class: 'btn btn-info' %>
+      </div>
 
     </div>
     </div>
 
   </div>
+  <% end %>
