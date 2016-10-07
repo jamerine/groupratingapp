@@ -40,3 +40,4 @@
 
 User.create({email: 'jason@dittoh.com', password: 'Jamrine08'})
 User.create({email: 'paul@dittoh.com', password: 'password'})
+User.create({email: 'millercj320@gmail.com', password: 'password'})

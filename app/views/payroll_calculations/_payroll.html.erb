@@ -6,6 +6,7 @@
       <thead>
         <%= link_to 'Adjust Payroll', new_payroll_calculation_path(id: params[:id]), class: 'btn btn-success' %>
         <tr>
+          <th>Manual Type</th>
           <th>Effective Date</th>
           <th>Payroll Amount</th>
           <th>Payroll Origin</th>
@@ -18,6 +19,7 @@
       <tbody>
         <% @payroll_calculations.order("manual_class_effective_date desc").each do |payroll_calculation| %>
         <tr>
+          <td> <%= payroll_calculation.manual_type %></td>
           <td> <%= payroll_calculation.manual_class_effective_date %></td>
           <td> <%= number_to_currency(payroll_calculation.manual_class_payroll) %></td>
           <td> <%= payroll_calculation.payroll_origin %></td>
