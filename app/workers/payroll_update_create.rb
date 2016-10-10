@@ -25,7 +25,7 @@ class PayrollUpdateCreate
       payroll_origin: payroll_origin,
       data_source: data_source).update_or_create(
         representative_number: representative_number,
-        policy_type: policy_number,
+        policy_type: policy_type,
         policy_number: policy_number,
         manual_type: manual_type,
         manual_number: manual_number,
