@@ -75,6 +75,7 @@ class AccountsController < ApplicationController
       redirect_to @account
     else
       flash[:alert] = "There was an error calculating group rating"
+      redirect_to @account
     end
   end
 

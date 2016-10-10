@@ -11,16 +11,16 @@ class PayrollUpdateCreateProcess
       @manual_class_calculation = ManualClassCalculation.find_by(policy_number: payroll_transaction.policy_number, manual_number: payroll_transaction.manual_number, representative_number: payroll_transaction.representative_number)
       unless @manual_class_calculation.nil? || payroll_transaction.id.nil? || payroll_transaction.manual_number == 0
         PayrollUpdateCreate.perform_async(
-        payroll_transaction.representative_number,
-        payroll_transaction.policy_type,
-        payroll_transaction.policy_number,
-        payroll_transaction.manual_type,
-        payroll_transaction.manual_number,
-        @manual_class_calculation.id,
-        payroll_transaction.manual_class_effective_date,
-        payroll_transaction.manual_class_payroll,
-        payroll_transaction.payroll_origin,
-        payroll_transaction.data_source
+          payroll_transaction.representative_number,
+          payroll_transaction.policy_type,
+          payroll_transaction.policy_number,
+          payroll_transaction.manual_type,
+          payroll_transaction.manual_number,
+          @manual_class_calculation.id,
+          payroll_transaction.manual_class_effective_date,
+          payroll_transaction.manual_class_payroll,
+          payroll_transaction.payroll_origin,
+          payroll_transaction.data_source
         )
       end
     end
@@ -28,6 +28,5 @@ class PayrollUpdateCreateProcess
     @group_rating.status = "Payroll Completed"
     @group_rating.save
     AccountGroupRatingProcess.perform_async(group_rating_id)
-    ClaimUpdateCreateProcess.perform_async(group_rating_id)
   end
 end
