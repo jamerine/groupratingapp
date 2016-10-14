@@ -72,7 +72,6 @@ class GroupRatingsController < ApplicationController
           ImportProcess.perform_async(@import.process_representative, @import.id, @representative.abbreviated_name, @group_rating.id)
 
           redirect_to group_ratings_path, notice: "Step 1, Step 2, Step 3, Step 4, Step 5, Step 6, Step 7, Step 8 have been queued."
-
         end
     end
   end

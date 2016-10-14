@@ -61,14 +61,16 @@ class Step8Proc < ActiveRecord::Migration
           a.representative_number,
           a.policy_type,
           a.policy_number,
-          a.manual_number,
-          round(sum(a.manual_class_payroll)::numeric,2) as manual_class_current_estimated_payroll,
+          b.manual_number,
+          round(sum(b.manual_class_payroll)::numeric,2) as manual_class_current_estimated_payroll,
           'bwc' as data_source,
           run_date as created_at,
           run_date as updated_at
-        FROM public.process_payroll_all_transactions_breakdown_by_manual_classes a
-        WHERE (a.manual_class_effective_date >= current_payroll_period_lower_date) and a.representative_number = process_representative
-        GROUP BY a.representative_number, a.policy_type, a.policy_number, a.manual_number
+        FROM public.final_employer_demographics_informations a
+        Inner Join public.process_payroll_all_transactions_breakdown_by_manual_classes b
+        ON a.policy_number = b.policy_number
+        WHERE (b.manual_class_effective_date >= current_payroll_period_lower_date) and a.representative_number = process_representative
+        GROUP BY a.representative_number, a.policy_type, a.policy_number, b.manual_number
       );
 
 
@@ -292,24 +294,24 @@ class Step8Proc < ActiveRecord::Migration
       -- 06/06/2016 ADDED condition for creating group_rating_tier only when the policy_status is Active, ReInsured, or Lapse
       -- update group_rating_tier
 
-      update public.final_policy_group_rating_and_premium_projections c SET
-      (group_rating_tier, updated_at)	= (t1.group_rating_tier, t1.updated_at)
-      FROM
-      	(SELECT
-      		a.policy_number,
-      		(SELECT (CASE WHEN (a.policy_group_ratio = '0') THEN '-.53'
-      					ELSE min(market_rate)
-      					END)  as group_rating_tier
-      				 FROM public.bwc_codes_industry_group_savings_ratio_criteria
-      				 WHERE (a.policy_group_ratio /ratio_criteria <= 1) and (industry_group = b.policy_industry_group)),
-               run_date as updated_at
-      			FROM public.final_policy_experience_calculations a
-            LEFT JOIN final_policy_group_rating_and_premium_projections b
-            ON a.policy_number = b.policy_number
-            WHERE a.representative_number = process_representative
-      			GROUP BY a.policy_number, a.policy_group_ratio, a.policy_status, b.policy_industry_group
-      		) t1
-      WHERE c.policy_number = t1.policy_number;
+      # update public.final_policy_group_rating_and_premium_projections c SET
+      # (group_rating_tier, updated_at)	= (t1.group_rating_tier, t1.updated_at)
+      # FROM
+      # 	(SELECT
+      # 		a.policy_number,
+      # 		(SELECT (CASE WHEN (a.policy_group_ratio = '0') THEN '-.53'
+      # 					ELSE min(market_rate)
+      # 					END)  as group_rating_tier
+      # 				 FROM public.bwc_codes_industry_group_savings_ratio_criteria
+      # 				 WHERE (a.policy_group_ratio /ratio_criteria <= 1) and (industry_group = b.policy_industry_group)),
+      #          run_date as updated_at
+      # 			FROM public.final_policy_experience_calculations a
+      #       LEFT JOIN final_policy_group_rating_and_premium_projections b
+      #       ON a.policy_number = b.policy_number
+      #       WHERE a.representative_number = process_representative and a.policy_group_ratio is not null
+      # 			GROUP BY a.policy_number, a.policy_group_ratio, a.policy_status, b.policy_industry_group
+      # 		) t1
+      # WHERE c.policy_number = t1.policy_number;
 
 
 
@@ -369,6 +371,15 @@ class Step8Proc < ActiveRecord::Migration
       ) t1
       WHERE pgr.policy_number = t1.policy_number;
 
+
+      DELETE FROM process_policy_experience_period_peos
+      WHERE id IN (SELECT id
+                   FROM (SELECT id,
+                                  ROW_NUMBER() OVER (partition BY representative_number, policy_type, policy_number, manual_class_sf_peo_lease_effective_date,
+       manual_class_sf_peo_lease_termination_date, manual_class_si_peo_lease_effective_date,
+       manual_class_si_peo_lease_termination_date, data_source ORDER BY id) AS rnum
+                          FROM process_policy_experience_period_peos) t
+                   WHERE t.rnum > 1);
 
       end;
 

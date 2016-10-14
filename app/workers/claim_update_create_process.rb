@@ -4,8 +4,11 @@ class ClaimUpdateCreateProcess
   sidekiq_options queue: :claim_update_create_process
 
   def perform(group_rating_id)
+    @group_rating = GroupRating.find_by(id: group_rating_id)
+    @group_rating.update_attributes(status: "Claims Updating")
+
     FinalClaimCostCalculationTable.find_each do |claim|
-        @policy_calculation= PolicyCalculation.find_by(policy_number: claim.policy_number, representative_number: claim.representative_number)
+        @policy_calculation = PolicyCalculation.find_by(policy_number: claim.policy_number, representative_number: claim.representative_number)
         unless @policy_calculation.nil?
             ClaimUpdateCreate.perform_async(
               claim.representative_number,
@@ -40,8 +43,7 @@ class ClaimUpdateCreateProcess
             )
         end
     end
-    @group_rating = GroupRating.find_by(id: group_rating_id)
-    @group_rating.status = "Completed"
-    @group_rating.save
+    @group_rating.update_attributes(status: "Claims Completed")
+    AccountGroupRatingProcess.perform_async(group_rating_id)
   end
 end

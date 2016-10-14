@@ -65,18 +65,16 @@ class AccountsController < ApplicationController
     @policy_calculation = @account.policy_calculation
     @representative = Representative.find(@account.representative_id)
     @new_payroll_calculation = PayrollCalculation.new
+    @group_rating_rejections = GroupRatingRejection.where(account_id: @account.id, representative_id: @account.representative_id)
   end
 
 
   def group_rating_calc
     @account = Account.find(params[:account_id])
-    if @account.group_rating
+    @account.group_rating
       flash[:notice] = "Account's group rating calculation was successful."
       redirect_to @account
-    else
-      flash[:alert] = "There was an error calculating group rating"
-      redirect_to @account
-    end
+
   end
 
 

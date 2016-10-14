@@ -20,7 +20,7 @@ class CreatePolicyCalculations < ActiveRecord::Migration
       t.float :policy_individual_total_modifier
       t.float :policy_individual_experience_modified_rate
       t.integer :policy_industry_group
-      t.string :group_rating_qualification 
+      t.string :group_rating_qualification
       t.float :group_rating_tier
       t.integer :group_rating_group_number
       t.float :policy_total_current_payroll
