@@ -39,7 +39,7 @@ class Step4Proc < ActiveRecord::Migration
           FROM public.final_employer_demographics_informations a
           Inner Join public.process_payroll_all_transactions_breakdown_by_manual_classes b
           ON a.policy_number = b.policy_number
-          WHERE b.manual_class_effective_date >= experience_period_lower_date and b.manual_class_effective_date <= experience_period_upper_date and a.representative_number = process_representative
+          WHERE b.manual_class_effective_date >= experience_period_lower_date and a.representative_number = process_representative
           GROUP BY a.representative_number,
             a.policy_type,
             a.policy_number,
@@ -211,7 +211,7 @@ class Step4Proc < ActiveRecord::Migration
           run_date as updated_at
          FROM public.process_policy_combine_partial_to_full_leases pcl
          -- Self Insured PEO
-         WHERE pcl.successor_policy_type = '2' and pcl.successor_policy_number in (SELECT peo.policy_number FROM bwc_codes_peo_lists peo) and pcl.representative_number = process_representative
+         WHERE pcl.successor_policy_type = 'private_self_insured' and pcl.successor_policy_number in (SELECT peo.policy_number FROM bwc_codes_peo_lists peo) and pcl.representative_number = process_representative
          GROUP BY pcl.representative_number,
           pcl.predecessor_policy_number
         ) t2
@@ -228,7 +228,7 @@ class Step4Proc < ActiveRecord::Migration
          max(pct.transfer_effective_date) as manual_class_si_peo_lease_termination_date,
          run_date as updated_at
         FROM public.process_policy_combination_lease_terminations pct
-        WHERE pct.predecessor_policy_number in (SELECT peo.policy_number FROM bwc_codes_peo_lists peo) and pct.predecessor_policy_type = '2' and pct.representative_number = process_representative
+        WHERE pct.predecessor_policy_number in (SELECT peo.policy_number FROM bwc_codes_peo_lists peo) and pct.predecessor_policy_type = 'private_self_insured' and pct.representative_number = process_representative
         GROUP BY pct.representative_number,
          pct.successor_policy_number
         ) t2
@@ -246,7 +246,7 @@ class Step4Proc < ActiveRecord::Migration
       run_date as updated_at
      FROM public.process_policy_combine_partial_to_full_leases pcl
      -- Self Insured PEO
-     WHERE pcl.successor_policy_type != '2' and pcl.successor_policy_number in (SELECT peo.policy_number FROM bwc_codes_peo_lists peo) and pcl.representative_number = process_representative
+     WHERE pcl.successor_policy_type != 'private_self_insured' and pcl.successor_policy_number in (SELECT peo.policy_number FROM bwc_codes_peo_lists peo) and pcl.representative_number = process_representative
      GROUP BY pcl.representative_number,
       pcl.predecessor_policy_number
     ) t2
@@ -263,7 +263,7 @@ class Step4Proc < ActiveRecord::Migration
      max(pct.transfer_effective_date) as manual_class_sf_peo_lease_termination_date,
      run_date as updated_at
     FROM public.process_policy_combination_lease_terminations pct
-    WHERE pct.predecessor_policy_number in (SELECT peo.policy_number FROM bwc_codes_peo_lists peo) and pct.predecessor_policy_type != '2'and pct.representative_number = process_representative
+    WHERE pct.predecessor_policy_number in (SELECT peo.policy_number FROM bwc_codes_peo_lists peo) and pct.predecessor_policy_type != 'private_self_insured'and pct.representative_number = process_representative
     GROUP BY pct.representative_number,
      pct.successor_policy_number
     ) t2

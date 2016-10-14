@@ -1975,7 +1975,7 @@ CREATE FUNCTION proc_step_2(process_representative integer, experience_period_lo
         run_date as created_at,
         run_date as updated_at
       	FROM public.sc220_rec2_employer_manual_level_payrolls
-        WHERE manual_effective_date is not null and representative_number = process_representative and manual_effective_date >= experience_period_lower_date and manual_effective_date <= experience_period_upper_date
+        WHERE manual_effective_date is not null and representative_number = process_representative and manual_effective_date >= experience_period_lower_date
         )
         Union ALL
         (SELECT representative_number,
@@ -1992,7 +1992,7 @@ CREATE FUNCTION proc_step_2(process_representative integer, experience_period_lo
           run_date as created_at,
           run_date as updated_at
         	FROM public.sc220_rec2_employer_manual_level_payrolls
-          WHERE n2nd_manual_effective_date is not null and representative_number = process_representative and n2nd_manual_effective_date >= experience_period_lower_date and manual_effective_date <= experience_period_upper_date
+          WHERE n2nd_manual_effective_date is not null and representative_number = process_representative and n2nd_manual_effective_date >= experience_period_lower_date
         )
         Union ALL
         (SELECT representative_number,
@@ -2009,7 +2009,7 @@ CREATE FUNCTION proc_step_2(process_representative integer, experience_period_lo
           run_date as created_at,
           run_date as updated_at
       	   FROM public.sc220_rec2_employer_manual_level_payrolls
-           WHERE n3rd_manual_effective_date is not null and representative_number = process_representative and n3rd_manual_effective_date >= experience_period_lower_date and manual_effective_date <= experience_period_upper_date
+           WHERE n3rd_manual_effective_date is not null and representative_number = process_representative and n3rd_manual_effective_date >= experience_period_lower_date
         )
         Union All
         (SELECT representative_number,
@@ -2026,7 +2026,7 @@ CREATE FUNCTION proc_step_2(process_representative integer, experience_period_lo
           run_date as created_at,
           run_date as updated_at
         	FROM public.sc220_rec2_employer_manual_level_payrolls
-          WHERE n4th_manual_effective_date is not null and representative_number = process_representative and n4th_manual_effective_date >= experience_period_lower_date and manual_effective_date <= experience_period_upper_date
+          WHERE n4th_manual_effective_date is not null and representative_number = process_representative and n4th_manual_effective_date >= experience_period_lower_date
         )
         Union All
         (SELECT representative_number,
@@ -2043,7 +2043,7 @@ CREATE FUNCTION proc_step_2(process_representative integer, experience_period_lo
         run_date as created_at,
         run_date as updated_at
       	FROM public.sc220_rec2_employer_manual_level_payrolls
-        WHERE n5th_manual_effective_date is not null and representative_number = process_representative and n5th_manual_effective_date >= experience_period_lower_date and manual_effective_date <= experience_period_upper_date
+        WHERE n5th_manual_effective_date is not null and representative_number = process_representative and n5th_manual_effective_date >= experience_period_lower_date
         )
         Union All
         (SELECT representative_number,
@@ -2060,7 +2060,7 @@ CREATE FUNCTION proc_step_2(process_representative integer, experience_period_lo
           run_date as created_at,
           run_date as updated_at
       	FROM public.sc220_rec2_employer_manual_level_payrolls
-        WHERE n6th_manual_effective_date is not null and representative_number = process_representative and n6th_manual_effective_date >= experience_period_lower_date and manual_effective_date <= experience_period_upper_date
+        WHERE n6th_manual_effective_date is not null and representative_number = process_representative and n6th_manual_effective_date >= experience_period_lower_date
         )
         Union All
         (SELECT representative_number,
@@ -2077,7 +2077,7 @@ CREATE FUNCTION proc_step_2(process_representative integer, experience_period_lo
           run_date as created_at,
           run_date as updated_at
       	FROM public.sc220_rec2_employer_manual_level_payrolls
-        WHERE n7th_manual_effective_date is not null and representative_number = process_representative and n7th_manual_effective_date >= experience_period_lower_date and manual_effective_date <= experience_period_upper_date
+        WHERE n7th_manual_effective_date is not null and representative_number = process_representative and n7th_manual_effective_date >= experience_period_lower_date
         )
         Union All
         (SELECT representative_number,
@@ -2094,7 +2094,7 @@ CREATE FUNCTION proc_step_2(process_representative integer, experience_period_lo
           run_date as created_at,
           run_date as updated_at
       	FROM public.sc220_rec2_employer_manual_level_payrolls
-        WHERE n8th_manual_effective_date is not null and representative_number = process_representative and n8th_manual_effective_date >= experience_period_lower_date and manual_effective_date <= experience_period_upper_date
+        WHERE n8th_manual_effective_date is not null and representative_number = process_representative and n8th_manual_effective_date >= experience_period_lower_date
         )
         Union All
         (SELECT representative_number,
@@ -2111,7 +2111,7 @@ CREATE FUNCTION proc_step_2(process_representative integer, experience_period_lo
           run_date as created_at,
           run_date as updated_at
       	FROM public.sc220_rec2_employer_manual_level_payrolls
-        WHERE n9th_manual_effective_date is not null and representative_number = process_representative and n9th_manual_effective_date >= experience_period_lower_date and manual_effective_date <= experience_period_upper_date
+        WHERE n9th_manual_effective_date is not null and representative_number = process_representative and n9th_manual_effective_date >= experience_period_lower_date
         )
         Union All
         (SELECT representative_number,
@@ -2128,7 +2128,7 @@ CREATE FUNCTION proc_step_2(process_representative integer, experience_period_lo
           run_date as created_at,
           run_date as updated_at
       	FROM public.sc220_rec2_employer_manual_level_payrolls
-        WHERE n10th_manual_effective_date is not null and representative_number = process_representative and n10th_manual_effective_date >= experience_period_lower_date and manual_effective_date <= experience_period_upper_date
+        WHERE n10th_manual_effective_date is not null and representative_number = process_representative and n10th_manual_effective_date >= experience_period_lower_date
         )
         Union All
         (SELECT representative_number,
@@ -2145,7 +2145,7 @@ CREATE FUNCTION proc_step_2(process_representative integer, experience_period_lo
           run_date as created_at,
           run_date as updated_at
       	FROM public.sc220_rec2_employer_manual_level_payrolls
-        WHERE n11th_manual_effective_date is not null and representative_number = process_representative and n11th_manual_effective_date >= experience_period_lower_date and manual_effective_date <= experience_period_upper_date
+        WHERE n11th_manual_effective_date is not null and representative_number = process_representative and n11th_manual_effective_date >= experience_period_lower_date
         )
         Union All
         (SELECT representative_number,
@@ -2162,7 +2162,7 @@ CREATE FUNCTION proc_step_2(process_representative integer, experience_period_lo
           run_date as created_at,
           run_date as updated_at
         	FROM public.sc220_rec2_employer_manual_level_payrolls
-          WHERE n12th_manual_effective_date is not null and representative_number = process_representative and n12th_manual_effective_date >= experience_period_lower_date and manual_effective_date <= experience_period_upper_date
+          WHERE n12th_manual_effective_date is not null and representative_number = process_representative and n12th_manual_effective_date >= experience_period_lower_date
         )
         ORDER BY
           policy_number ASC,
@@ -3034,7 +3034,7 @@ CREATE FUNCTION proc_step_4(process_representative integer, experience_period_lo
           FROM public.final_employer_demographics_informations a
           Inner Join public.process_payroll_all_transactions_breakdown_by_manual_classes b
           ON a.policy_number = b.policy_number
-          WHERE b.manual_class_effective_date >= experience_period_lower_date and b.manual_class_effective_date <= experience_period_upper_date and a.representative_number = process_representative
+          WHERE b.manual_class_effective_date >= experience_period_lower_date and a.representative_number = process_representative
           GROUP BY a.representative_number,
             a.policy_type,
             a.policy_number,
@@ -3206,7 +3206,7 @@ CREATE FUNCTION proc_step_4(process_representative integer, experience_period_lo
           run_date as updated_at
          FROM public.process_policy_combine_partial_to_full_leases pcl
          -- Self Insured PEO
-         WHERE pcl.successor_policy_type = '2' and pcl.successor_policy_number in (SELECT peo.policy_number FROM bwc_codes_peo_lists peo) and pcl.representative_number = process_representative
+         WHERE pcl.successor_policy_type = 'private_self_insured' and pcl.successor_policy_number in (SELECT peo.policy_number FROM bwc_codes_peo_lists peo) and pcl.representative_number = process_representative
          GROUP BY pcl.representative_number,
           pcl.predecessor_policy_number
         ) t2
@@ -3223,7 +3223,7 @@ CREATE FUNCTION proc_step_4(process_representative integer, experience_period_lo
          max(pct.transfer_effective_date) as manual_class_si_peo_lease_termination_date,
          run_date as updated_at
         FROM public.process_policy_combination_lease_terminations pct
-        WHERE pct.predecessor_policy_number in (SELECT peo.policy_number FROM bwc_codes_peo_lists peo) and pct.predecessor_policy_type = '2' and pct.representative_number = process_representative
+        WHERE pct.predecessor_policy_number in (SELECT peo.policy_number FROM bwc_codes_peo_lists peo) and pct.predecessor_policy_type = 'private_self_insured' and pct.representative_number = process_representative
         GROUP BY pct.representative_number,
          pct.successor_policy_number
         ) t2
@@ -3241,7 +3241,7 @@ CREATE FUNCTION proc_step_4(process_representative integer, experience_period_lo
       run_date as updated_at
      FROM public.process_policy_combine_partial_to_full_leases pcl
      -- Self Insured PEO
-     WHERE pcl.successor_policy_type != '2' and pcl.successor_policy_number in (SELECT peo.policy_number FROM bwc_codes_peo_lists peo) and pcl.representative_number = process_representative
+     WHERE pcl.successor_policy_type != 'private_self_insured' and pcl.successor_policy_number in (SELECT peo.policy_number FROM bwc_codes_peo_lists peo) and pcl.representative_number = process_representative
      GROUP BY pcl.representative_number,
       pcl.predecessor_policy_number
     ) t2
@@ -3258,7 +3258,7 @@ CREATE FUNCTION proc_step_4(process_representative integer, experience_period_lo
      max(pct.transfer_effective_date) as manual_class_sf_peo_lease_termination_date,
      run_date as updated_at
     FROM public.process_policy_combination_lease_terminations pct
-    WHERE pct.predecessor_policy_number in (SELECT peo.policy_number FROM bwc_codes_peo_lists peo) and pct.predecessor_policy_type != '2'and pct.representative_number = process_representative
+    WHERE pct.predecessor_policy_number in (SELECT peo.policy_number FROM bwc_codes_peo_lists peo) and pct.predecessor_policy_type != 'private_self_insured'and pct.representative_number = process_representative
     GROUP BY pct.representative_number,
      pct.successor_policy_number
     ) t2
@@ -3722,29 +3722,14 @@ CREATE FUNCTION proc_step_7(process_representative integer, experience_period_lo
 
         update public.final_policy_experience_calculations SET policy_group_ratio =
           (
-            CASE WHEN policy_total_expected_losses = '0.00' THEN '0.00'::numeric
-            ELSE
-            round((policy_total_modified_losses_group_reduced / policy_total_expected_losses)::numeric, 4)
+            CASE WHEN policy_total_expected_losses = '0.00' and policy_total_modified_losses_group_reduced = '0.00' THEN '0.00'::numeric
+                 WHEN policy_total_expected_losses > '0.00' and policy_total_modified_losses_group_reduced >= '0.00' THEN
+                 round((policy_total_modified_losses_group_reduced / policy_total_expected_losses)::numeric, 4)
             END
           );
 
 
 
-      -- UPDATE policy_group_ratio for policies that have a four_year_payroll, but do not have any claims data.
-
-      -- update public.policy_experience_calculations c SET policy_group_ratio =
-      -- 	(
-      -- SELECT Case when a.policy_group_ratio is null THEN 0
-      -- 	ELSE a.policy_group_ratio
-      -- END
-      --   FROM public.policy_experience_calculations a
-      --   LEFT JOIN public.claim_cost_calculation_table b
-      --   ON a.policy_number = b.policy_number
-      --   WHERE b.claim_unlimited_limited_loss = '0' and b.claim_injury_date is null and
-      --   c.policy_number = a.policy_number and
-      -- a.policy_total_modified_losses_group_reduced is null and a.policy_total_four_year_payroll > '0'
-      --
-      -- )
 
       -- Update policy_individual_total_modifier but subtracting total limited losses from total modified losses and dividing by the total limited Losses.  Then Multiplying by the policy_credibility_percent
 
@@ -3830,14 +3815,16 @@ CREATE FUNCTION proc_step_8(process_representative integer, experience_period_lo
           a.representative_number,
           a.policy_type,
           a.policy_number,
-          a.manual_number,
-          round(sum(a.manual_class_payroll)::numeric,2) as manual_class_current_estimated_payroll,
+          b.manual_number,
+          round(sum(b.manual_class_payroll)::numeric,2) as manual_class_current_estimated_payroll,
           'bwc' as data_source,
           run_date as created_at,
           run_date as updated_at
-        FROM public.process_payroll_all_transactions_breakdown_by_manual_classes a
-        WHERE (a.manual_class_effective_date >= current_payroll_period_lower_date) and a.representative_number = process_representative
-        GROUP BY a.representative_number, a.policy_type, a.policy_number, a.manual_number
+        FROM public.final_employer_demographics_informations a
+        Inner Join public.process_payroll_all_transactions_breakdown_by_manual_classes b
+        ON a.policy_number = b.policy_number
+        WHERE (b.manual_class_effective_date >= current_payroll_period_lower_date) and a.representative_number = process_representative
+        GROUP BY a.representative_number, a.policy_type, a.policy_number, b.manual_number
       );
 
 
@@ -4075,7 +4062,7 @@ CREATE FUNCTION proc_step_8(process_representative integer, experience_period_lo
       			FROM public.final_policy_experience_calculations a
             LEFT JOIN final_policy_group_rating_and_premium_projections b
             ON a.policy_number = b.policy_number
-            WHERE a.representative_number = process_representative
+            WHERE a.representative_number = process_representative and a.policy_group_ratio is not null
       			GROUP BY a.policy_number, a.policy_group_ratio, a.policy_status, b.policy_industry_group
       		) t1
       WHERE c.policy_number = t1.policy_number;
@@ -4139,6 +4126,15 @@ CREATE FUNCTION proc_step_8(process_representative integer, experience_period_lo
       WHERE pgr.policy_number = t1.policy_number;
 
 
+      DELETE FROM process_policy_experience_period_peos
+      WHERE id IN (SELECT id
+                   FROM (SELECT id,
+                                  ROW_NUMBER() OVER (partition BY representative_number, policy_type, policy_number, manual_class_sf_peo_lease_effective_date,
+       manual_class_sf_peo_lease_termination_date, manual_class_si_peo_lease_effective_date,
+       manual_class_si_peo_lease_termination_date, data_source ORDER BY id) AS rnum
+                          FROM process_policy_experience_period_peos) t
+                   WHERE t.rnum > 1);
+
       end;
 
         $$;
@@ -4180,6 +4176,7 @@ CREATE TABLE accounts (
     quarterly_request boolean,
     weekly_request boolean,
     ac3_approval boolean,
+    user_override boolean,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
 );
@@ -4983,6 +4980,39 @@ ALTER SEQUENCE final_policy_group_rating_and_premium_projections_id_seq OWNED BY
 
 
 --
+-- Name: group_rating_rejections; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE group_rating_rejections (
+    id integer NOT NULL,
+    account_id integer,
+    representative_id integer,
+    reject_reason character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: group_rating_rejections_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE group_rating_rejections_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: group_rating_rejections_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE group_rating_rejections_id_seq OWNED BY group_rating_rejections.id;
+
+
+--
 -- Name: group_ratings; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -5695,6 +5725,46 @@ CREATE SEQUENCE policy_calculations_id_seq
 --
 
 ALTER SEQUENCE policy_calculations_id_seq OWNED BY policy_calculations.id;
+
+
+--
+-- Name: policy_coverage_status_histories; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE policy_coverage_status_histories (
+    id integer NOT NULL,
+    policy_calculation_id integer,
+    representative_id integer,
+    representative_number integer,
+    policy_type character varying,
+    policy_number integer,
+    coverage_effective_date date,
+    coverage_end_date date,
+    coverage_status character varying,
+    lapse_days integer,
+    data_source character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: policy_coverage_status_histories_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE policy_coverage_status_histories_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: policy_coverage_status_histories_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE policy_coverage_status_histories_id_seq OWNED BY policy_coverage_status_histories.id;
 
 
 --
@@ -6957,6 +7027,13 @@ ALTER TABLE ONLY final_policy_group_rating_and_premium_projections ALTER COLUMN 
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY group_rating_rejections ALTER COLUMN id SET DEFAULT nextval('group_rating_rejections_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY group_ratings ALTER COLUMN id SET DEFAULT nextval('group_ratings_id_seq'::regclass);
 
 
@@ -7056,6 +7133,13 @@ ALTER TABLE ONLY phmgns ALTER COLUMN id SET DEFAULT nextval('phmgns_id_seq'::reg
 --
 
 ALTER TABLE ONLY policy_calculations ALTER COLUMN id SET DEFAULT nextval('policy_calculations_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY policy_coverage_status_histories ALTER COLUMN id SET DEFAULT nextval('policy_coverage_status_histories_id_seq'::regclass);
 
 
 --
@@ -7358,6 +7442,14 @@ ALTER TABLE ONLY final_policy_group_rating_and_premium_projections
 
 
 --
+-- Name: group_rating_rejections_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY group_rating_rejections
+    ADD CONSTRAINT group_rating_rejections_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: group_ratings_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -7475,6 +7567,14 @@ ALTER TABLE ONLY phmgns
 
 ALTER TABLE ONLY policy_calculations
     ADD CONSTRAINT policy_calculations_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: policy_coverage_status_histories_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY policy_coverage_status_histories
+    ADD CONSTRAINT policy_coverage_status_histories_pkey PRIMARY KEY (id);
 
 
 --
@@ -7695,6 +7795,20 @@ CREATE INDEX index_fin_man_pr_pol_num_and_man_num_rep ON final_manual_class_grou
 
 
 --
+-- Name: index_group_rating_rejections_on_account_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_group_rating_rejections_on_account_id ON group_rating_rejections USING btree (account_id);
+
+
+--
+-- Name: index_group_rating_rejections_on_representative_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_group_rating_rejections_on_representative_id ON group_rating_rejections USING btree (representative_id);
+
+
+--
 -- Name: index_group_ratings_on_representative_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -7783,6 +7897,20 @@ CREATE INDEX index_policy_calculations_on_pol_num ON policy_calculations USING b
 --
 
 CREATE INDEX index_policy_calculations_on_representative_id ON policy_calculations USING btree (representative_id);
+
+
+--
+-- Name: index_policy_coverage_status_histories_on_policy_calculation_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_policy_coverage_status_histories_on_policy_calculation_id ON policy_coverage_status_histories USING btree (policy_calculation_id);
+
+
+--
+-- Name: index_policy_coverage_status_histories_on_representative_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_policy_coverage_status_histories_on_representative_id ON policy_coverage_status_histories USING btree (representative_id);
 
 
 --
@@ -7891,11 +8019,43 @@ ALTER TABLE ONLY imports
 
 
 --
+-- Name: fk_rails_bba45d7002; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY group_rating_rejections
+    ADD CONSTRAINT fk_rails_bba45d7002 FOREIGN KEY (representative_id) REFERENCES representatives(id);
+
+
+--
+-- Name: fk_rails_d66971042d; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY policy_coverage_status_histories
+    ADD CONSTRAINT fk_rails_d66971042d FOREIGN KEY (policy_calculation_id) REFERENCES policy_calculations(id);
+
+
+--
+-- Name: fk_rails_f4817e19cc; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY group_rating_rejections
+    ADD CONSTRAINT fk_rails_f4817e19cc FOREIGN KEY (account_id) REFERENCES accounts(id);
+
+
+--
 -- Name: fk_rails_f48992ad9e; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY claim_calculations
     ADD CONSTRAINT fk_rails_f48992ad9e FOREIGN KEY (policy_calculation_id) REFERENCES policy_calculations(id);
+
+
+--
+-- Name: fk_rails_fc6071f47a; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY policy_coverage_status_histories
+    ADD CONSTRAINT fk_rails_fc6071f47a FOREIGN KEY (representative_id) REFERENCES representatives(id);
 
 
 --
@@ -8063,4 +8223,8 @@ INSERT INTO schema_migrations (version) VALUES ('20160902121319');
 INSERT INTO schema_migrations (version) VALUES ('20160926143428');
 
 INSERT INTO schema_migrations (version) VALUES ('20160926150157');
+
+INSERT INTO schema_migrations (version) VALUES ('20161010135709');
+
+INSERT INTO schema_migrations (version) VALUES ('20161010144227');
 

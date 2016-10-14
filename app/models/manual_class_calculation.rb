@@ -4,7 +4,10 @@ class ManualClassCalculation < ActiveRecord::Base
   has_many :payroll_calculations, dependent: :destroy
 
   def self.update_or_create(attributes)
-    assign_or_new(attributes).save
+    obj = first || new
+    obj.assign_attributes(attributes)
+    obj.save
+    obj
   end
 
   def self.assign_or_new(attributes)
@@ -121,7 +124,7 @@ class ManualClassCalculation < ActiveRecord::Base
 
       manual_class_calculation.update_attribute(:manual_class_modification_rate, manual_class_modification_rate)
 
-      manual_class_individual_total_rate = manual_class_modification_rate * (1 + BwcCodesConstantValue.find_by(name: 'administrative_rate', completed_date: nil).value )
+      manual_class_individual_total_rate = manual_class_modification_rate * (1 + BwcCodesConstantValue.find_by(name: 'administrative_rate', completed_date: nil).rate )
 
       manual_class_calculation.update_attribute(:manual_class_individual_total_rate, manual_class_individual_total_rate)
 

@@ -1,6 +1,6 @@
-class GroupRating < ActiveRecord::Base
-  belongs_to :representive
-  has_one :import, dependent: :destroy
+class PolicyCoverageStatusHistory < ActiveRecord::Base
+  belongs_to :policy_calculation
+  belongs_to :representative
 
   def self.update_or_create(attributes)
     obj = first || new
@@ -14,4 +14,5 @@ class GroupRating < ActiveRecord::Base
     obj.assign_attributes(attributes)
     obj
   end
+
 end

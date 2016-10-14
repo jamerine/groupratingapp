@@ -5,6 +5,9 @@ class Representative < ActiveRecord::Base
   has_many :policy_calculations, dependent: :destroy
   has_many :manual_class_calculations, :through => :policy_calculations
   has_many :accounts, dependent: :destroy
+  has_many :policy_coverage_status_history, dependent: :destroy
+  has_many :group_rating_qualifications, dependent: :destroy
+
 
 
 
