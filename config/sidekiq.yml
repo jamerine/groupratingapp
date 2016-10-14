@@ -18,13 +18,17 @@ production:
   - group_rating_step_seven
   - group_rating_step_eight
   - predecessor_account_update_create_process
+  - group_rating_all_create_process
+  - group_rating_all_create
+  - policy_update_create_process
+  - policy_update_create
+  - policy_coverage_update_create_process
+  - policy_coverage_update_create
+  - manual_class_update_create_process
+  - manual_class_update_create
+  - payroll_update_create_process
+  - payroll_update_create
   - account_group_rating_process
   - account_group_rating_calc
-  - policy_update_create
-  - policy_update_create_process
-  - manual_class_update_create
-  - manual_class_update_create_process
-  - payroll_update_create
-  - payroll_update_create_process
   - claim_update_create
   - claim_update_create_process

@@ -27,7 +27,8 @@ class CreateAccounts < ActiveRecord::Migration
       t.boolean   :quarterly_request
       t.boolean   :weekly_request
       t.boolean   :ac3_approval
-
+      t.boolean   :user_override
+      
       t.timestamps null: false
     end
   end

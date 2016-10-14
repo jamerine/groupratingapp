@@ -2,11 +2,15 @@ class PolicyCalculation < ActiveRecord::Base
 
   has_many :manual_class_calculations, dependent: :destroy
   has_many :claim_calculations, dependent: :destroy
+  has_many :policy_coverage_status_history, dependent: :destroy
   belongs_to :representative
   belongs_to :account
 
   def self.update_or_create(attributes)
-    assign_or_new(attributes).save
+    obj = first || new
+    obj.assign_attributes(attributes)
+    obj.save
+    obj
   end
 
   def self.assign_or_new(attributes)
@@ -22,13 +26,14 @@ class PolicyCalculation < ActiveRecord::Base
 
 
   def self.to_csv
-    attributes = self.column_names
+    account_attributes = self.column_names
+
 
     CSV.generate(headers: true) do |csv|
-      csv << attributes
+      csv << account_attributes
 
       all.each do |policy|
-        csv << attributes.map{ |attr| policy.send(attr) }
+        csv << account_attributes.map{ |attr| policy.send(attr) }
       end
     end
   end

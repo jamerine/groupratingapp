@@ -68,29 +68,14 @@ class Step7Proc < ActiveRecord::Migration
 
         update public.final_policy_experience_calculations SET policy_group_ratio =
           (
-            CASE WHEN policy_total_expected_losses = '0.00' THEN '0.00'::numeric
-            ELSE
-            round((policy_total_modified_losses_group_reduced / policy_total_expected_losses)::numeric, 4)
+            CASE WHEN policy_total_expected_losses = '0.00' and policy_total_modified_losses_group_reduced = '0.00' THEN '0.00'::numeric
+                 WHEN policy_total_expected_losses > '0.00' and policy_total_modified_losses_group_reduced >= '0.00' THEN
+                 round((policy_total_modified_losses_group_reduced / policy_total_expected_losses)::numeric, 4)
             END
           );
 
 
 
-      -- UPDATE policy_group_ratio for policies that have a four_year_payroll, but do not have any claims data.
-
-      -- update public.policy_experience_calculations c SET policy_group_ratio =
-      -- 	(
-      -- SELECT Case when a.policy_group_ratio is null THEN 0
-      -- 	ELSE a.policy_group_ratio
-      -- END
-      --   FROM public.policy_experience_calculations a
-      --   LEFT JOIN public.claim_cost_calculation_table b
-      --   ON a.policy_number = b.policy_number
-      --   WHERE b.claim_unlimited_limited_loss = '0' and b.claim_injury_date is null and
-      --   c.policy_number = a.policy_number and
-      -- a.policy_total_modified_losses_group_reduced is null and a.policy_total_four_year_payroll > '0'
-      --
-      -- )
 
       -- Update policy_individual_total_modifier but subtracting total limited losses from total modified losses and dividing by the total limited Losses.  Then Multiplying by the policy_credibility_percent
 

@@ -23,7 +23,7 @@
         </div>
         <div class="col-md-3">
           <p>Status:</p>
-          <h3><%= @account.status.humanize %></h3>
+          <h3><%= @account.status %></h3>
         </div>
 
       </div>
@@ -57,9 +57,16 @@
     <%= link_to "Calc Group Rating", account_group_rating_calc_path(params[:id]), class: 'btn btn-primary', method: :post %>
     <div class="row">
       <h3>Group Rating Information</h3>
-      <div class="col-md-2">
-        <p>Qualification:</p>
-        <h5><%= @account.group_rating_qualification %></h5>
+      <div class="col-md-12">
+        <% if @group_rating_rejections.nil? %>
+          <p>Qualification:</p>
+          <h5><%= @account.group_rating_qualification %></h5>
+        <% else %>
+          <h5><% @group_rating_rejections.each do |rejection| %>
+              <%= rejection.reject_reason %>, 
+              <% end %>
+          </h5>
+        <% end %>
       </div>
       <div class="col-md-2">
         <p>Discount Tier:</p>
@@ -80,10 +87,6 @@
       <div class="col-md-2">
         <p>Fees:</p>
         <h5><%= number_to_currency(@account.group_fees) %></h5>
-      </div>
-      <div class="col-md-2">
-        <p>Dues:</p>
-        <h5><%= number_to_currency(@account.group_dues) %></h5>
       </div>
 
     </div>

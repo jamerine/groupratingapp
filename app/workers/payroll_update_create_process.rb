@@ -27,6 +27,6 @@ class PayrollUpdateCreateProcess
     @group_rating = GroupRating.find_by(id: group_rating_id)
     @group_rating.status = "Payroll Completed"
     @group_rating.save
-    AccountGroupRatingProcess.perform_async(group_rating_id)
+    ClaimUpdateCreateProcess.perform_async(group_rating_id)
   end
 end

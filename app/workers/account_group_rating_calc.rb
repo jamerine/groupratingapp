@@ -5,8 +5,9 @@ class AccountGroupRatingCalc
 
   def perform(account_id)
     @account = Account.includes(policy_calculation: :manual_class_calculations).find(account_id)
+    @account.group_rating_rejections
 
-    unless @account.policy_calculation.policy_group_ratio.nil?
+    unless @account.group_rating_qualification = 'reject'
 
       group_rating_rows = BwcCodesIndustryGroupSavingsRatioCriterium.where("ratio_criteria >= :group_ratio and industry_group = :industry_group", group_ratio: @account.policy_calculation.policy_group_ratio, industry_group: @account.policy_calculation.policy_industry_group)
 
@@ -29,7 +30,10 @@ class AccountGroupRatingCalc
         group_savings = @account.policy_calculation.policy_total_individual_premium - group_premium
 
         @account.update_attributes(group_rating_tier: group_rating_tier, group_premium: group_premium, group_savings: group_savings)
+
+
       end
+      @account.fee_calculation
     end
 
   end
