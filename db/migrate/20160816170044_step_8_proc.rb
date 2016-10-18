@@ -294,24 +294,24 @@ class Step8Proc < ActiveRecord::Migration
       -- 06/06/2016 ADDED condition for creating group_rating_tier only when the policy_status is Active, ReInsured, or Lapse
       -- update group_rating_tier
 
-      # update public.final_policy_group_rating_and_premium_projections c SET
-      # (group_rating_tier, updated_at)	= (t1.group_rating_tier, t1.updated_at)
-      # FROM
-      # 	(SELECT
-      # 		a.policy_number,
-      # 		(SELECT (CASE WHEN (a.policy_group_ratio = '0') THEN '-.53'
-      # 					ELSE min(market_rate)
-      # 					END)  as group_rating_tier
-      # 				 FROM public.bwc_codes_industry_group_savings_ratio_criteria
-      # 				 WHERE (a.policy_group_ratio /ratio_criteria <= 1) and (industry_group = b.policy_industry_group)),
-      #          run_date as updated_at
-      # 			FROM public.final_policy_experience_calculations a
-      #       LEFT JOIN final_policy_group_rating_and_premium_projections b
-      #       ON a.policy_number = b.policy_number
-      #       WHERE a.representative_number = process_representative and a.policy_group_ratio is not null
-      # 			GROUP BY a.policy_number, a.policy_group_ratio, a.policy_status, b.policy_industry_group
-      # 		) t1
-      # WHERE c.policy_number = t1.policy_number;
+      update public.final_policy_group_rating_and_premium_projections c SET
+      (group_rating_tier, updated_at)	= (t1.group_rating_tier, t1.updated_at)
+      FROM
+      	(SELECT
+      		a.policy_number,
+      		(SELECT (CASE WHEN (a.policy_group_ratio = '0') THEN '-.53'
+      					ELSE min(market_rate)
+      					END)  as group_rating_tier
+      				 FROM public.bwc_codes_industry_group_savings_ratio_criteria
+      				 WHERE (a.policy_group_ratio /ratio_criteria <= 1) and (industry_group = b.policy_industry_group)),
+               run_date as updated_at
+      			FROM public.final_policy_experience_calculations a
+            LEFT JOIN final_policy_group_rating_and_premium_projections b
+            ON a.policy_number = b.policy_number
+            WHERE a.representative_number = process_representative and a.policy_group_ratio is not null
+      			GROUP BY a.policy_number, a.policy_group_ratio, a.policy_status, b.policy_industry_group
+      		) t1
+      WHERE c.policy_number = t1.policy_number;
 
 
 

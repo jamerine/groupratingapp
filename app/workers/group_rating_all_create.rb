@@ -185,6 +185,7 @@ class GroupRatingAllCreate
                 end
               end
         end
+      @account.group_rating
   end
 
 end

@@ -26,6 +26,8 @@
           <h4><%= @policy_calculation.updated_at.in_time_zone("America/New_York").strftime("%m/%d/%y @ %I:%M %p") %></h4>
           <h5>Status Effective Date:</h5>
           <h4><%= @policy_calculation.current_policy_status_effective_date.strftime("%b %d, %Y") %></h4>
+          <h5>Policy Creation Date:</h5>
+          <h4><%= @policy_calculation.policy_creation_date.strftime("%b %d, %Y") %></h4>
         </div>
       </div>
     </div>
