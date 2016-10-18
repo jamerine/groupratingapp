@@ -452,7 +452,7 @@ class Step3Proc < ActiveRecord::Migration
         FROM public.process_payroll_breakdown_by_manual_classes a
         LEFT JOIN public.final_employer_demographics_informations b
         ON a.policy_number = b.policy_number
-        where a.representative_number = process_representative a.manual_class_effective_date >= b.policy_creation_date
+        where a.representative_number = process_representative and a.manual_class_effective_date >= b.policy_creation_date
         );
 
 
