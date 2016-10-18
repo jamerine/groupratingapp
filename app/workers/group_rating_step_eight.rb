@@ -15,7 +15,7 @@
     predecessor_policies = ExceptionTablePolicyCombinedRequestPayrollInfo.all
 
     PredecessorAccountUpdateCreateProcess.perform_async(@group_rating.id)
-    PolicyUpdateCreateProcess.perform_async(@group_rating.id)
+    GroupRatingAllCreateProcess.perform_async(@group_rating.id)
   end
 
 end
