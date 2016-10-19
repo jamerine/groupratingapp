@@ -1976,8 +1976,26 @@ CREATE FUNCTION proc_step_2(process_representative integer, experience_period_lo
         run_date as updated_at
       	FROM public.sc220_rec2_employer_manual_level_payrolls
         WHERE manual_effective_date is not null and representative_number = process_representative and manual_effective_date >= experience_period_lower_date
+        ORDER BY
+          policy_number ASC,
+          manual_number ASC,
+          manual_class_effective_date ASC
+        );
+        INSERT INTO process_payroll_breakdown_by_manual_classes (
+          representative_number,
+            policy_type,
+            policy_number,
+            manual_number,
+            manual_type,
+            manual_class_effective_date,
+            manual_class_rate,
+            manual_class_payroll,
+            manual_class_premium,
+            payroll_origin,
+            data_source,
+            created_at,
+            updated_at
         )
-        Union ALL
         (SELECT representative_number,
           policy_type,
         	policy_number,
@@ -1993,8 +2011,26 @@ CREATE FUNCTION proc_step_2(process_representative integer, experience_period_lo
           run_date as updated_at
         	FROM public.sc220_rec2_employer_manual_level_payrolls
           WHERE n2nd_manual_effective_date is not null and representative_number = process_representative and n2nd_manual_effective_date >= experience_period_lower_date
+          ORDER BY
+            policy_number ASC,
+            manual_number ASC,
+            manual_class_effective_date ASC
+        );
+        INSERT INTO process_payroll_breakdown_by_manual_classes (
+          representative_number,
+            policy_type,
+            policy_number,
+            manual_number,
+            manual_type,
+            manual_class_effective_date,
+            manual_class_rate,
+            manual_class_payroll,
+            manual_class_premium,
+            payroll_origin,
+            data_source,
+            created_at,
+            updated_at
         )
-        Union ALL
         (SELECT representative_number,
           policy_type,
         	policy_number,
@@ -2010,8 +2046,26 @@ CREATE FUNCTION proc_step_2(process_representative integer, experience_period_lo
           run_date as updated_at
       	   FROM public.sc220_rec2_employer_manual_level_payrolls
            WHERE n3rd_manual_effective_date is not null and representative_number = process_representative and n3rd_manual_effective_date >= experience_period_lower_date
-        )
-        Union All
+           ORDER BY
+             policy_number ASC,
+             manual_number ASC,
+             manual_class_effective_date ASC
+           );
+           INSERT INTO process_payroll_breakdown_by_manual_classes (
+             representative_number,
+               policy_type,
+               policy_number,
+               manual_number,
+               manual_type,
+               manual_class_effective_date,
+               manual_class_rate,
+               manual_class_payroll,
+               manual_class_premium,
+               payroll_origin,
+               data_source,
+               created_at,
+               updated_at
+           )
         (SELECT representative_number,
           policy_type,
         	policy_number,
@@ -2027,8 +2081,26 @@ CREATE FUNCTION proc_step_2(process_representative integer, experience_period_lo
           run_date as updated_at
         	FROM public.sc220_rec2_employer_manual_level_payrolls
           WHERE n4th_manual_effective_date is not null and representative_number = process_representative and n4th_manual_effective_date >= experience_period_lower_date
-        )
-        Union All
+          ORDER BY
+            policy_number ASC,
+            manual_number ASC,
+            manual_class_effective_date ASC
+          );
+          INSERT INTO process_payroll_breakdown_by_manual_classes (
+            representative_number,
+              policy_type,
+              policy_number,
+              manual_number,
+              manual_type,
+              manual_class_effective_date,
+              manual_class_rate,
+              manual_class_payroll,
+              manual_class_premium,
+              payroll_origin,
+              data_source,
+              created_at,
+              updated_at
+          )
         (SELECT representative_number,
         policy_type,
       	policy_number,
@@ -2044,8 +2116,26 @@ CREATE FUNCTION proc_step_2(process_representative integer, experience_period_lo
         run_date as updated_at
       	FROM public.sc220_rec2_employer_manual_level_payrolls
         WHERE n5th_manual_effective_date is not null and representative_number = process_representative and n5th_manual_effective_date >= experience_period_lower_date
+        ORDER BY
+          policy_number ASC,
+          manual_number ASC,
+          manual_class_effective_date ASC
+        );
+        INSERT INTO process_payroll_breakdown_by_manual_classes (
+          representative_number,
+            policy_type,
+            policy_number,
+            manual_number,
+            manual_type,
+            manual_class_effective_date,
+            manual_class_rate,
+            manual_class_payroll,
+            manual_class_premium,
+            payroll_origin,
+            data_source,
+            created_at,
+            updated_at
         )
-        Union All
         (SELECT representative_number,
           policy_type,
         	policy_number,
@@ -2061,8 +2151,26 @@ CREATE FUNCTION proc_step_2(process_representative integer, experience_period_lo
           run_date as updated_at
       	FROM public.sc220_rec2_employer_manual_level_payrolls
         WHERE n6th_manual_effective_date is not null and representative_number = process_representative and n6th_manual_effective_date >= experience_period_lower_date
+        ORDER BY
+          policy_number ASC,
+          manual_number ASC,
+          manual_class_effective_date ASC
+        );
+        INSERT INTO process_payroll_breakdown_by_manual_classes (
+          representative_number,
+            policy_type,
+            policy_number,
+            manual_number,
+            manual_type,
+            manual_class_effective_date,
+            manual_class_rate,
+            manual_class_payroll,
+            manual_class_premium,
+            payroll_origin,
+            data_source,
+            created_at,
+            updated_at
         )
-        Union All
         (SELECT representative_number,
           policy_type,
         	policy_number,
@@ -2078,8 +2186,26 @@ CREATE FUNCTION proc_step_2(process_representative integer, experience_period_lo
           run_date as updated_at
       	FROM public.sc220_rec2_employer_manual_level_payrolls
         WHERE n7th_manual_effective_date is not null and representative_number = process_representative and n7th_manual_effective_date >= experience_period_lower_date
+        ORDER BY
+          policy_number ASC,
+          manual_number ASC,
+          manual_class_effective_date ASC
+        );
+        INSERT INTO process_payroll_breakdown_by_manual_classes (
+          representative_number,
+            policy_type,
+            policy_number,
+            manual_number,
+            manual_type,
+            manual_class_effective_date,
+            manual_class_rate,
+            manual_class_payroll,
+            manual_class_premium,
+            payroll_origin,
+            data_source,
+            created_at,
+            updated_at
         )
-        Union All
         (SELECT representative_number,
           policy_type,
         	policy_number,
@@ -2095,8 +2221,26 @@ CREATE FUNCTION proc_step_2(process_representative integer, experience_period_lo
           run_date as updated_at
       	FROM public.sc220_rec2_employer_manual_level_payrolls
         WHERE n8th_manual_effective_date is not null and representative_number = process_representative and n8th_manual_effective_date >= experience_period_lower_date
+        ORDER BY
+          policy_number ASC,
+          manual_number ASC,
+          manual_class_effective_date ASC
+        );
+        INSERT INTO process_payroll_breakdown_by_manual_classes (
+          representative_number,
+            policy_type,
+            policy_number,
+            manual_number,
+            manual_type,
+            manual_class_effective_date,
+            manual_class_rate,
+            manual_class_payroll,
+            manual_class_premium,
+            payroll_origin,
+            data_source,
+            created_at,
+            updated_at
         )
-        Union All
         (SELECT representative_number,
           policy_type,
         	policy_number,
@@ -2112,8 +2256,26 @@ CREATE FUNCTION proc_step_2(process_representative integer, experience_period_lo
           run_date as updated_at
       	FROM public.sc220_rec2_employer_manual_level_payrolls
         WHERE n9th_manual_effective_date is not null and representative_number = process_representative and n9th_manual_effective_date >= experience_period_lower_date
+        ORDER BY
+          policy_number ASC,
+          manual_number ASC,
+          manual_class_effective_date ASC
+        );
+        INSERT INTO process_payroll_breakdown_by_manual_classes (
+          representative_number,
+            policy_type,
+            policy_number,
+            manual_number,
+            manual_type,
+            manual_class_effective_date,
+            manual_class_rate,
+            manual_class_payroll,
+            manual_class_premium,
+            payroll_origin,
+            data_source,
+            created_at,
+            updated_at
         )
-        Union All
         (SELECT representative_number,
           policy_type,
         	policy_number,
@@ -2129,8 +2291,26 @@ CREATE FUNCTION proc_step_2(process_representative integer, experience_period_lo
           run_date as updated_at
       	FROM public.sc220_rec2_employer_manual_level_payrolls
         WHERE n10th_manual_effective_date is not null and representative_number = process_representative and n10th_manual_effective_date >= experience_period_lower_date
+        ORDER BY
+          policy_number ASC,
+          manual_number ASC,
+          manual_class_effective_date ASC
+        );
+        INSERT INTO process_payroll_breakdown_by_manual_classes (
+          representative_number,
+            policy_type,
+            policy_number,
+            manual_number,
+            manual_type,
+            manual_class_effective_date,
+            manual_class_rate,
+            manual_class_payroll,
+            manual_class_premium,
+            payroll_origin,
+            data_source,
+            created_at,
+            updated_at
         )
-        Union All
         (SELECT representative_number,
           policy_type,
         	policy_number,
@@ -2146,8 +2326,26 @@ CREATE FUNCTION proc_step_2(process_representative integer, experience_period_lo
           run_date as updated_at
       	FROM public.sc220_rec2_employer_manual_level_payrolls
         WHERE n11th_manual_effective_date is not null and representative_number = process_representative and n11th_manual_effective_date >= experience_period_lower_date
+        ORDER BY
+          policy_number ASC,
+          manual_number ASC,
+          manual_class_effective_date ASC
+        );
+        INSERT INTO process_payroll_breakdown_by_manual_classes (
+          representative_number,
+            policy_type,
+            policy_number,
+            manual_number,
+            manual_type,
+            manual_class_effective_date,
+            manual_class_rate,
+            manual_class_payroll,
+            manual_class_premium,
+            payroll_origin,
+            data_source,
+            created_at,
+            updated_at
         )
-        Union All
         (SELECT representative_number,
           policy_type,
         	policy_number,
@@ -2163,11 +2361,12 @@ CREATE FUNCTION proc_step_2(process_representative integer, experience_period_lo
           run_date as updated_at
         	FROM public.sc220_rec2_employer_manual_level_payrolls
           WHERE n12th_manual_effective_date is not null and representative_number = process_representative and n12th_manual_effective_date >= experience_period_lower_date
-        )
-        ORDER BY
-          policy_number ASC,
-          manual_number ASC,
-          manual_class_effective_date ASC;
+          ORDER BY
+            policy_number ASC,
+            manual_number ASC,
+            manual_class_effective_date ASC
+        );
+
 
           DELETE FROM public.process_payroll_breakdown_by_manual_classes
           WHERE id IN (SELECT id
@@ -2610,23 +2809,21 @@ CREATE FUNCTION proc_step_3(process_representative integer, experience_period_lo
           created_at,
           updated_at
         )
-
-
-        -- Payroll breakdown by manual_class
-
-        (SELECT representative_number,
-        policy_type,
-        policy_number,
-        manual_type,
-        manual_number,
-        manual_class_effective_date,
-        manual_class_payroll,
-        payroll_origin,
+        (SELECT a.representative_number,
+         a.policy_type,
+         a.policy_number,
+         a.manual_type,
+         a.manual_number,
+         a.manual_class_effective_date,
+         a.manual_class_payroll,
+         a.payroll_origin,
         'bwc' as data_source,
         run_date as created_at,
         run_date as updated_at
-        FROM public.process_payroll_breakdown_by_manual_classes
-        where representative_number = process_representative
+        FROM public.process_payroll_breakdown_by_manual_classes a
+        LEFT JOIN public.final_employer_demographics_informations b
+        ON a.policy_number = b.policy_number
+        where a.representative_number = process_representative and b.policy_creation_date <= a.manual_class_effective_date
         );
 
 

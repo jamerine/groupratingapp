@@ -40,6 +40,7 @@ Rails.application.routes.draw do
   resources :representatives do
     post :fee_calculations
     get :export_manual_classes
+    get :export_accounts
   end
 
 

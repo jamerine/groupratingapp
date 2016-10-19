@@ -434,25 +434,21 @@ class Step3Proc < ActiveRecord::Migration
           created_at,
           updated_at
         )
-
-
-        -- Payroll breakdown by manual_class
-
         (SELECT a.representative_number,
-        a.policy_type,
-        a.policy_number,
-        a.manual_type,
-        a.manual_number,
-        a.manual_class_effective_date,
-        a.manual_class_payroll,
-        a.payroll_origin,
+         a.policy_type,
+         a.policy_number,
+         a.manual_type,
+         a.manual_number,
+         a.manual_class_effective_date,
+         a.manual_class_payroll,
+         a.payroll_origin,
         'bwc' as data_source,
         run_date as created_at,
         run_date as updated_at
         FROM public.process_payroll_breakdown_by_manual_classes a
         LEFT JOIN public.final_employer_demographics_informations b
         ON a.policy_number = b.policy_number
-        where a.representative_number = process_representative and a.manual_class_effective_date >= b.policy_creation_date
+        where a.representative_number = process_representative and b.policy_creation_date <= a.manual_class_effective_date
         );
 
 

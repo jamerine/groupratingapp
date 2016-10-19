@@ -63,7 +63,7 @@
           <h5><%= @account.group_rating_qualification %></h5>
         <% else %>
           <h5><% @group_rating_rejections.each do |rejection| %>
-              <%= rejection.reject_reason %>, 
+              <%= rejection.reject_reason %>,
               <% end %>
           </h5>
         <% end %>
