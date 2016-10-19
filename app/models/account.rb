@@ -28,12 +28,9 @@ class Account < ActiveRecord::Base
 
 
   def group_rating(args = {})
-
-    policy_calculation = PolicyCalculation.includes(manual_class_calculations: :payroll_calculations).find_by(account_id: self.id)
       if args.empty?
         self.group_rating_reject
       end
-
       group_rating_calc = GroupRating.find_by(representative_id: policy_calculation.representative_id)
 
       if args.empty?
@@ -58,12 +55,12 @@ class Account < ActiveRecord::Base
           end
         end
 
-        group_premium = policy_calculation.manual_class_calculations.sum(:manual_class_estimated_group_premium)
+          group_premium = policy_calculation.manual_class_calculations.sum(:manual_class_estimated_group_premium)
 
-        group_savings = policy_calculation.policy_total_individual_premium - group_premium
+          group_savings = policy_calculation.policy_total_individual_premium - group_premium
 
-        update_attributes(group_rating_tier: group_rating_tier, group_premium: group_premium, group_savings: group_savings)
-      end
+          update_attributes(group_rating_tier: group_rating_tier, group_premium: group_premium, group_savings: group_savings)
+    end
 
   end
 
@@ -130,6 +127,19 @@ class Account < ActiveRecord::Base
         fee = (policy_calculation.policy_total_individual_premium * 0.0275)
         update_attribute(:group_fees, fee)
       end
+  end
+
+
+  def self.to_csv
+    attributes = self.column_names
+
+    CSV.generate(headers: true) do |csv|
+      csv << attributes
+
+      all.each do |account|
+        csv << attributes.map{ |attr| account.send(attr) }
+      end
+    end
   end
 
 end

@@ -26,14 +26,13 @@ class PolicyCalculation < ActiveRecord::Base
 
 
   def self.to_csv
-    account_attributes = self.column_names
-
+    attributes = self.column_names
 
     CSV.generate(headers: true) do |csv|
-      csv << account_attributes
+      csv << attributes
 
       all.each do |policy|
-        csv << account_attributes.map{ |attr| policy.send(attr) }
+        csv << attributes.map{ |attr| policy.send(attr) }
       end
     end
   end
