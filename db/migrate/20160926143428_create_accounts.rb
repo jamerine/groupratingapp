@@ -12,7 +12,7 @@ class CreateAccounts < ActiveRecord::Migration
       t.bigint    :business_phone_number
       t.string    :business_email_address
       t.string    :website_url
-      t.string    :group_rating_qualification
+      t.integer    :group_rating_qualification
       t.float     :group_rating_tier
       t.integer   :group_rating_group_number
       t.float     :group_premium
@@ -28,7 +28,7 @@ class CreateAccounts < ActiveRecord::Migration
       t.boolean   :weekly_request
       t.boolean   :ac3_approval
       t.boolean   :user_override
-      
+
       t.timestamps null: false
     end
   end
