@@ -1,8 +1,9 @@
 class GroupRatingsController < ApplicationController
 
   def index
-    @group_ratings = GroupRating.all
-    @representatives = Representative.all
+    @group_ratings = GroupRating.includes(:import)
+    rep_ids = @group_ratings.pluck(:representative_id).uniq
+    @representatives = Representative.where("id in (?)", rep_ids)
   end
 
   def show

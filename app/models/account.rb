@@ -8,6 +8,8 @@ class Account < ActiveRecord::Base
 
   enum status: [:active, :inactive, :predecessor, :prospect]
 
+  enum group_rating_qualification: [:accept, :pending_predecessor, :reject]
+
   def self.update_or_create(attributes)
     obj = first || new
     obj.assign_attributes(attributes)
@@ -28,40 +30,43 @@ class Account < ActiveRecord::Base
 
 
   def group_rating(args = {})
-      if args.empty?
+
+      if args[:group_rating_qualification].nil?
         self.group_rating_reject
       end
-      group_rating_calc = GroupRating.find_by(representative_id: policy_calculation.representative_id)
 
-      if args.empty?
-        group_rating_rows = BwcCodesIndustryGroupSavingsRatioCriterium.where("ratio_criteria >= :group_ratio and industry_group = :industry_group", group_ratio: policy_calculation.policy_group_ratio, industry_group: policy_calculation.policy_industry_group)
-      else
-        group_rating_rows = BwcCodesIndustryGroupSavingsRatioCriterium.where("market_rate >= :group_rating_tier_entered and industry_group = :industry_group", group_rating_tier_entered: group_rating_tier_entered, industry_group: policy_calculation.policy_industry_group)
-      end
+      if group_rating_qualification != "reject"
+        group_rating_calc = GroupRating.find_by(representative_id: policy_calculation.representative_id)
 
-      unless group_rating_rows.empty?
-        administrative_rate = BwcCodesConstantValue.find_by("name = 'administrative_rate' and completed_date is null").rate
-
-        group_rating_tier = group_rating_rows.min.market_rate
-
-        # manual_classes = policy_calculation.manual_class_calculations
-        policy_calculation.manual_class_calculations.each do |manual_class|
-          unless manual_class.manual_class_base_rate.nil?
-            manual_class_group_total_rate = (1 + group_rating_tier) * manual_class.manual_class_base_rate * (1 +  administrative_rate)
-
-            manual_class_estimated_group_premium = manual_class.payroll_calculations.where("manual_class_effective_date >= :current_payroll_period_lower_date", current_payroll_period_lower_date: group_rating_calc.current_payroll_period_lower_date).sum(:manual_class_payroll) * manual_class_group_total_rate
-
-            manual_class.update_attributes(manual_class_group_total_rate: manual_class_group_total_rate, manual_class_estimated_group_premium: manual_class_estimated_group_premium)
-          end
+        if args[:group_rating_tier_entered].nil?
+          group_rating_rows = BwcCodesIndustryGroupSavingsRatioCriterium.where("ratio_criteria >= :group_ratio and industry_group = :industry_group", group_ratio: policy_calculation.policy_group_ratio, industry_group: policy_calculation.policy_industry_group)
+        else
+          group_rating_rows = BwcCodesIndustryGroupSavingsRatioCriterium.where("market_rate >= :group_rating_tier_entered and industry_group = :industry_group", group_rating_tier_entered: group_rating_tier_entered, industry_group: policy_calculation.policy_industry_group)
         end
 
-          group_premium = policy_calculation.manual_class_calculations.sum(:manual_class_estimated_group_premium)
+        unless group_rating_rows.empty?
+          administrative_rate = BwcCodesConstantValue.find_by("name = 'administrative_rate' and completed_date is null").rate
 
-          group_savings = policy_calculation.policy_total_individual_premium - group_premium
+          group_rating_tier = group_rating_rows.min.market_rate
 
-          update_attributes(group_rating_tier: group_rating_tier, group_premium: group_premium, group_savings: group_savings)
-    end
+          # manual_classes = policy_calculation.manual_class_calculations
+          policy_calculation.manual_class_calculations.each do |manual_class|
+            unless manual_class.manual_class_base_rate.nil?
+              manual_class_group_total_rate = (1 + group_rating_tier) * manual_class.manual_class_base_rate * (1 +  administrative_rate)
 
+              manual_class_estimated_group_premium = manual_class.payroll_calculations.where("manual_class_effective_date >= :current_payroll_period_lower_date", current_payroll_period_lower_date: group_rating_calc.current_payroll_period_lower_date).sum(:manual_class_payroll) * manual_class_group_total_rate
+
+              manual_class.update_attributes(manual_class_group_total_rate: manual_class_group_total_rate, manual_class_estimated_group_premium: manual_class_estimated_group_premium)
+            end
+          end
+
+            group_premium = policy_calculation.manual_class_calculations.sum(:manual_class_estimated_group_premium)
+
+            group_savings = policy_calculation.policy_total_individual_premium - group_premium
+
+            update_attributes(group_rating_tier: group_rating_tier, group_premium: group_premium, group_savings: group_savings)
+        end
+      end
   end
 
 
@@ -103,12 +108,12 @@ class Account < ActiveRecord::Base
         end
       end
       if self.group_rating_rejections.count > 0
-         group_rating_qualification = 'reject'
+         qualification = 2
        else
-         group_rating_qualification = 'accept'
+         qualification = 0
        end
 
-      update_attributes(group_rating_qualification: group_rating_qualification)
+      update_attributes(group_rating_qualification: qualification)
     end
   end
 
