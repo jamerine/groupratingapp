@@ -7,7 +7,7 @@ class AccountGroupRatingCalc
     @account = Account.includes(policy_calculation: :manual_class_calculations).find(account_id)
     @account.group_rating_rejections
 
-    unless @account.group_rating_qualification = 'reject'
+    unless @account.group_rating_qualification = 2
 
       group_rating_rows = BwcCodesIndustryGroupSavingsRatioCriterium.where("ratio_criteria >= :group_ratio and industry_group = :industry_group", group_ratio: @account.policy_calculation.policy_group_ratio, industry_group: @account.policy_calculation.policy_industry_group)
 
