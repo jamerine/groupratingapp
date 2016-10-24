@@ -143,21 +143,6 @@ class Step8Proc < ActiveRecord::Migration
 
 
 
-
-      -- -- UPDATE policy_total_std_premium
-      -- update public.final_manual_class_group_rating_and_premium_projections mcgr SET
-      -- (policy_total_std_premium) = (t1.policy_total_std_premium)
-      -- FROM
-      --   ( SELECT
-      --       a.policy_number as policy_number,
-      --     sum(a.manual_class_standard_premium) as policy_total_std_premium
-      --     FROM public.final_manual_class_group_rating_and_premium_projections a
-      --     WHERE a.representative_number = process_representative
-      --     GROUP BY a.policy_number
-      --  ) t1
-      --  WHERE mcgr.policy_number = t1.policy_number;
-
-
        update public.final_policy_group_rating_and_premium_projections pgr SET (policy_total_standard_premium, updated_at) =
        (t1.policy_total_standard_premium, t1.updated_at)
        FROM
@@ -171,20 +156,6 @@ class Step8Proc < ActiveRecord::Migration
        ) t1
        WHERE pgr.policy_number = t1.policy_number;
 
-
-
-       -- UPDATE policy_total_payroll
-       -- update public.final_manual_class_group_rating_and_premium_projections mcgr SET
-       -- (policy_total_payroll) = (t1.policy_total_payroll)
-       -- FROM
-       --   ( SELECT
-       --       a.policy_number as policy_number,
-       --     sum(a.manual_class_current_estimated_payroll) as policy_total_payroll
-       --     FROM public.final_manual_class_group_rating_and_premium_projections a
-       --     WHERE a.representative_number = process_representative
-       --     GROUP BY a.policy_number
-       --  ) t1
-       --  WHERE mcgr.policy_number = t1.policy_number;
 
 
 
@@ -251,11 +222,27 @@ class Step8Proc < ActiveRecord::Migration
       where name = 'administrative_rate' and completed_date is null)))::numeric,6));
 
 
+      -- ADDED Logic to find industry_group by using the Homogeneity File
+
+      update public.final_policy_group_rating_and_premium_projections c SET
+        (policy_industry_group, updated_at) = (t1.manual_class, t1.updated_at)
+        FROM
+        (SELECT a.policy_number as policy_number,
+            	(SELECT cast_to_int(b.industry_code)
+      	FROM public.phmgn_detail_records b
+      	WHERE  b.policy_number = a.policy_number and cast_to_int(b.industry_code) != 0
+             ORDER BY premium_percentage DESC NULLS LAST LIMIT 1) as manual_class,
+             run_date as updated_at
+        FROM final_policy_group_rating_and_premium_projections a
+        ) t1
+        WHERE c.policy_number = t1.policy_number;
 
 
 
-      -- Update policy industry group based on highest payroll industry group of all manual classes.
+      -- Update policy industry group based on highest payroll percentage by industry group of all manual classes.
         -- Adds up like manual classes if different manual classes for a policy belong to the same policy.
+
+
       update public.final_policy_group_rating_and_premium_projections c SET
         (policy_industry_group, updated_at) = (t1.manual_class, t1.updated_at)
         FROM
@@ -268,7 +255,8 @@ class Step8Proc < ActiveRecord::Migration
       FROM final_policy_group_rating_and_premium_projections a
       WHERE a.representative_number = process_representative
         ) t1
-        WHERE c.policy_number = t1.policy_number;
+        WHERE c.policy_number = t1.policy_number and c.policy_industry_group is null;
+
 
 
       -- ADD logic to update a  new industry_group when the industry_group is 10.
@@ -294,43 +282,43 @@ class Step8Proc < ActiveRecord::Migration
       -- 06/06/2016 ADDED condition for creating group_rating_tier only when the policy_status is Active, ReInsured, or Lapse
       -- update group_rating_tier
 
-      update public.final_policy_group_rating_and_premium_projections c SET
-      (group_rating_tier, updated_at)	= (t1.group_rating_tier, t1.updated_at)
-      FROM
-      	(SELECT
-      		a.policy_number,
-      		(SELECT (CASE WHEN (a.policy_group_ratio = '0') THEN '-.53'
-      					ELSE min(market_rate)
-      					END)  as group_rating_tier
-      				 FROM public.bwc_codes_industry_group_savings_ratio_criteria
-      				 WHERE (a.policy_group_ratio /ratio_criteria <= 1) and (industry_group = b.policy_industry_group)),
-               run_date as updated_at
-      			FROM public.final_policy_experience_calculations a
-            LEFT JOIN final_policy_group_rating_and_premium_projections b
-            ON a.policy_number = b.policy_number
-            WHERE a.representative_number = process_representative and a.policy_group_ratio is not null
-      			GROUP BY a.policy_number, a.policy_group_ratio, a.policy_status, b.policy_industry_group
-      		) t1
-      WHERE c.policy_number = t1.policy_number;
+      -- update public.final_policy_group_rating_and_premium_projections c SET
+      -- (group_rating_tier, updated_at)	= (t1.group_rating_tier, t1.updated_at)
+      -- FROM
+      -- 	(SELECT
+      -- 		a.policy_number,
+      -- 		(SELECT (CASE WHEN (a.policy_group_ratio = '0') THEN '-.53'
+      -- 					ELSE min(market_rate)
+      -- 					END)  as group_rating_tier
+      -- 				 FROM public.bwc_codes_industry_group_savings_ratio_criteria
+      -- 				 WHERE (a.policy_group_ratio /ratio_criteria <= 1) and (industry_group = b.policy_industry_group)),
+      --          run_date as updated_at
+      -- 			FROM public.final_policy_experience_calculations a
+      --       LEFT JOIN final_policy_group_rating_and_premium_projections b
+      --       ON a.policy_number = b.policy_number
+      --       WHERE a.representative_number = process_representative and a.policy_group_ratio is not null
+      -- 			GROUP BY a.policy_number, a.policy_group_ratio, a.policy_status, b.policy_industry_group
+      -- 		) t1
+      -- WHERE c.policy_number = t1.policy_number;
 
 
 
 
-      UPDATE public.final_manual_class_group_rating_and_premium_projections mcgr SET
-      (manual_class_group_total_rate, updated_at) = (t1.manual_class_group_total_rate, t1.updated_at)
-      FROM
-      (
-        SELECT a.policy_number as policy_number,
-          a.manual_number as manual_number,
-          ((1+ b.group_rating_tier) * a.manual_class_base_rate * (1 + (SELECT rate from public.bwc_codes_constant_values
-          where name = 'administrative_rate' and completed_date is null))) as manual_class_group_total_rate,
-          run_date as updated_at
-        FROM public.final_manual_class_group_rating_and_premium_projections a
-        Left Join public.final_policy_group_rating_and_premium_projections b
-        ON a.policy_number = b.policy_number
-        WHERE a.representative_number = process_representative
-      ) t1
-      WHERE mcgr.policy_number = t1.policy_number and mcgr.manual_number = t1.manual_number;
+      -- UPDATE public.final_manual_class_group_rating_and_premium_projections mcgr SET
+      -- (manual_class_group_total_rate, updated_at) = (t1.manual_class_group_total_rate, t1.updated_at)
+      -- FROM
+      -- (
+      --  SELECT a.policy_number as policy_number,
+      --    a.manual_number as manual_number,
+      --    ((1+ b.group_rating_tier) * a.manual_class_base_rate * (1 + (SELECT rate from public.bwc_codes_constant_values
+      --    where name = 'administrative_rate' and completed_date is null))) as manual_class_group_total_rate,
+      --    run_date as updated_at
+      --  FROM public.final_manual_class_group_rating_and_premium_projections a
+      --  Left Join public.final_policy_group_rating_and_premium_projections b
+      --  ON a.policy_number = b.policy_number
+      --  WHERE a.representative_number = process_representative
+      -- ) t1
+      -- WHERE mcgr.policy_number = t1.policy_number and mcgr.manual_number = t1.manual_number;
 
 
 
@@ -346,11 +334,10 @@ class Step8Proc < ActiveRecord::Migration
            );
 
 
-      UPDATE public.final_policy_group_rating_and_premium_projections pgr SET (policy_total_individual_premium, policy_total_group_premium, updated_at) = (t1.policy_total_individual_premium, t1.policy_total_group_premium, t1.updated_at)
+      UPDATE public.final_policy_group_rating_and_premium_projections pgr SET (policy_total_individual_premium, updated_at) = (t1.policy_total_individual_premium, t1.updated_at)
       FROM
       (SELECT a.policy_number,
         round(SUM(a.manual_class_estimated_individual_premium)::numeric,2) as policy_total_individual_premium,
-        round(SUM(a.manual_class_estimated_group_premium)::numeric,2) as policy_total_group_premium,
         run_date as updated_at
         FROM public.final_manual_class_group_rating_and_premium_projections a
         WHERE a.representative_number = process_representative
@@ -360,16 +347,16 @@ class Step8Proc < ActiveRecord::Migration
 
 
       -- Update policy_total_group_savings
-      UPDATE public.final_policy_group_rating_and_premium_projections pgr SET (policy_total_group_savings, updated_at) =
-      (t1.policy_total_group_savings, t1.updated_at)
-      FROM
-      (SELECT a.policy_number,
-         round((a.policy_total_individual_premium - a.policy_total_group_premium)::numeric,2) as policy_total_group_savings,
-         run_date as updated_at
-       FROM final_policy_group_rating_and_premium_projections a
-       WHERE a.representative_number = process_representative
-      ) t1
-      WHERE pgr.policy_number = t1.policy_number;
+      -- UPDATE public.final_policy_group_rating_and_premium_projections pgr SET (policy_total_group_savings, updated_at) =
+      -- (t1.policy_total_group_savings, t1.updated_at)
+      -- FROM
+      -- (SELECT a.policy_number,
+      --   round((a.policy_total_individual_premium - a.policy_total_group_premium)::numeric,2) as policy_total_group_savings,
+      --   run_date as updated_at
+      -- FROM final_policy_group_rating_and_premium_projections a
+      -- WHERE a.representative_number = process_representative
+      --) t1
+      --WHERE pgr.policy_number = t1.policy_number;
 
 
       DELETE FROM process_policy_experience_period_peos

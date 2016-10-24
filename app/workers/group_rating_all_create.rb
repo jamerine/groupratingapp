@@ -34,17 +34,17 @@ class GroupRatingAllCreate
           policy_individual_experience_modified_rate:
           @policy_exp.policy_individual_experience_modified_rate,
           policy_industry_group: @policy_proj.policy_industry_group,
-          group_rating_qualification: @policy_proj.group_rating_qualification,
-          group_rating_tier: @policy_proj.group_rating_tier,
-          group_rating_group_number: @policy_proj.group_rating_group_number,
+          # group_rating_qualification: @policy_proj.group_rating_qualification,
+          # group_rating_tier: @policy_proj.group_rating_tier,
+          # group_rating_group_number: @policy_proj.group_rating_group_number,
           policy_total_current_payroll: @policy_proj.policy_total_current_payroll,
           policy_total_standard_premium: @policy_proj.policy_total_standard_premium,
           policy_total_individual_premium: @policy_proj.policy_total_individual_premium,
-          policy_total_group_premium: @policy_proj.policy_total_group_premium,
-          policy_total_group_savings: @policy_proj.policy_total_group_savings,
-          policy_group_fees: @policy_proj.policy_group_fees,
-          policy_group_dues: @policy_proj.policy_group_dues,
-          policy_total_costs: @policy_proj.policy_total_costs,
+          # policy_total_group_premium: @policy_proj.policy_total_group_premium,
+          # policy_total_group_savings: @policy_proj.policy_total_group_savings,
+          # policy_group_fees: @policy_proj.policy_group_fees,
+          # policy_group_dues: @policy_proj.policy_group_dues,
+          # policy_total_costs: @policy_proj.policy_total_costs,
           successor_policy_number: @policy_demographic.successor_policy_number,
           currently_assigned_representative_number: @policy_demographic.currently_assigned_representative_number,
           federal_identification_number: @policy_demographic.federal_identification_number,
@@ -110,6 +110,22 @@ class GroupRatingAllCreate
               data_source: claim.data_source)
           end
 
+          ProcessPolicyCoverageStatusHistory.where(representative_number: @policy_calculation.representative_number, policy_number: @policy_calculation.policy_number).find_each do |policy_coverage|
+            PolicyCoverageStatusHistory.where(policy_calculation_id: @policy_calculation.id, policy_number: @policy_calculation.policy_number, representative_number: @policy_calculation.representative_number, coverage_effective_date: policy_coverage.coverage_effective_date, coverage_end_date: policy_coverage.coverage_end_date, coverage_status: policy_coverage.coverage_status, lapse_days: policy_coverage.lapse_days).update_or_create(
+                    policy_calculation_id: @policy_calculation.id,
+                    representative_id: @policy_calculation.representative_id,
+                    representative_number: @policy_calculation.representative_number,
+                    policy_type: @policy_calculation.policy_type,
+                    policy_number: @policy_calculation.policy_number,
+                    coverage_effective_date: policy_coverage.coverage_effective_date,
+                    coverage_end_date: policy_coverage.coverage_end_date,
+                    coverage_status: policy_coverage.coverage_status,
+                    lapse_days: policy_coverage.lapse_days,
+                    data_source: policy_coverage.data_source
+                )
+
+          end
+
 
           FinalManualClassFourYearPayrollAndExpLoss.where(representative_number: @policy_calculation.representative_number, policy_number: @policy_calculation.policy_number).each do |man_class_exp|
               man_class_proj = FinalManualClassGroupRatingAndPremiumProjection.find_by(policy_number: man_class_exp.policy_number, manual_number: man_class_exp.manual_number, representative_number: man_class_exp.representative_number)
@@ -133,7 +149,7 @@ class GroupRatingAllCreate
                     manual_class_individual_total_rate: man_class_proj.manual_class_individual_total_rate,
                     manual_class_group_total_rate: man_class_proj.manual_class_group_total_rate,
                     manual_class_standard_premium: man_class_proj.manual_class_standard_premium,
-                    manual_class_estimated_group_premium: man_class_proj.manual_class_estimated_group_premium,
+                    # manual_class_estimated_group_premium: man_class_proj.manual_class_estimated_group_premium,
                     manual_class_estimated_individual_premium: man_class_proj.manual_class_estimated_individual_premium,
                     data_source: man_class_proj.data_source)
                 else
