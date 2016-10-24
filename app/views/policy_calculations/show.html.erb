@@ -111,4 +111,5 @@
 
   <%= render partial: 'manual_class_calculations/manual_classes', locals: { manual_class_calculations: @manual_class_calculations, policy_calculation: @policy_calculation} %>
   <%= render partial: 'claim_calculations/claims', locals: { claims: @policy_calculation.claim_calculations } %>
+  <%= render partial: 'policy_coverage_status_histories/policy_coverage_status_histories', locals: { status_histories: @policy_calculation.policy_coverage_status_history } %>
 <% end %>
