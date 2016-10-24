@@ -1,4 +1,5 @@
 class GroupRatingsController < ApplicationController
+  require 'sidekiq/api'
 
   def index
     @group_ratings = GroupRating.includes(:import)
@@ -18,7 +19,11 @@ class GroupRatingsController < ApplicationController
   end
 
   def create
-    @group_rating = GroupRating.new(group_rating_params)
+    stats = Sidekiq::Stats.new.fetch_stats!
+    if stats[:retry_size] > 0 || stats[:workers_size] > 0 || stats[:enqueued] > 0
+      redirect_to group_ratings_path, alert: "Please wait for import to finish"
+    else
+      @group_rating = GroupRating.new(group_rating_params)
     @representative = Representative.find(@group_rating.representative_id)
     @group_rating.process_representative = @representative.representative_number
     @group_rating.status = 'Queuing'
@@ -73,6 +78,7 @@ class GroupRatingsController < ApplicationController
           ImportProcess.perform_async(@import.process_representative, @import.id, @representative.abbreviated_name, @group_rating.id)
 
           redirect_to group_ratings_path, notice: "Step 1, Step 2, Step 3, Step 4, Step 5, Step 6, Step 7, Step 8 have been queued."
+        end
         end
     end
   end
