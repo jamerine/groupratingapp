@@ -151,4 +151,15 @@ class Account < ActiveRecord::Base
     end
   end
 
+  def self.to_request(representative_number)
+    rep_num = "%06d" % representative_number + '-80'
+    CSV.generate(:col_sep => "\t") do |csv|
+
+      all.each do |account|
+        policy_number = "%08d" % account.policy_number_entered + '-000'
+        csv << ["159",policy_number, rep_num ]
+      end
+    end
+  end
+
 end
