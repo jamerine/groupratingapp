@@ -30,6 +30,8 @@ Rails.application.routes.draw do
 
   resources :claim_calculations
 
+  resources :policy_coverage_status_histories
+
   resources :final_policy_group_rating_and_premium_projections
 
   resources :policy_calculations do

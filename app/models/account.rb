@@ -87,6 +87,10 @@ class Account < ActiveRecord::Base
         GroupRatingRejection.create(account_id: self.id, reject_reason: 'reject_homogeneity', representative_id: @group_rating.representative_id)
       end
 
+      # Check for waiting on predecessor payroll
+      if PolicyCalculation.find_by(business_name: "Predecessor Policy for #{self.policy_calculation.policy_number}")
+        GroupRatingRejection.create(account_id: self.id, reject_reason: 'reject_pending_predecessor', representative_id: @group_rating.representative_id)
+      end
       #CONDITION TO CHECK LAPSE DAYS > 60
 
 

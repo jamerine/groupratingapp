@@ -1,0 +1,2 @@
+module PolicyCoverageStatusHistoriesHelper
+end

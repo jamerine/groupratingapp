@@ -120,7 +120,7 @@ class Step3Proc < ActiveRecord::Migration
            FROM public.process_payroll_breakdown_by_manual_classes a
            Right Join public.pcomb_detail_records b
            ON a.policy_number = b.predecessor_policy_number
-           Where b.transfer_type = 'FC' and a.representative_number is null and b.transfer_creation_date >= experience_period_lower_date
+           Where b.transfer_type = 'FC' and a.representative_number is null and b.transfer_creation_date >= experience_period_lower_date and predecessor_policy_number not in (SELECT policy_number from bwc_codes_peo_lists)
            GROUP BY
              b.representative_number,
              b.predecessor_policy_type,

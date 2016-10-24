@@ -24,9 +24,6 @@ class PolicyCoverageUpdateCreateProcess
         )
     end
 
-
-    ManualClassUpdateCreateProcess.perform_async(group_rating_id, @group_rating.representative_id)
-
   end
 
 end

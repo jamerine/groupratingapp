@@ -1,0 +1,39 @@
+<div class="container text-center">
+  <br>
+  <h2>Policy Coverage Status History</h2>
+  <ul class="list-group">
+    <div class="row list-group-item active">
+      <div class="col-md-3 col-sm-3 col-xs-3">
+        <h5>Coverage Status</h5>
+      </div>
+      <div class="col-md-3 col-sm-3 col-xs-3">
+        <h5>Effective Date</h5>
+      </div>
+      <div class="col-md-3 col-sm-3 col-xs-3">
+        <h5>End date</h5>
+      </div>
+      <div class="col-md-3 col-sm-3 col-xs-3">
+        <h5>Lapse Days</h5>
+      </div>
+
+    </div>
+
+  <% status_histories.order("coverage_effective_date desc").each do |status| %>
+    <div class="row text-center list-group-item">
+      <div class="col-md-3 col-sm-3 col-xs-3 ">
+        <p><%= status.coverage_status %></p>
+      </div>
+      <div class="col-md-3 col-sm-3 col-xs-3 ">
+        <p><%= status.coverage_effective_date %></p>
+      </div>
+      <div class="col-md-3 col-sm-3 col-xs-3 ">
+        <p><%= status.coverage_end_date %></p>
+      </div>
+      <div class="col-md-3 col-sm-3 col-xs-3 ">
+        <p><%= status.lapse_days %></p>
+      </div>
+
+    </div>
+  <% end %>
+  </ul>
+</div>

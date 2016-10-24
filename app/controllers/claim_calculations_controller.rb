@@ -9,9 +9,4 @@ class ClaimCalculationsController < ApplicationController
   end
 
 
-  def create_claim_objects
-    Resque.enqueue(ClaimUpdateCreate)
-    redirect_to claim_calculations_path, notice: "Claims are queued to update."
-  end
-
 end
