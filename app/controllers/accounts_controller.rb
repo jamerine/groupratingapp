@@ -4,14 +4,14 @@ class AccountsController < ApplicationController
     @representatives = Representative.all
     if params[:search].present? && params[:representative_number].present?
       @representative = Representative.find_by(representative_number: params[:representative_number])
-      @accounts = Account.where(representative_id: @representative.id).search(params[:search]).paginate(page: params[:page], per_page: 50)
+      @accounts = Account.includes(:group_rating_rejections).where(representative_id: @representative.id).search(params[:search]).paginate(page: params[:page], per_page: 50)
     elsif params[:search].present?
-      @accounts = Account.search(params[:search]).paginate(page: params[:page], per_page: 50)
+      @accounts = Account.includes(:group_rating_rejections).search(params[:search]).paginate(page: params[:page], per_page: 50)
     elsif params[:representative_number].present?
       @representative = Representative.find_by(representative_number: params[:representative_number])
-      @accounts = Account.where(representative_id: @representative.id).paginate(page: params[:page], per_page: 50)
+      @accounts = Account.includes(:group_rating_rejections).where(representative_id: @representative.id).paginate(page: params[:page], per_page: 50)
     else
-      @accounts = Account.all.paginate(page: params[:page], per_page: 50)
+      @accounts = Account.includes(:group_rating_rejections).all.paginate(page: params[:page], per_page: 50)
     end
   end
 
