@@ -42,6 +42,16 @@ class RepresentativesController < ApplicationController
     end
   end
 
+  def export_159_request
+    @representative = Representative.find(params[:representative_id])
+    @accounts = @representative.accounts.where("status in (0,2,3)")
+
+    respond_to do |format|
+      format.html
+      format.csv { send_data @accounts.to_request(@representative.representative_number), filename: "#{@representative.abbreviated_name}_159_request_#{Date.today}.csv" }
+    end
+  end
+
 
 
   def edit
