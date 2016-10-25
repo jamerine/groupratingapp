@@ -57,37 +57,39 @@
     <%= link_to "Calc Group Rating", account_group_rating_calc_path(params[:id]), class: 'btn btn-primary', method: :post %>
     <div class="row">
       <h3>Group Rating Information</h3>
-      <div class="col-md-12">
-        <% if @group_rating_rejections.nil? %>
-          <p>Qualification:</p>
-          <h5><%= @account.group_rating_qualification %></h5>
+        <% if @account.accept? %>
+          <div class="col-md-12">
+            <p>Qualification:</p>
+            <h5><%= @account.group_rating_qualification %></h5>
+          </div>
+          <div class="col-md-2">
+            <p>Discount Tier:</p>
+            <h5><%= @account.group_rating_tier %></h5>
+          </div>
+          <div class="col-md-2">
+            <p>Group Number:</p>
+            <h5><%= @account.group_rating_group_number %></h5>
+          </div>
+          <div class="col-md-2">
+            <p>Premium:</p>
+            <h5><%= number_to_currency(@account.group_premium) %></h5>
+          </div>
+          <div class="col-md-2">
+            <p>Savings:</p>
+            <h5><%= number_to_currency(@account.group_savings) %></h5>
+          </div>
+          <div class="col-md-2">
+            <p>Fees:</p>
+            <h5><%= number_to_currency(@account.group_fees) %></h5>
+          </div>
         <% else %>
-          <h5><% @group_rating_rejections.each do |rejection| %>
-              <%= rejection.reject_reason %>,
-              <% end %>
-          </h5>
+            <p>Qualification:</p>
+            <h5><% @account.group_rating_rejections.each do |rejection| %>
+                <%= rejection.reject_reason %>,
+                <% end %>
+            </h5>
         <% end %>
-      </div>
-      <div class="col-md-2">
-        <p>Discount Tier:</p>
-        <h5><%= @account.group_rating_tier %></h5>
-      </div>
-      <div class="col-md-2">
-        <p>Group Number:</p>
-        <h5><%= @account.group_rating_group_number %></h5>
-      </div>
-      <div class="col-md-2">
-        <p>Premium:</p>
-        <h5><%= number_to_currency(@account.group_premium) %></h5>
-      </div>
-      <div class="col-md-2">
-        <p>Savings:</p>
-        <h5><%= number_to_currency(@account.group_savings) %></h5>
-      </div>
-      <div class="col-md-2">
-        <p>Fees:</p>
-        <h5><%= number_to_currency(@account.group_fees) %></h5>
-      </div>
+
 
     </div>
 
@@ -96,7 +98,7 @@
 
 
 
-<%= render partial: 'policy_calculations/policy_snapshot', locals: { policy_calculation: @policy_calculation } %>
+<%= render partial: 'policy_calculations/policy_snapshot', locals: { policy_calculation: @policy_calculation} %>
 
 
 <% end %>

@@ -23,8 +23,8 @@ class GroupRatingsController < ApplicationController
     if stats[:retry_size] > 0 || stats[:workers_size] > 0 || stats[:enqueued] > 0
       redirect_to group_ratings_path, alert: "Please wait for group rating process to finish"
     else
-      GroupRating.where(representative_id: group_rating_params[:representative_id]).destroy_all
-      @group_rating = GroupRating.new(group_rating_params)
+      @group_Rating = GroupRating.where(representative_id: group_rating_params[:representative_id])
+      @group_rating = GroupRating.update_attributes(group_rating_params)
       @representative = Representative.find(@group_rating.representative_id)
       @group_rating.process_representative = @representative.representative_number
       @group_rating.status = 'Queuing'

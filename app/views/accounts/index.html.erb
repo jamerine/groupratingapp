@@ -37,7 +37,7 @@
           <td><%= link_to "#{account.policy_calculation.policy_number}",account_path(account.id), class: 'btn btn-info' %> </td>
           <td><%= account.name %> </td>
           <td><%= account.status.humanize %> </td>
-          <td><%= account.group_rating_qualification.titleize %></td>
+          <td><%= account.group_rating_qualification %></td>
           <td><%= @representatives.find(account.representative_id).abbreviated_name %></td>
           <td><%= account.updated_at.in_time_zone("America/New_York").strftime("%m/%d/%y @ %I:%M %p") %> </td>
         </tr>
