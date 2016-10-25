@@ -15,7 +15,9 @@
           <%= link_to "Account Export", representative_export_accounts_path(params[:id], format: "csv"), class: 'btn btn-default' %>
           <%= link_to "Policy Export", representative_path(params[:id], format: "csv"), class: 'btn btn-default' %>
           <%= link_to "Manual Class Export", representative_export_manual_classes_path(params[:id], format: "csv"), class: 'btn btn-default' %>
-          <%= link_to "159 Export", representative_export_159_request_path(params[:id], format: "csv"), class: 'btn btn-default' %>
+          <br>
+          <%= link_to "Weekly 159 Export", representative_export_159_request_weekly_path(params[:id], format: "csv"), class: 'btn btn-default' %>
+          <%= link_to "Quarterly 159 Export", representative_export_159_request_weekly_path(params[:id], format: "csv"), class: 'btn btn-default' %>
       </div>
     </div>
   </div>

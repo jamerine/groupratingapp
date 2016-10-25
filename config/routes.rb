@@ -43,7 +43,7 @@ Rails.application.routes.draw do
     post :fee_calculations
     get :export_manual_classes
     get :export_accounts
-    get :export_159_request
+    get :export_159_request_weekly
   end
 
 

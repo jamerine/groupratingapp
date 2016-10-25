@@ -60,12 +60,11 @@ class AccountsController < ApplicationController
 
 
   def show
-    @account = Account.find(params[:id])
+    @account = Account.includes(:group_rating_rejections).find(params[:id])
     @statuses = Account.statuses
-    @policy_calculation = @account.policy_calculation
     @representative = Representative.find(@account.representative_id)
     @new_payroll_calculation = PayrollCalculation.new
-    @group_rating_rejections = GroupRatingRejection.where(account_id: @account.id, representative_id: @account.representative_id)
+    @policy_calculation = PolicyCalculation.find_by(account_id: @account.id)
   end
 
 
