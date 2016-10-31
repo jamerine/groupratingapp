@@ -45,7 +45,7 @@ class RepresentativesController < ApplicationController
 
   def export_159_request_weekly
     @representative = Representative.find(params[:representative_id])
-    @accounts = @representative.accounts.where("weekly_request = true or request_date is null")
+    @accounts = @representative.accounts.where("weekly_request = true or request_date is null or status in (0,3)")
 
     respond_to do |format|
       format.html
