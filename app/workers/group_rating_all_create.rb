@@ -9,7 +9,17 @@ class GroupRatingAllCreate
 
       @policy_demographic = FinalEmployerDemographicsInformation.find_by(policy_number: @policy_exp.policy_number, representative_number: @policy_exp.representative_number)
 
-      @account = Account.where(policy_number_entered: @policy_exp.policy_number, representative_id: representative_id).update_or_create(policy_number_entered: @policy_exp.policy_number, representative_id: representative_id, status: 3, name: @policy_demographic.business_name, street_address: @policy_demographic.address_1, street_address_2: @policy_demographic.address_2, city: @policy_demographic.city, state: @policy_demographic.state, zip_code: @policy_demographic.zip_code)
+      @account = Account.where(policy_number_entered: @policy_exp.policy_number, representative_id: representative_id)
+      # @account = Account.where(policy_number_entered: 1638083, representative_id: 17)
+      # @account.first.status == "predecessor"
+      if @account.empty?
+        @account = @account.update_or_create(policy_number_entered: @policy_exp.policy_number, representative_id: representative_id, status: 3, name: @policy_demographic.business_name, street_address: @policy_demographic.address_1, street_address_2: @policy_demographic.address_2, city: @policy_demographic.city, state: @policy_demographic.state, zip_code: @policy_demographic.zip_code, weekly_request: true)
+      elsif @account.first.status == "predecessor"
+        @account = @account.first
+        @account.update_attributes(policy_number_entered: @policy_exp.policy_number, representative_id: representative_id, name: @policy_demographic.business_name, street_address: @policy_demographic.address_1, street_address_2: @policy_demographic.address_2, city: @policy_demographic.city, state: @policy_demographic.state, zip_code: @policy_demographic.zip_code)
+      else
+        @account = @account.first
+      end
 
       @policy_calculation = PolicyCalculation.where(account_id: @account.id).update_or_create(
           representative_number: @policy_exp.representative_number,
