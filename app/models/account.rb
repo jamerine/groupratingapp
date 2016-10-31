@@ -74,6 +74,7 @@ class Account < ActiveRecord::Base
     GroupRatingRejection.where(representative_id: self.representative_id, account_id: self.id).destroy_all
     unless self.predecessor?
       @group_rating = GroupRating.where(representative_id: self.representative_id).last
+
       group_rating_range = @group_rating.experience_period_lower_date..@group_rating.experience_period_upper_date
       if ["CANFI","CANPN","BKPCA","BKPCO","COMB","CANUN"].include? policy_calculation.policy_status
         GroupRatingRejection.create(account_id: self.id, reject_reason: 'reject_inactive_policy', representative_id: @group_rating.representative_id)
@@ -91,7 +92,9 @@ class Account < ActiveRecord::Base
       if PolicyCalculation.find_by(business_name: "Predecessor Policy for #{self.policy_calculation.policy_number}")
         GroupRatingRejection.create(account_id: self.id, reject_reason: 'reject_pending_predecessor', representative_id: @group_rating.representative_id)
       end
-      #CONDITION TO CHECK LAPSE DAYS > 60
+
+
+
 
 
       # CONDITIONS FOR State Fund and Self Insured PEO
@@ -162,7 +165,7 @@ class Account < ActiveRecord::Base
         account.update_attributes(request_date: Time.now)
       end
     end
-    
+
   end
 
 end
