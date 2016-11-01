@@ -19,7 +19,7 @@ class GroupRatingStepTwoPartial
           policy_number: payroll.policy_number,
           manual_number: payroll.manual_number,
           manual_type: payroll.manual_type,
-          manual_class_effective_date: low_payroll_period,
+          manual_class_effective_date: payroll.manual_class_effective_date,
           manual_class_payroll: added_payroll,
           payroll_origin: 'partial_payroll',
           data_source: payroll.data_source )
@@ -49,7 +49,7 @@ class GroupRatingStepTwoPartial
           policy_number: payroll.policy_number,
           manual_number: payroll.manual_number,
           manual_type: payroll.manual_type,
-          manual_class_effective_date: next_payroll_period,
+          manual_class_effective_date: payroll.manual_class_effective_date,
           manual_class_payroll: added_payroll,
           payroll_origin: 'partial_payroll',
           data_source: payroll.data_source)
