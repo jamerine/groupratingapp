@@ -34,7 +34,7 @@
     { representative_number: 219952, abbreviated_name: 'SCLLC', company_name: 'Tom Stefanik'  },
     { representative_number: 218961, abbreviated_name: 'TRIDENT', company_name: 'Trident' },
     { representative_number: 217351, abbreviated_name: 'UNITED', company_name: 'United Corp' },
-    { representative_number: 21152, abbreviated_name: 'WHPCB', company_name: 'Wickens Herzer'  }
+    { representative_number: 21152, abbreviated_name: 'WHPCB', company_name: 'Wickens Herzer'  },
     { representative_number: 1633, abbreviated_name: 'CPM', company_name: 'CPM Risk Management'  }
 
     ])
