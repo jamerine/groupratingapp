@@ -3,6 +3,7 @@ class Account < ActiveRecord::Base
   has_one :policy_calculation, dependent: :destroy
   belongs_to :representative
   has_many :group_rating_rejections, dependent: :destroy
+  has_many :group_rating_exceptions, dependent: :destroy
 
   validates :policy_number_entered, :presence => true, length: { maximum: 8 }
 
@@ -93,10 +94,6 @@ class Account < ActiveRecord::Base
         GroupRatingRejection.create(account_id: self.id, reject_reason: 'reject_pending_predecessor', representative_id: @group_rating.representative_id)
       end
 
-
-
-
-
       # CONDITIONS FOR State Fund and Self Insured PEO
       if peo_records = ProcessPolicyExperiencePeriodPeo.where(policy_number: policy_calculation.policy_number, representative_number: @group_rating.process_representative)
         peo_records.each do |peo_record|
@@ -121,9 +118,24 @@ class Account < ActiveRecord::Base
        end
 
       update_attributes(group_rating_qualification: qualification)
+      self.fee_calculation
+      self.exceptions
     end
   end
 
+
+  def exceptions
+    #LAPSE PERIOD FOR GROUP RATING
+    higher_lapse = (Date.current.year.to_s + '-01-31').to_date
+    lower_lapse = higher_lapse - 12.months
+
+    if self.policy_calculation.policy_coverage_status_histories.where("coverage_status = :coverage_status and (coverage_end_date BETWEEN :lower_lapse and :higher_lapse or coverage_end_date is null)", coverage_status: "LAPSE", lower_lapse: lower_lapse, higher_lapse: higher_lapse).sum(:lapse_days) >= 40
+      GroupRatingException.create(account_id: self.id, exception_reason: 'group_rating_lapse', representative_id: self.representative_id)
+    end
+
+
+
+  end
 
   def fee_calculation
       if policy_calculation.policy_total_individual_premium.nil? || representative.representative_number != 219406

@@ -6085,6 +6085,39 @@ ALTER SEQUENCE final_policy_group_rating_and_premium_projections_id_seq OWNED BY
 
 
 --
+-- Name: group_rating_exceptions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE group_rating_exceptions (
+    id integer NOT NULL,
+    account_id integer,
+    representative_id integer,
+    exception_reason character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: group_rating_exceptions_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE group_rating_exceptions_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: group_rating_exceptions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE group_rating_exceptions_id_seq OWNED BY group_rating_exceptions.id;
+
+
+--
 -- Name: group_rating_rejections; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -8216,6 +8249,13 @@ ALTER TABLE ONLY final_policy_group_rating_and_premium_projections ALTER COLUMN 
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY group_rating_exceptions ALTER COLUMN id SET DEFAULT nextval('group_rating_exceptions_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY group_rating_rejections ALTER COLUMN id SET DEFAULT nextval('group_rating_rejections_id_seq'::regclass);
 
 
@@ -8645,6 +8685,14 @@ ALTER TABLE ONLY final_policy_group_rating_and_premium_projections
 
 
 --
+-- Name: group_rating_exceptions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY group_rating_exceptions
+    ADD CONSTRAINT group_rating_exceptions_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: group_rating_rejections_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -9014,6 +9062,20 @@ CREATE INDEX index_fin_man_pr_pol_num_and_man_num_rep ON final_manual_class_grou
 
 
 --
+-- Name: index_group_rating_exceptions_on_account_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_group_rating_exceptions_on_account_id ON group_rating_exceptions USING btree (account_id);
+
+
+--
+-- Name: index_group_rating_exceptions_on_representative_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_group_rating_exceptions_on_representative_id ON group_rating_exceptions USING btree (representative_id);
+
+
+--
 -- Name: index_group_rating_rejections_on_account_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -9246,6 +9308,14 @@ ALTER TABLE ONLY group_rating_rejections
 
 
 --
+-- Name: fk_rails_bd17fdc162; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY group_rating_exceptions
+    ADD CONSTRAINT fk_rails_bd17fdc162 FOREIGN KEY (representative_id) REFERENCES representatives(id);
+
+
+--
 -- Name: fk_rails_d66971042d; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -9267,6 +9337,14 @@ ALTER TABLE ONLY group_rating_rejections
 
 ALTER TABLE ONLY claim_calculations
     ADD CONSTRAINT fk_rails_f48992ad9e FOREIGN KEY (policy_calculation_id) REFERENCES policy_calculations(id);
+
+
+--
+-- Name: fk_rails_fb29362929; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY group_rating_exceptions
+    ADD CONSTRAINT fk_rails_fb29362929 FOREIGN KEY (account_id) REFERENCES accounts(id);
 
 
 --
@@ -9458,4 +9536,6 @@ INSERT INTO schema_migrations (version) VALUES ('20161031172343');
 INSERT INTO schema_migrations (version) VALUES ('20161031191723');
 
 INSERT INTO schema_migrations (version) VALUES ('20161031191940');
+
+INSERT INTO schema_migrations (version) VALUES ('20161101161501');
 
