@@ -7,7 +7,11 @@ class ImportFile
     puts "Start Time: " + time1.inspect
       conn = ActiveRecord::Base.connection
       rc = conn.raw_connection
-      rc.exec("COPY " + table_name + " (single_rec) FROM STDIN WITH DELIMITER AS '|'")
+      if table_name == 'rates'
+        rc.exec("COPY " + table_name + " (single_rec) FROM STDIN WITH DELIMITER AS '~'")
+      else
+        rc.exec("COPY " + table_name + " (single_rec) FROM STDIN WITH DELIMITER AS '|'")
+      end
 
       file = open(url)
       while !file.eof?
@@ -22,6 +26,7 @@ class ImportFile
           p e_message
         end
       end
+
       result = ActiveRecord::Base.connection.execute("SELECT public.proc_process_flat_" + table_name + "()")
       result.clear
       @import = Import.find_by(id: import_id)
@@ -60,6 +65,10 @@ class ImportFile
         @import.phmgns_count = Phmgn.count
         @import.phmgn_detail_records_count = PhmgnDetailRecord.count
         @import.import_status = "#{table_name} Completed"
+      elsif table_name == "rates"
+        @import.rates_count = Rate.count
+        @import.rate_detail_records_count = RateDetailRecord.count
+        @import.import_status = "#{table_name} Completed"
       end
       @import.save
 
@@ -71,7 +80,8 @@ class ImportFile
         (!@import.mremps_count.nil? || !@import.mremp_employee_experience_policy_levels_count.nil? || !@import.mremp_employee_experience_manual_class_levels_count.nil? ||
         !@import.mremp_employee_experience_claim_levels_count.nil?) &&
         (!@import.pcombs_count.nil? || !@import.pcomb_detail_records_count.nil?) &&
-        (!@import.phmgns_count.nil? || !@import.phmgn_detail_records_count.nil?)
+        (!@import.phmgns_count.nil? || !@import.phmgn_detail_records_count.nil?) &&
+        (!@import.rates_count.nil? || !@import.rate_detail_records_count.nil?)
           @import.import_status = "Completed"
           @import.save
           @group_rating = GroupRating.find(group_rating_id)

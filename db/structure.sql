@@ -687,6 +687,82 @@ CREATE FUNCTION proc_process_flat_phmgns() RETURNS void
 
 
 --
+-- Name: proc_process_flat_rates(); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION proc_process_flat_rates() RETURNS void
+    LANGUAGE plpgsql
+    AS $$
+
+      BEGIN
+      /***************************************************************************/
+      -- START OF rates
+      /* Detail Record Type 02 */
+      INSERT INTO rate_detail_records (
+        create_date,
+        representative_number,
+        representative_name,
+        policy_number,
+        business_sequence_number,
+        policy_name,
+        tax_id,
+        policy_status_effective_date,
+        policy_status,
+        reporting_period_start_date,
+        reporting_period_end_date,
+        manual_class,
+        manual_class_type,
+        manual_class_description,
+        bwc_customer_id,
+        individual_first_name,
+        individual_middle_name,
+        individual_last_name,
+        individual_tax_id,
+        manual_class_rate,
+        reporting_type,
+        number_of_employees,
+        payroll,
+        created_at,
+        updated_at
+      )
+      (
+      SELECT
+        split_part(single_rec, '|',1)::date,
+        cast_to_int(substring(split_part(single_rec, '|',2),1,6)),
+        split_part(single_rec, '|',3),
+        cast_to_int(split_part(single_rec, '|',4)),
+        cast_to_int(split_part(single_rec, '|',5)),
+        split_part(single_rec, '|',6),
+        cast_to_int(split_part(single_rec, '|',7)),
+        split_part(single_rec, '|',8)::date,
+        split_part(single_rec, '|',9),
+        split_part(single_rec, '|',10)::date,
+        split_part(single_rec, '|',11)::date,
+        cast_to_int(split_part(single_rec, '|',12)),
+        split_part(single_rec, '|',13),
+        split_part(single_rec, '|',14),
+        cast_to_int(split_part(single_rec, '|',15)),
+        split_part(single_rec, '|',16),
+        split_part(single_rec, '|',17),
+        split_part(single_rec, '|',18),
+        cast_to_int(split_part(single_rec, '|',19)),
+        cast(split_part(single_rec, '|',20) as numeric),
+        split_part(single_rec, '|',21),
+        cast_to_int(split_part(single_rec, '|',22)),
+        cast(split_part(single_rec, '|',23) as numeric),
+        current_timestamp::timestamp as created_at,
+        current_timestamp::timestamp as updated_at
+       FROM public.rates
+
+      );
+
+
+       end;
+
+         $$;
+
+
+--
 -- Name: proc_process_flat_sc220s(); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -6098,6 +6174,7 @@ CREATE TABLE imports (
     phmgns_count integer,
     sc220s_count integer,
     sc230s_count integer,
+    rates_count integer,
     democ_detail_records_count integer,
     mrcl_detail_records_count integer,
     mremp_employee_experience_policy_levels_count integer,
@@ -6112,6 +6189,7 @@ CREATE TABLE imports (
     sc230_employer_demographics_count integer,
     sc230_claim_medical_payments_count integer,
     sc230_claim_indemnity_awards_count integer,
+    rate_detail_records_count integer,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
     representative_id integer
@@ -7244,6 +7322,88 @@ ALTER SEQUENCE process_policy_experience_period_peos_id_seq OWNED BY process_pol
 
 
 --
+-- Name: rate_detail_records; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE rate_detail_records (
+    id integer NOT NULL,
+    create_date date,
+    representative_number integer,
+    representative_name character varying,
+    policy_number integer,
+    business_sequence_number integer,
+    policy_name character varying,
+    tax_id integer,
+    policy_status_effective_date date,
+    policy_status character varying,
+    reporting_period_start_date date,
+    reporting_period_end_date date,
+    manual_class integer,
+    manual_class_type character varying,
+    manual_class_description character varying,
+    bwc_customer_id integer,
+    individual_first_name character varying,
+    individual_middle_name character varying,
+    individual_last_name character varying,
+    individual_tax_id integer,
+    manual_class_rate double precision,
+    reporting_type character varying,
+    number_of_employees integer,
+    payroll double precision,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: rate_detail_records_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE rate_detail_records_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: rate_detail_records_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE rate_detail_records_id_seq OWNED BY rate_detail_records.id;
+
+
+--
+-- Name: rates; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE rates (
+    id integer NOT NULL,
+    single_rec character varying
+);
+
+
+--
+-- Name: rates_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE rates_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: rates_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE rates_id_seq OWNED BY rates.id;
+
+
+--
 -- Name: representatives; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -8245,6 +8405,20 @@ ALTER TABLE ONLY process_policy_experience_period_peos ALTER COLUMN id SET DEFAU
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY rate_detail_records ALTER COLUMN id SET DEFAULT nextval('rate_detail_records_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY rates ALTER COLUMN id SET DEFAULT nextval('rates_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY representatives ALTER COLUMN id SET DEFAULT nextval('representatives_id_seq'::regclass);
 
 
@@ -8684,6 +8858,22 @@ ALTER TABLE ONLY process_policy_coverage_status_histories
 
 ALTER TABLE ONLY process_policy_experience_period_peos
     ADD CONSTRAINT process_policy_experience_period_peos_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: rate_detail_records_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY rate_detail_records
+    ADD CONSTRAINT rate_detail_records_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: rates_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY rates
+    ADD CONSTRAINT rates_pkey PRIMARY KEY (id);
 
 
 --
@@ -9262,4 +9452,10 @@ INSERT INTO schema_migrations (version) VALUES ('20161020184006');
 INSERT INTO schema_migrations (version) VALUES ('20161020184132');
 
 INSERT INTO schema_migrations (version) VALUES ('20161020184549');
+
+INSERT INTO schema_migrations (version) VALUES ('20161031172343');
+
+INSERT INTO schema_migrations (version) VALUES ('20161031191723');
+
+INSERT INTO schema_migrations (version) VALUES ('20161031191940');
 
