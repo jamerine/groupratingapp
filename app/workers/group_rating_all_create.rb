@@ -26,7 +26,7 @@ class GroupRatingAllCreate
           policy_type: @policy_exp.policy_type,
           policy_number: @account.policy_number_entered,
           policy_group_number: @policy_exp.policy_group_number,
-          policy_status: @policy_exp.policy_status,
+          policy_status: @policy_exp.policy_status.strip,
           policy_total_four_year_payroll: @policy_exp.policy_total_four_year_payroll,
           policy_credibility_group: @policy_exp.policy_credibility_group,
           policy_maximum_claim_value: @policy_exp.policy_maximum_claim_value,

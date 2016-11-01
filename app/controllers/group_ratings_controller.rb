@@ -43,6 +43,7 @@ class GroupRatingsController < ApplicationController
             Phmgn.delete_all
             Sc220.delete_all
             Sc230.delete_all
+            Rate.delete_all
             DemocDetailRecord.delete_all
             MrclDetailRecord.delete_all
             MrempEmployeeExperiencePolicyLevel.delete_all
@@ -57,6 +58,7 @@ class GroupRatingsController < ApplicationController
             Sc230EmployerDemographic.delete_all
             Sc230ClaimMedicalPayment.delete_all
             Sc230ClaimIndemnityAward.delete_all
+            RateDetailRecord.delete_all
             ExceptionTablePolicyCombinedRequestPayrollInfo.where(data_source: 'bwc').delete_all
             FinalClaimCostCalculationTable.where(data_source: 'bwc').delete_all
             FinalEmployerDemographicsInformation.where(data_source: 'bwc').delete_all
