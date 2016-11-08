@@ -9,7 +9,4 @@ class Representative < ActiveRecord::Base
   has_many :group_rating_rejections, dependent: :destroy
   has_many :group_rating_exceptions, dependent: :destroy
 
-
-
-
 end
