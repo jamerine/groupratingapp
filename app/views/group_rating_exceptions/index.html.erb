@@ -1,0 +1,27 @@
+
+
+<div class="container">
+
+<div>
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th>Policy Number</th>
+        <th>Account Name</th>
+        <th>Exception Reason</th>
+      </tr>
+    </thead>
+    <tbody>
+     <% @group_rating_exceptions.order("representative_id").each do |group_rating_exception| %>
+      <tr>
+        <td><%= link_to "#{group_rating_exception.account.policy_number_entered}", account_path(group_rating_exception.account.id), class: 'btn btn-info' %> </td>
+        <td><%= group_rating_exception.account.name %> </td>
+        <td><%= group_rating_exception.exception_reason %> </td>
+      </tr>
+      <% end %>
+
+    </tbody>
+  </table>
+</div>
+
+</div>

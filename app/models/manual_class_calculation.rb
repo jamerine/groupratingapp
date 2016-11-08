@@ -55,8 +55,13 @@ class ManualClassCalculation < ActiveRecord::Base
 
       @limited_loss_rate = BwcCodesLimitedLossRatio.find_by(industry_group: self.manual_class_industry_group, credibility_group: @policy_calculation.policy_credibility_group)
 
-      limited_loss_rate = @limited_loss_rate.limited_loss_ratio
-      limited_losses = self.manual_class_expected_losses * limited_loss_rate
+      if @limited_loss_rate.nil?
+        limited_loss_rate = 0
+        limited_losses = 0
+      else
+        limited_loss_rate = @limited_loss_rate.limited_loss_ratio
+        limited_losses = self.manual_class_expected_losses * limited_loss_rate
+      end
 
       update_attributes(manual_class_limited_losses: limited_losses, manual_class_limited_loss_rate: limited_loss_rate)
 

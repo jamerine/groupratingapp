@@ -125,13 +125,45 @@ class Account < ActiveRecord::Base
 
 
   def exceptions
-    #LAPSE PERIOD FOR GROUP RATING
-    higher_lapse = (Date.current.year.to_s + '-01-31').to_date
-    lower_lapse = higher_lapse - 12.months
 
-    if self.policy_calculation.policy_coverage_status_histories.where("coverage_status = :coverage_status and (coverage_end_date BETWEEN :lower_lapse and :higher_lapse or coverage_end_date is null)", coverage_status: "LAPSE", lower_lapse: lower_lapse, higher_lapse: higher_lapse).sum(:lapse_days) >= 40
+    #LAPSE PERIOD FOR GROUP RATING
+    nov_first = (Date.current.year.to_s + '-11-01').to_date
+    days_to_add = (4 - nov_first.wday) % 7
+    fourth_thursday = nov_first + days_to_add + 21
+
+    higher_lapse = fourth_thursday - 3
+    lower_lapse = higher_lapse - 12.months
+    lapse_sum = 0
+
+    coverage_lapse_periods = self.policy_calculation.policy_coverage_status_histories.where("coverage_status = :coverage_status and (coverage_end_date BETWEEN :lower_lapse and :higher_lapse or coverage_end_date is null)", coverage_status: "LAPSE", lower_lapse: lower_lapse, higher_lapse: higher_lapse)
+
+    coverage_lapse_periods.each do |period|
+      # period starts before and ends out of range
+      if period.coverage_effective_date < lower_lapse && period.coverage_end_date.nil?
+        lapse_sum += Date.current - lower_lapse
+      # period starts after and ends out of range
+      elsif period.coverage_effective_date > lower_lapse && period.coverage_end_date.nil?
+        lapse_sum += Date.current - period.coverage_effective_date
+      # period starts before and ends in range
+      elsif period.coverage_effective_date < lower_lapse && period.coverage_end_date < higher_lapse
+        lapse_sum += period.coverage_end_date - lower_lapse
+      # period starts after and ends in range
+      elsif period.coverage_effective_date > lower_lapse && period.coverage_end_date < higher_lapse
+        lapse_sum += period.coverage_end_date - period.coverage_effective_date
+      end
+    end
+
+    if lapse_sum >= 40
       GroupRatingException.create(account_id: self.id, exception_reason: 'group_rating_lapse', representative_id: self.representative_id)
     end
+
+    # NEGATIVE PAYROLL ON A MANUAL CLASS
+
+    if !self.policy_calculation.manual_class_calculations.where("manual_class_current_estimated_payroll < 0 or manual_class_four_year_period_payroll < 0").empty?
+      GroupRatingException.create(account_id: self.id, exception_reason: 'manual_class_negative_payroll', representative_id: self.representative_id)
+    end
+
+
 
 
 
@@ -141,6 +173,7 @@ class Account < ActiveRecord::Base
       if policy_calculation.policy_total_individual_premium.nil? || representative.representative_number != 219406
         return
       end
+
       if group_rating_tier.nil?
         fee = (policy_calculation.policy_total_individual_premium * 0.035)
         update_attribute(:group_fees, fee)

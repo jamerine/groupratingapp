@@ -36,8 +36,9 @@ Rails.application.routes.draw do
 
   resources :policy_calculations do
     collection {get 'create_policy_objects'}
-
   end
+
+  resources :group_rating_exceptions
 
   resources :representatives do
     post :fee_calculations
