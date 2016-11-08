@@ -14,4 +14,6 @@ class GroupRating < ActiveRecord::Base
     obj.assign_attributes(attributes)
     obj
   end
+
+  
 end
