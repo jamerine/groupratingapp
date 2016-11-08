@@ -2,7 +2,6 @@ require 'rails_helper'
 
 RSpec.describe RepresentativesController, :type => :controller do
   let(:my_representative) { create(:representative ) }
-  let(:bad_representative) { create(:representative) {representative_number: "2"} }
 
   describe "anonymous user" do
     before :each do
