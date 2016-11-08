@@ -121,7 +121,7 @@ class GroupRatingAllCreate
           end
 
           ProcessPolicyCoverageStatusHistory.where(representative_number: @policy_calculation.representative_number, policy_number: @policy_calculation.policy_number).find_each do |policy_coverage|
-            PolicyCoverageStatusHistory.where(policy_calculation_id: @policy_calculation.id, policy_number: @policy_calculation.policy_number, representative_number: @policy_calculation.representative_number, coverage_effective_date: policy_coverage.coverage_effective_date, coverage_end_date: policy_coverage.coverage_end_date, coverage_status: policy_coverage.coverage_status, lapse_days: policy_coverage.lapse_days).update_or_create(
+            PolicyCoverageStatusHistory.where(policy_calculation_id: @policy_calculation.id, policy_number: @policy_calculation.policy_number, representative_number: @policy_calculation.representative_number, coverage_effective_date: policy_coverage.coverage_effective_date, coverage_status: policy_coverage.coverage_status).update_or_create(
                     policy_calculation_id: @policy_calculation.id,
                     representative_id: @policy_calculation.representative_id,
                     representative_number: @policy_calculation.representative_number,

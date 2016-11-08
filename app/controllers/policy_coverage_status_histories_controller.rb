@@ -1,4 +1,4 @@
 class PolicyCoverageStatusHistoriesController < ApplicationController
-  
+
 
 end

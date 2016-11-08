@@ -60,7 +60,7 @@ class AccountsController < ApplicationController
 
 
   def show
-    @account = Account.includes(:group_rating_rejections).find(params[:id])
+    @account = Account.includes(:group_rating_rejections, :group_rating_exceptions).find(params[:id])
     @statuses = Account.statuses
     @representative = Representative.find(@account.representative_id)
     @new_payroll_calculation = PayrollCalculation.new
