@@ -5283,7 +5283,8 @@ CREATE TABLE accounts (
     ac3_approval boolean,
     user_override boolean,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    industry_group integer
 );
 
 
@@ -6257,7 +6258,7 @@ CREATE TABLE manual_class_calculations (
     representative_number integer,
     policy_calculation_id integer,
     policy_number integer,
-    manual_type integer,
+    manual_type character varying,
     manual_number integer,
     manual_class_four_year_period_payroll double precision,
     manual_class_expected_loss_rate double precision,
@@ -6581,7 +6582,7 @@ CREATE TABLE payroll_calculations (
     representative_number integer,
     policy_type character varying,
     policy_number integer,
-    manual_type integer,
+    manual_type character varying,
     manual_number integer,
     manual_class_calculation_id integer,
     manual_class_effective_date date,
@@ -9538,4 +9539,6 @@ INSERT INTO schema_migrations (version) VALUES ('20161031191723');
 INSERT INTO schema_migrations (version) VALUES ('20161031191940');
 
 INSERT INTO schema_migrations (version) VALUES ('20161101161501');
+
+INSERT INTO schema_migrations (version) VALUES ('20161110171036');
 

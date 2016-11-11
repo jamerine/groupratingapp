@@ -13,6 +13,7 @@ class CreateAccounts < ActiveRecord::Migration
       t.string    :business_email_address
       t.string    :website_url
       t.integer    :group_rating_qualification
+      t.integer   :industry_group
       t.float     :group_rating_tier
       t.integer   :group_rating_group_number
       t.float     :group_premium

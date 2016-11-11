@@ -54,7 +54,17 @@
 
 
   <div class="container">
-    <%= link_to "Calc Group Rating", account_group_rating_calc_path(params[:id]), class: 'btn btn-primary', method: :post %>
+    <%= link_to "Calc Group Rating", account_edit_group_rating_path(params[:id]), class: 'btn btn-primary', method: :get %>
+    <div class="row">
+      <% unless @account.group_rating_exceptions.empty? %>
+        <h3>Group Rating Exceptions</h3>
+        <% @account.group_rating_exceptions.each do |exception| %>
+          <div class="col-md-4">
+            <h5><%= exception.exception_reason.humanize %></h5>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
     <div class="row">
       <h3>Group Rating Information</h3>
         <% unless @account.accept? %>
@@ -70,6 +80,7 @@
           <p>Qualification:</p>
           <h5><%= @account.group_rating_qualification %></h5>
         </div>
+
         <div class="col-md-2">
           <p>Discount Tier:</p>
           <h5><%= @account.group_rating_tier %></h5>

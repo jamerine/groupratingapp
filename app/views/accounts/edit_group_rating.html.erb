@@ -1,0 +1,33 @@
+<div class="container">
+  <div class="jumbotron text-center">
+    <h1>Calculate Group Rating</h1>
+    <div class="row">
+      <%= form_for :account , :url => account_group_rating_calc_path(@account) do |f| %>
+          <div class="col-md-2">
+            <%= f.label 'Qualification' %>
+            <%= f.select :group_rating_qualification, options_for_select(@group_rating_qualifications.collect { |s| [s[0].humanize, s[0]] }, selected: @account.group_rating_qualification), {} , class: "form-control" %>
+          </div>
+          <div class="col-md-2">
+            <%= f.label 'Discount Tier' %>
+            <%= f.text_field :group_rating_tier, class: "form-control" %>
+          </div>
+          <div class="col-md-2">
+            <%= f.label 'Industry_group' %>
+            <%= f.number_field :industry_group, class: "form-control" %>
+          </div>
+
+          <div class="col-md-2">
+            <%= f.label 'Group Fees' %>
+            <%= f.text_field :group_fees %>
+          </div>
+
+          <div class="col-md-12" >
+            <%= f.submit 'Calculate Group Rating', class: 'btn btn-info' %>
+          </div>
+
+      <% end %>
+
+    </div>
+    </div>
+
+  </div>
