@@ -22,13 +22,17 @@ class ManualClassCalculation < ActiveRecord::Base
 
       manual_class_four_year_sum = self.payroll_calculations.where("manual_class_effective_date BETWEEN :experience_period_lower_date and :experience_period_upper_date",  experience_period_lower_date: @group_rating.experience_period_lower_date, experience_period_upper_date: @group_rating.experience_period_upper_date).sum(:manual_class_payroll)
 
-      manual_class_current_payroll = self.payroll_calculations.where("manual_class_effective_date >= :current_payroll_period_lower_date", current_payroll_period_lower_date: @group_rating.current_payroll_period_lower_date).sum(:manual_class_payroll)
+      manual_class_current_payroll = self.payroll_calculations.where("manual_class_effective_date >= :current_payroll_period_lower_date and manual_class_effective_date < :current_payroll_period_upper_date", current_payroll_period_lower_date: @group_rating.current_payroll_period_lower_date, current_payroll_period_upper_date: (@group_rating.current_payroll_period_lower_date + 1.year)).sum(:manual_class_payroll)
 
       @bwc_base_rate = BwcCodesBaseRatesExpLossRate.find_by(class_code: self.manual_number)
 
-      manual_class_expected_losses = @bwc_base_rate.expected_loss_rate * manual_class_four_year_sum
-
-      update_attributes(manual_class_expected_loss_rate: @bwc_base_rate.expected_loss_rate, manual_class_base_rate: @bwc_base_rate.base_rate, manual_class_expected_losses: manual_class_expected_losses, manual_class_current_estimated_payroll: manual_class_current_payroll, manual_class_four_year_period_payroll: manual_class_four_year_sum)
+      if @bwc_base_rate.nil?
+        manual_class_expected_losses = 0
+        update_attributes(manual_class_expected_loss_rate: 0, manual_class_base_rate: 0, manual_class_expected_losses: manual_class_expected_losses, manual_class_current_estimated_payroll: manual_class_current_payroll, manual_class_four_year_period_payroll: manual_class_four_year_sum)
+      else
+        manual_class_expected_losses = @bwc_base_rate.expected_loss_rate * manual_class_four_year_sum
+        update_attributes(manual_class_expected_loss_rate: @bwc_base_rate.expected_loss_rate, manual_class_base_rate: @bwc_base_rate.base_rate, manual_class_expected_losses: manual_class_expected_losses, manual_class_current_estimated_payroll: manual_class_current_payroll, manual_class_four_year_period_payroll: manual_class_four_year_sum)
+      end
 
       @policy_calculation = PolicyCalculation.find(self.policy_calculation_id)
 

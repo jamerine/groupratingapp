@@ -13,7 +13,9 @@ Rails.application.routes.draw do
   devise_for :users
 
   resources :accounts do
+    get :edit_group_rating
     post :group_rating_calc
+    post :group_rating
   end
 
   resources :imports do

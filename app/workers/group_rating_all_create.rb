@@ -4,6 +4,7 @@ class GroupRatingAllCreate
   sidekiq_options queue: :group_rating_all_create
 
   def perform(group_rating_id, experience_period_lower_date, process_representative, representative_id, policy_number)
+
       @policy_exp = FinalPolicyExperienceCalculation.find_by(policy_number: policy_number, representative_number: process_representative)
       @policy_proj = FinalPolicyGroupRatingAndPremiumProjection.find_by(policy_number: @policy_exp.policy_number, representative_number: @policy_exp.representative_number)
 
@@ -211,7 +212,9 @@ class GroupRatingAllCreate
                 end
               end
         end
-      @account.group_rating
+      unless @account.user_override?
+        @account.group_rating
+      end
   end
 
 end

@@ -68,19 +68,33 @@ class AccountsController < ApplicationController
   end
 
 
-  def group_rating_calc
+  def edit_group_rating
     @account = Account.find(params[:account_id])
-    @account.group_rating
+    @policy_calculation = @account.policy_calculation
+    @group_rating_qualifications = Account.group_rating_qualifications
+  end
+
+  def group_rating_calc
+    args = params[:account]
+    puts "these are the args: #{args}"
+    @account = Account.find(params[:account_id])
+    @account.group_rating_calc(args)
       flash[:notice] = "Account's group rating calculation was successful."
       redirect_to @account
-
   end
+
+  # def group_rating
+  #   @account = Account.find(params[:account_id])
+  #   @account.group_ratings
+  #     flash[:notice] = "Account's group rating calculation was successful."
+  #     redirect_to @account
+  # end
 
 
   private
 
   def account_params
-    params.require(:account).permit(:representative_id, :name, :policy_number_entered, :street_address, :street_address_2, :city, :state, :zip_code, :business_phone_number, :business_email_address, :website_url, :group_fees, :group_dues, :total_costs, :status, :federal_identification_number, :cycle_date, :request_date, :quarterly_request, :weekly_request, :ac3_approval)
+    params.require(:account).permit(:representative_id, :name, :policy_number_entered, :street_address, :street_address_2, :city, :state, :zip_code, :business_phone_number, :business_email_address, :website_url, :group_rating_qualification, :group_rating_tier, :group_fees, :user_override, :industry_group, :group_dues, :total_costs, :status, :federal_identification_number, :cycle_date, :request_date, :quarterly_request, :weekly_request, :ac3_approval)
   end
 
 
