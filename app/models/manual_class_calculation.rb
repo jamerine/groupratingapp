@@ -205,6 +205,8 @@ class ManualClassCalculation < ActiveRecord::Base
   end
 
   @policy_calculation.update_attributes(policy_total_individual_premium: policy_total_individual_premium, policy_total_group_premium: policy_total_group_premium)
+
+  @policy_calculation.account.group_rating
   end
 
 
