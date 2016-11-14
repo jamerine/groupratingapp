@@ -38,14 +38,12 @@ class Account < ActiveRecord::Base
       else
         self.update_attributes(group_rating_qualification: args["group_rating_qualification"])
       end
-
+      industry_group = policy_calculation.policy_industry_group
       if group_rating_qualification == "accept"
-
 
         group_rating_calc = GroupRating.find_by(representative_id: policy_calculation.representative_id)
 
         if (args["group_rating_tier"].empty? && args["industry_group"].empty?) || args.empty? || (args["group_rating_tier"].nil? && args["industry_group"].nil?)
-          industry_group = policy_calculation.policy_industry_group
           group_ratio = policy_calculation.policy_group_ratio
           group_rating_rows = BwcCodesIndustryGroupSavingsRatioCriterium.where("ratio_criteria >= :group_ratio and industry_group = :industry_group", group_ratio: group_ratio, industry_group: industry_group)
         elsif (args["group_rating_tier"].empty? && !args["industry_group"].empty?)
@@ -53,7 +51,6 @@ class Account < ActiveRecord::Base
           group_ratio = policy_calculation.policy_group_ratio
           group_rating_rows = BwcCodesIndustryGroupSavingsRatioCriterium.where("ratio_criteria >= :group_ratio and industry_group = :industry_group", group_ratio: group_ratio, industry_group: industry_group)
         elsif (!args["group_rating_tier"].empty? && args["industry_group"].empty?)
-          industry_group = policy_calculation.policy_industry_group
           group_rating_tier = args["group_rating_tier"]
           group_rating_rows = BwcCodesIndustryGroupSavingsRatioCriterium.where("market_rate >= :group_rating_tier and industry_group = :industry_group", group_rating_tier: group_rating_tier, industry_group: industry_group)
         else
@@ -249,7 +246,7 @@ class Account < ActiveRecord::Base
 
 
   def fee_calculation
-      if representative.representative_number != 219406
+      if policy_calculation.policy_total_individual_premium.nil? || representative.representative_number != 219406
         return
       end
 
