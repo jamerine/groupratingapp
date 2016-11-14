@@ -31,40 +31,40 @@ class Account < ActiveRecord::Base
 
 
   def group_rating_calc(args = {})
+    # MANUAL EDIT OF GROUP RATING METHOD
 
       if args.empty?
         self.group_rating_reject
       else
-        self.update_attributes(group_rating_qualification: args[:group_rating_qualification], user_override: args[:user_override])
+        self.update_attributes(group_rating_qualification: args["group_rating_qualification"])
       end
 
       if group_rating_qualification == "accept"
+
+
         group_rating_calc = GroupRating.find_by(representative_id: policy_calculation.representative_id)
 
-        if (args[:group_rating_tier].empty? && args[:industry_group].empty?) || args.empty?
+        if (args["group_rating_tier"].empty? && args["industry_group"].empty?) || args.empty? || (args["group_rating_tier"].nil? && args["industry_group"].nil?)
           industry_group = policy_calculation.policy_industry_group
           group_ratio = policy_calculation.policy_group_ratio
           group_rating_rows = BwcCodesIndustryGroupSavingsRatioCriterium.where("ratio_criteria >= :group_ratio and industry_group = :industry_group", group_ratio: group_ratio, industry_group: industry_group)
-        elsif (args[:group_rating_tier].empty? && !args[:industry_group].empty?)
-          industry_group = args[:industry_group]
+        elsif (args["group_rating_tier"].empty? && !args["industry_group"].empty?)
+          industry_group = args["industry_group"]
           group_ratio = policy_calculation.policy_group_ratio
           group_rating_rows = BwcCodesIndustryGroupSavingsRatioCriterium.where("ratio_criteria >= :group_ratio and industry_group = :industry_group", group_ratio: group_ratio, industry_group: industry_group)
-        elsif (!args[:group_rating_tier].empty? && args[:industry_group].empty?)
+        elsif (!args["group_rating_tier"].empty? && args["industry_group"].empty?)
           industry_group = policy_calculation.policy_industry_group
-          group_rating_tier = args[:group_rating_tier]
+          group_rating_tier = args["group_rating_tier"]
           group_rating_rows = BwcCodesIndustryGroupSavingsRatioCriterium.where("market_rate >= :group_rating_tier and industry_group = :industry_group", group_rating_tier: group_rating_tier, industry_group: industry_group)
         else
-          industry_group = args[:industry_group]
-          group_rating_tier = args[:group_rating_tier]
+          industry_group = args["industry_group"]
+          group_rating_tier = args["group_rating_tier"]
           group_rating_rows = BwcCodesIndustryGroupSavingsRatioCriterium.where("market_rate >= :group_rating_tier and industry_group = :industry_group", group_rating_tier: group_rating_tier, industry_group: industry_group)
         end
-        puts "BEFORE CHECKING FOR GROUP RATING ROWS NIL OR EMPTY #{group_rating_rows}"
 
-        group_rating_rows = BwcCodesIndustryGroupSavingsRatioCriterium.where("market_rate >= :group_rating_tier and industry_group = :industry_group", group_rating_tier: group_rating_tier, industry_group: industry_group)
 
         if !group_rating_rows.empty?
           administrative_rate = BwcCodesConstantValue.find_by("name = 'administrative_rate' and completed_date is null").rate
-          puts "AFTER CHECKING FOR GROUP RATING ROWS NIL OR EMPTY #{group_rating_rows}"
           group_rating_tier = group_rating_rows.min.market_rate
 
           # manual_classes = policy_calculation.manual_class_calculations
@@ -82,25 +82,31 @@ class Account < ActiveRecord::Base
 
           group_savings = policy_calculation.policy_total_individual_premium - group_premium
 
-        elsif
-          update_attributes(group_rating_qualification: "reject")
+        else
           group_premium = nil
           group_savings = nil
           group_rating_tier = nil
         end
-
-
-        update_attributes(group_rating_tier: group_rating_tier, group_premium: group_premium, group_savings: group_savings, industry_group: industry_group)
-
+      else
+        group_premium = nil
+        group_savings = nil
+        group_rating_tier = nil
       end
-      if args[:group_fees].nil? || args[:group_fees].empty? || (args[:group_fees] == self.group_fees)
+
+
+      update_attributes(group_rating_tier: group_rating_tier, group_premium: group_premium, group_savings: group_savings, industry_group: industry_group)
+
+
+      if args["group_fees"].nil? || args["group_fees"].empty?
         self.fee_calculation
       else
-        self.update_attributes(group_fees: args[:group_fees])
+        self.update_attributes(group_fees: args["group_fees"])
+
       end
   end
 
   def group_rating
+    # AUTOMATIC GROUP RATING METHOD
     self.group_rating_reject
 
     if group_rating_qualification == "accept"
@@ -239,7 +245,7 @@ class Account < ActiveRecord::Base
 
 
   def fee_calculation
-      if policy_calculation.policy_total_individual_premium.nil? || representative.representative_number != 219406
+      if representative.representative_number != 219406
         return
       end
 

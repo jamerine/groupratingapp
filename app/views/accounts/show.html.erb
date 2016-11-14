@@ -67,6 +67,15 @@
     </div>
     <div class="row">
       <h3>Group Rating Information</h3>
+        <p>
+          USER OVERRIDE
+        <% if @account.user_override %>
+          <input type="checkbox" checked="checked" disabled>
+        <% else %>
+          <input type="checkbox" disabled>
+        <% end %>
+      </p>
+
         <% unless @account.accept? %>
           <div class="col-md-12">
             <p>Rejections:</p>

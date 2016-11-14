@@ -72,15 +72,24 @@ class AccountsController < ApplicationController
     @account = Account.find(params[:account_id])
     @policy_calculation = @account.policy_calculation
     @group_rating_qualifications = Account.group_rating_qualifications
+    @group_rating_qualifications[:auto_run] = "3"
+    @group_rating_tiers = BwcCodesIndustryGroupSavingsRatioCriterium.where(industry_group: @account.industry_group).pluck(:market_rate).uniq
   end
 
   def group_rating_calc
     args = params[:account]
-    puts "these are the args: #{args}"
     @account = Account.find(params[:account_id])
+    if args[:group_rating_qualification] == "auto_run"
+      @account.update_attributes(user_override: nil)
+      @account.group_rating
+      flash[:notice] = "Account's automatic group rating calculation was successful."
+      redirect_to @account
+    else
     @account.group_rating_calc(args)
+        @account.update_attributes(user_override: true)
       flash[:notice] = "Account's group rating calculation was successful."
       redirect_to @account
+    end
   end
 
   # def group_rating
