@@ -39,7 +39,7 @@ class Step4Proc < ActiveRecord::Migration
           FROM public.final_employer_demographics_informations a
           Inner Join public.process_payroll_all_transactions_breakdown_by_manual_classes b
           ON a.policy_number = b.policy_number
-          WHERE b.manual_class_effective_date >= experience_period_lower_date and a.representative_number = process_representative
+          WHERE b.reporting_period_start_date >= experience_period_lower_date and a.representative_number = process_representative
           GROUP BY a.representative_number,
             a.policy_type,
             a.policy_number,
@@ -49,7 +49,7 @@ class Step4Proc < ActiveRecord::Migration
 
 
           -- Broke manual_class payroll calculations into two tables.
-          -- One  to calculate payroll and manual_reclass payroll when  a.manual_class_effective_date > edi.policy_creation_date because a payroll is only counted in your experience when you have a policy_created.
+          -- One  to calculate payroll and manual_reclass payroll when  a.reporting_period_start_date > edi.policy_creation_date because a payroll is only counted in your experience when you have a policy_created.
 
           -- One to calculate the payroll of transferred payroll from another policy.  This does not require a policy to be  created.
 
@@ -78,9 +78,9 @@ class Step4Proc < ActiveRecord::Migration
             FROM public.process_payroll_all_transactions_breakdown_by_manual_classes a
             Left Join public.final_employer_demographics_informations edi
             ON a.policy_number = edi.policy_number
-            WHERE (a.manual_class_effective_date BETWEEN experience_period_lower_date and experience_period_upper_date)
+            WHERE (a.reporting_period_start_date BETWEEN experience_period_lower_date and experience_period_upper_date)
             and a.representative_number = process_representative -- date range for experience_period
-              and (a.payroll_origin = 'payroll' or a.payroll_origin = 'manual_reclass' or a.payroll_origin = 'payroll_adjustment') and (a.manual_class_effective_date >= edi.policy_creation_date )
+              and (a.payroll_origin = 'payroll' or a.payroll_origin = 'manual_reclass' or a.payroll_origin = 'payroll_adjustment') and (a.reporting_period_start_date >= edi.policy_creation_date )
             GROUP BY a.representative_number, a.policy_type, a.policy_number, a.manual_number
           );
 
@@ -108,7 +108,7 @@ class Step4Proc < ActiveRecord::Migration
             FROM public.process_payroll_all_transactions_breakdown_by_manual_classes a
             Left Join public.final_employer_demographics_informations edi
             ON a.policy_number = edi.policy_number
-            WHERE (a.manual_class_effective_date BETWEEN experience_period_lower_date and experience_period_upper_date)
+            WHERE (a.reporting_period_start_date BETWEEN experience_period_lower_date and experience_period_upper_date)
             and a.representative_number = process_representative -- date range for experience_period
               and (a.payroll_origin != 'payroll' and a.payroll_origin != 'manual_reclass' and a.payroll_origin != 'payroll_adjustment')
             GROUP BY a.representative_number, a.policy_type, a.policy_number, a.manual_number

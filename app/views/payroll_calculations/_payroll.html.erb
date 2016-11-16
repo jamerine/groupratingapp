@@ -17,10 +17,10 @@
       </thead>
 
       <tbody>
-        <% @payroll_calculations.order("manual_class_effective_date desc").each do |payroll_calculation| %>
+        <% @payroll_calculations.order("reporting_period_start_date desc").each do |payroll_calculation| %>
         <tr>
           <td> <%= payroll_calculation.manual_type %></td>
-          <td> <%= payroll_calculation.manual_class_effective_date %></td>
+          <td> <%= payroll_calculation.reporting_period_start_date %></td>
           <td> <%= number_to_currency(payroll_calculation.manual_class_payroll) %></td>
           <td> <%= payroll_calculation.payroll_origin %></td>
           <td> <%= payroll_calculation.data_source %></td>

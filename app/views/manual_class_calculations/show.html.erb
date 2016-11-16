@@ -110,11 +110,11 @@
         </div>
       </div>
 
-    <% @payroll_calculations.order("manual_class_effective_date desc").each do |payroll_calculation| %>
+    <% @payroll_calculations.order("reporting_period_start_date desc").each do |payroll_calculation| %>
       <div class="row text-center list-group-item">
           <div class="col-md-2 col-sm-6 col-xs-6">
             <h5 class="hidden-md hidden-lg">Effective Date</h5>
-            <p> <%= payroll_calculation.manual_class_effective_date %></p>
+            <p> <%= payroll_calculation.reporting_period_start_date %></p>
           </div>
           <div class="col-md-2 col-sm-6 col-xs-6">
             <h5 class="hidden-md hidden-lg">Manual_type</h5>

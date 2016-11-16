@@ -187,7 +187,7 @@ class GroupRatingAllCreate
                     manual_class_estimated_individual_premium: 0,
                     data_source: man_class_exp.data_source)
               end
-              ProcessPayrollAllTransactionsBreakdownByManualClass.where("manual_class_effective_date >= :manual_class_effective_date and representative_number = :representative_number and manual_number = :manual_number and policy_number = :policy_number",  manual_class_effective_date: experience_period_lower_date, representative_number: process_representative, manual_number: @manual_class_calculation.manual_number, policy_number: @manual_class_calculation.policy_number).find_each do |payroll_transaction|
+              ProcessPayrollAllTransactionsBreakdownByManualClass.where("reporting_period_start_date >= :reporting_period_start_date and representative_number = :representative_number and manual_number = :manual_number and policy_number = :policy_number",  reporting_period_start_date: experience_period_lower_date, representative_number: process_representative, manual_number: @manual_class_calculation.manual_number, policy_number: @manual_class_calculation.policy_number).find_each do |payroll_transaction|
                 unless @manual_class_calculation.nil? || payroll_transaction.id.nil? || payroll_transaction.manual_number == 0
                   PayrollCalculation.where(representative_number: payroll_transaction.representative_number,
                   policy_type: payroll_transaction.policy_type,
@@ -195,7 +195,10 @@ class GroupRatingAllCreate
                   manual_type: payroll_transaction.manual_type,
                   manual_number: payroll_transaction.manual_number,
                   manual_class_calculation_id: @manual_class_calculation.id,
-                  manual_class_effective_date: payroll_transaction.manual_class_effective_date,
+                  reporting_period_start_date: payroll_transaction.reporting_period_start_date,
+                  reporting_period_end_date: payroll_transaction.reporting_period_end_date,
+                  policy_transferred: payroll_transaction.policy_transferred,
+                  transfer_creation_date: payroll_transaction.transfer_creation_date,
                   payroll_origin: payroll_transaction.payroll_origin,
                   data_source: payroll_transaction.data_source).update_or_create(
                     representative_number: payroll_transaction.representative_number,
@@ -204,7 +207,10 @@ class GroupRatingAllCreate
                     manual_type: payroll_transaction.manual_type,
                     manual_number: payroll_transaction.manual_number,
                     manual_class_calculation_id: @manual_class_calculation.id,
-                    manual_class_effective_date: payroll_transaction.manual_class_effective_date,
+                    reporting_period_start_date: payroll_transaction.reporting_period_start_date,
+                    reporting_period_end_date: payroll_transaction.reporting_period_end_date,
+                    policy_transferred: payroll_transaction.policy_transferred,
+                    transfer_creation_date: payroll_transaction.transfer_creation_date,
                     manual_class_payroll: payroll_transaction.manual_class_payroll,
                     payroll_origin: payroll_transaction.payroll_origin,
                     data_source: payroll_transaction.data_source
