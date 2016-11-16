@@ -69,7 +69,7 @@ class Account < ActiveRecord::Base
             unless manual_class.manual_class_base_rate.nil?
               manual_class_group_total_rate = (1 + group_rating_tier) * manual_class.manual_class_base_rate * (1 +  administrative_rate)
 
-              manual_class_estimated_group_premium = manual_class.payroll_calculations.where("manual_class_effective_date >= :current_payroll_period_lower_date and manual_class_effective_date < :current_payroll_period_upper_date", current_payroll_period_lower_date: group_rating_calc.current_payroll_period_lower_date, current_payroll_period_upper_date: (group_rating_calc.current_payroll_period_lower_date + 1.year)).sum(:manual_class_payroll) * manual_class_group_total_rate
+              manual_class_estimated_group_premium = manual_class.payroll_calculations.where("reporting_period_start_date >= :current_payroll_period_lower_date and reporting_period_start_date < :current_payroll_period_upper_date", current_payroll_period_lower_date: group_rating_calc.current_payroll_period_lower_date, current_payroll_period_upper_date: (group_rating_calc.current_payroll_period_lower_date + 1.year)).sum(:manual_class_payroll) * manual_class_group_total_rate
 
               manual_class.update_attributes(manual_class_group_total_rate: manual_class_group_total_rate, manual_class_estimated_group_premium: manual_class_estimated_group_premium)
             end
@@ -107,9 +107,10 @@ class Account < ActiveRecord::Base
     unless self.user_override?
       self.group_rating_reject
 
+      industry_group = policy_calculation.policy_industry_group
+
       if group_rating_qualification == "accept"
         group_rating_calc = GroupRating.find_by(representative_id: policy_calculation.representative_id)
-        industry_group = policy_calculation.policy_industry_group
         group_rating_rows = BwcCodesIndustryGroupSavingsRatioCriterium.where("ratio_criteria >= :group_ratio and industry_group = :industry_group", group_ratio: policy_calculation.policy_group_ratio, industry_group: industry_group)
 
         if group_rating_rows.empty?
@@ -124,7 +125,7 @@ class Account < ActiveRecord::Base
             unless manual_class.manual_class_base_rate.nil?
               manual_class_group_total_rate = (1 + group_rating_tier) * manual_class.manual_class_base_rate * (1 +  administrative_rate)
 
-              manual_class_estimated_group_premium = manual_class.payroll_calculations.where("manual_class_effective_date >= :current_payroll_period_lower_date and manual_class_effective_date < :current_payroll_period_upper_date", current_payroll_period_lower_date: group_rating_calc.current_payroll_period_lower_date, current_payroll_period_upper_date: (group_rating_calc.current_payroll_period_lower_date + 1.year)).sum(:manual_class_payroll) * manual_class_group_total_rate
+              manual_class_estimated_group_premium = manual_class.payroll_calculations.where("reporting_period_start_date >= :current_payroll_period_lower_date and reporting_period_start_date < :current_payroll_period_upper_date", current_payroll_period_lower_date: group_rating_calc.current_payroll_period_lower_date, current_payroll_period_upper_date: (group_rating_calc.current_payroll_period_lower_date + 1.year)).sum(:manual_class_payroll) * manual_class_group_total_rate
 
               manual_class.update_attributes(manual_class_group_total_rate: manual_class_group_total_rate, manual_class_estimated_group_premium: manual_class_estimated_group_premium)
             end
@@ -147,46 +148,11 @@ class Account < ActiveRecord::Base
 
 
   def group_rating_reject
-    GroupRatingRejection.where(representative_id: self.representative_id, account_id: self.id).destroy_all
+    self.group_rating_rejections.destroy_all
+    self.group_rating_exceptions.destroy_all
 
     unless self.predecessor?
       @group_rating = GroupRating.where(representative_id: self.representative_id).last
-
-      # ----------- Exception Section -----------
-      self.group_rating_exceptions.destroy_all
-      #LAPSE PERIOD FOR GROUP RATING
-        nov_first = (Date.current.year.to_s + '-11-01').to_date
-        days_to_add = (4 - nov_first.wday) % 7
-        fourth_thursday = nov_first + days_to_add + 21
-
-        higher_lapse = fourth_thursday - 3
-        lower_lapse = higher_lapse - 12.months
-        lapse_sum = 0
-
-        coverage_lapse_periods = self.policy_calculation.policy_coverage_status_histories.where("coverage_status = :coverage_status and (coverage_end_date BETWEEN :lower_lapse and :higher_lapse or coverage_end_date is null)", coverage_status: "LAPSE", lower_lapse: lower_lapse, higher_lapse: higher_lapse)
-
-        coverage_lapse_periods.each do |period|
-          # period starts before and ends out of range
-          if period.coverage_effective_date < lower_lapse && period.coverage_end_date.nil?
-            lapse_sum += Date.current - lower_lapse
-          # period starts after and ends out of range
-          elsif period.coverage_effective_date > lower_lapse && period.coverage_end_date.nil?
-            lapse_sum += Date.current - period.coverage_effective_date
-          # period starts before and ends in range
-          elsif period.coverage_effective_date < lower_lapse && period.coverage_end_date < higher_lapse
-            lapse_sum += period.coverage_end_date - lower_lapse
-          # period starts after and ends in range
-          elsif period.coverage_effective_date > lower_lapse && period.coverage_end_date < higher_lapse
-            lapse_sum += period.coverage_end_date - period.coverage_effective_date
-          end
-        end
-
-        if lapse_sum >= 60
-          GroupRatingRejection.create(account_id: self.id, reject_reason: 'reject_60+_lapse', representative_id: self.representative_id)
-          GroupRatingException.create(account_id: self.id, exception_reason: 'group_rating_60+_lapse', representative_id: self.representative_id)
-        elsif lapse_sum < 60 && lapse_sum >= 40
-          GroupRatingException.create(account_id: self.id, exception_reason: 'group_rating_40-60_lapse', representative_id: self.representative_id)
-        end
 
         # NEGATIVE PAYROLL ON A MANUAL CLASS
 
@@ -238,6 +204,51 @@ class Account < ActiveRecord::Base
        else
          qualification = 0
        end
+
+       if qualification = 0
+         # ----------- Exception Section -----------
+
+         #LAPSE PERIOD FOR GROUP RATING
+           nov_first = (Date.current.year.to_s + '-11-01').to_date
+           days_to_add = (4 - nov_first.wday) % 7
+           fourth_thursday = nov_first + days_to_add + 21
+
+           higher_lapse = fourth_thursday - 3
+           lower_lapse = higher_lapse - 12.months
+           lapse_sum = 0
+
+           coverage_lapse_periods = self.policy_calculation.policy_coverage_status_histories.where("coverage_status = :coverage_status and (coverage_end_date BETWEEN :lower_lapse and :higher_lapse or coverage_end_date is null)", coverage_status: "LAPSE", lower_lapse: lower_lapse, higher_lapse: higher_lapse)
+
+           coverage_lapse_periods.each do |period|
+             # period starts before and ends out of range
+             if period.coverage_effective_date < lower_lapse && period.coverage_end_date.nil?
+               lapse_sum += Date.current - lower_lapse
+             # period starts after and ends out of range
+             elsif period.coverage_effective_date > lower_lapse && period.coverage_end_date.nil?
+               lapse_sum += Date.current - period.coverage_effective_date
+             # period starts before and ends in range
+             elsif period.coverage_effective_date < lower_lapse && period.coverage_end_date < higher_lapse
+               lapse_sum += period.coverage_end_date - lower_lapse
+             # period starts after and ends in range
+             elsif period.coverage_effective_date > lower_lapse && period.coverage_end_date < higher_lapse
+               lapse_sum += period.coverage_end_date - period.coverage_effective_date
+             end
+           end
+
+           if lapse_sum >= 60
+             GroupRatingRejection.create(account_id: self.id, reject_reason: 'reject_60+_lapse', representative_id: self.representative_id)
+             GroupRatingException.create(account_id: self.id, exception_reason: 'group_rating_60+_lapse', representative_id: self.representative_id)
+           elsif lapse_sum < 60 && lapse_sum >= 40
+             GroupRatingException.create(account_id: self.id, exception_reason: 'group_rating_40-60_lapse', representative_id: self.representative_id)
+           end
+
+            if self.group_rating_rejections.count > 0
+              puts self.group_rating_rejections.count
+              qualification = 2
+            else
+              qualification = 0
+            end
+         end
 
       update_attributes(group_rating_qualification: qualification)
     end

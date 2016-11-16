@@ -5,7 +5,8 @@ class CreateProcessPolicyCombineFullTransfers < ActiveRecord::Migration
       t.string :policy_type
       t.integer :manual_number
       t.string :manual_type
-      t.date :manual_class_effective_date
+      t.date :reporting_period_start_date
+      t.date :reporting_period_end_date
       t.float :manual_class_rate
       t.float :manual_class_payroll
       t.float :manual_class_premium
