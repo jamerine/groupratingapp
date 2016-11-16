@@ -77,7 +77,7 @@ class CreateProcessRateProc < ActiveRecord::Migration
 
   def down
     connection.execute(%q{
-      DROP FUNCTION public.proc_process_flat_rates;
+      DROP FUNCTION public.proc_process_flat_rates();
     })
   end
 end

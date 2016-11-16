@@ -7,7 +7,8 @@ class CreateProcessPayrollBreakdownByManualClasses < ActiveRecord::Migration
       t.integer :manual_number
       t.index [:policy_number, :manual_number, :representative_number], name: 'index_proc_pr_by_man_cl_on_pol_and_man_rep'
       t.string :manual_type
-      t.date :manual_class_effective_date
+      t.date :reporting_period_start_date
+      t.date :reporting_period_end_date
       t.float :manual_class_rate
       t.float :manual_class_payroll
       t.float :manual_class_premium

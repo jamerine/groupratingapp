@@ -23,7 +23,8 @@ class Step2Proc < ActiveRecord::Migration
         	policy_number,
         	manual_number,
         	manual_type,
-        	manual_class_effective_date,
+        	reporting_period_start_date,
+        	reporting_period_end_date,
         	manual_class_rate,
         	manual_class_payroll,
         	manual_class_premium,
@@ -37,7 +38,8 @@ class Step2Proc < ActiveRecord::Migration
         policy_number,
       	manual_number,
       	manual_type,
-      	manual_effective_date as manual_class_effective_date,
+      	manual_effective_date as reporting_period_start_date,
+      	(manual_effective_date + (6::text || ' month')::interval  - (1::text || ' day')::interval)::date as reporting_period_end_date,
       	manual_class_rate as manual_class_rate,
       	year_to_date_payroll as manual_class_payroll,
       	year_to_date_premium_billed as manual_class_premium,
@@ -50,15 +52,17 @@ class Step2Proc < ActiveRecord::Migration
         ORDER BY
           policy_number ASC,
           manual_number ASC,
-          manual_class_effective_date ASC
+          reporting_period_start_date ASC
         );
+
         INSERT INTO process_payroll_breakdown_by_manual_classes (
           representative_number,
             policy_type,
             policy_number,
             manual_number,
             manual_type,
-            manual_class_effective_date,
+            reporting_period_start_date,
+            reporting_period_end_date,
             manual_class_rate,
             manual_class_payroll,
             manual_class_premium,
@@ -72,7 +76,8 @@ class Step2Proc < ActiveRecord::Migration
         	policy_number,
         	manual_number,
         	manual_type,
-        	n2nd_manual_effective_date as manual_class_effective_date,
+        	n2nd_manual_effective_date as reporting_period_start_date,
+        	(n2nd_manual_effective_date + (6::text || ' month')::interval  - (1::text || ' day')::interval)::date as reporting_period_end_date,
         	n2nd_manual_class_rate as manual_class_rate,
         	n2nd_year_to_date_payroll as manual_class_payroll,
         	n2nd_year_to_date_premium_billed as manual_class_premium,
@@ -85,7 +90,7 @@ class Step2Proc < ActiveRecord::Migration
           ORDER BY
             policy_number ASC,
             manual_number ASC,
-            manual_class_effective_date ASC
+            reporting_period_start_date ASC
         );
         INSERT INTO process_payroll_breakdown_by_manual_classes (
           representative_number,
@@ -93,7 +98,8 @@ class Step2Proc < ActiveRecord::Migration
             policy_number,
             manual_number,
             manual_type,
-            manual_class_effective_date,
+            reporting_period_start_date,
+            reporting_period_end_date,
             manual_class_rate,
             manual_class_payroll,
             manual_class_premium,
@@ -107,7 +113,8 @@ class Step2Proc < ActiveRecord::Migration
         	policy_number,
         	manual_number,
         	manual_type,
-        	n3rd_manual_effective_date as manual_class_effective_date,
+        	n3rd_manual_effective_date as reporting_period_start_date,
+        	(n3rd_manual_effective_date + (6::text || ' month')::interval  - (1::text || ' day')::interval)::date as reporting_period_end_date,
         	n3rd_manual_class_rate as manual_class_rate,
         	n3rd_year_to_date_payroll as manual_class_payroll,
         	n3rd_year_to_date_premium_billed as manual_class_premium,
@@ -120,7 +127,7 @@ class Step2Proc < ActiveRecord::Migration
            ORDER BY
              policy_number ASC,
              manual_number ASC,
-             manual_class_effective_date ASC
+             reporting_period_start_date ASC
            );
            INSERT INTO process_payroll_breakdown_by_manual_classes (
              representative_number,
@@ -128,7 +135,8 @@ class Step2Proc < ActiveRecord::Migration
                policy_number,
                manual_number,
                manual_type,
-               manual_class_effective_date,
+               reporting_period_start_date,
+               reporting_period_end_date,
                manual_class_rate,
                manual_class_payroll,
                manual_class_premium,
@@ -142,7 +150,8 @@ class Step2Proc < ActiveRecord::Migration
         	policy_number,
         	manual_number,
         	manual_type,
-        	n4th_manual_effective_date as manual_class_effective_date,
+        	n4th_manual_effective_date as reporting_period_start_date,
+        	(n4th_manual_effective_date + (6::text || ' month')::interval  - (1::text || ' day')::interval)::date as reporting_period_end_date,
         	n4th_manual_class_rate as manual_class_rate,
         	n4th_year_to_date_payroll as manual_class_payroll,
         	n4th_year_to_date_premium_billed as manual_class_premium,
@@ -155,7 +164,7 @@ class Step2Proc < ActiveRecord::Migration
           ORDER BY
             policy_number ASC,
             manual_number ASC,
-            manual_class_effective_date ASC
+            reporting_period_start_date ASC
           );
           INSERT INTO process_payroll_breakdown_by_manual_classes (
             representative_number,
@@ -163,7 +172,8 @@ class Step2Proc < ActiveRecord::Migration
               policy_number,
               manual_number,
               manual_type,
-              manual_class_effective_date,
+              reporting_period_start_date,
+              reporting_period_end_date,
               manual_class_rate,
               manual_class_payroll,
               manual_class_premium,
@@ -177,7 +187,8 @@ class Step2Proc < ActiveRecord::Migration
       	policy_number,
       	manual_number,
       	manual_type,
-      	n5th_manual_effective_date as manual_class_effective_date,
+      	n5th_manual_effective_date as reporting_period_start_date,
+      	(n5th_manual_effective_date + (6::text || ' month')::interval  - (1::text || ' day')::interval)::date as reporting_period_end_date,
       	n5th_manual_class_rate as manual_class_rate,
       	n5th_year_to_date_payroll as manual_class_payroll,
       	n5th_year_to_date_premium_billed as manual_class_premium,
@@ -190,7 +201,7 @@ class Step2Proc < ActiveRecord::Migration
         ORDER BY
           policy_number ASC,
           manual_number ASC,
-          manual_class_effective_date ASC
+          reporting_period_start_date ASC
         );
         INSERT INTO process_payroll_breakdown_by_manual_classes (
           representative_number,
@@ -198,7 +209,8 @@ class Step2Proc < ActiveRecord::Migration
             policy_number,
             manual_number,
             manual_type,
-            manual_class_effective_date,
+            reporting_period_start_date,
+            reporting_period_end_date,
             manual_class_rate,
             manual_class_payroll,
             manual_class_premium,
@@ -212,7 +224,8 @@ class Step2Proc < ActiveRecord::Migration
         	policy_number,
         	manual_number,
         	manual_type,
-        	n6th_manual_effective_date as manual_class_effective_date,
+        	n6th_manual_effective_date as reporting_period_start_date,
+        	(n6th_manual_effective_date + (6::text || ' month')::interval  - (1::text || ' day')::interval)::date as reporting_period_end_date,
         	n6th_manual_class_rate as manual_class_rate,
         	n6th_year_to_date_payroll as manual_class_payroll,
         	n6th_year_to_date_premium_billed as manual_class_premium,
@@ -225,7 +238,7 @@ class Step2Proc < ActiveRecord::Migration
         ORDER BY
           policy_number ASC,
           manual_number ASC,
-          manual_class_effective_date ASC
+          reporting_period_start_date ASC
         );
         INSERT INTO process_payroll_breakdown_by_manual_classes (
           representative_number,
@@ -233,7 +246,8 @@ class Step2Proc < ActiveRecord::Migration
             policy_number,
             manual_number,
             manual_type,
-            manual_class_effective_date,
+            reporting_period_start_date,
+            reporting_period_end_date,
             manual_class_rate,
             manual_class_payroll,
             manual_class_premium,
@@ -247,7 +261,8 @@ class Step2Proc < ActiveRecord::Migration
         	policy_number,
         	manual_number,
         	manual_type,
-        	n7th_manual_effective_date as manual_class_effective_date,
+        	n7th_manual_effective_date as reporting_period_start_date,
+        	(n7th_manual_effective_date + (6::text || ' month')::interval  - (1::text || ' day')::interval)::date as reporting_period_end_date,
         	n7th_manual_class_rate as manual_class_rate,
         	n7th_year_to_date_payroll as manual_class_payroll,
         	n7th_year_to_date_premium_billed as manual_class_premium,
@@ -260,7 +275,7 @@ class Step2Proc < ActiveRecord::Migration
         ORDER BY
           policy_number ASC,
           manual_number ASC,
-          manual_class_effective_date ASC
+          reporting_period_start_date ASC
         );
         INSERT INTO process_payroll_breakdown_by_manual_classes (
           representative_number,
@@ -268,7 +283,8 @@ class Step2Proc < ActiveRecord::Migration
             policy_number,
             manual_number,
             manual_type,
-            manual_class_effective_date,
+            reporting_period_start_date,
+            reporting_period_end_date,
             manual_class_rate,
             manual_class_payroll,
             manual_class_premium,
@@ -282,7 +298,8 @@ class Step2Proc < ActiveRecord::Migration
         	policy_number,
         	manual_number,
         	manual_type,
-        	n8th_manual_effective_date as manual_class_effective_date,
+        	n8th_manual_effective_date as reporting_period_start_date,
+        	(n8th_manual_effective_date + (6::text || ' month')::interval  - (1::text || ' day')::interval)::date as reporting_period_end_date,
         	n8th_manual_class_rate as manual_class_rate,
         	n8th_year_to_date_payroll as manual_class_payroll,
         	n8th_year_to_date_premium_billed as manual_class_premium,
@@ -295,7 +312,7 @@ class Step2Proc < ActiveRecord::Migration
         ORDER BY
           policy_number ASC,
           manual_number ASC,
-          manual_class_effective_date ASC
+          reporting_period_start_date ASC
         );
         INSERT INTO process_payroll_breakdown_by_manual_classes (
           representative_number,
@@ -303,7 +320,8 @@ class Step2Proc < ActiveRecord::Migration
             policy_number,
             manual_number,
             manual_type,
-            manual_class_effective_date,
+            reporting_period_start_date,
+            reporting_period_end_date,
             manual_class_rate,
             manual_class_payroll,
             manual_class_premium,
@@ -317,7 +335,8 @@ class Step2Proc < ActiveRecord::Migration
         	policy_number,
         	manual_number,
         	manual_type,
-        	n9th_manual_effective_date as manual_class_effective_date,
+        	n9th_manual_effective_date as reporting_period_start_date,
+        	(n9th_manual_effective_date + (6::text || ' month')::interval  - (1::text || ' day')::interval)::date as reporting_period_end_date,
         	n9th_manual_class_rate as manual_class_rate,
         	n9th_year_to_date_payroll as manual_class_payroll,
         	n9th_year_to_date_premium_billed as manual_class_premium,
@@ -330,7 +349,7 @@ class Step2Proc < ActiveRecord::Migration
         ORDER BY
           policy_number ASC,
           manual_number ASC,
-          manual_class_effective_date ASC
+          reporting_period_start_date ASC
         );
         INSERT INTO process_payroll_breakdown_by_manual_classes (
           representative_number,
@@ -338,7 +357,8 @@ class Step2Proc < ActiveRecord::Migration
             policy_number,
             manual_number,
             manual_type,
-            manual_class_effective_date,
+            reporting_period_start_date,
+            reporting_period_end_date,
             manual_class_rate,
             manual_class_payroll,
             manual_class_premium,
@@ -352,7 +372,8 @@ class Step2Proc < ActiveRecord::Migration
         	policy_number,
         	manual_number,
         	manual_type,
-        	n10th_manual_effective_date as manual_class_effective_date,
+        	n10th_manual_effective_date as reporting_period_start_date,
+        	(n10th_manual_effective_date + (6::text || ' month')::interval  - (1::text || ' day')::interval)::date as reporting_period_end_date,
         	n10th_manual_class_rate as manual_class_rate,
         	n10th_year_to_date_payroll as manual_class_payroll,
         	n10th_year_to_date_premium_billed as manual_class_premium,
@@ -365,7 +386,7 @@ class Step2Proc < ActiveRecord::Migration
         ORDER BY
           policy_number ASC,
           manual_number ASC,
-          manual_class_effective_date ASC
+          reporting_period_start_date ASC
         );
         INSERT INTO process_payroll_breakdown_by_manual_classes (
           representative_number,
@@ -373,7 +394,8 @@ class Step2Proc < ActiveRecord::Migration
             policy_number,
             manual_number,
             manual_type,
-            manual_class_effective_date,
+            reporting_period_start_date,
+            reporting_period_end_date,
             manual_class_rate,
             manual_class_payroll,
             manual_class_premium,
@@ -387,7 +409,8 @@ class Step2Proc < ActiveRecord::Migration
         	policy_number,
         	manual_number,
         	manual_type,
-        	n11th_manual_effective_date as manual_class_effective_date,
+        	n11th_manual_effective_date as reporting_period_start_date,
+        	(n11th_manual_effective_date + (6::text || ' month')::interval  - (1::text || ' day')::interval)::date as reporting_period_end_date,
         	n11th_manual_class_rate as manual_class_rate,
         	n11th_year_to_date_payroll as manual_class_payroll,
         	n11th_year_to_date_premium_billed as manual_class_premium,
@@ -400,7 +423,7 @@ class Step2Proc < ActiveRecord::Migration
         ORDER BY
           policy_number ASC,
           manual_number ASC,
-          manual_class_effective_date ASC
+          reporting_period_start_date ASC
         );
         INSERT INTO process_payroll_breakdown_by_manual_classes (
           representative_number,
@@ -408,7 +431,8 @@ class Step2Proc < ActiveRecord::Migration
             policy_number,
             manual_number,
             manual_type,
-            manual_class_effective_date,
+            reporting_period_start_date,
+            reporting_period_end_date,
             manual_class_rate,
             manual_class_payroll,
             manual_class_premium,
@@ -422,7 +446,8 @@ class Step2Proc < ActiveRecord::Migration
         	policy_number,
         	manual_number,
         	manual_type,
-        	n12th_manual_effective_date as manual_class_effective_date,
+        	n12th_manual_effective_date as reporting_period_start_date,
+        	(n12th_manual_effective_date + (6::text || ' month')::interval  - (1::text || ' day')::interval)::date as reporting_period_end_date,
         	n12th_manual_class_rate as manual_class_rate,
         	n12th_year_to_date_payroll as manual_class_payroll,
         	n12th_year_to_date_premium_billed as manual_class_premium,
@@ -435,14 +460,14 @@ class Step2Proc < ActiveRecord::Migration
           ORDER BY
             policy_number ASC,
             manual_number ASC,
-            manual_class_effective_date ASC
+            reporting_period_start_date ASC
         );
 
 
           DELETE FROM public.process_payroll_breakdown_by_manual_classes
           WHERE id IN (SELECT id
                 FROM (SELECT id,
-                               ROW_NUMBER() OVER (partition BY policy_type, policy_number, manual_number, manual_type, manual_class_effective_date, manual_class_rate, manual_class_payroll, manual_class_premium, payroll_origin, data_source, created_at, updated_at ORDER BY id) AS rnum
+                               ROW_NUMBER() OVER (partition BY policy_type, policy_number, manual_number, manual_type, reporting_period_start_date, manual_class_rate, manual_class_payroll, manual_class_premium, payroll_origin, data_source, created_at, updated_at ORDER BY id) AS rnum
                        FROM public.process_payroll_breakdown_by_manual_classes) t
                 WHERE t.rnum > 1);
 
