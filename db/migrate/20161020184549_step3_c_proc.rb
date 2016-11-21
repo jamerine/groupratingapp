@@ -253,18 +253,21 @@ class Step3CProc < ActiveRecord::Migration
       where representative_number = process_representative
       );
 
-      DELETE FROM public.process_payroll_all_transactions_breakdown_by_manual_classes
-      WHERE id IN (SELECT id
-            FROM (SELECT id,
-                           ROW_NUMBER() OVER (partition BY representative_number, policy_type, policy_number, manual_type, manual_number, reporting_period_start_date,
-                           reporting_period_end_date,
-                           manual_class_payroll,
-                           policy_transferred,
-                           transfer_creation_date,
-                           data_source, created_at,
-                           updated_at ORDER BY id) AS rnum
-                   FROM public.process_payroll_all_transactions_breakdown_by_manual_classes) t
-          WHERE t.rnum > 1);
+      DELETE FROM process_payroll_all_transactions_breakdown_by_manual_classes
+          WHERE id IN (SELECT id
+             FROM (SELECT id, ROW_NUMBER() OVER (partition BY representative_number,
+                            policy_type,
+                            policy_number,
+                            manual_type,
+                            manual_number,
+                            reporting_period_start_date,
+                            reporting_period_end_date,
+                            manual_class_payroll,
+                            data_source ORDER BY transfer_creation_date DESC) AS rnum
+                            FROM process_payroll_all_transactions_breakdown_by_manual_classes) t
+             WHERE t.rnum > 1);
+
+
     end;
         $BODY$
         LANGUAGE plpgsql;
