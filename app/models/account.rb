@@ -171,7 +171,7 @@ class Account < ActiveRecord::Base
         GroupRatingRejection.create(account_id: self.id, reject_reason: 'reject_high_group_ratio', representative_id: @group_rating.representative_id)
       end
 
-      if [3,4,5,7,8].exclude? policy_calculation.policy_industry_group
+      if [3,4,5,7,8,10].exclude? policy_calculation.policy_industry_group
         GroupRatingRejection.create(account_id: self.id, reject_reason: 'reject_homogeneity', representative_id: @group_rating.representative_id)
       end
 
