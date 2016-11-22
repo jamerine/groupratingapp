@@ -61,6 +61,7 @@ class AccountsController < ApplicationController
 
   def show
     @account = Account.includes(:group_rating_rejections, :group_rating_exceptions).find(params[:id])
+    @account_changes = @account.versions.map{|v| [v.created_at, v.changeset]}
     @statuses = Account.statuses
     @representative = Representative.find(@account.representative_id)
     @new_payroll_calculation = PayrollCalculation.new
