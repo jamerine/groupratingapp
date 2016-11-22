@@ -60,7 +60,7 @@
 
   <div class="container">
     <%= link_to "Calc Group Rating", account_edit_group_rating_path(params[:id]), class: 'btn btn-primary', method: :get %>
-    <%= link_to "Calc Group Rating", account_edit_group_rating_path(params[:id]), class: 'btn btn-primary', method: :get %>
+    <%= link_to "Change History", versions_path(item_id: @account.id, item_type: @account.class.name), class: 'btn btn-info', method: :get %>
     <div class="row">
       <% unless @account.group_rating_exceptions.empty? %>
         <h3>Group Rating Exceptions</h3>

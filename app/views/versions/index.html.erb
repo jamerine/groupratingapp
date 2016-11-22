@@ -1,0 +1,20 @@
+<div class="container">
+  <%= link_to 'Back', :back %>
+  <h3> <%= @model.class.name %> Changes</h3>
+    <% @versions.each do |created_at,changeset,whodunnit| %>
+    <div class="row">
+        <div class="col-md-2">
+          <p><%= created_at.strftime("%D %l:%M %p") %></p>
+          <p><%= whodunnit || 'process' %></p>
+        </div>
+        <% changeset.each_with_index do |change, index| %>
+          <% if index != changeset.size - 1 %>
+            <div class="col-md-2">
+                <p><%= change[0] %>:</p>
+                <p><%= change[1][1] || 'nil' %></p>
+            </div>
+          <% end %>
+        <% end %>
+    </div>
+    <% end %>
+</div>

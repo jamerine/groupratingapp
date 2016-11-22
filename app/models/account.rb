@@ -1,5 +1,5 @@
 class Account < ActiveRecord::Base
-  has_paper_trail
+  has_paper_trail :ignore => [:user_override]
 
   has_one :policy_calculation, dependent: :destroy
   belongs_to :representative
@@ -33,6 +33,7 @@ class Account < ActiveRecord::Base
 
   def group_rating_calc(args = {})
     # MANUAL EDIT OF GROUP RATING METHOD
+      @user_override = args['user_override']
 
       if args.empty?
         self.group_rating_reject
@@ -99,15 +100,16 @@ class Account < ActiveRecord::Base
       if args["group_fees"].nil? || args["group_fees"].empty?
         self.fee_calculation(@group_rating_qualification, @group_rating_tier, @group_savings)
 
-        self.update_attributes(group_rating_tier: @group_rating_tier, group_premium: @group_premium, group_savings: @group_savings, industry_group: @industry_group, group_fees: @group_fees, group_rating_qualification: @group_rating_qualification)
+        self.update_attributes(user_override: @user_override, group_rating_qualification: @group_rating_qualification, industry_group: @industry_group, group_rating_tier: @group_rating_tier, group_premium: @group_premium, group_savings: @group_savings, group_fees: @group_fees)
       else
-        self.update_attributes(group_rating_tier: @group_rating_tier, group_premium: @group_premium, group_savings: @group_savings, industry_group: @industry_group, group_fees: args["group_fees"], group_rating_qualification: @group_rating_qualification)
+        self.update_attributes(user_override: @user_override, group_rating_qualification: @group_rating_qualification, industry_group: @industry_group, group_rating_tier: @group_rating_tier, group_premium: @group_premium, group_savings: @group_savings, group_fees: args["group_fees"])
       end
   end
 
-  def group_rating
+  def group_rating(user_override=nil)
+
     # AUTOMATIC GROUP RATING METHOD
-    unless self.user_override?
+    unless (self.user_override? && !user_override)
       self.group_rating_reject
 
       @industry_group = policy_calculation.policy_industry_group
@@ -148,7 +150,11 @@ class Account < ActiveRecord::Base
 
       self.fee_calculation(@group_rating_qualification, @group_rating_tier, @group_savings)
 
-      update_attributes(group_rating_tier: @group_rating_tier, group_premium: @group_premium, group_savings: @group_savings, industry_group: @industry_group, group_rating_qualification: @group_rating_qualification, group_fees: @group_fees)
+      if user_override
+        self.update_attributes(user_override: user_override, group_rating_qualification: @group_rating_qualification, industry_group: @industry_group, group_rating_tier: @group_rating_tier, group_premium: @group_premium, group_savings: @group_savings, group_fees: @group_fees)
+      else
+        self.update_attributes(group_rating_qualification: @group_rating_qualification, industry_group: @industry_group, group_rating_tier: @group_rating_tier, group_premium: @group_premium, group_savings: @group_savings, group_fees: @group_fees)
+      end
     end
   end
 
