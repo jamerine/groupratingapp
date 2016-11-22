@@ -89,6 +89,7 @@ Rails.application.routes.draw do
      collection { delete :destroy}
   end
 
+  resources :versions
 
   resources :welcome
 
