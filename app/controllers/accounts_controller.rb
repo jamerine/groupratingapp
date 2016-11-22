@@ -81,13 +81,12 @@ class AccountsController < ApplicationController
     args = params[:account]
     @account = Account.find(params[:account_id])
     if args[:group_rating_qualification] == "auto_run"
-      @account.update_attributes(user_override: nil)
-      @account.group_rating
+      @account.group_rating(user_override: true)
       flash[:notice] = "Account's automatic group rating calculation was successful."
       redirect_to @account
     else
+      args[:user_override] = true
     @account.group_rating_calc(args)
-        @account.update_attributes(user_override: true)
       flash[:notice] = "Account's group rating calculation was successful."
       redirect_to @account
     end
