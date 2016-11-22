@@ -53,6 +53,9 @@ gem 'sinatra', :require => false
 
 gem 'rubyzip'
 
+# For versioning
+gem 'paper_trail'
+
 
 # Use Unicorn as the app server
 # gem 'unicorn'
