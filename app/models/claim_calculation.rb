@@ -9,12 +9,12 @@ class ClaimCalculation < ActiveRecord::Base
   end
 
   def recalculate_experience
-    @policy_calculation = PolicyCalculation.find(self.policy_calculation_id)
+    @policy_calculation = self.policy_calculation
 
     policy_individual_maximum_claim_value = @policy_calculation.policy_maximum_claim_value
 
     claim_individual_multiplier =
-      if policy_individual_maximum_claim_value.nil? || self.claim_unlimited_limited_loss.nil? || self.policy_individual_maximum_claim_value > self.claim_unlimited_limited_loss || policy_individual_maximum_claim_value == 0
+      if (policy_individual_maximum_claim_value.nil? || self.claim_unlimited_limited_loss.nil? || policy_individual_maximum_claim_value > self.claim_unlimited_limited_loss || policy_individual_maximum_claim_value == 0 || self.claim_unlimited_limited_loss == 0)
         1
       else
         policy_individual_maximum_claim_value / self.claim_unlimited_limited_loss
