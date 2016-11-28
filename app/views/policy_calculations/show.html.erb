@@ -34,6 +34,8 @@
   </div>
 
 <div class="container text-center">
+    <%= link_to "Change History", versions_path(item_id: @policy_calculation.id, item_type: @policy_calculation.class.name), class: 'btn btn-info', method: :get %>
+
     <h2>Policy Premium Projections</h2>
     <div class="row text-center">
       <div class="col-md-3 col-sm-4 col-xs-6 ">
