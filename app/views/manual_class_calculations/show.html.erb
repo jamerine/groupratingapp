@@ -91,7 +91,7 @@
     <ul class="list-group">
       <div class="row list-group-item active hidden-sm hidden-xs ">
         <div class="col-md-2 col-sm-4 col-xs-6 hidden-sm hidden-xs">
-          <h5>Effective Date</h5>
+          <h5>Reporting Start Date</h5>
         </div>
         <div class="col-md-2 col-sm-4 col-xs-6 hidden-sm hidden-xs">
           <h5>Manual Type</h5>
@@ -113,7 +113,7 @@
     <% @payroll_calculations.order("reporting_period_start_date desc").each do |payroll_calculation| %>
       <div class="row text-center list-group-item">
           <div class="col-md-2 col-sm-6 col-xs-6">
-            <h5 class="hidden-md hidden-lg">Effective Date</h5>
+            <h5 class="hidden-md hidden-lg">Reporting Start Date</h5>
             <p> <%= payroll_calculation.reporting_period_start_date %></p>
           </div>
           <div class="col-md-2 col-sm-6 col-xs-6">
