@@ -16,7 +16,7 @@
       <tr>
         <td><%= link_to "#{group_rating_exception.account.policy_number_entered}", account_path(group_rating_exception.account.id), class: 'btn btn-info' %> </td>
         <td><%= group_rating_exception.account.name %> </td>
-        <td><%= group_rating_exception.exception_reason %> </td>
+        <td><%= group_rating_exception.exception_reason.humanize.titleize %> </td>
       </tr>
       <% end %>
 

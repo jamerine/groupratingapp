@@ -1,20 +1,41 @@
 <div class="container">
-  <%= link_to 'Back', :back %>
+  <%= link_to 'Back', :back, class: 'btn btn-primary' %>
   <h3> <%= @model.class.name %> Changes</h3>
-    <% @versions.each do |created_at,changeset,whodunnit| %>
-    <div class="row">
-        <div class="col-md-2">
-          <p><%= created_at.strftime("%D %l:%M %p") %></p>
-          <p><%= whodunnit || 'process' %></p>
-        </div>
-        <% changeset.each_with_index do |change, index| %>
-          <% if index != changeset.size - 1 %>
-            <div class="col-md-2">
-                <p><%= change[0] %>:</p>
-                <p><%= change[1][1] || 'nil' %></p>
-            </div>
-          <% end %>
-        <% end %>
-    </div>
-    <% end %>
+  <div>
+    <table class="table table-striped table-responsive">
+      <thead>
+        <tr>
+          <th>Change Date</th>
+          <th>Change By</th>
+          <th>Changes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @versions.each do |created_at,changeset,whodunnit| %>
+          <tr>
+            <td>
+              <p><%= created_at.in_time_zone('America/New_York').strftime("%m/%-d/%y %l:%M %P ") %></p>
+            </td>
+            <td>
+              <p>
+              <% if !whodunnit.nil? %>
+              <%= @version_users.find(whodunnit).email %>
+              <% else %>
+              <%= 'process' %>
+              <% end %>
+              </p>
+            </td>
+            <% changeset.each_with_index do |change, index| %>
+              <% if index != changeset.size - 1 %>
+                <td>
+                    <p><%= change[0].humanize %>:</p>
+                    <p><%= change[1][1] || 'nil' %></p>
+                </td>
+              <% end %>
+            <% end %>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
 </div>

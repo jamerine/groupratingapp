@@ -1,5 +1,5 @@
 class Account < ActiveRecord::Base
-  has_paper_trail :ignore => [:user_override]
+  has_paper_trail :ignore => [:user_override, :created_at, :updated_at, :weekly_request, :representative_id], :on => [:update]
 
   has_one :policy_calculation, dependent: :destroy
   belongs_to :representative
@@ -78,9 +78,9 @@ class Account < ActiveRecord::Base
             end
           end
 
-          @group_premium = policy_calculation.manual_class_calculations.sum(:manual_class_estimated_group_premium)
+          @group_premium = (policy_calculation.manual_class_calculations.sum(:manual_class_estimated_group_premium)).round(0)
 
-          @group_savings = policy_calculation.policy_total_individual_premium - @group_premium
+          @group_savings = (policy_calculation.policy_total_individual_premium - @group_premium).round(0)
 
         else
           @group_premium = nil
@@ -116,7 +116,8 @@ class Account < ActiveRecord::Base
 
       if @group_rating_qualification == "accept"
         group_rating_calc = GroupRating.find_by(representative_id: policy_calculation.representative_id)
-        group_rating_rows = BwcCodesIndustryGroupSavingsRatioCriterium.where("ratio_criteria >= :group_ratio and industry_group = :industry_group", group_ratio: policy_calculation.policy_group_ratio, industry_group: industry_group)
+
+        group_rating_rows = BwcCodesIndustryGroupSavingsRatioCriterium.where("ratio_criteria >= :group_ratio and industry_group = :industry_group", group_ratio: policy_calculation.policy_group_ratio, industry_group: @industry_group)
 
         if group_rating_rows.empty?
           # self.update_attributes(group_rating_qualification: "reject", group_rating_tier: nil, group_premium: nil, group_savings: nil, industry_group: industry_group)
@@ -140,9 +141,9 @@ class Account < ActiveRecord::Base
             end
           end
 
-          @group_premium = policy_calculation.manual_class_calculations.sum(:manual_class_estimated_group_premium)
+          @group_premium = policy_calculation.manual_class_calculations.sum(:manual_class_estimated_group_premium).round(0)
 
-          @group_savings = policy_calculation.policy_total_individual_premium - @group_premium
+          @group_savings = (policy_calculation.policy_total_individual_premium - @group_premium).round(0)
 
           # update_attributes(group_rating_tier: group_rating_tier, group_premium: group_premium, group_savings: group_savings, industry_group: industry_group)
         end

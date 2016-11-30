@@ -93,7 +93,7 @@
         <div class="col-md-2 col-sm-4 col-xs-6 hidden-sm hidden-xs">
           <h5>Reporting Start Date</h5>
         </div>
-        <div class="col-md-2 col-sm-4 col-xs-6 hidden-sm hidden-xs">
+        <div class="col-md-1 col-sm-4 col-xs-6 hidden-sm hidden-xs">
           <h5>Manual Type</h5>
         </div>
         <div class="col-md-2 col-sm-4 col-xs-6 hidden-sm hidden-xs">
@@ -104,6 +104,9 @@
         </div>
         <div class="col-md-2 col-sm-4 col-xs-6 hidden-sm hidden-xs">
           <h5>Payroll Source</h5>
+        </div>
+        <div class="col-md-1 col-sm-4 col-xs-6 hidden-sm hidden-xs">
+          <h5>Policy Transfered</h5>
         </div>
         <div class="col-md-2 col-sm-4 col-xs-6 hidden-sm hidden-xs">
           <h5>Action</h5>
@@ -116,7 +119,7 @@
             <h5 class="hidden-md hidden-lg">Reporting Start Date</h5>
             <p> <%= payroll_calculation.reporting_period_start_date %></p>
           </div>
-          <div class="col-md-2 col-sm-6 col-xs-6">
+          <div class="col-md-1 col-sm-6 col-xs-6">
             <h5 class="hidden-md hidden-lg">Manual_type</h5>
             <p> <%= payroll_calculation.manual_type %></p>
           </div>
@@ -131,6 +134,10 @@
           <div class="col-md-2 col-sm-6 col-xs-6">
             <h5 class="hidden-md hidden-lg">Payroll Source</h5>
             <p> <%= payroll_calculation.data_source %></p>
+          </div>
+          <div class="col-md-1 col-sm-6 col-xs-6">
+            <h5 class="hidden-md hidden-lg">Policy Transfered</h5>
+            <p> <%= payroll_calculation.policy_transferred || 'none' %></p>
           </div>
 
           <div class="col-md-2 col-sm-12 col-xs-12">
