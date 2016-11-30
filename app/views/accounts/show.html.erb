@@ -59,8 +59,10 @@
   <br>
 
   <div class="container">
-    <%= link_to "Calc Group Rating", account_edit_group_rating_path(params[:id]), class: 'btn btn-primary', method: :get %>
-    <%= link_to "Change History", versions_path(item_id: @account.id, item_type: @account.class.name), class: 'btn btn-info', method: :get %>
+    <% unless @account.predecessor? %>
+      <%= link_to "Calc Group Rating", account_edit_group_rating_path(params[:id]), class: 'btn btn-primary', method: :get %>
+      <%= link_to "Change History", versions_path(item_id: @account.id, item_type: @account.class.name), class: 'btn btn-info', method: :get %>
+    <% end %>
     <div class="row">
       <% unless @account.group_rating_exceptions.empty? %>
         <h3>Group Rating Exceptions</h3>
@@ -124,7 +126,7 @@
 
 
 
-<%= render partial: 'policy_calculations/policy_snapshot', locals: { policy_calculation: @policy_calculation} %>
+<%= render partial: 'policy_calculations/policy_snapshot', locals: { policy_calculation: @policy_calculation, account: @account} %>
 
 
 <% end %>
