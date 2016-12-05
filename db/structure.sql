@@ -603,6 +603,281 @@ CREATE FUNCTION proc_process_flat_pcombs() RETURNS void
 
 
 --
+-- Name: proc_process_flat_pcovgs(); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION proc_process_flat_pcovgs() RETURNS void
+    LANGUAGE plpgsql
+    AS $$
+
+      BEGIN
+      /***************************************************************************/
+      -- START OF pcovg
+      /* Detail Record Type 02 */
+      INSERT INTO pcovg_detail_records (
+        representative_number,
+        record_type,
+        requestor_number,
+        policy_number,
+        business_sequence_number,
+        valid_policy_number,
+        coverage_status,
+        coverage_status_effective_date,
+        coverage_status_end_date,
+        created_at,
+        updated_at
+      )
+      (
+      SELECT
+        cast_to_int(substring(single_rec,1,6)) /* representative_number */,
+        cast_to_int(substring(single_rec,10,2)) /* record_type */,
+        cast_to_int(substring(single_rec,12,3)) /* requestor_number */,
+        cast_to_int(substring(single_rec,15,8)) /* policy_number */,
+        cast_to_int(substring(single_rec,24,3)) /* business_sequence_number */,
+        substring(single_rec,27,1) /* valid_policy_number */,
+        substring(single_rec,28,5) /* coverage_status */,
+        case when substring(single_rec,33,8) > '00000000' THEN to_date(substring(single_rec,33,8), 'YYYYMMDD')
+          else null
+        end /* coverage_status_effective_date */,
+        case when substring(single_rec,41,8) > '00000000' THEN to_date(substring(single_rec,41,8), 'YYYYMMDD')
+          else null
+        end /* coverage_status_end_date */,
+        current_timestamp::timestamp as created_at,
+        current_timestamp::timestamp as updated_at
+
+       from pcovgs WHERE substring(single_rec,10,2) = '02');
+
+
+       end;
+
+         $$;
+
+
+--
+-- Name: proc_process_flat_pdemos(); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION proc_process_flat_pdemos() RETURNS void
+    LANGUAGE plpgsql
+    AS $$
+
+      BEGIN
+      /***************************************************************************/
+      -- START OF pdemo
+      /* Detail Record Type 02 */
+      INSERT INTO pdemo_detail_records (
+        representative_number,
+        record_type,
+        requestor_number,
+        policy_number,
+        business_sequence_number,
+        valid_policy_number,
+        current_coverage_status,
+        coverage_status_effective_date,
+        federal_identification_number,
+        business_name,
+        trading_as_name,
+        valid_mailing_address,
+        mailing_address_line_1,
+        mailing_address_line_2,
+        mailing_city,
+        mailing_state,
+        mailing_zip_code,
+        mailing_zip_code_plus_4,
+        mailing_country_code,
+        mailing_county,
+        valid_location_address,
+        location_address_line_1,
+        location_address_line_2,
+        location_city,
+        location_state,
+        location_zip_code,
+        location_zip_code_plus_4,
+        location_country_code,
+        location_county,
+        currently_assigned_clm_representative_number,
+        currently_assigned_risk_representative_number,
+        currently_assigned_erc_representative_number,
+        currently_assigned_grc_representative_number,
+        immediate_successor_policy_number,
+        immediate_successor_business_sequence_number,
+        ultimate_successor_policy_number,
+        ultimate_successor_business_sequence_number,
+        employer_type,
+        coverage_type,
+        created_at,
+        updated_at
+      )
+      (
+      SELECT
+        cast_to_int(substring(single_rec,1,6)) /* representative_number */,
+        cast_to_int(substring(single_rec,10,2)) /* record_type */,
+        cast_to_int(substring(single_rec,12,3)) /*  requestor_number  */,
+        cast_to_int(substring(single_rec,15,8)) /*  policy_number  */,
+        cast_to_int(substring(single_rec,24,3)) /*  business_sequence_number  */,
+        substring(single_rec,27,1) /*  valid_policy_number  */,
+        substring(single_rec,28,5) /*  current_coverage_status  */,
+        case when substring(single_rec,33,8) > '00000000' THEN to_date(substring(single_rec,33,8), 'YYYYMMDD')
+          else null
+        end      /*  coverage_status_effective_date  */,
+        cast_to_int(substring(single_rec,41,11)) /*  federal_identification_number  */,
+        substring(single_rec,52,40) /*  business_name  */,
+        substring(single_rec,92,40) /*  trading_as_name  */,
+        substring(single_rec,132,1) /*  valid_mailing_address  */,
+        substring(single_rec,133,40) /*  mailing_address_line_1  */,
+        substring(single_rec,173,40) /*  mailing_address_line_2  */,
+        substring(single_rec,213,30) /*  mailing_city  */,
+        substring(single_rec,243,2) /*  mailing_state  */,
+        cast_to_int(substring(single_rec,245,5)) /*  mailing_zip_code  */,
+        cast_to_int(substring(single_rec,250,4)) /*  mailing_zip_code_plus_4  */,
+        cast_to_int(substring(single_rec,254,3)) /*  mailing_country_code  */,
+        cast_to_int(substring(single_rec,257,5)) /*  mailing_county  */,
+        substring(single_rec,262,1) /*  valid_location_address  */,
+        substring(single_rec,263,40) /*  location_address_line_1  */,
+        substring(single_rec,303,40) /*  location_address_line_2  */,
+        substring(single_rec,343,30) /*  location_city  */,
+        substring(single_rec,373,2) /*  location_state  */,
+        cast_to_int(substring(single_rec,375,5)) /*  location_zip_code  */,
+        cast_to_int(substring(single_rec,380,4)) /*  location_zip_code_plus_4  */,
+        cast_to_int(substring(single_rec,384,3)) /*  location_country_code  */,
+        cast_to_int(substring(single_rec,387,5)) /*  location_county  */,
+        cast_to_int(substring(single_rec,392,6)) /*  currently_assigned_clm_representative_number  */,
+        cast_to_int(substring(single_rec,401,6)) /*  currently_assigned_risk_representative_number  */,
+        cast_to_int(substring(single_rec,410,6)) /*  currently_assigned_erc_representative_number  */,
+        cast_to_int(substring(single_rec,419,6)) /*  currently_assigned_grc_representative_number  */,
+        cast_to_int(substring(single_rec,428,8)) /*  immediate_successor_policy_number  */,
+        cast_to_int(substring(single_rec,437,3)) /*  immediate_successor_business_sequence_number  */,
+        cast_to_int(substring(single_rec,440,8)) /*  ultimate_successor_policy_number  */,
+        cast_to_int(substring(single_rec,449,3)) /*  ultimate_successor_business_sequence_number  */,
+        substring(single_rec,452,3) /*  employer_type  */,
+        substring(single_rec,455,2) /*  coverage_type  */,
+        current_timestamp::timestamp as created_at,
+        current_timestamp::timestamp as updated_at
+
+       from pdemos WHERE substring(single_rec,10,2) = '02');
+
+
+       end;
+
+         $$;
+
+
+--
+-- Name: proc_process_flat_pemhs(); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION proc_process_flat_pemhs() RETURNS void
+    LANGUAGE plpgsql
+    AS $$
+
+      BEGIN
+      /***************************************************************************/
+      -- START OF pemhs
+      /* Detail Record Type 02 */
+      INSERT INTO pemh_detail_records (
+        representative_number,
+        record_type,
+        requestor_number,
+        policy_number,
+        business_sequence_number,
+        valid_policy_number,
+        current_coverage_status,
+        coverage_status_effective_date,
+        experience_modifier_rate,
+        em_effective_date,
+        policy_year,
+        reporting_period_start_date,
+        reporting_period_end_date,
+        group_participation_indicator,
+        group_code,
+        group_type,
+        rrr_participation_indicator,
+        rrr_tier,
+        rrr_policy_claim_limit,
+        rrr_minimum_permium_percentage,
+        deductible_participation_indicator,
+        deductible_level,
+        deductible_stop_loss_indicator,
+        deductible_discount_percentage,
+        ocp_participation_indicator,
+        ocp_participation,
+        ocp_first_year_of_participation,
+        grow_ohio_participation_indicator,
+        em_cap_participation_indicator,
+        drug_free_program_participation_indicator,
+        drug_free_program_type,
+        drug_free_program_participation_level,
+        drug_free_program_discount_eligiblity_indicator,
+        issp_participation_indicator,
+        issp_discount_eligibility_indicator,
+        twbns_participation_indicator,
+        twbns_discount_eligibility_indicator,
+        created_at,
+        updated_at
+      )
+      (
+      SELECT
+        cast_to_int(substring(single_rec,1,6)) /* representative_number */,
+        cast_to_int(substring(single_rec,10,2)) /* record_type */,
+        cast_to_int(substring(single_rec,12,3)) /* requestor_number */,
+        cast_to_int(substring(single_rec,15,8)) /* policy_number */,
+        cast_to_int(substring(single_rec,24,3)) /* business_sequence_number */,
+        substring(single_rec,27,1) /* valid_policy_number */,
+        substring(single_rec,28,5) /* current_coverage_status */,
+        case when substring(single_rec,33,8) > '00000000' THEN to_date(substring(single_rec,33,8), 'YYYYMMDD')
+          else null
+        end /* coverage_status_effective_date */,
+        case when substring(single_rec,41,5) > '0' THEN
+          substring(single_rec,41,5)::numeric
+          ELSE null
+        end  /* experience_modifier_rate */,
+        case when substring(single_rec,46,8) > '00000000' THEN to_date(substring(single_rec,46,8), 'YYYYMMDD')
+          else null
+        end /* em_effective_date */,
+        cast_to_int(substring(single_rec,54,4)) /* policy_year */,
+        case when substring(single_rec,68,8) > '00000000' THEN
+        to_date(substring(single_rec,58,8), 'YYYYMMDD')
+          else null
+        end /* reporting_period_start_date */,
+        case when substring(single_rec,66,8) > '00000000' THEN to_date(substring(single_rec,66,8), 'YYYYMMDD')
+          else null
+        end /* reporting_period_end_date */,
+        substring(single_rec,74,1) /* group_participation_indicator */,
+        cast_to_int(substring(single_rec,75,5)) /* group_code */,
+        substring(single_rec,80,5) /* group_type */,
+        substring(single_rec,85,1) /* rrr_participation_indicator */,
+        cast_to_int(substring(single_rec,86,1)) /* rrr_tier */,
+        cast_to_int(substring(single_rec,87,6)) /* rrr_policy_claim_limit */,
+        cast_to_int(substring(single_rec,93,3)) /* rrr_minimum_permium_percentage */,
+        substring(single_rec,96,1) /* deductible_participation_indicator */,
+        cast_to_int(substring(single_rec,97,6)) /* deductible_level */,
+        substring(single_rec,103,1) /* deductible_stop_loss_indicator */,
+        cast_to_int(substring(single_rec,104,3)) /* deductible_discount_percentage */,
+        substring(single_rec,107,1) /* ocp_participation_indicator */,
+        cast_to_int(substring(single_rec,108,1)) /* ocp_participation */,
+        cast_to_int(substring(single_rec,109,4)) /* ocp_first_year_of_participation */,
+        substring(single_rec,113,1) /* grow_ohio_participation_indicator */,
+        substring(single_rec,114,1) /* em_cap_participation_indicator */,
+        substring(single_rec,115,1) /* drug_free_program_participation_indicator */,
+        substring(single_rec,116,4) /* drug_free_program_type */,
+        substring(single_rec,120,1) /* drug_free_program_participation_level */,
+        substring(single_rec,121,1) /* drug_free_program_discount_eligiblity_indicator */,
+        substring(single_rec,122,1) /* issp_participation_indicator */,
+        substring(single_rec,123,1) /* issp_discount_eligibility_indicator */,
+        substring(single_rec,124,1) /* twbns_participation_indicator */,
+        substring(single_rec,125,1) /* twbns_discount_eligibility_indicator */,
+        current_timestamp::timestamp as created_at,
+        current_timestamp::timestamp as updated_at
+
+       from pemhs WHERE substring(single_rec,10,2) = '02');
+
+
+       end;
+
+         $$;
+
+
+--
 -- Name: proc_process_flat_phmgns(); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -6306,6 +6581,9 @@ CREATE TABLE imports (
     sc220s_count integer,
     sc230s_count integer,
     rates_count integer,
+    pdemos_count integer,
+    pemhs_count integer,
+    pcovgs_count integer,
     democ_detail_records_count integer,
     mrcl_detail_records_count integer,
     mremp_employee_experience_policy_levels_count integer,
@@ -6321,6 +6599,9 @@ CREATE TABLE imports (
     sc230_claim_medical_payments_count integer,
     sc230_claim_indemnity_awards_count integer,
     rate_detail_records_count integer,
+    pdemo_detail_records_count integer,
+    pemh_detail_records_count integer,
+    pcovg_detail_records_count integer,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
     representative_id integer
@@ -6799,6 +7080,268 @@ CREATE SEQUENCE pcombs_id_seq
 --
 
 ALTER SEQUENCE pcombs_id_seq OWNED BY pcombs.id;
+
+
+--
+-- Name: pcovg_detail_records; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE pcovg_detail_records (
+    id integer NOT NULL,
+    representative_number integer,
+    record_type integer,
+    requestor_number integer,
+    policy_number integer,
+    business_sequence_number integer,
+    valid_policy_number character varying,
+    coverage_status character varying,
+    coverage_status_effective_date date,
+    coverage_status_end_date date,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: pcovg_detail_records_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE pcovg_detail_records_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: pcovg_detail_records_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE pcovg_detail_records_id_seq OWNED BY pcovg_detail_records.id;
+
+
+--
+-- Name: pcovgs; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE pcovgs (
+    id integer NOT NULL,
+    single_rec character varying
+);
+
+
+--
+-- Name: pcovgs_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE pcovgs_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: pcovgs_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE pcovgs_id_seq OWNED BY pcovgs.id;
+
+
+--
+-- Name: pdemo_detail_records; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE pdemo_detail_records (
+    id integer NOT NULL,
+    representative_number integer,
+    record_type integer,
+    requestor_number integer,
+    policy_number integer,
+    business_sequence_number integer,
+    valid_policy_number character varying,
+    current_coverage_status character varying,
+    coverage_status_effective_date date,
+    federal_identification_number integer,
+    business_name character varying,
+    trading_as_name character varying,
+    valid_mailing_address character varying,
+    mailing_address_line_1 character varying,
+    mailing_address_line_2 character varying,
+    mailing_city character varying,
+    mailing_state character varying,
+    mailing_zip_code integer,
+    mailing_zip_code_plus_4 integer,
+    mailing_country_code integer,
+    mailing_county integer,
+    valid_location_address character varying,
+    location_address_line_1 character varying,
+    location_address_line_2 character varying,
+    location_city character varying,
+    location_state character varying,
+    location_zip_code integer,
+    location_zip_code_plus_4 integer,
+    location_country_code integer,
+    location_county integer,
+    currently_assigned_clm_representative_number integer,
+    currently_assigned_risk_representative_number integer,
+    currently_assigned_erc_representative_number integer,
+    currently_assigned_grc_representative_number integer,
+    immediate_successor_policy_number integer,
+    immediate_successor_business_sequence_number integer,
+    ultimate_successor_policy_number integer,
+    ultimate_successor_business_sequence_number integer,
+    employer_type character varying,
+    coverage_type character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: pdemo_detail_records_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE pdemo_detail_records_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: pdemo_detail_records_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE pdemo_detail_records_id_seq OWNED BY pdemo_detail_records.id;
+
+
+--
+-- Name: pdemos; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE pdemos (
+    id integer NOT NULL,
+    single_rec character varying
+);
+
+
+--
+-- Name: pdemos_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE pdemos_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: pdemos_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE pdemos_id_seq OWNED BY pdemos.id;
+
+
+--
+-- Name: pemh_detail_records; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE pemh_detail_records (
+    id integer NOT NULL,
+    representative_number integer,
+    record_type integer,
+    requestor_number integer,
+    policy_number integer,
+    business_sequence_number integer,
+    valid_policy_number character varying,
+    current_coverage_status character varying,
+    coverage_status_effective_date date,
+    experience_modifier_rate double precision,
+    em_effective_date date,
+    policy_year integer,
+    reporting_period_start_date date,
+    reporting_period_end_date date,
+    group_participation_indicator character varying,
+    group_code integer,
+    group_type character varying,
+    rrr_participation_indicator character varying,
+    rrr_tier integer,
+    rrr_policy_claim_limit integer,
+    rrr_minimum_permium_percentage integer,
+    deductible_participation_indicator character varying,
+    deductible_level integer,
+    deductible_stop_loss_indicator character varying,
+    deductible_discount_percentage integer,
+    ocp_participation_indicator character varying,
+    ocp_participation integer,
+    ocp_first_year_of_participation integer,
+    grow_ohio_participation_indicator character varying,
+    em_cap_participation_indicator character varying,
+    drug_free_program_participation_indicator character varying,
+    drug_free_program_type character varying,
+    drug_free_program_participation_level character varying,
+    drug_free_program_discount_eligiblity_indicator character varying,
+    issp_participation_indicator character varying,
+    issp_discount_eligibility_indicator character varying,
+    twbns_participation_indicator character varying,
+    twbns_discount_eligibility_indicator character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: pemh_detail_records_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE pemh_detail_records_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: pemh_detail_records_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE pemh_detail_records_id_seq OWNED BY pemh_detail_records.id;
+
+
+--
+-- Name: pemhs; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE pemhs (
+    id integer NOT NULL,
+    single_rec character varying
+);
+
+
+--
+-- Name: pemhs_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE pemhs_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: pemhs_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE pemhs_id_seq OWNED BY pemhs.id;
 
 
 --
@@ -8488,6 +9031,48 @@ ALTER TABLE ONLY pcombs ALTER COLUMN id SET DEFAULT nextval('pcombs_id_seq'::reg
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY pcovg_detail_records ALTER COLUMN id SET DEFAULT nextval('pcovg_detail_records_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY pcovgs ALTER COLUMN id SET DEFAULT nextval('pcovgs_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY pdemo_detail_records ALTER COLUMN id SET DEFAULT nextval('pdemo_detail_records_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY pdemos ALTER COLUMN id SET DEFAULT nextval('pdemos_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY pemh_detail_records ALTER COLUMN id SET DEFAULT nextval('pemh_detail_records_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY pemhs ALTER COLUMN id SET DEFAULT nextval('pemhs_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY phmgn_detail_records ALTER COLUMN id SET DEFAULT nextval('phmgn_detail_records_id_seq'::regclass);
 
 
@@ -8942,6 +9527,54 @@ ALTER TABLE ONLY pcomb_detail_records
 
 ALTER TABLE ONLY pcombs
     ADD CONSTRAINT pcombs_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: pcovg_detail_records_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY pcovg_detail_records
+    ADD CONSTRAINT pcovg_detail_records_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: pcovgs_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY pcovgs
+    ADD CONSTRAINT pcovgs_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: pdemo_detail_records_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY pdemo_detail_records
+    ADD CONSTRAINT pdemo_detail_records_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: pdemos_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY pdemos
+    ADD CONSTRAINT pdemos_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: pemh_detail_records_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY pemh_detail_records
+    ADD CONSTRAINT pemh_detail_records_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: pemhs_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY pemhs
+    ADD CONSTRAINT pemhs_pkey PRIMARY KEY (id);
 
 
 --
@@ -9703,4 +10336,22 @@ INSERT INTO schema_migrations (version) VALUES ('20161031191940');
 INSERT INTO schema_migrations (version) VALUES ('20161101161501');
 
 INSERT INTO schema_migrations (version) VALUES ('20161121192918');
+
+INSERT INTO schema_migrations (version) VALUES ('20161205121232');
+
+INSERT INTO schema_migrations (version) VALUES ('20161205122049');
+
+INSERT INTO schema_migrations (version) VALUES ('20161205130251');
+
+INSERT INTO schema_migrations (version) VALUES ('20161205152859');
+
+INSERT INTO schema_migrations (version) VALUES ('20161205152952');
+
+INSERT INTO schema_migrations (version) VALUES ('20161205154857');
+
+INSERT INTO schema_migrations (version) VALUES ('20161205181316');
+
+INSERT INTO schema_migrations (version) VALUES ('20161205181412');
+
+INSERT INTO schema_migrations (version) VALUES ('20161205181641');
 

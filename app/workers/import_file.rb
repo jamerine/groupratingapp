@@ -36,13 +36,13 @@ class ImportFile
         @import.sc230_claim_medical_payments_count = Sc230ClaimMedicalPayment.count
         @import.sc230_claim_indemnity_awards_count = Sc230ClaimIndemnityAward.count
         @import.import_status = "#{table_name} Completed"
-      elsif table_name == "sc220s"
-        @import.sc220s_count = Sc220.count
-        @import.sc220_rec1_employer_demographics_count = Sc220Rec1EmployerDemographic.count
-        @import.sc220_rec2_employer_manual_level_payrolls_count = Sc220Rec2EmployerManualLevelPayroll.count
-        @import.sc220_rec3_employer_ar_transactions_count = Sc220Rec3EmployerArTransaction.count
-        @import.sc220_rec4_policy_not_founds_count = Sc220Rec4PolicyNotFound.count
-        @import.import_status = "#{table_name} Completed"
+      # elsif table_name == "sc220s"
+      #   @import.sc220s_count = Sc220.count
+      #   @import.sc220_rec1_employer_demographics_count = Sc220Rec1EmployerDemographic.count
+      #   @import.sc220_rec2_employer_manual_level_payrolls_count = Sc220Rec2EmployerManualLevelPayroll.count
+      #   @import.sc220_rec3_employer_ar_transactions_count = Sc220Rec3EmployerArTransaction.count
+      #   @import.sc220_rec4_policy_not_founds_count = Sc220Rec4PolicyNotFound.count
+      #   @import.import_status = "#{table_name} Completed"
       elsif table_name == "democs"
         @import.democs_count = Democ.count
         @import.democ_detail_records_count = DemocDetailRecord.count
@@ -69,23 +69,39 @@ class ImportFile
         @import.rates_count = Rate.count
         @import.rate_detail_records_count = RateDetailRecord.count
         @import.import_status = "#{table_name} Completed"
+      elsif table_name == "pdemos"
+        @import.pdemos_count = Pdemo.count
+        @import.pdemo_detail_records_count = PdemoDetailRecord.count
+        @import.import_status = "#{table_name} Completed"
+      elsif table_name == "pemhs"
+        @import.pemhs_count = Pemh.count
+        @import.pemh_detail_records_count = PemhDetailRecord.count
+        @import.import_status = "#{table_name} Completed"
+      elsif table_name == "pcovgs"
+        @import.pcovgs_count = Pcovg.count
+        @import.pcovg_detail_records_count = PcovgDetailRecord.count
+        @import.import_status = "#{table_name} Completed"
       end
+
       @import.save
 
       if
         (!@import.sc230s_count.nil? || !@import.sc230_employer_demographics_count.nil? || !@import.sc230_claim_medical_payments_count.nil? || !@import.sc230_claim_indemnity_awards_count.nil?) &&
-        (!@import.sc220s_count.nil? || !@import.sc220_rec1_employer_demographics_count.nil? || !@import.sc220_rec2_employer_manual_level_payrolls_count.nil? ||    !@import.sc220_rec3_employer_ar_transactions_count.nil?) &&
+        # (!@import.sc220s_count.nil? || !@import.sc220_rec1_employer_demographics_count.nil? || !@import.sc220_rec2_employer_manual_level_payrolls_count.nil? ||    !@import.sc220_rec3_employer_ar_transactions_count.nil?) &&
         (!@import.democs_count.nil? || !@import.democ_detail_records_count.nil?) &&
         (!@import.mrcls_count.nil? || !@import.mrcl_detail_records_count.nil?) &&
         (!@import.mremps_count.nil? || !@import.mremp_employee_experience_policy_levels_count.nil? || !@import.mremp_employee_experience_manual_class_levels_count.nil? ||
         !@import.mremp_employee_experience_claim_levels_count.nil?) &&
         (!@import.pcombs_count.nil? || !@import.pcomb_detail_records_count.nil?) &&
         (!@import.phmgns_count.nil? || !@import.phmgn_detail_records_count.nil?) &&
-        (!@import.rates_count.nil? || !@import.rate_detail_records_count.nil?)
+        (!@import.rates_count.nil? || !@import.rate_detail_records_count.nil?) &&
+        (!@import.pdemos_count.nil? || !@import.pdemo_detail_records_count.nil?) &&
+        (!@import.pemhs_count.nil? || !@import.pemh_detail_records_count.nil?) &&
+        (!@import.pcovgs_count.nil? || !@import.pcovg_detail_records_count.nil?)
           @import.import_status = "Completed"
           @import.save
           @group_rating = GroupRating.find(group_rating_id)
-          GroupRatingStepOne.perform_async("1", @group_rating.process_representative, @group_rating.experience_period_lower_date, @group_rating.experience_period_upper_date, @group_rating.current_payroll_period_lower_date, @group_rating.id)
+          # GroupRatingStepOne.perform_async("1", @group_rating.process_representative, @group_rating.experience_period_lower_date, @group_rating.experience_period_upper_date, @group_rating.current_payroll_period_lower_date, @group_rating.id)
       end
 
 
