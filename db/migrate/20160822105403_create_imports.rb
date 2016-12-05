@@ -13,6 +13,9 @@ class CreateImports < ActiveRecord::Migration
       t.integer :sc220s_count
       t.integer :sc230s_count
       t.integer :rates_count
+      t.integer :pdemos_count
+      t.integer :pemhs_count
+      t.integer :pcovgs_count
       t.integer :democ_detail_records_count
       t.integer :mrcl_detail_records_count
       t.integer :mremp_employee_experience_policy_levels_count
@@ -28,6 +31,9 @@ class CreateImports < ActiveRecord::Migration
       t.integer :sc230_claim_medical_payments_count
       t.integer :sc230_claim_indemnity_awards_count
       t.integer :rate_detail_records_count
+      t.integer :pdemo_detail_records_count
+      t.integer :pemh_detail_records_count
+      t.integer :pcovg_detail_records_count
 
       t.timestamps null: false
     end
