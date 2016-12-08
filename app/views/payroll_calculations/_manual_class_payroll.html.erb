@@ -1,0 +1,76 @@
+<ul class="list-group">
+  <div class="row list-group-item active hidden-sm hidden-xs ">
+    <div class="col-md-2 col-sm-4 col-xs-6 hidden-sm hidden-xs">
+      <h5>Start Date</h5>
+    </div>
+    <div class="col-md-2 col-sm-4 col-xs-6 hidden-sm hidden-xs">
+      <h5>End Date</h5>
+    </div>
+    <div class="col-md-1 col-sm-4 col-xs-6 hidden-sm hidden-xs">
+      <h5>Manual Type</h5>
+    </div>
+    <div class="col-md-2 col-sm-4 col-xs-6 hidden-sm hidden-xs">
+      <h5>Payroll Amount</h5>
+    </div>
+    <div class="col-md-1 col-sm-4 col-xs-6 hidden-sm hidden-xs">
+      <h5>Reporting Type</h5>
+    </div>
+    <div class="col-md-1 col-sm-4 col-xs-6 hidden-sm hidden-xs">
+      <h5>Payroll Origin</h5>
+    </div>
+    <div class="col-md-1 col-sm-4 col-xs-6 hidden-sm hidden-xs">
+      <h5>Payroll Source</h5>
+    </div>
+    <div class="col-md-1 col-sm-4 col-xs-6 hidden-sm hidden-xs">
+      <h5>Policy Transfered</h5>
+    </div>
+    <div class="col-md-1 col-sm-4 col-xs-6 hidden-sm hidden-xs">
+      <h5>Action</h5>
+    </div>
+  </div>
+<% payroll_calculations.order("reporting_period_start_date desc").each do |payroll_calculation| %>
+  <div class="row text-center list-group-item">
+      <div class="col-md-2 col-sm-6 col-xs-6">
+        <h5 class="hidden-md hidden-lg">Start Date</h5>
+        <p> <%= payroll_calculation.reporting_period_start_date.strftime('%-m/%-d/%y') %></p>
+      </div>
+      <div class="col-md-2 col-sm-6 col-xs-6">
+        <h5 class="hidden-md hidden-lg">End Date</h5>
+        <p> <%= payroll_calculation.reporting_period_end_date.strftime('%-m/%-d/%y') %></p>
+      </div>
+      <div class="col-md-1 col-sm-6 col-xs-6">
+        <h5 class="hidden-md hidden-lg">manual_class_type</h5>
+        <p> <%= payroll_calculation.manual_class_type %></p>
+      </div>
+      <div class="col-md-2 col-sm-6 col-xs-6">
+        <h5 class="hidden-md hidden-lg">Payroll Amount</h5>
+        <p> <%= number_to_currency(payroll_calculation.manual_class_payroll) %></p>
+      </div>
+      <div class="col-md-1 col-sm-6 col-xs-6">
+        <h5 class="hidden-md hidden-lg">Reporting Type</h5>
+        <p> <%= payroll_calculation.reporting_type %></p>
+      </div>
+      <div class="col-md-1 col-sm-6 col-xs-6">
+        <h5 class="hidden-md hidden-lg">Payroll Origin</h5>
+        <p> <%= payroll_calculation.payroll_origin %></p>
+      </div>
+      <div class="col-md-1 col-sm-6 col-xs-6">
+        <h5 class="hidden-md hidden-lg">Payroll Source</h5>
+        <p> <%= payroll_calculation.data_source %></p>
+      </div>
+      <div class="col-md-1 col-sm-6 col-xs-6">
+        <h5 class="hidden-md hidden-lg">Policy Transfered</h5>
+        <p> <%= payroll_calculation.policy_transferred || 'none' %></p>
+      </div>
+
+      <div class="col-md-1 col-sm-12 col-xs-12">
+        <h5 class="hidden-md hidden-lg hidden-sm hidden-xs">Action</h5>
+        <% if payroll_calculation.data_source == 'bwc' %>
+          <p class="hidden-sm hidden-xs"><small>uneditable</small></p>
+        <% else %>
+          <p> <%= link_to 'Delete', payroll_calculation_path(id: payroll_calculation.id), method: :delete %></p>
+        <% end %>
+      </div>
+</div>
+<% end %>
+</ul>

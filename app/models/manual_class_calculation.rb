@@ -22,7 +22,7 @@ class ManualClassCalculation < ActiveRecord::Base
 
       manual_class_four_year_sum = self.payroll_calculations.where("reporting_period_start_date BETWEEN :experience_period_lower_date and :experience_period_upper_date", experience_period_lower_date: @group_rating.experience_period_lower_date, experience_period_upper_date: @group_rating.experience_period_upper_date).sum(:manual_class_payroll)
 
-      manual_class_current_payroll = self.payroll_calculations.where("reporting_period_start_date >= :current_payroll_period_lower_date and reporting_period_start_date < :current_payroll_period_upper_date", current_payroll_period_lower_date: @group_rating.current_payroll_period_lower_date, current_payroll_period_upper_date: (@group_rating.current_payroll_period_lower_date + 1.year)).sum(:manual_class_payroll)
+      manual_class_current_payroll = self.payroll_calculations.where("reporting_period_start_date >= :current_payroll_period_lower_date and reporting_period_start_date < :current_payroll_period_upper_date", current_payroll_period_lower_date: @group_rating.current_payroll_period_lower_date, current_payroll_period_upper_date: @group_rating.current_payroll_period_upper_date).sum(:manual_class_payroll)
 
       @bwc_base_rate = BwcCodesBaseRatesExpLossRate.find_by(class_code: self.manual_number)
 
@@ -197,8 +197,7 @@ class ManualClassCalculation < ActiveRecord::Base
 
     @policy_calculation.update_attributes(policy_total_individual_premium: policy_total_individual_premium, policy_industry_group: manual_class_industry_group, policy_total_standard_premium: policy_total_standard_premium)
 
-    @policy_calculation.account.group_rating
-
+   @policy_calculation.account.group_rating
   end
 
 

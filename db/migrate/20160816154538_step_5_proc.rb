@@ -6,7 +6,8 @@ class Step5Proc < ActiveRecord::Migration
       CREATE OR REPLACE FUNCTION public.proc_step_5(process_representative integer,
       experience_period_lower_date date,
       experience_period_upper_date date,
-      current_payroll_period_lower_date date
+      current_payroll_period_lower_date date,
+      current_payroll_period_upper_date date
       )
       RETURNS void AS
       $BODY$
@@ -22,15 +23,15 @@ class Step5Proc < ActiveRecord::Migration
       INSERT INTO public.final_policy_experience_calculations
       (
       representative_number,
-      policy_type,
       policy_number,
+      valid_policy_number,
       data_source,
       created_at,
       updated_at
       )
       (SELECT DISTINCT representative_number,
-             policy_type,
              policy_number,
+             valid_policy_number,
              'bwc' as data_source,
              run_date as created_at,
              run_date as updated_at
@@ -76,9 +77,9 @@ class Step5Proc < ActiveRecord::Migration
       ----------------------------
       -- Update policy_status
 
-      UPDATE public.final_policy_experience_calculations a SET (policy_status, updated_at) = (t2.current_policy_status, t2.updated_at)
+      UPDATE public.final_policy_experience_calculations a SET (policy_status, updated_at) = (t2.current_coverage_status, t2.updated_at)
       FROM
-      (SELECT p.policy_number, p.current_policy_status,
+      (SELECT p.policy_number, p.current_coverage_status,
       run_date as updated_at
         FROM public.final_employer_demographics_informations p
         where p.representative_number = process_representative

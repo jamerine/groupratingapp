@@ -4,7 +4,7 @@ class CreateManualClassCalculations < ActiveRecord::Migration
       t.integer :representative_number
       t.references :policy_calculation, index: true, foreign_key: true
       t.integer :policy_number
-      t.string :manual_type
+      t.string :manual_class_type
       t.integer :manual_number
       t.index [:policy_number, :manual_number], name: 'index_man_class_calc_pol_num_and_man_num'
       t.float :manual_class_four_year_period_payroll

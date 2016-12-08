@@ -9,14 +9,14 @@
           <h5>Policy Number:</h5>
           <h4><%= @policy_calculation.policy_number %></h4>
           <h5>Policy Type:</h5>
-          <h4><%= @policy_calculation.policy_type.humanize %></h4>
+
           <h5>Policy Status:</h5>
-          <h4><%= @policy_calculation.current_policy_status %></h4>
+          <h4><%= @policy_calculation.current_coverage_status %></h4>
         </div>
 
         <div class="col-md-6">
           <h2><%= @policy_calculation.business_name.titleize %></h2>
-          <p><%=  @policy_calculation.address_1.titleize %>, <%=  @policy_calculation.address_2.titleize %><%=  @policy_calculation.city.titleize %>, <%= @policy_calculation.state %> <%= @policy_calculation.zip_code %></p>
+          <p><%=  @policy_calculation.mailing_address_line_1.titleize %>, <%=  @policy_calculation.mailing_address_line_2.titleize %><%=  @policy_calculation.mailing_city.titleize %>, <%= @policy_calculation.mailing_state %> <%= @policy_calculation.mailing_zip_code %></p>
           <p>
           <%=  @policy_calculation.in_care_name_contact_name %>
           </p>
@@ -25,7 +25,7 @@
           <h5>Policy Updated at:</h5>
           <h4><%= @policy_calculation.updated_at.in_time_zone("America/New_York").strftime("%m/%d/%y @ %I:%M %p") %></h4>
           <h5>Status Effective Date:</h5>
-          <h4><%= @policy_calculation.current_policy_status_effective_date.strftime("%b %d, %Y") %></h4>
+          <h4><%= @policy_calculation.coverage_status_effective_date.strftime("%b %d, %Y") %></h4>
           <h5>Policy Creation Date:</h5>
           <h4><%= @policy_calculation.policy_creation_date.strftime("%b %d, %Y") %></h4>
         </div>

@@ -9,7 +9,8 @@ class Step3AProc < ActiveRecord::Migration
       process_representative integer,
       experience_period_lower_date date,
       experience_period_upper_date date,
-      current_payroll_period_lower_date date)
+      current_payroll_period_lower_date date,
+      current_payroll_period_upper_date date)
     RETURNS void AS
   $BODY$
 
@@ -24,12 +25,11 @@ class Step3AProc < ActiveRecord::Migration
           representative_number,
           policy_type,
           manual_number,
-          manual_type,
+          manual_class_type,
           reporting_period_start_date,
           reporting_period_end_date,
           manual_class_rate,
           manual_class_payroll,
-          manual_class_premium,
           predecessor_policy_type,
           predecessor_policy_number,
           successor_policy_type,
@@ -46,12 +46,11 @@ class Step3AProc < ActiveRecord::Migration
             a.representative_number,
             a.policy_type,
             a.manual_number,
-            a.manual_type,
+            a.manual_class_type,
             a.reporting_period_start_date,
             a.reporting_period_end_date,
             a.manual_class_rate,
             a.manual_class_payroll,
-            a.manual_class_premium,
             b.predecessor_policy_type,
             b.predecessor_policy_number,
             b.successor_policy_type,
@@ -66,16 +65,18 @@ class Step3AProc < ActiveRecord::Migration
           FROM public.process_payroll_breakdown_by_manual_classes a
           Right Join public.pcomb_detail_records b
           ON a.policy_number = b.predecessor_policy_number
+          RIGHT JOIN public.final_employer_demographics_informations c
+          ON a.policy_number = c.policy_number
           Where b.transfer_type = 'FC' and a.representative_number = process_representative
+          and a.reporting_period_start_date >= c.policy_creation_date
           GROUP BY a.representative_number,
             a.policy_type,
             a.manual_number,
-            a.manual_type,
+            a.manual_class_type,
             a.reporting_period_start_date,
             a.reporting_period_end_date,
             a.manual_class_rate,
             a.manual_class_payroll,
-            a.manual_class_premium,
             b.predecessor_policy_type,
             b.predecessor_policy_number,
             b.successor_policy_type,
@@ -233,7 +234,7 @@ class Step3AProc < ActiveRecord::Migration
 
   def down
     connection.execute(%q{
-      DROP FUNCTION public.proc_step_3_a(integer, date, date, date);
+      DROP FUNCTION public.proc_step_3_a(integer, date, date, date, date);
     })
   end
 end
