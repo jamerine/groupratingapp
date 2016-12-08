@@ -5,6 +5,7 @@ class CreateProcessManualClassFourYearPayrollWithoutConditions < ActiveRecord::M
       t.string :policy_type
       t.integer :policy_number
       t.integer :manual_number
+      t.string :manual_class_type
       t.float :manual_class_four_year_period_payroll
       t.string :data_source
       t.timestamps null: false

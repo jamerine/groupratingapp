@@ -8,12 +8,12 @@
           <h5>Policy Number:</h5>
           <h3><%= policy_calculation.policy_number %></h3>
           <h5>Policy Status:</h5>
-          <h3><%= policy_calculation.current_policy_status %></h3>
+          <h3><%= policy_calculation.current_coverage_status %></h3>
         </div>
 
         <div class="col-md-6">
           <h2><%= policy_calculation.business_name %></h2>
-          <p><%=  policy_calculation.address_1 %>, <%=  policy_calculation.address_2 %><%=  policy_calculation.city %>, <%= policy_calculation.state %> <%= policy_calculation.zip_code %></p>
+          <p><%=  policy_calculation.mailing_address_line_1 %>, <%=  policy_calculation.mailing_address_line_2 %><%=  policy_calculation.mailing_city %>, <%= policy_calculation.mailing_state %> <%= policy_calculation.mailing_zip_code %></p>
           <p>
           <%=  policy_calculation.in_care_name_contact_name %>
           </p>
@@ -22,7 +22,7 @@
           <h5>Policy Updated at:</h5>
           <h4><%= policy_calculation.updated_at.in_time_zone("America/New_York") %></h4>
           <h5>Status Effective Date:</h5>
-          <h4><%= policy_calculation.current_policy_status_effective_date %></h4>
+          <h4><%= policy_calculation.coverage_status_effective_date %></h4>
         </div>
       </div>
     </div>

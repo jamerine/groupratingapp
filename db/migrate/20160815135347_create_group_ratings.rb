@@ -6,10 +6,13 @@ class CreateGroupRatings < ActiveRecord::Migration
       t.date :experience_period_lower_date
       t.date :experience_period_upper_date
       t.date :current_payroll_period_lower_date
+      t.date :current_payroll_period_upper_date
+      t.integer :total_accounts_updated
       t.integer :total_policies_updated
       t.integer :total_manual_classes_updated
       t.integer :total_payrolls_updated
       t.integer :total_claims_updated
+
       t.timestamps null: false
     end
   end

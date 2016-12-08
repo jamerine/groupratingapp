@@ -7,8 +7,7 @@ class PolicyCalculation < ActiveRecord::Base
   belongs_to :account
 
   # Add Papertrail as history tracking
-  has_paper_trail
-
+  has_paper_trail :on => [:update]
 
   def self.update_or_create(attributes)
     obj = first || new

@@ -36,13 +36,13 @@ class ImportFile
         @import.sc230_claim_medical_payments_count = Sc230ClaimMedicalPayment.count
         @import.sc230_claim_indemnity_awards_count = Sc230ClaimIndemnityAward.count
         @import.import_status = "#{table_name} Completed"
-      # elsif table_name == "sc220s"
-      #   @import.sc220s_count = Sc220.count
-      #   @import.sc220_rec1_employer_demographics_count = Sc220Rec1EmployerDemographic.count
-      #   @import.sc220_rec2_employer_manual_level_payrolls_count = Sc220Rec2EmployerManualLevelPayroll.count
-      #   @import.sc220_rec3_employer_ar_transactions_count = Sc220Rec3EmployerArTransaction.count
-      #   @import.sc220_rec4_policy_not_founds_count = Sc220Rec4PolicyNotFound.count
-      #   @import.import_status = "#{table_name} Completed"
+      elsif table_name == "sc220s"
+        @import.sc220s_count = Sc220.count
+        @import.sc220_rec1_employer_demographics_count = Sc220Rec1EmployerDemographic.count
+        @import.sc220_rec2_employer_manual_level_payrolls_count = Sc220Rec2EmployerManualLevelPayroll.count
+        @import.sc220_rec3_employer_ar_transactions_count = Sc220Rec3EmployerArTransaction.count
+        @import.sc220_rec4_policy_not_founds_count = Sc220Rec4PolicyNotFound.count
+        @import.import_status = "#{table_name} Completed"
       elsif table_name == "democs"
         @import.democs_count = Democ.count
         @import.democ_detail_records_count = DemocDetailRecord.count
@@ -87,7 +87,7 @@ class ImportFile
 
       if
         (!@import.sc230s_count.nil? || !@import.sc230_employer_demographics_count.nil? || !@import.sc230_claim_medical_payments_count.nil? || !@import.sc230_claim_indemnity_awards_count.nil?) &&
-        # (!@import.sc220s_count.nil? || !@import.sc220_rec1_employer_demographics_count.nil? || !@import.sc220_rec2_employer_manual_level_payrolls_count.nil? ||    !@import.sc220_rec3_employer_ar_transactions_count.nil?) &&
+        (!@import.sc220s_count.nil? || !@import.sc220_rec1_employer_demographics_count.nil? || !@import.sc220_rec2_employer_manual_level_payrolls_count.nil? ||    !@import.sc220_rec3_employer_ar_transactions_count.nil?) &&
         (!@import.democs_count.nil? || !@import.democ_detail_records_count.nil?) &&
         (!@import.mrcls_count.nil? || !@import.mrcl_detail_records_count.nil?) &&
         (!@import.mremps_count.nil? || !@import.mremp_employee_experience_policy_levels_count.nil? || !@import.mremp_employee_experience_manual_class_levels_count.nil? ||
@@ -101,7 +101,7 @@ class ImportFile
           @import.import_status = "Completed"
           @import.save
           @group_rating = GroupRating.find(group_rating_id)
-          # GroupRatingStepOne.perform_async("1", @group_rating.process_representative, @group_rating.experience_period_lower_date, @group_rating.experience_period_upper_date, @group_rating.current_payroll_period_lower_date, @group_rating.id)
+          GroupRatingStepOne.perform_async("1", @group_rating.process_representative, @group_rating.experience_period_lower_date, @group_rating.experience_period_upper_date, @group_rating.current_payroll_period_lower_date, @group_rating.current_payroll_period_upper_date, @group_rating.id)
       end
 
 

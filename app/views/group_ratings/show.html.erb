@@ -26,6 +26,11 @@
           <p><%= @group_rating.current_payroll_period_lower_date %></p>
       </div>
     </div>
+      <div class="col-md-4">
+        <h4>Current Payroll Period Upper Date</h4>
+          <p><%= @group_rating.current_payroll_period_upper_date %></p>
+      </div>
+    </div>
     <%= link_to "Delete Group Rating", @group_rating, method: :delete %>
   </div>
 
@@ -55,10 +60,10 @@
         <td>Phmgn</td>
         <td><%= @import.phmgns_count %></td>
       </tr>
-      <!-- <tr>
+      <tr>
         <td>Sc220</td>
         <td><%= @import.sc220s_count %></td>
-      </tr> -->
+      </tr>
       <tr>
         <td>Sc230</td>
         <td><%= @import.sc230s_count %></td>
@@ -107,7 +112,7 @@
         <td>Phmgn Detail Records</td>
         <td><%= @import.phmgn_detail_records_count %></td>
       </tr>
-      <!-- <tr>
+      <tr>
         <td>SC220 Record 1s</td>
         <td><%= @import.sc220_rec1_employer_demographics_count %></td>
       </tr>
@@ -122,7 +127,7 @@
       <tr>
         <td>SC220 Record 4s</td>
         <td><%= @import.sc220_rec4_policy_not_founds_count %></td>
-      </tr> -->
+      </tr>
       <tr>
         <td>SC230 Record 1s</td>
         <td><%= @import.sc230_employer_demographics_count %></td>

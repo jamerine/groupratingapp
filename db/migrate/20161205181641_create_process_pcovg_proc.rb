@@ -34,7 +34,9 @@ class CreateProcessPcovgProc < ActiveRecord::Migration
         case when substring(single_rec,33,8) > '00000000' THEN to_date(substring(single_rec,33,8), 'YYYYMMDD')
           else null
         end /* coverage_status_effective_date */,
-        case when substring(single_rec,41,8) > '00000000' THEN to_date(substring(single_rec,41,8), 'YYYYMMDD')
+        case when substring(single_rec,41,8) > '00000000' and substring(single_rec,41,8) < '30000101' THEN to_date(substring(single_rec,41,8), 'YYYYMMDD')
+        when substring(single_rec,41,8) = '30000101' THEN
+          null
           else null
         end /* coverage_status_end_date */,
         current_timestamp::timestamp as created_at,
@@ -42,11 +44,10 @@ class CreateProcessPcovgProc < ActiveRecord::Migration
 
        from pcovgs WHERE substring(single_rec,10,2) = '02');
 
-
        end;
 
          $BODY$
-       LANGUAGE plpgsql ;
+       LANGUAGE plpgsql;
     })
   end
 

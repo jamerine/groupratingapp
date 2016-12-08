@@ -6,7 +6,8 @@ class Step8Proc < ActiveRecord::Migration
       CREATE OR REPLACE FUNCTION public.proc_step_8(process_representative integer,
       experience_period_lower_date date,
       experience_period_upper_date date,
-      current_payroll_period_lower_date date
+      current_payroll_period_lower_date date,
+      current_payroll_period_upper_date date
       )
       RETURNS void AS
       $BODY$
@@ -20,7 +21,6 @@ class Step8Proc < ActiveRecord::Migration
       Insert into final_policy_group_rating_and_premium_projections
       (
         representative_number,
-        policy_type,
         policy_number,
         policy_status,
         data_source,
@@ -29,7 +29,6 @@ class Step8Proc < ActiveRecord::Migration
       )
       (Select
         representative_number,
-        policy_type,
         policy_number,
         policy_status,
         'bwc' as data_source,
@@ -46,7 +45,6 @@ class Step8Proc < ActiveRecord::Migration
       INSERT INTO final_manual_class_group_rating_and_premium_projections
       (
         representative_number,
-        policy_type,
         policy_number,
         manual_number,
         -- ADD ALL INDUSTRY_GROUP'S PAYROLL WITHIN A POLICY_NUMBER SURE TO UPDATE THIS AFTER GOING AF
@@ -59,7 +57,6 @@ class Step8Proc < ActiveRecord::Migration
       (
         SELECT
           a.representative_number,
-          a.policy_type,
           a.policy_number,
           b.manual_number,
           round(sum(b.manual_class_payroll)::numeric,2) as manual_class_current_estimated_payroll,
@@ -70,7 +67,7 @@ class Step8Proc < ActiveRecord::Migration
         Inner Join public.process_payroll_all_transactions_breakdown_by_manual_classes b
         ON a.policy_number = b.policy_number
         WHERE (b.reporting_period_start_date >= current_payroll_period_lower_date) and a.representative_number = process_representative
-        GROUP BY a.representative_number, a.policy_type, a.policy_number, b.manual_number
+        GROUP BY a.representative_number, a.policy_number, b.manual_number
       );
 
 
@@ -362,7 +359,7 @@ class Step8Proc < ActiveRecord::Migration
       DELETE FROM process_policy_experience_period_peos
       WHERE id IN (SELECT id
                    FROM (SELECT id,
-                                  ROW_NUMBER() OVER (partition BY representative_number, policy_type, policy_number, manual_class_sf_peo_lease_effective_date,
+                                  ROW_NUMBER() OVER (partition BY representative_number, policy_number, manual_class_sf_peo_lease_effective_date,
        manual_class_sf_peo_lease_termination_date, manual_class_si_peo_lease_effective_date,
        manual_class_si_peo_lease_termination_date, data_source ORDER BY id) AS rnum
                           FROM process_policy_experience_period_peos) t

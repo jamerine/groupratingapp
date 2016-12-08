@@ -4,7 +4,8 @@ class Step4Proc < ActiveRecord::Migration
       CREATE OR REPLACE FUNCTION public.proc_step_4(process_representative integer,
         experience_period_lower_date date,
         experience_period_upper_date date,
-        current_payroll_period_lower_date date
+        current_payroll_period_lower_date date,
+        current_payroll_period_upper_date date
         )
         RETURNS void AS
         $BODY$
@@ -20,9 +21,9 @@ class Step4Proc < ActiveRecord::Migration
         INSERT INTO final_manual_class_four_year_payroll_and_exp_losses
           (
             representative_number,
-            policy_type,
             policy_number,
             manual_number,
+            manual_class_type,
             data_source,
             created_at,
             updated_at
@@ -30,9 +31,9 @@ class Step4Proc < ActiveRecord::Migration
           (
             SELECT
             a.representative_number,
-            a.policy_type,
             a.policy_number,
             b.manual_number,
+            b.manual_class_type,
             'bwc' as data_source,
             run_date as created_at,
             run_date as updated_at
@@ -41,9 +42,9 @@ class Step4Proc < ActiveRecord::Migration
           ON a.policy_number = b.policy_number
           WHERE b.reporting_period_start_date >= experience_period_lower_date and a.representative_number = process_representative
           GROUP BY a.representative_number,
-            a.policy_type,
             a.policy_number,
-            b.manual_number
+            b.manual_number,
+            b.manual_class_type
           );
 
 
@@ -57,9 +58,9 @@ class Step4Proc < ActiveRecord::Migration
           INSERT INTO process_manual_class_four_year_payroll_with_conditions
           (
             representative_number,
-            policy_type,
             policy_number,
             manual_number,
+            manual_class_type,
             manual_class_four_year_period_payroll,
             data_source,
             created_at,
@@ -68,9 +69,9 @@ class Step4Proc < ActiveRecord::Migration
           (
             SELECT
               a.representative_number,
-              a.policy_type,
               a.policy_number,
               a.manual_number,
+              a.manual_class_type,
               SUM(a.manual_class_payroll) as manual_class_four_year_period_payroll,
               'bwc' as data_source,
               run_date as created_at,
@@ -81,15 +82,15 @@ class Step4Proc < ActiveRecord::Migration
             WHERE (a.reporting_period_start_date BETWEEN experience_period_lower_date and experience_period_upper_date)
             and a.representative_number = process_representative -- date range for experience_period
               and (a.payroll_origin = 'payroll' or a.payroll_origin = 'manual_reclass' or a.payroll_origin = 'payroll_adjustment') and (a.reporting_period_start_date >= edi.policy_creation_date )
-            GROUP BY a.representative_number, a.policy_type, a.policy_number, a.manual_number
+            GROUP BY a.representative_number, a.policy_number, a.manual_number, a.manual_class_type
           );
 
             INSERT INTO process_manual_class_four_year_payroll_without_conditions
             (
               representative_number,
-              policy_type,
               policy_number,
               manual_number,
+              manual_class_type,
               manual_class_four_year_period_payroll,
               data_source,
               created_at,
@@ -98,9 +99,9 @@ class Step4Proc < ActiveRecord::Migration
             (
             SELECT
               a.representative_number,
-              a.policy_type,
               a.policy_number,
               a.manual_number,
+              a.manual_class_type,
               SUM(a.manual_class_payroll) as manual_class_four_year_period_payroll,
               'bwc' as data_source,
               run_date as created_at,
@@ -111,7 +112,7 @@ class Step4Proc < ActiveRecord::Migration
             WHERE (a.reporting_period_start_date BETWEEN experience_period_lower_date and experience_period_upper_date)
             and a.representative_number = process_representative -- date range for experience_period
               and (a.payroll_origin != 'payroll' and a.payroll_origin != 'manual_reclass' and a.payroll_origin != 'payroll_adjustment')
-            GROUP BY a.representative_number, a.policy_type, a.policy_number, a.manual_number
+            GROUP BY a.representative_number, a.policy_number, a.manual_number, a.manual_class_type
             );
 
 
@@ -122,7 +123,7 @@ class Step4Proc < ActiveRecord::Migration
 
          UPDATE public.final_manual_class_four_year_payroll_and_exp_losses a SET (manual_class_four_year_period_payroll, updated_at) = (t2.manual_class_four_year_period_payroll, t2.updated_at)
          FROM
-         (SELECT a.representative_number, a.policy_number, a.manual_number,
+         (SELECT a.representative_number, a.policy_number, a.manual_number, a.manual_class_type,
         ROUND(((Case when wo.manual_class_four_year_period_payroll is null then '0'::decimal ELSE
         wo.manual_class_four_year_period_payroll END)
         + (Case when w.manual_class_four_year_period_payroll is null then '0'::decimal ELSE
@@ -130,11 +131,11 @@ class Step4Proc < ActiveRecord::Migration
         run_date as updated_at
         FROM public.final_manual_class_four_year_payroll_and_exp_losses a
         Left join public.process_manual_class_four_year_payroll_without_conditions wo
-        ON a.policy_number = wo.policy_number and a.manual_number = wo.manual_number
+        ON a.policy_number = wo.policy_number and a.manual_number = wo.manual_number and a.manual_class_type = wo.manual_class_type
         Left join public.process_manual_class_four_year_payroll_with_conditions w
-        ON a.policy_number = w.policy_number and a.manual_number = w.manual_number
+        ON a.policy_number = w.policy_number and a.manual_number = w.manual_number and a.manual_class_type = w.manual_class_type
          ) t2
-         WHERE a.policy_number = t2.policy_number and a.manual_number = t2.manual_number and a.representative_number = t2.representative_number and a.representative_number = process_representative;
+         WHERE a.policy_number = t2.policy_number and a.manual_number = t2.manual_number and a.manual_class_type = t2.manual_class_type and a.representative_number = t2.representative_number and a.representative_number = process_representative;
 
 
 
@@ -148,9 +149,9 @@ class Step4Proc < ActiveRecord::Migration
          FROM
          (  SELECT
              a.representative_number,
-             a.policy_type,
              a.policy_number,
              a.manual_number,
+             a.manual_class_type,
              b.expected_loss_rate as manual_class_expected_loss_rate,
              b.base_rate as manual_class_base_rate,
              ROUND((a.manual_class_four_year_period_payroll * b.expected_loss_rate)::numeric, 4)
@@ -165,7 +166,7 @@ class Step4Proc < ActiveRecord::Migration
            Left Join public.final_employer_demographics_informations edi
            ON a.policy_number = edi.policy_number
            ) t2
-         WHERE a.policy_number = t2.policy_number and a.manual_number = t2.manual_number and a.representative_number = t2.representative_number and (a.representative_number is not null) and a.representative_number = process_representative;
+         WHERE a.policy_number = t2.policy_number and a.manual_number = t2.manual_number and a.manual_class_type = t2.manual_class_type and a.representative_number = t2.representative_number and (a.representative_number is not null) and a.representative_number = process_representative;
 
 
 

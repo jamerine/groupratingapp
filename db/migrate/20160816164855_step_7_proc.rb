@@ -6,7 +6,8 @@ class Step7Proc < ActiveRecord::Migration
       CREATE OR REPLACE FUNCTION public.proc_step_7(process_representative integer,
       experience_period_lower_date date,
       experience_period_upper_date date,
-      current_payroll_period_lower_date date
+      current_payroll_period_lower_date date,
+      current_payroll_period_upper_date date
       )
       RETURNS void AS
       $BODY$
