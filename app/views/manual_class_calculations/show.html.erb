@@ -10,10 +10,6 @@
           <h3><%= @policy_calculation.policy_number %></h3>
         </div>
 
-        <div class="col-md-6">
-          <h2><%= @policy_calculation.business_name.titleize %></h2>
-          <p><%=  @policy_calculation.address_1.titleize %>, <%=  @policy_calculation.address_2.titleize %><%=  @policy_calculation.city.titleize %>, <%= @policy_calculation.state %> <%= @policy_calculation.zip_code %></p>
-        </div>
         <div class="col-md-3">
           <h5>Policy Updated at:</h5>
           <h4><%= @policy_calculation.updated_at.in_time_zone("America/New_York").strftime("%m/%d/%y @ %I:%M %p") %></h4>
@@ -28,10 +24,6 @@
     <br>
         <h2>Manual Class Premium Projections</h2>
         <div class="row text-center">
-          <div class="col-md-2 col-sm-4 col-xs-6">
-            <h5>Qualification</h5>
-            <p><%= @policy_calculation.group_rating_qualification %></p>
-          </div>
           <div class="col-md-2 col-sm-4 col-xs-6">
             <h5>IG Premium Ratio</h5>
             <p><%= @manual_class_calculation.manual_class_industry_group_premium_percentage %></p>
@@ -88,69 +80,9 @@
   <div class="container text-center">
     <br>
     <h2><%= pluralize_without_count(@manual_class_calculation.payroll_calculations.count, 'Payroll Range') %></h2>
-    <ul class="list-group">
-      <div class="row list-group-item active hidden-sm hidden-xs ">
-        <div class="col-md-2 col-sm-4 col-xs-6 hidden-sm hidden-xs">
-          <h5>Reporting Start Date</h5>
-        </div>
-        <div class="col-md-1 col-sm-4 col-xs-6 hidden-sm hidden-xs">
-          <h5>Manual Type</h5>
-        </div>
-        <div class="col-md-2 col-sm-4 col-xs-6 hidden-sm hidden-xs">
-          <h5>Payroll Amount</h5>
-        </div>
-        <div class="col-md-2 col-sm-4 col-xs-6 hidden-sm hidden-xs">
-          <h5>Payroll Origin</h5>
-        </div>
-        <div class="col-md-2 col-sm-4 col-xs-6 hidden-sm hidden-xs">
-          <h5>Payroll Source</h5>
-        </div>
-        <div class="col-md-1 col-sm-4 col-xs-6 hidden-sm hidden-xs">
-          <h5>Policy Transfered</h5>
-        </div>
-        <div class="col-md-2 col-sm-4 col-xs-6 hidden-sm hidden-xs">
-          <h5>Action</h5>
-        </div>
-      </div>
 
-    <% @payroll_calculations.order("reporting_period_start_date desc").each do |payroll_calculation| %>
-      <div class="row text-center list-group-item">
-          <div class="col-md-2 col-sm-6 col-xs-6">
-            <h5 class="hidden-md hidden-lg">Reporting Start Date</h5>
-            <p> <%= payroll_calculation.reporting_period_start_date %></p>
-          </div>
-          <div class="col-md-1 col-sm-6 col-xs-6">
-            <h5 class="hidden-md hidden-lg">Manual_type</h5>
-            <p> <%= payroll_calculation.manual_type %></p>
-          </div>
-          <div class="col-md-2 col-sm-6 col-xs-6">
-            <h5 class="hidden-md hidden-lg">Payroll Amount</h5>
-            <p> <%= number_to_currency(payroll_calculation.manual_class_payroll) %></p>
-          </div>
-          <div class="col-md-2 col-sm-6 col-xs-6">
-            <h5 class="hidden-md hidden-lg">Payroll Origin</h5>
-            <p> <%= payroll_calculation.payroll_origin %></p>
-          </div>
-          <div class="col-md-2 col-sm-6 col-xs-6">
-            <h5 class="hidden-md hidden-lg">Payroll Source</h5>
-            <p> <%= payroll_calculation.data_source %></p>
-          </div>
-          <div class="col-md-1 col-sm-6 col-xs-6">
-            <h5 class="hidden-md hidden-lg">Policy Transfered</h5>
-            <p> <%= payroll_calculation.policy_transferred || 'none' %></p>
-          </div>
+    <%= render partial: 'payroll_calculations/manual_class_payroll', locals: { payroll_calculations: @payroll_calculations} %>
 
-          <div class="col-md-2 col-sm-12 col-xs-12">
-            <h5 class="hidden-md hidden-lg hidden-sm hidden-xs">Action</h5>
-            <% if payroll_calculation.data_source == 'bwc' %>
-              <p class="hidden-sm hidden-xs"><small>uneditable</small></p>
-            <% else %>
-              <p> <%= link_to 'Delete', payroll_calculation_path(id: payroll_calculation.id), method: :delete %></p>
-            <% end %>
-          </div>
-    </div>
-    <% end %>
-  </ul>
   </div>
 
 <%= render partial: 'payroll_calculations/form', locals: { payroll_calculation: @new_payroll_calculation, manual_class_calculation: @manual_class_calculation} %>

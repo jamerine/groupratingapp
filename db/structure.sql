@@ -639,14 +639,15 @@ CREATE FUNCTION proc_process_flat_pcovgs() RETURNS void
         case when substring(single_rec,33,8) > '00000000' THEN to_date(substring(single_rec,33,8), 'YYYYMMDD')
           else null
         end /* coverage_status_effective_date */,
-        case when substring(single_rec,41,8) > '00000000' THEN to_date(substring(single_rec,41,8), 'YYYYMMDD')
+        case when substring(single_rec,41,8) > '00000000' and substring(single_rec,41,8) < '30000101' THEN to_date(substring(single_rec,41,8), 'YYYYMMDD')
+        when substring(single_rec,41,8) = '30000101' THEN
+          null
           else null
         end /* coverage_status_end_date */,
         current_timestamp::timestamp as created_at,
         current_timestamp::timestamp as updated_at
 
        from pcovgs WHERE substring(single_rec,10,2) = '02');
-
 
        end;
 
@@ -2283,6 +2284,213 @@ CREATE FUNCTION proc_step_1(process_representative integer, experience_period_lo
 
 
 --
+-- Name: proc_step_100(integer, date, date, date, date); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION proc_step_100(process_representative integer, experience_period_lower_date date, experience_period_upper_date date, current_payroll_period_lower_date date, current_payroll_period_upper_date date) RETURNS void
+    LANGUAGE plpgsql
+    AS $_$
+
+        DECLARE
+          run_date timestamp := LOCALTIMESTAMP;
+        BEGIN
+
+        /* UPDATED FROM NEW PIRS FILES MONDAY, DECEMBER 5, 2015 */
+
+
+        -- STEP 1 A -- CREATE FINAL EMPLOYER DEMOGRAPHICS
+
+        INSERT INTO final_employer_demographics_informations (
+          representative_number,
+          policy_number,
+          valid_policy_number,
+          current_coverage_status,
+          coverage_status_effective_date,
+          federal_identification_number,
+          business_name,
+          trading_as_name,
+          valid_mailing_address,
+          mailing_address_line_1,
+          mailing_address_line_2,
+          mailing_city,
+          mailing_state,
+          mailing_zip_code,
+          mailing_zip_code_plus_4,
+          mailing_country_code,
+          mailing_county,
+          valid_location_address,
+          location_address_line_1,
+          location_address_line_2,
+          location_city,
+          location_state,
+          location_zip_code,
+          location_zip_code_plus_4,
+          location_country_code,
+          location_county,
+          currently_assigned_clm_representative_number,
+          currently_assigned_risk_representative_number,
+          currently_assigned_erc_representative_number,
+          currently_assigned_grc_representative_number,
+          immediate_successor_policy_number,
+          immediate_successor_business_sequence_number,
+          ultimate_successor_policy_number,
+          ultimate_successor_business_sequence_number,
+          employer_type,
+          coverage_type,
+          policy_employer_type,
+          policy_coverage_type,
+          data_source,
+          created_at,
+          updated_at
+        )
+
+        (Select
+          representative_number,
+          policy_number,
+          valid_policy_number,
+          current_coverage_status,
+          coverage_status_effective_date,
+          federal_identification_number,
+          REGEXP_REPLACE(business_name, '\s+$', ''),
+          REGEXP_REPLACE(trading_as_name, '\s+$', ''),
+          valid_mailing_address,
+          REGEXP_REPLACE(mailing_address_line_1, '\s+$', ''),
+          REGEXP_REPLACE(mailing_address_line_2, '\s+$', ''),
+          REGEXP_REPLACE(mailing_city, '\s+$', ''),
+          REGEXP_REPLACE(mailing_state, '\s+$', ''),
+          mailing_zip_code,
+          mailing_zip_code_plus_4,
+          mailing_country_code,
+          mailing_county,
+          valid_location_address,
+          REGEXP_REPLACE(location_address_line_1, '\s+$', ''),
+          REGEXP_REPLACE(location_address_line_2, '\s+$', ''),
+          REGEXP_REPLACE(location_city, '\s+$', ''),
+          REGEXP_REPLACE(location_state, '\s+$', ''),
+          location_zip_code,
+          location_zip_code_plus_4,
+          location_country_code,
+          location_county,
+          currently_assigned_clm_representative_number,
+          currently_assigned_risk_representative_number,
+          currently_assigned_erc_representative_number,
+          currently_assigned_grc_representative_number,
+          immediate_successor_policy_number,
+          immediate_successor_business_sequence_number,
+          ultimate_successor_policy_number,
+          ultimate_successor_business_sequence_number,
+          employer_type,
+          coverage_type,
+          CASE WHEN employer_type = 'PA ' THEN 'private_account'
+        		   WHEN employer_type = 'PEC' THEN 'public_employer_county'
+        		   WHEN employer_type = 'PES' THEN 'public_employer_state'
+          end as policy_employer_type,
+          CASE WHEN coverage_type = 'SF' THEN 'state_fund'
+        		   WHEN coverage_type = 'SI' THEN 'self_insured'
+        		   WHEN coverage_type = 'BL' THEN 'black_lung'
+        		   WHEN coverage_type = 'ML' THEN 'marine_fund'
+          end as policy_coverage_type,
+          'bwc' as data_source,
+          run_date as created_at,
+          run_date as updated_at
+        FROM public.pdemo_detail_records
+        WHERE representative_number = process_representative
+        );
+
+
+
+        -- STEP 1B -- CREATE POLICY COVERAGE HISTORY FROM SC220
+
+
+        Insert into process_policy_coverage_status_histories
+        (
+        representative_number,
+        policy_number,
+        coverage_status,
+        coverage_effective_date,
+        coverage_end_date,
+        data_source,
+        created_at,
+        updated_at
+        )
+
+        (SELECT
+        representative_number,
+        policy_number,
+        coverage_status,
+        coverage_status_effective_date,
+        coverage_status_end_date,
+        'bwc' as data_source,
+        run_date as created_at,
+        run_date as updated_at
+        FROM pcovg_detail_records
+        WHERE coverage_status_effective_date is not null and representative_number = process_representative
+        ORDER BY policy_number, coverage_status_effective_date DESC
+        );
+
+
+        --     UPDATE LAPSE PERIOD
+
+        Update public.process_policy_coverage_status_histories pcsh set (lapse_days, updated_at) = (t2.lapse_days, t2.updated_at)
+        FROM
+        (SELECT a.representative_number,
+          a.policy_number,
+          a.coverage_effective_date,
+          a.coverage_end_date,
+          a.coverage_status,
+          (CASE WHEN a.coverage_status = 'LAPSE' and a.coverage_end_date is not null Then (a.coverage_end_date - a.coverage_effective_date)
+               WHEN a.coverage_status = 'LAPSE' and a.coverage_end_date is null THEN (run_date::date - a.coverage_effective_date)
+               WHEN a.coverage_status = 'LAPSE' and a.coverage_end_date is null THEN (run_date::date - a.coverage_effective_date)
+               ELSE '0'::integer END) as lapse_days,
+          run_date as updated_at
+          FROM public.process_policy_coverage_status_histories a
+          WHERE a.representative_number = process_representative
+        ) t2
+        WHERE pcsh.representative_number = t2.representative_number and pcsh.policy_number = t2.policy_number and pcsh.coverage_effective_date = t2.coverage_effective_date and pcsh.coverage_end_date = t2.coverage_end_date and pcsh.coverage_status = t2.coverage_status;
+
+
+        -- UPDATE current coverage status periods that are lapse with the number of days they have been lapse.
+
+        Update public.process_policy_coverage_status_histories pcsh set (lapse_days, updated_at) = (t2.lapse_days, t2.updated_at)
+        FROM
+        (SELECT a.representative_number,
+         policy_type,
+          a.policy_number,
+          a.coverage_effective_date,
+          a.coverage_end_date,
+          a.coverage_status,
+          (run_date::date - a.coverage_effective_date) as lapse_days,
+           run_date as updated_at
+          FROM public.process_policy_coverage_status_histories a
+          WHERE a.coverage_end_date is null and a.coverage_status = 'LAPSE'
+          and a.representative_number = process_representative
+        ) t2
+        WHERE  pcsh.policy_number = t2.policy_number and pcsh.coverage_effective_date = t2.coverage_effective_date and pcsh.coverage_status = t2.coverage_status ;
+
+
+        -- 65 milliseconds
+
+
+
+        UPDATE public.final_employer_demographics_informations edi SET
+        (policy_creation_date, updated_at) =
+        (t2.min_coverage_effective_date, t2.updated_at)
+        FROM
+        (
+        SELECT a.representative_number,
+          a.policy_number,
+          MIN(a.coverage_effective_date) as min_coverage_effective_date,
+           current_timestamp as updated_at
+          FROM public.process_policy_coverage_status_histories a
+          GROUP BY a.representative_number, a.policy_number
+        ) t2
+        WHERE edi.policy_number = t2.policy_number;
+
+        end;
+          $_$;
+
+
+--
 -- Name: proc_step_2(integer, date, date, date); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -2757,10 +2965,542 @@ CREATE FUNCTION proc_step_2(process_representative integer, experience_period_lo
 
 
 --
--- Name: proc_step_3(integer, date, date, date); Type: FUNCTION; Schema: public; Owner: -
+-- Name: proc_step_200(integer, date, date, date, date); Type: FUNCTION; Schema: public; Owner: -
 --
 
-CREATE FUNCTION proc_step_3(process_representative integer, experience_period_lower_date date, experience_period_upper_date date, current_payroll_period_lower_date date) RETURNS void
+CREATE FUNCTION proc_step_200(process_representative integer, experience_period_lower_date date, experience_period_upper_date date, current_payroll_period_lower_date date, current_payroll_period_upper_date date) RETURNS void
+    LANGUAGE plpgsql
+    AS $$
+
+      DECLARE
+        run_date timestamp := LOCALTIMESTAMP;
+      BEGIN
+
+      /* UPDATED FROM NEW PIRS FILES MONDAY, DECEMBER 5, 2015 */
+
+
+
+      INSERT INTO process_payroll_breakdown_by_manual_classes (
+        representative_number,
+        policy_number,
+        policy_status_effective_date,
+        policy_status,
+        manual_number,
+        manual_class_type,
+        manual_class_description,
+        bwc_customer_id,
+        reporting_period_start_date,
+        reporting_period_end_date,
+        manual_class_rate,
+        manual_class_payroll,
+        reporting_type,
+        number_of_employees,
+        payroll_origin,
+        data_source,
+        created_at,
+        updated_at
+      )
+      (SELECT
+          a.representative_number,
+          a.policy_number,
+          a.policy_status_effective_date,
+          a.policy_status,
+          a.manual_class as manual_number,
+          a.manual_class_type,
+          a.manual_class_description,
+          a.bwc_customer_id,
+          a.reporting_period_start_date,
+          a.reporting_period_end_date,
+          a.manual_class_rate,
+          a.payroll as manual_class_payroll,
+          a.reporting_type,
+          a.number_of_employees,
+          'payroll' as payroll_origin,
+          'bwc' as data_source,
+          run_date as created_at,
+          run_date as updated_at
+        FROM public.rate_detail_records a
+        LEFT JOIN public.final_employer_demographics_informations b
+        ON a.policy_number = b.policy_number
+        WHERE a.reporting_period_start_date is not null and a.representative_number = process_representative and a.reporting_period_start_date >= experience_period_lower_date and a.reporting_period_start_date >= b.policy_creation_date
+        ORDER BY
+          policy_number ASC,
+          manual_class ASC,
+          reporting_period_start_date ASC
+        );
+
+
+
+
+
+      -- Add SC220 AND WILL REMOVE ONCE THE BWC CHANGES THE RATES FILE TO INCLUDE HISTORY VALUES
+
+      INSERT INTO process_payroll_breakdown_by_manual_classes (
+          representative_number,
+          policy_type,
+          policy_number,
+          manual_number,
+          manual_class_type,
+          reporting_period_start_date,
+          reporting_period_end_date,
+          manual_class_rate,
+          manual_class_payroll,
+          reporting_type,
+          payroll_origin,
+          data_source,
+          created_at,
+          updated_at
+      )
+      (SELECT representative_number,
+          policy_type,
+          policy_number,
+          manual_number,
+          manual_type as manual_class_type,
+          manual_effective_date as reporting_period_start_date,
+          (manual_effective_date + (6::text || ' month')::interval  - (1::text || ' day')::interval)::date as reporting_period_end_date,
+          manual_class_rate,
+          year_to_date_payroll as manual_class_payroll,
+          'A' as reporting_type,
+          'payroll' as payroll_origin,
+          'bwc' as data_source,
+          run_date as created_at,
+          run_date as updated_at
+      FROM public.sc220_rec2_employer_manual_level_payrolls
+      WHERE manual_effective_date is not null and representative_number = process_representative and manual_effective_date >= experience_period_lower_date
+      ORDER BY
+          policy_number ASC,
+          manual_number ASC,
+          reporting_period_start_date ASC
+        );
+
+        INSERT INTO process_payroll_breakdown_by_manual_classes (
+            representative_number,
+            policy_type,
+            policy_number,
+            manual_number,
+            manual_class_type,
+            reporting_period_start_date,
+            reporting_period_end_date,
+            manual_class_rate,
+            manual_class_payroll,
+            reporting_type,
+            payroll_origin,
+            data_source,
+            created_at,
+            updated_at
+        )
+        (SELECT representative_number,
+          policy_type,
+          policy_number,
+          manual_number,
+          manual_type as manual_class_type,
+          n2nd_manual_effective_date as reporting_period_start_date,
+          (n2nd_manual_effective_date + (6::text || ' month')::interval  - (1::text || ' day')::interval)::date as reporting_period_end_date,
+          n2nd_manual_class_rate as manual_class_rate,
+          n2nd_year_to_date_payroll as manual_class_payroll,
+          'A' as reporting_type,
+          'payroll' as payroll_origin,
+          'bwc' as data_source,
+          run_date as created_at,
+          run_date as updated_at
+          FROM public.sc220_rec2_employer_manual_level_payrolls
+          WHERE n2nd_manual_effective_date is not null and representative_number = process_representative and n2nd_manual_effective_date >= experience_period_lower_date
+          ORDER BY
+            policy_number ASC,
+            manual_number ASC,
+            reporting_period_start_date ASC
+        );
+
+
+        INSERT INTO process_payroll_breakdown_by_manual_classes (
+            representative_number,
+            policy_type,
+            policy_number,
+            manual_number,
+            manual_class_type,
+            reporting_period_start_date,
+            reporting_period_end_date,
+            manual_class_rate,
+            manual_class_payroll,
+            reporting_type,
+            payroll_origin,
+            data_source,
+            created_at,
+            updated_at
+        )
+        (SELECT representative_number,
+          policy_type,
+          policy_number,
+          manual_number,
+          manual_type as manual_class_type,
+          n3rd_manual_effective_date as reporting_period_start_date,
+          (n3rd_manual_effective_date + (6::text || ' month')::interval  - (1::text || ' day')::interval)::date as reporting_period_end_date,
+          n3rd_manual_class_rate as manual_class_rate,
+          n3rd_year_to_date_payroll as manual_class_payroll,
+          'A' as reporting_type,
+          'payroll' as payroll_origin,
+          'bwc' as data_source,
+          run_date as created_at,
+          run_date as updated_at
+           FROM public.sc220_rec2_employer_manual_level_payrolls
+           WHERE n3rd_manual_effective_date is not null and representative_number = process_representative and n3rd_manual_effective_date >= experience_period_lower_date
+           ORDER BY
+             policy_number ASC,
+             manual_number ASC,
+             reporting_period_start_date ASC
+           );
+           INSERT INTO process_payroll_breakdown_by_manual_classes (
+             representative_number,
+             policy_type,
+             policy_number,
+             manual_number,
+             manual_class_type,
+             reporting_period_start_date,
+             reporting_period_end_date,
+             manual_class_rate,
+             manual_class_payroll,
+             reporting_type,
+             payroll_origin,
+             data_source,
+             created_at,
+             updated_at
+           )
+        (SELECT representative_number,
+          policy_type,
+          policy_number,
+          manual_number,
+          manual_type as manual_class_type,
+          n4th_manual_effective_date as reporting_period_start_date,
+          (n4th_manual_effective_date + (6::text || ' month')::interval  - (1::text || ' day')::interval)::date as reporting_period_end_date,
+          n4th_manual_class_rate as manual_class_rate,
+          n4th_year_to_date_payroll as manual_class_payroll,
+          'A' as reporting_type,
+          'payroll' as payroll_origin,
+          'bwc' as data_source,
+          run_date as created_at,
+          run_date as updated_at
+          FROM public.sc220_rec2_employer_manual_level_payrolls
+          WHERE n4th_manual_effective_date is not null and representative_number = process_representative and n4th_manual_effective_date >= experience_period_lower_date
+          ORDER BY
+            policy_number ASC,
+            manual_number ASC,
+            reporting_period_start_date ASC
+          );
+          INSERT INTO process_payroll_breakdown_by_manual_classes (
+            representative_number,
+            policy_type,
+            policy_number,
+            manual_number,
+            manual_class_type,
+            reporting_period_start_date,
+            reporting_period_end_date,
+            manual_class_rate,
+            manual_class_payroll,
+            reporting_type,
+            payroll_origin,
+            data_source,
+            created_at,
+            updated_at
+          )
+        (SELECT representative_number,
+        policy_type,
+        policy_number,
+        manual_number,
+        manual_type as manual_class_type,
+        n5th_manual_effective_date as reporting_period_start_date,
+        (n5th_manual_effective_date + (6::text || ' month')::interval  - (1::text || ' day')::interval)::date as reporting_period_end_date,
+        n5th_manual_class_rate as manual_class_rate,
+        n5th_year_to_date_payroll as manual_class_payroll,
+        'A' as reporting_type,
+        'payroll' as payroll_origin,
+        'bwc' as data_source,
+        run_date as created_at,
+        run_date as updated_at
+        FROM public.sc220_rec2_employer_manual_level_payrolls
+        WHERE n5th_manual_effective_date is not null and representative_number = process_representative and n5th_manual_effective_date >= experience_period_lower_date
+        ORDER BY
+          policy_number ASC,
+          manual_number ASC,
+          reporting_period_start_date ASC
+        );
+        INSERT INTO process_payroll_breakdown_by_manual_classes (
+            representative_number,
+            policy_type,
+            policy_number,
+            manual_number,
+            manual_class_type,
+            reporting_period_start_date,
+            reporting_period_end_date,
+            manual_class_rate,
+            manual_class_payroll,
+            reporting_type,
+            payroll_origin,
+            data_source,
+            created_at,
+            updated_at
+        )
+        (SELECT representative_number,
+          policy_type,
+          policy_number,
+          manual_number,
+          manual_type as manual_class_type,
+          n6th_manual_effective_date as reporting_period_start_date,
+          (n6th_manual_effective_date + (6::text || ' month')::interval  - (1::text || ' day')::interval)::date as reporting_period_end_date,
+          n6th_manual_class_rate as manual_class_rate,
+          n6th_year_to_date_payroll as manual_class_payroll,
+          'A' as reporting_type,
+          'payroll' as payroll_origin,
+          'bwc' as data_source,
+          run_date as created_at,
+          run_date as updated_at
+        FROM public.sc220_rec2_employer_manual_level_payrolls
+        WHERE n6th_manual_effective_date is not null and representative_number = process_representative and n6th_manual_effective_date >= experience_period_lower_date
+        ORDER BY
+          policy_number ASC,
+          manual_number ASC,
+          reporting_period_start_date ASC
+        );
+        INSERT INTO process_payroll_breakdown_by_manual_classes (
+            representative_number,
+            policy_type,
+            policy_number,
+            manual_number,
+            manual_class_type,
+            reporting_period_start_date,
+            reporting_period_end_date,
+            manual_class_rate,
+            manual_class_payroll,
+            reporting_type,
+            payroll_origin,
+            data_source,
+            created_at,
+            updated_at
+        )
+        (SELECT representative_number,
+          policy_type,
+          policy_number,
+          manual_number,
+          manual_type as manual_class_type,
+          n7th_manual_effective_date as reporting_period_start_date,
+          (n7th_manual_effective_date + (6::text || ' month')::interval  - (1::text || ' day')::interval)::date as reporting_period_end_date,
+          n7th_manual_class_rate as manual_class_rate,
+          n7th_year_to_date_payroll as manual_class_payroll,
+          'A' as reporting_type,
+          'payroll' as payroll_origin,
+          'bwc' as data_source,
+          run_date as created_at,
+          run_date as updated_at
+        FROM public.sc220_rec2_employer_manual_level_payrolls
+        WHERE n7th_manual_effective_date is not null and representative_number = process_representative and n7th_manual_effective_date >= experience_period_lower_date
+        ORDER BY
+          policy_number ASC,
+          manual_number ASC,
+          reporting_period_start_date ASC
+        );
+        INSERT INTO process_payroll_breakdown_by_manual_classes (
+            representative_number,
+            policy_type,
+            policy_number,
+            manual_number,
+            manual_class_type,
+            reporting_period_start_date,
+            reporting_period_end_date,
+            manual_class_rate,
+            manual_class_payroll,
+            reporting_type,
+            payroll_origin,
+            data_source,
+            created_at,
+            updated_at
+        )
+        (SELECT representative_number,
+          policy_type,
+          policy_number,
+          manual_number,
+          manual_type as manual_class_type,
+          n8th_manual_effective_date as reporting_period_start_date,
+          (n8th_manual_effective_date + (6::text || ' month')::interval  - (1::text || ' day')::interval)::date as reporting_period_end_date,
+          n8th_manual_class_rate as manual_class_rate,
+          n8th_year_to_date_payroll as manual_class_payroll,
+          'A' as reporting_type,
+          'payroll' as payroll_origin,
+          'bwc' as data_source,
+          run_date as created_at,
+          run_date as updated_at
+        FROM public.sc220_rec2_employer_manual_level_payrolls
+        WHERE n8th_manual_effective_date is not null and representative_number = process_representative and n8th_manual_effective_date >= experience_period_lower_date
+        ORDER BY
+          policy_number ASC,
+          manual_number ASC,
+          reporting_period_start_date ASC
+        );
+        INSERT INTO process_payroll_breakdown_by_manual_classes (
+            representative_number,
+            policy_type,
+            policy_number,
+            manual_number,
+            manual_class_type,
+            reporting_period_start_date,
+            reporting_period_end_date,
+            manual_class_rate,
+            manual_class_payroll,
+            reporting_type,
+            payroll_origin,
+            data_source,
+            created_at,
+            updated_at
+        )
+        (SELECT representative_number,
+          policy_type,
+          policy_number,
+          manual_number,
+          manual_type as manual_class_type,
+          n9th_manual_effective_date as reporting_period_start_date,
+          (n9th_manual_effective_date + (6::text || ' month')::interval  - (1::text || ' day')::interval)::date as reporting_period_end_date,
+          n9th_manual_class_rate as manual_class_rate,
+          n9th_year_to_date_payroll as manual_class_payroll,
+          'A' as reporting_type,
+          'payroll' as payroll_origin,
+          'bwc' as data_source,
+          run_date as created_at,
+          run_date as updated_at
+        FROM public.sc220_rec2_employer_manual_level_payrolls
+        WHERE n9th_manual_effective_date is not null and representative_number = process_representative and n9th_manual_effective_date >= experience_period_lower_date
+        ORDER BY
+          policy_number ASC,
+          manual_number ASC,
+          reporting_period_start_date ASC
+        );
+        INSERT INTO process_payroll_breakdown_by_manual_classes (
+            representative_number,
+            policy_type,
+            policy_number,
+            manual_number,
+            manual_class_type,
+            reporting_period_start_date,
+            reporting_period_end_date,
+            manual_class_rate,
+            manual_class_payroll,
+            reporting_type,
+            payroll_origin,
+            data_source,
+            created_at,
+            updated_at
+        )
+        (SELECT representative_number,
+          policy_type,
+          policy_number,
+          manual_number,
+          manual_type as manual_class_type,
+          n10th_manual_effective_date as reporting_period_start_date,
+          (n10th_manual_effective_date + (6::text || ' month')::interval  - (1::text || ' day')::interval)::date as reporting_period_end_date,
+          n10th_manual_class_rate as manual_class_rate,
+          n10th_year_to_date_payroll as manual_class_payroll,
+          'A' as reporting_type,
+          'payroll' as payroll_origin,
+          'bwc' as data_source,
+          run_date as created_at,
+          run_date as updated_at
+        FROM public.sc220_rec2_employer_manual_level_payrolls
+        WHERE n10th_manual_effective_date is not null and representative_number = process_representative and n10th_manual_effective_date >= experience_period_lower_date
+        ORDER BY
+          policy_number ASC,
+          manual_number ASC,
+          reporting_period_start_date ASC
+        );
+        INSERT INTO process_payroll_breakdown_by_manual_classes (
+            representative_number,
+            policy_type,
+            policy_number,
+            manual_number,
+            manual_class_type,
+            reporting_period_start_date,
+            reporting_period_end_date,
+            manual_class_rate,
+            manual_class_payroll,
+            reporting_type,
+            payroll_origin,
+            data_source,
+            created_at,
+            updated_at
+        )
+        (SELECT representative_number,
+          policy_type,
+          policy_number,
+          manual_number,
+          manual_type as manual_class_type,
+          n11th_manual_effective_date as reporting_period_start_date,
+          (n11th_manual_effective_date + (6::text || ' month')::interval  - (1::text || ' day')::interval)::date as reporting_period_end_date,
+          n11th_manual_class_rate as manual_class_rate,
+          n11th_year_to_date_payroll as manual_class_payroll,
+          'A' as reporting_type,
+          'payroll' as payroll_origin,
+          'bwc' as data_source,
+          run_date as created_at,
+          run_date as updated_at
+        FROM public.sc220_rec2_employer_manual_level_payrolls
+        WHERE n11th_manual_effective_date is not null and representative_number = process_representative and n11th_manual_effective_date >= experience_period_lower_date
+        ORDER BY
+          policy_number ASC,
+          manual_number ASC,
+          reporting_period_start_date ASC
+        );
+        INSERT INTO process_payroll_breakdown_by_manual_classes (
+          representative_number,
+          policy_type,
+          policy_number,
+          manual_number,
+          manual_class_type,
+          reporting_period_start_date,
+          reporting_period_end_date,
+          manual_class_rate,
+          manual_class_payroll,
+          reporting_type,
+          payroll_origin,
+          data_source,
+          created_at,
+          updated_at
+        )
+        (SELECT representative_number,
+          policy_type,
+          policy_number,
+          manual_number,
+          manual_type as manual_class_type,
+          n12th_manual_effective_date as reporting_period_start_date,
+          (n12th_manual_effective_date + (6::text || ' month')::interval  - (1::text || ' day')::interval)::date as reporting_period_end_date,
+          n12th_manual_class_rate as manual_class_rate,
+          n12th_year_to_date_payroll as manual_class_payroll,
+          'A' as reporting_type,
+          'payroll' as payroll_origin,
+          'bwc' as data_source,
+          run_date as created_at,
+          run_date as updated_at
+          FROM public.sc220_rec2_employer_manual_level_payrolls
+          WHERE n12th_manual_effective_date is not null and representative_number = process_representative and n12th_manual_effective_date >= experience_period_lower_date
+          ORDER BY
+            policy_number ASC,
+            manual_number ASC,
+            reporting_period_start_date ASC
+        );
+
+
+          DELETE FROM public.process_payroll_breakdown_by_manual_classes
+          WHERE id IN (SELECT id
+                FROM (SELECT id,
+                               ROW_NUMBER() OVER (partition BY policy_type, policy_number, manual_number, manual_class_type, reporting_period_start_date, reporting_period_end_date, manual_class_rate, manual_class_payroll, reporting_type, payroll_origin, data_source ORDER BY id) AS rnum
+                       FROM public.process_payroll_breakdown_by_manual_classes) t
+                WHERE t.rnum > 1);
+
+      end;
+
+        $$;
+
+
+--
+-- Name: proc_step_3(integer, date, date, date, date); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION proc_step_3(process_representative integer, experience_period_lower_date date, experience_period_upper_date date, current_payroll_period_lower_date date, current_payroll_period_upper_date date) RETURNS void
     LANGUAGE plpgsql
     AS $$
 
@@ -3570,10 +4310,10 @@ CREATE FUNCTION proc_step_3(process_representative integer, experience_period_lo
 
 
 --
--- Name: proc_step_3_a(integer, date, date, date); Type: FUNCTION; Schema: public; Owner: -
+-- Name: proc_step_3_a(integer, date, date, date, date); Type: FUNCTION; Schema: public; Owner: -
 --
 
-CREATE FUNCTION proc_step_3_a(process_representative integer, experience_period_lower_date date, experience_period_upper_date date, current_payroll_period_lower_date date) RETURNS void
+CREATE FUNCTION proc_step_3_a(process_representative integer, experience_period_lower_date date, experience_period_upper_date date, current_payroll_period_lower_date date, current_payroll_period_upper_date date) RETURNS void
     LANGUAGE plpgsql
     AS $$
 
@@ -3588,12 +4328,11 @@ CREATE FUNCTION proc_step_3_a(process_representative integer, experience_period_
           representative_number,
           policy_type,
           manual_number,
-          manual_type,
+          manual_class_type,
           reporting_period_start_date,
           reporting_period_end_date,
           manual_class_rate,
           manual_class_payroll,
-          manual_class_premium,
           predecessor_policy_type,
           predecessor_policy_number,
           successor_policy_type,
@@ -3610,12 +4349,11 @@ CREATE FUNCTION proc_step_3_a(process_representative integer, experience_period_
             a.representative_number,
             a.policy_type,
             a.manual_number,
-            a.manual_type,
+            a.manual_class_type,
             a.reporting_period_start_date,
             a.reporting_period_end_date,
             a.manual_class_rate,
             a.manual_class_payroll,
-            a.manual_class_premium,
             b.predecessor_policy_type,
             b.predecessor_policy_number,
             b.successor_policy_type,
@@ -3630,16 +4368,18 @@ CREATE FUNCTION proc_step_3_a(process_representative integer, experience_period_
           FROM public.process_payroll_breakdown_by_manual_classes a
           Right Join public.pcomb_detail_records b
           ON a.policy_number = b.predecessor_policy_number
+          RIGHT JOIN public.final_employer_demographics_informations c
+          ON a.policy_number = c.policy_number
           Where b.transfer_type = 'FC' and a.representative_number = process_representative
+          and a.reporting_period_start_date >= c.policy_creation_date
           GROUP BY a.representative_number,
             a.policy_type,
             a.manual_number,
-            a.manual_type,
+            a.manual_class_type,
             a.reporting_period_start_date,
             a.reporting_period_end_date,
             a.manual_class_rate,
             a.manual_class_payroll,
-            a.manual_class_premium,
             b.predecessor_policy_type,
             b.predecessor_policy_number,
             b.successor_policy_type,
@@ -3792,10 +4532,10 @@ CREATE FUNCTION proc_step_3_a(process_representative integer, experience_period_
 
 
 --
--- Name: proc_step_3_b(integer, date, date, date); Type: FUNCTION; Schema: public; Owner: -
+-- Name: proc_step_3_b(integer, date, date, date, date); Type: FUNCTION; Schema: public; Owner: -
 --
 
-CREATE FUNCTION proc_step_3_b(process_representative integer, experience_period_lower_date date, experience_period_upper_date date, current_payroll_period_lower_date date) RETURNS void
+CREATE FUNCTION proc_step_3_b(process_representative integer, experience_period_lower_date date, experience_period_upper_date date, current_payroll_period_lower_date date, current_payroll_period_upper_date date) RETURNS void
     LANGUAGE plpgsql
     AS $$
 
@@ -4009,28 +4749,43 @@ CREATE FUNCTION proc_step_3_b(process_representative integer, experience_period_
           representative_number,
           policy_type,
           policy_number,
-          manual_type,
+          policy_status_effective_date,
+          policy_status,
           manual_number,
+          manual_class_type,
+          manual_class_description,
+          bwc_customer_id,
           reporting_period_start_date,
           reporting_period_end_date,
+          manual_class_rate,
           manual_class_payroll,
+          reporting_type,
+          number_of_employees,
           payroll_origin,
           data_source,
           created_at,
           updated_at
+
         )
         (SELECT a.representative_number,
-         a.policy_type,
-         a.policy_number,
-         a.manual_type,
-         a.manual_number,
-         a.reporting_period_start_date,
-         a.reporting_period_end_date,
-         a.manual_class_payroll,
-         a.payroll_origin,
-        'bwc' as data_source,
-        run_date as created_at,
-        run_date as updated_at
+          a.policy_type,
+          a.policy_number,
+          a.policy_status_effective_date,
+          a.policy_status,
+          a.manual_number,
+          a.manual_class_type,
+          a.manual_class_description,
+          a.bwc_customer_id,
+          a.reporting_period_start_date,
+          a.reporting_period_end_date,
+          a.manual_class_rate,
+          a.manual_class_payroll,
+          a.reporting_type,
+          a.number_of_employees,
+          a.payroll_origin,
+          a.data_source,
+          a.created_at,
+          a.updated_at
         FROM public.process_payroll_breakdown_by_manual_classes a
         LEFT JOIN public.final_employer_demographics_informations b
         ON a.policy_number = b.policy_number
@@ -4044,7 +4799,7 @@ CREATE FUNCTION proc_step_3_b(process_representative integer, experience_period_
           representative_number,
           policy_type,
           policy_number,
-          manual_type,
+          manual_class_type,
           manual_number,
           reporting_period_start_date,
           reporting_period_end_date,
@@ -4059,7 +4814,7 @@ CREATE FUNCTION proc_step_3_b(process_representative integer, experience_period_
         (SELECT representative_number,
         successor_policy_type as "policy_type",
         successor_policy_number as "policy_number",
-        manual_type,
+        manual_class_type,
         manual_number,
         reporting_period_start_date,
         reporting_period_end_date,
@@ -4079,7 +4834,7 @@ CREATE FUNCTION proc_step_3_b(process_representative integer, experience_period_
           representative_number,
           policy_type,
           policy_number,
-          manual_type,
+          manual_class_type,
           manual_number,
           reporting_period_start_date,
           reporting_period_end_date,
@@ -4094,7 +4849,7 @@ CREATE FUNCTION proc_step_3_b(process_representative integer, experience_period_
         (SELECT representative_number,
         predecessor_policy_type as "policy_type",
         predecessor_policy_number as "policy_number",
-        manual_type,
+        manual_class_type,
         manual_number,
         reporting_period_start_date,
         reporting_period_end_date,
@@ -4115,77 +4870,7 @@ CREATE FUNCTION proc_step_3_b(process_representative integer, experience_period_
           representative_number,
           policy_type,
           policy_number,
-          manual_type,
-          manual_number,
-          reporting_period_start_date,
-          reporting_period_end_date,
-          manual_class_payroll,
-          policy_transferred,
-          transfer_creation_date,
-          payroll_origin,
-          data_source,
-          created_at,
-          updated_at
-        )
-        (SELECT representative_number,
-        successor_policy_type as "policy_type",
-        successor_policy_number as "policy_number",
-        manual_coverage_type as manual_type,
-        ncci_manual_number as "manual_number",
-        payroll_reporting_period_from_date as "reporting_period_start_date",
-        payroll_reporting_period_to_date as "reporting_period_end_date",
-        manual_payroll,
-        predecessor_policy_number as "policy_transferred",
-        transfer_creation_date,
-        payroll_origin,
-        'bwc' as data_source,
-        run_date as created_at,
-        run_date as updated_at
-        FROM public.process_policy_combine_partial_transfer_no_leases
-        where representative_number = process_representative
-        );
-
-        INSERT INTO process_payroll_all_transactions_breakdown_by_manual_classes (
-          representative_number,
-          policy_type,
-          policy_number,
-          manual_type,
-          manual_number,
-          reporting_period_start_date,
-          reporting_period_end_date,
-          manual_class_payroll,
-          policy_transferred,
-          transfer_creation_date,
-          payroll_origin,
-          data_source,
-          created_at,
-          updated_at
-        )
-        (SELECT representative_number,
-        predecessor_policy_type as "policy_type",
-        predecessor_policy_number as "policy_number",
-        manual_coverage_type as manual_type,
-        ncci_manual_number as "manual_number",
-        payroll_reporting_period_from_date as "reporting_period_start_date",
-        payroll_reporting_period_to_date as "reporting_period_end_date",
-        (-manual_payroll) as "manual_payroll",
-        successor_policy_number as "policy_transferred",
-        transfer_creation_date,
-        payroll_origin,
-        'bwc' as data_source,
-        run_date as created_at,
-        run_date as updated_at
-        FROM public.process_policy_combine_partial_transfer_no_leases
-        where representative_number = process_representative
-        );
-
-
-        -- Payroll Combination - Partial to Full Lease -- Positive
-        INSERT INTO process_payroll_all_transactions_breakdown_by_manual_classes (
-          representative_number,
-          policy_type,
-          policy_number,
-          manual_type,
+          manual_class_type,
           manual_number,
           reporting_period_start_date,
           reporting_period_end_date,
@@ -4200,7 +4885,77 @@ CREATE FUNCTION proc_step_3_b(process_representative integer, experience_period_
         (SELECT representative_number,
           successor_policy_type as "policy_type",
           successor_policy_number as "policy_number",
-          manual_coverage_type as manual_type,
+          manual_coverage_type as manual_class_type,
+          ncci_manual_number as "manual_number",
+          payroll_reporting_period_from_date as "reporting_period_start_date",
+          payroll_reporting_period_to_date as "reporting_period_end_date",
+          manual_payroll,
+          predecessor_policy_number as "policy_transferred",
+          transfer_creation_date,
+          payroll_origin,
+          'bwc' as data_source,
+          run_date as created_at,
+          run_date as updated_at
+        FROM public.process_policy_combine_partial_transfer_no_leases
+        where representative_number = process_representative
+        );
+
+        INSERT INTO process_payroll_all_transactions_breakdown_by_manual_classes (
+          representative_number,
+          policy_type,
+          policy_number,
+          manual_class_type,
+          manual_number,
+          reporting_period_start_date,
+          reporting_period_end_date,
+          manual_class_payroll,
+          policy_transferred,
+          transfer_creation_date,
+          payroll_origin,
+          data_source,
+          created_at,
+          updated_at
+        )
+        (SELECT representative_number,
+          predecessor_policy_type as "policy_type",
+          predecessor_policy_number as "policy_number",
+          manual_coverage_type as manual_class_type,
+          ncci_manual_number as "manual_number",
+          payroll_reporting_period_from_date as "reporting_period_start_date",
+          payroll_reporting_period_to_date as "reporting_period_end_date",
+          (-manual_payroll) as "manual_payroll",
+          successor_policy_number as "policy_transferred",
+          transfer_creation_date,
+          payroll_origin,
+          'bwc' as data_source,
+          run_date as created_at,
+          run_date as updated_at
+        FROM public.process_policy_combine_partial_transfer_no_leases
+        where representative_number = process_representative
+        );
+
+
+        -- Payroll Combination - Partial to Full Lease -- Positive
+        INSERT INTO process_payroll_all_transactions_breakdown_by_manual_classes (
+          representative_number,
+          policy_type,
+          policy_number,
+          manual_class_type,
+          manual_number,
+          reporting_period_start_date,
+          reporting_period_end_date,
+          manual_class_payroll,
+          policy_transferred,
+          transfer_creation_date,
+          payroll_origin,
+          data_source,
+          created_at,
+          updated_at
+        )
+        (SELECT representative_number,
+          successor_policy_type as "policy_type",
+          successor_policy_number as "policy_number",
+          manual_coverage_type as manual_class_type,
           ncci_manual_number as "manual_number",
           payroll_reporting_period_from_date as "reporting_period_start_date",
           payroll_reporting_period_to_date as "reporting_period_end_date",
@@ -4220,10 +4975,10 @@ CREATE FUNCTION proc_step_3_b(process_representative integer, experience_period_
 
 
 --
--- Name: proc_step_3_c(integer, date, date, date); Type: FUNCTION; Schema: public; Owner: -
+-- Name: proc_step_3_c(integer, date, date, date, date); Type: FUNCTION; Schema: public; Owner: -
 --
 
-CREATE FUNCTION proc_step_3_c(process_representative integer, experience_period_lower_date date, experience_period_upper_date date, current_payroll_period_lower_date date) RETURNS void
+CREATE FUNCTION proc_step_3_c(process_representative integer, experience_period_lower_date date, experience_period_upper_date date, current_payroll_period_lower_date date, current_payroll_period_upper_date date) RETURNS void
     LANGUAGE plpgsql
     AS $$
 
@@ -4236,7 +4991,7 @@ CREATE FUNCTION proc_step_3_c(process_representative integer, experience_period_
         representative_number,
         policy_type,
         policy_number,
-        manual_type,
+        manual_class_type,
         manual_number,
         reporting_period_start_date,
         reporting_period_end_date,
@@ -4251,7 +5006,7 @@ CREATE FUNCTION proc_step_3_c(process_representative integer, experience_period_
       (SELECT representative_number,
         predecessor_policy_type as "policy_type",
         predecessor_policy_number as "policy_number",
-        manual_coverage_type as manual_type,
+        manual_coverage_type as manual_class_type,
         ncci_manual_number as "manual_number",
         payroll_reporting_period_from_date as "reporting_period_start_date",
         payroll_reporting_period_to_date as "reporting_period_end_date",
@@ -4273,7 +5028,7 @@ CREATE FUNCTION proc_step_3_c(process_representative integer, experience_period_
         representative_number,
         policy_type,
         policy_number,
-        manual_type,
+        manual_class_type,
         manual_number,
         reporting_period_start_date,
         reporting_period_end_date,
@@ -4288,7 +5043,7 @@ CREATE FUNCTION proc_step_3_c(process_representative integer, experience_period_
       (SELECT representative_number,
         successor_policy_type as "policy_type",
         successor_policy_number as "policy_number",
-        manual_coverage_type as manual_type,
+        manual_coverage_type as manual_class_type,
         ncci_manual_number as "manual_number",
         payroll_reporting_period_from_date as "reporting_period_start_date",
         payroll_reporting_period_to_date as "reporting_period_end_date",
@@ -4311,7 +5066,7 @@ CREATE FUNCTION proc_step_3_c(process_representative integer, experience_period_
         representative_number,
         policy_type,
         policy_number,
-        manual_type,
+        manual_class_type,
         manual_number,
         reporting_period_start_date,
         reporting_period_end_date,
@@ -4326,7 +5081,7 @@ CREATE FUNCTION proc_step_3_c(process_representative integer, experience_period_
       (SELECT representative_number,
         predecessor_policy_type as "policy_type",
         predecessor_policy_number as "policy_number",
-        manual_coverage_type as manual_type,
+        manual_coverage_type as manual_class_type,
         ncci_manual_number as "manual_number",
         payroll_reporting_period_from_date as "reporting_period_start_date",
         payroll_reporting_period_to_date as "reporting_period_end_date",
@@ -4399,7 +5154,7 @@ CREATE FUNCTION proc_step_3_c(process_representative integer, experience_period_
         representative_number,
         policy_type,
         policy_number,
-        manual_type,
+        manual_class_type,
         manual_number,
         reporting_period_start_date,
         reporting_period_end_date,
@@ -4416,7 +5171,7 @@ CREATE FUNCTION proc_step_3_c(process_representative integer, experience_period_
           representative_number,
           policy_type,
           policy_number as "policy_number",
-          reclass_manual_coverage_type as manual_type,
+          reclass_manual_coverage_type as manual_class_type,
           re_classed_from_manual_number as "manual_number",
           payroll_reporting_period_from_date as "payroll_reporting_period_from_date",
           payroll_reporting_period_to_date as "payroll_reporting_period_to_date",
@@ -4437,7 +5192,7 @@ CREATE FUNCTION proc_step_3_c(process_representative integer, experience_period_
         policy_type,
         policy_number,
         manual_number,
-        manual_type,
+        manual_class_type,
         reporting_period_start_date,
         reporting_period_end_date,
         manual_class_payroll,
@@ -4453,7 +5208,7 @@ CREATE FUNCTION proc_step_3_c(process_representative integer, experience_period_
           policy_type,
           policy_number as "policy_number",
           re_classed_to_manual_number as "manual_number",
-          reclass_manual_coverage_type as manual_type,
+          reclass_manual_coverage_type as manual_class_type,
           payroll_reporting_period_from_date as "payroll_reporting_period_from_date",
           payroll_reporting_period_to_date as "payroll_reporting_period_to_date",
           (re_classed_to_manual_payroll_total) as "manual_payroll",
@@ -4472,7 +5227,7 @@ CREATE FUNCTION proc_step_3_c(process_representative integer, experience_period_
              FROM (SELECT id, ROW_NUMBER() OVER (partition BY representative_number,
                             policy_type,
                             policy_number,
-                            manual_type,
+                            manual_class_type,
                             manual_number,
                             reporting_period_start_date,
                             reporting_period_end_date,
@@ -4487,10 +5242,10 @@ CREATE FUNCTION proc_step_3_c(process_representative integer, experience_period_
 
 
 --
--- Name: proc_step_4(integer, date, date, date); Type: FUNCTION; Schema: public; Owner: -
+-- Name: proc_step_4(integer, date, date, date, date); Type: FUNCTION; Schema: public; Owner: -
 --
 
-CREATE FUNCTION proc_step_4(process_representative integer, experience_period_lower_date date, experience_period_upper_date date, current_payroll_period_lower_date date) RETURNS void
+CREATE FUNCTION proc_step_4(process_representative integer, experience_period_lower_date date, experience_period_upper_date date, current_payroll_period_lower_date date, current_payroll_period_upper_date date) RETURNS void
     LANGUAGE plpgsql
     AS $$
 
@@ -4505,9 +5260,9 @@ CREATE FUNCTION proc_step_4(process_representative integer, experience_period_lo
         INSERT INTO final_manual_class_four_year_payroll_and_exp_losses
           (
             representative_number,
-            policy_type,
             policy_number,
             manual_number,
+            manual_class_type,
             data_source,
             created_at,
             updated_at
@@ -4515,9 +5270,9 @@ CREATE FUNCTION proc_step_4(process_representative integer, experience_period_lo
           (
             SELECT
             a.representative_number,
-            a.policy_type,
             a.policy_number,
             b.manual_number,
+            b.manual_class_type,
             'bwc' as data_source,
             run_date as created_at,
             run_date as updated_at
@@ -4526,9 +5281,9 @@ CREATE FUNCTION proc_step_4(process_representative integer, experience_period_lo
           ON a.policy_number = b.policy_number
           WHERE b.reporting_period_start_date >= experience_period_lower_date and a.representative_number = process_representative
           GROUP BY a.representative_number,
-            a.policy_type,
             a.policy_number,
-            b.manual_number
+            b.manual_number,
+            b.manual_class_type
           );
 
 
@@ -4542,9 +5297,9 @@ CREATE FUNCTION proc_step_4(process_representative integer, experience_period_lo
           INSERT INTO process_manual_class_four_year_payroll_with_conditions
           (
             representative_number,
-            policy_type,
             policy_number,
             manual_number,
+            manual_class_type,
             manual_class_four_year_period_payroll,
             data_source,
             created_at,
@@ -4553,9 +5308,9 @@ CREATE FUNCTION proc_step_4(process_representative integer, experience_period_lo
           (
             SELECT
               a.representative_number,
-              a.policy_type,
               a.policy_number,
               a.manual_number,
+              a.manual_class_type,
               SUM(a.manual_class_payroll) as manual_class_four_year_period_payroll,
               'bwc' as data_source,
               run_date as created_at,
@@ -4566,15 +5321,15 @@ CREATE FUNCTION proc_step_4(process_representative integer, experience_period_lo
             WHERE (a.reporting_period_start_date BETWEEN experience_period_lower_date and experience_period_upper_date)
             and a.representative_number = process_representative -- date range for experience_period
               and (a.payroll_origin = 'payroll' or a.payroll_origin = 'manual_reclass' or a.payroll_origin = 'payroll_adjustment') and (a.reporting_period_start_date >= edi.policy_creation_date )
-            GROUP BY a.representative_number, a.policy_type, a.policy_number, a.manual_number
+            GROUP BY a.representative_number, a.policy_number, a.manual_number, a.manual_class_type
           );
 
             INSERT INTO process_manual_class_four_year_payroll_without_conditions
             (
               representative_number,
-              policy_type,
               policy_number,
               manual_number,
+              manual_class_type,
               manual_class_four_year_period_payroll,
               data_source,
               created_at,
@@ -4583,9 +5338,9 @@ CREATE FUNCTION proc_step_4(process_representative integer, experience_period_lo
             (
             SELECT
               a.representative_number,
-              a.policy_type,
               a.policy_number,
               a.manual_number,
+              a.manual_class_type,
               SUM(a.manual_class_payroll) as manual_class_four_year_period_payroll,
               'bwc' as data_source,
               run_date as created_at,
@@ -4596,7 +5351,7 @@ CREATE FUNCTION proc_step_4(process_representative integer, experience_period_lo
             WHERE (a.reporting_period_start_date BETWEEN experience_period_lower_date and experience_period_upper_date)
             and a.representative_number = process_representative -- date range for experience_period
               and (a.payroll_origin != 'payroll' and a.payroll_origin != 'manual_reclass' and a.payroll_origin != 'payroll_adjustment')
-            GROUP BY a.representative_number, a.policy_type, a.policy_number, a.manual_number
+            GROUP BY a.representative_number, a.policy_number, a.manual_number, a.manual_class_type
             );
 
 
@@ -4607,7 +5362,7 @@ CREATE FUNCTION proc_step_4(process_representative integer, experience_period_lo
 
          UPDATE public.final_manual_class_four_year_payroll_and_exp_losses a SET (manual_class_four_year_period_payroll, updated_at) = (t2.manual_class_four_year_period_payroll, t2.updated_at)
          FROM
-         (SELECT a.representative_number, a.policy_number, a.manual_number,
+         (SELECT a.representative_number, a.policy_number, a.manual_number, a.manual_class_type,
         ROUND(((Case when wo.manual_class_four_year_period_payroll is null then '0'::decimal ELSE
         wo.manual_class_four_year_period_payroll END)
         + (Case when w.manual_class_four_year_period_payroll is null then '0'::decimal ELSE
@@ -4615,11 +5370,11 @@ CREATE FUNCTION proc_step_4(process_representative integer, experience_period_lo
         run_date as updated_at
         FROM public.final_manual_class_four_year_payroll_and_exp_losses a
         Left join public.process_manual_class_four_year_payroll_without_conditions wo
-        ON a.policy_number = wo.policy_number and a.manual_number = wo.manual_number
+        ON a.policy_number = wo.policy_number and a.manual_number = wo.manual_number and a.manual_class_type = wo.manual_class_type
         Left join public.process_manual_class_four_year_payroll_with_conditions w
-        ON a.policy_number = w.policy_number and a.manual_number = w.manual_number
+        ON a.policy_number = w.policy_number and a.manual_number = w.manual_number and a.manual_class_type = w.manual_class_type
          ) t2
-         WHERE a.policy_number = t2.policy_number and a.manual_number = t2.manual_number and a.representative_number = t2.representative_number and a.representative_number = process_representative;
+         WHERE a.policy_number = t2.policy_number and a.manual_number = t2.manual_number and a.manual_class_type = t2.manual_class_type and a.representative_number = t2.representative_number and a.representative_number = process_representative;
 
 
 
@@ -4633,9 +5388,9 @@ CREATE FUNCTION proc_step_4(process_representative integer, experience_period_lo
          FROM
          (  SELECT
              a.representative_number,
-             a.policy_type,
              a.policy_number,
              a.manual_number,
+             a.manual_class_type,
              b.expected_loss_rate as manual_class_expected_loss_rate,
              b.base_rate as manual_class_base_rate,
              ROUND((a.manual_class_four_year_period_payroll * b.expected_loss_rate)::numeric, 4)
@@ -4650,7 +5405,7 @@ CREATE FUNCTION proc_step_4(process_representative integer, experience_period_lo
            Left Join public.final_employer_demographics_informations edi
            ON a.policy_number = edi.policy_number
            ) t2
-         WHERE a.policy_number = t2.policy_number and a.manual_number = t2.manual_number and a.representative_number = t2.representative_number and (a.representative_number is not null) and a.representative_number = process_representative;
+         WHERE a.policy_number = t2.policy_number and a.manual_number = t2.manual_number and a.manual_class_type = t2.manual_class_type and a.representative_number = t2.representative_number and (a.representative_number is not null) and a.representative_number = process_representative;
 
 
 
@@ -4761,10 +5516,10 @@ CREATE FUNCTION proc_step_4(process_representative integer, experience_period_lo
 
 
 --
--- Name: proc_step_5(integer, date, date, date); Type: FUNCTION; Schema: public; Owner: -
+-- Name: proc_step_5(integer, date, date, date, date); Type: FUNCTION; Schema: public; Owner: -
 --
 
-CREATE FUNCTION proc_step_5(process_representative integer, experience_period_lower_date date, experience_period_upper_date date, current_payroll_period_lower_date date) RETURNS void
+CREATE FUNCTION proc_step_5(process_representative integer, experience_period_lower_date date, experience_period_upper_date date, current_payroll_period_lower_date date, current_payroll_period_upper_date date) RETURNS void
     LANGUAGE plpgsql
     AS $$
 
@@ -4779,15 +5534,15 @@ CREATE FUNCTION proc_step_5(process_representative integer, experience_period_lo
       INSERT INTO public.final_policy_experience_calculations
       (
       representative_number,
-      policy_type,
       policy_number,
+      valid_policy_number,
       data_source,
       created_at,
       updated_at
       )
       (SELECT DISTINCT representative_number,
-             policy_type,
              policy_number,
+             valid_policy_number,
              'bwc' as data_source,
              run_date as created_at,
              run_date as updated_at
@@ -4833,9 +5588,9 @@ CREATE FUNCTION proc_step_5(process_representative integer, experience_period_lo
       ----------------------------
       -- Update policy_status
 
-      UPDATE public.final_policy_experience_calculations a SET (policy_status, updated_at) = (t2.current_policy_status, t2.updated_at)
+      UPDATE public.final_policy_experience_calculations a SET (policy_status, updated_at) = (t2.current_coverage_status, t2.updated_at)
       FROM
-      (SELECT p.policy_number, p.current_policy_status,
+      (SELECT p.policy_number, p.current_coverage_status,
       run_date as updated_at
         FROM public.final_employer_demographics_informations p
         where p.representative_number = process_representative
@@ -4951,10 +5706,10 @@ CREATE FUNCTION proc_step_5(process_representative integer, experience_period_lo
 
 
 --
--- Name: proc_step_6(integer, date, date, date); Type: FUNCTION; Schema: public; Owner: -
+-- Name: proc_step_6(integer, date, date, date, date); Type: FUNCTION; Schema: public; Owner: -
 --
 
-CREATE FUNCTION proc_step_6(process_representative integer, experience_period_lower_date date, experience_period_upper_date date, current_payroll_period_lower_date date) RETURNS void
+CREATE FUNCTION proc_step_6(process_representative integer, experience_period_lower_date date, experience_period_upper_date date, current_payroll_period_lower_date date, current_payroll_period_upper_date date) RETURNS void
     LANGUAGE plpgsql
     AS $$
 
@@ -5148,10 +5903,10 @@ CREATE FUNCTION proc_step_6(process_representative integer, experience_period_lo
 
 
 --
--- Name: proc_step_7(integer, date, date, date); Type: FUNCTION; Schema: public; Owner: -
+-- Name: proc_step_7(integer, date, date, date, date); Type: FUNCTION; Schema: public; Owner: -
 --
 
-CREATE FUNCTION proc_step_7(process_representative integer, experience_period_lower_date date, experience_period_upper_date date, current_payroll_period_lower_date date) RETURNS void
+CREATE FUNCTION proc_step_7(process_representative integer, experience_period_lower_date date, experience_period_upper_date date, current_payroll_period_lower_date date, current_payroll_period_upper_date date) RETURNS void
     LANGUAGE plpgsql
     AS $$
 
@@ -5248,10 +6003,10 @@ CREATE FUNCTION proc_step_7(process_representative integer, experience_period_lo
 
 
 --
--- Name: proc_step_8(integer, date, date, date); Type: FUNCTION; Schema: public; Owner: -
+-- Name: proc_step_8(integer, date, date, date, date); Type: FUNCTION; Schema: public; Owner: -
 --
 
-CREATE FUNCTION proc_step_8(process_representative integer, experience_period_lower_date date, experience_period_upper_date date, current_payroll_period_lower_date date) RETURNS void
+CREATE FUNCTION proc_step_8(process_representative integer, experience_period_lower_date date, experience_period_upper_date date, current_payroll_period_lower_date date, current_payroll_period_upper_date date) RETURNS void
     LANGUAGE plpgsql
     AS $$
 
@@ -5264,7 +6019,6 @@ CREATE FUNCTION proc_step_8(process_representative integer, experience_period_lo
       Insert into final_policy_group_rating_and_premium_projections
       (
         representative_number,
-        policy_type,
         policy_number,
         policy_status,
         data_source,
@@ -5273,7 +6027,6 @@ CREATE FUNCTION proc_step_8(process_representative integer, experience_period_lo
       )
       (Select
         representative_number,
-        policy_type,
         policy_number,
         policy_status,
         'bwc' as data_source,
@@ -5290,7 +6043,6 @@ CREATE FUNCTION proc_step_8(process_representative integer, experience_period_lo
       INSERT INTO final_manual_class_group_rating_and_premium_projections
       (
         representative_number,
-        policy_type,
         policy_number,
         manual_number,
         -- ADD ALL INDUSTRY_GROUP'S PAYROLL WITHIN A POLICY_NUMBER SURE TO UPDATE THIS AFTER GOING AF
@@ -5303,7 +6055,6 @@ CREATE FUNCTION proc_step_8(process_representative integer, experience_period_lo
       (
         SELECT
           a.representative_number,
-          a.policy_type,
           a.policy_number,
           b.manual_number,
           round(sum(b.manual_class_payroll)::numeric,2) as manual_class_current_estimated_payroll,
@@ -5314,7 +6065,7 @@ CREATE FUNCTION proc_step_8(process_representative integer, experience_period_lo
         Inner Join public.process_payroll_all_transactions_breakdown_by_manual_classes b
         ON a.policy_number = b.policy_number
         WHERE (b.reporting_period_start_date >= current_payroll_period_lower_date) and a.representative_number = process_representative
-        GROUP BY a.representative_number, a.policy_type, a.policy_number, b.manual_number
+        GROUP BY a.representative_number, a.policy_number, b.manual_number
       );
 
 
@@ -5606,7 +6357,7 @@ CREATE FUNCTION proc_step_8(process_representative integer, experience_period_lo
       DELETE FROM process_policy_experience_period_peos
       WHERE id IN (SELECT id
                    FROM (SELECT id,
-                                  ROW_NUMBER() OVER (partition BY representative_number, policy_type, policy_number, manual_class_sf_peo_lease_effective_date,
+                                  ROW_NUMBER() OVER (partition BY representative_number, policy_number, manual_class_sf_peo_lease_effective_date,
        manual_class_sf_peo_lease_termination_date, manual_class_si_peo_lease_effective_date,
        manual_class_si_peo_lease_termination_date, data_source ORDER BY id) AS rnum
                           FROM process_policy_experience_period_peos) t
@@ -6220,25 +6971,45 @@ ALTER SEQUENCE final_claim_cost_calculation_tables_id_seq OWNED BY final_claim_c
 CREATE TABLE final_employer_demographics_informations (
     id integer NOT NULL,
     representative_number integer,
-    policy_type character varying,
     policy_number integer,
-    successor_policy_number integer,
     currently_assigned_representative_number integer,
+    valid_policy_number character varying,
+    current_coverage_status character varying,
+    coverage_status_effective_date date,
+    policy_creation_date date,
     federal_identification_number character varying,
     business_name character varying,
     trading_as_name character varying,
-    in_care_name_contact_name character varying,
-    address_1 character varying,
-    address_2 character varying,
-    city character varying,
-    state character varying,
-    zip_code character varying,
-    zip_code_plus_4 character varying,
-    country_code character varying,
-    county character varying,
-    policy_creation_date date,
-    current_policy_status character varying,
-    current_policy_status_effective_date date,
+    valid_mailing_address character varying,
+    mailing_address_line_1 character varying,
+    mailing_address_line_2 character varying,
+    mailing_city character varying,
+    mailing_state character varying,
+    mailing_zip_code integer,
+    mailing_zip_code_plus_4 integer,
+    mailing_country_code integer,
+    mailing_county integer,
+    valid_location_address character varying,
+    location_address_line_1 character varying,
+    location_address_line_2 character varying,
+    location_city character varying,
+    location_state character varying,
+    location_zip_code integer,
+    location_zip_code_plus_4 integer,
+    location_country_code integer,
+    location_county integer,
+    currently_assigned_clm_representative_number integer,
+    currently_assigned_risk_representative_number integer,
+    currently_assigned_erc_representative_number integer,
+    currently_assigned_grc_representative_number integer,
+    immediate_successor_policy_number integer,
+    immediate_successor_business_sequence_number integer,
+    ultimate_successor_policy_number integer,
+    ultimate_successor_business_sequence_number integer,
+    employer_type character varying,
+    coverage_type character varying,
+    policy_coverage_type character varying,
+    policy_employer_type character varying,
     merit_rate double precision,
     group_code character varying,
     minimum_premium_percentage character varying,
@@ -6284,6 +7055,7 @@ CREATE TABLE final_manual_class_four_year_payroll_and_exp_losses (
     policy_type character varying,
     policy_number integer,
     manual_number integer,
+    manual_class_type character varying,
     manual_class_four_year_period_payroll double precision,
     manual_class_expected_loss_rate double precision,
     manual_class_base_rate double precision,
@@ -6326,6 +7098,7 @@ CREATE TABLE final_manual_class_group_rating_and_premium_projections (
     policy_type character varying,
     policy_number integer,
     manual_number integer,
+    manual_class_type character varying,
     manual_class_industry_group integer,
     manual_class_industry_group_premium_total double precision,
     manual_class_current_estimated_payroll double precision,
@@ -6371,6 +7144,7 @@ CREATE TABLE final_policy_experience_calculations (
     representative_number integer,
     policy_type character varying,
     policy_number integer,
+    valid_policy_number character varying,
     policy_group_number character varying,
     policy_status character varying,
     policy_total_four_year_payroll double precision,
@@ -6534,6 +7308,8 @@ CREATE TABLE group_ratings (
     experience_period_lower_date date,
     experience_period_upper_date date,
     current_payroll_period_lower_date date,
+    current_payroll_period_upper_date date,
+    total_accounts_updated integer,
     total_policies_updated integer,
     total_manual_classes_updated integer,
     total_payrolls_updated integer,
@@ -6636,7 +7412,7 @@ CREATE TABLE manual_class_calculations (
     representative_number integer,
     policy_calculation_id integer,
     policy_number integer,
-    manual_type character varying,
+    manual_class_type character varying,
     manual_number integer,
     manual_class_four_year_period_payroll double precision,
     manual_class_expected_loss_rate double precision,
@@ -6960,12 +7736,14 @@ CREATE TABLE payroll_calculations (
     representative_number integer,
     policy_type character varying,
     policy_number integer,
-    manual_type character varying,
+    manual_class_type character varying,
     manual_number integer,
     manual_class_calculation_id integer,
     reporting_period_start_date date,
     reporting_period_end_date date,
     manual_class_payroll double precision,
+    reporting_type character varying,
+    number_of_employees integer,
     policy_transferred integer,
     transfer_creation_date date,
     process_payroll_all_transactions_breakdown_by_manual_class_id integer,
@@ -7429,10 +8207,8 @@ ALTER SEQUENCE phmgns_id_seq OWNED BY phmgns.id;
 CREATE TABLE policy_calculations (
     id integer NOT NULL,
     representative_number integer,
-    policy_type character varying,
     policy_number integer,
     policy_group_number character varying,
-    policy_status character varying,
     policy_total_four_year_payroll double precision,
     policy_credibility_group integer,
     policy_maximum_claim_value integer,
@@ -7446,34 +8222,48 @@ CREATE TABLE policy_calculations (
     policy_individual_total_modifier double precision,
     policy_individual_experience_modified_rate double precision,
     policy_industry_group integer,
-    group_rating_qualification character varying,
-    group_rating_tier double precision,
-    group_rating_group_number integer,
     policy_total_current_payroll double precision,
     policy_total_standard_premium double precision,
     policy_total_individual_premium double precision,
-    policy_total_group_premium double precision,
-    policy_total_group_savings double precision,
-    policy_group_fees double precision,
-    policy_group_dues double precision,
-    policy_total_costs double precision,
-    successor_policy_number integer,
     currently_assigned_representative_number integer,
+    valid_policy_number character varying,
+    current_coverage_status character varying,
+    coverage_status_effective_date date,
+    policy_creation_date date,
     federal_identification_number character varying,
     business_name character varying,
     trading_as_name character varying,
     in_care_name_contact_name character varying,
-    address_1 character varying,
-    address_2 character varying,
-    city character varying,
-    state character varying,
-    zip_code character varying,
-    zip_code_plus_4 character varying,
-    country_code character varying,
-    county character varying,
-    policy_creation_date date,
-    current_policy_status character varying,
-    current_policy_status_effective_date date,
+    valid_mailing_address character varying,
+    mailing_address_line_1 character varying,
+    mailing_address_line_2 character varying,
+    mailing_city character varying,
+    mailing_state character varying,
+    mailing_zip_code integer,
+    mailing_zip_code_plus_4 integer,
+    mailing_country_code integer,
+    mailing_county integer,
+    valid_location_address character varying,
+    location_address_line_1 character varying,
+    location_address_line_2 character varying,
+    location_city character varying,
+    location_state character varying,
+    location_zip_code integer,
+    location_zip_code_plus_4 integer,
+    location_country_code integer,
+    location_county integer,
+    currently_assigned_clm_representative_number integer,
+    currently_assigned_risk_representative_number integer,
+    currently_assigned_erc_representative_number integer,
+    currently_assigned_grc_representative_number integer,
+    immediate_successor_policy_number integer,
+    immediate_successor_business_sequence_number integer,
+    ultimate_successor_policy_number integer,
+    ultimate_successor_business_sequence_number integer,
+    employer_type character varying,
+    coverage_type character varying,
+    policy_coverage_type character varying,
+    policy_employer_type character varying,
     merit_rate double precision,
     group_code character varying,
     minimum_premium_percentage character varying,
@@ -7561,6 +8351,7 @@ CREATE TABLE process_manual_class_four_year_payroll_with_conditions (
     policy_type character varying,
     policy_number integer,
     manual_number integer,
+    manual_class_type character varying,
     manual_class_four_year_period_payroll double precision,
     data_source character varying,
     created_at timestamp without time zone NOT NULL,
@@ -7596,6 +8387,7 @@ CREATE TABLE process_manual_class_four_year_payroll_without_conditions (
     policy_type character varying,
     policy_number integer,
     manual_number integer,
+    manual_class_type character varying,
     manual_class_four_year_period_payroll double precision,
     data_source character varying,
     created_at timestamp without time zone NOT NULL,
@@ -7654,11 +8446,18 @@ CREATE TABLE process_payroll_all_transactions_breakdown_by_manual_classes (
     representative_number integer,
     policy_type character varying,
     policy_number integer,
-    manual_type character varying,
+    policy_status_effective_date date,
+    policy_status character varying,
     manual_number integer,
+    manual_class_type character varying,
+    manual_class_description character varying,
+    bwc_customer_id integer,
     reporting_period_start_date date,
     reporting_period_end_date date,
+    manual_class_rate double precision,
     manual_class_payroll double precision,
+    reporting_type character varying,
+    number_of_employees integer,
     policy_transferred integer,
     transfer_creation_date date,
     payroll_origin character varying,
@@ -7696,13 +8495,18 @@ CREATE TABLE process_payroll_breakdown_by_manual_classes (
     representative_number integer,
     policy_type character varying,
     policy_number integer,
+    policy_status_effective_date date,
+    policy_status character varying,
     manual_number integer,
-    manual_type character varying,
+    manual_class_type character varying,
+    manual_class_description character varying,
+    bwc_customer_id integer,
     reporting_period_start_date date,
     reporting_period_end_date date,
     manual_class_rate double precision,
     manual_class_payroll double precision,
-    manual_class_premium double precision,
+    reporting_type character varying,
+    number_of_employees integer,
     payroll_origin character varying,
     data_source character varying,
     created_at timestamp without time zone NOT NULL,
@@ -7788,7 +8592,7 @@ CREATE TABLE process_policy_combine_full_transfers (
     representative_number integer,
     policy_type character varying,
     manual_number integer,
-    manual_type character varying,
+    manual_class_type character varying,
     reporting_period_start_date date,
     reporting_period_end_date date,
     manual_class_rate double precision,
@@ -10354,4 +11158,8 @@ INSERT INTO schema_migrations (version) VALUES ('20161205181316');
 INSERT INTO schema_migrations (version) VALUES ('20161205181412');
 
 INSERT INTO schema_migrations (version) VALUES ('20161205181641');
+
+INSERT INTO schema_migrations (version) VALUES ('20161205190813');
+
+INSERT INTO schema_migrations (version) VALUES ('20161206001323');
 

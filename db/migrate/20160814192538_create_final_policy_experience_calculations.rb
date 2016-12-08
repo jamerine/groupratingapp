@@ -4,6 +4,7 @@ class CreateFinalPolicyExperienceCalculations < ActiveRecord::Migration
       t.integer :representative_number
       t.string :policy_type
       t.integer :policy_number
+      t.string :valid_policy_number
       t.index [:policy_number, :representative_number], name: 'index_pol_exp_pol_num_and_man_num_rep'
       t.string :policy_group_number
       t.string :policy_status

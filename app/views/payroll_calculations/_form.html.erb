@@ -2,14 +2,20 @@
   <ul class="list-group">
   <%= form_for payroll_calculation do |f| %>
       <div class="row list-group-item list-group-item-success hidden-sm hidden-xs ">
-        <div class="col-md-offset-1 col-md-2 col-sm-4 col-xs-6 hidden-sm hidden-xs">
-          <h5>Reporting Start Date</h5>
+        <div class="col-md-2 col-sm-4 col-xs-6 hidden-sm hidden-xs">
+          <h5>Start Date</h5>
         </div>
         <div class="col-md-2 col-sm-4 col-xs-6 hidden-sm hidden-xs">
+          <h5>End Date</h5>
+        </div>
+        <div class="col-md-1 col-sm-4 col-xs-6 hidden-sm hidden-xs">
           <h5>Manual Type</h5>
         </div>
         <div class="col-md-2 col-sm-4 col-xs-6 hidden-sm hidden-xs">
           <h5>Payroll Amount</h5>
+        </div>
+        <div class="col-md-1 col-sm-4 col-xs-6 hidden-sm hidden-xs">
+          <h5>Reporting Type</h5>
         </div>
         <div class="col-md-2 col-sm-4 col-xs-6 hidden-sm hidden-xs">
           <h5>Payroll Origin</h5>
@@ -24,18 +30,24 @@
             <%= f.hidden_field :manual_number, value: "#{manual_class_calculation.manual_number}" %>
             <%= f.hidden_field :policy_number, value: "#{manual_class_calculation.policy_number}" %>
             <%= f.hidden_field :representative_number, value: "#{manual_class_calculation.representative_number}" %>
-            <%= f.hidden_field :data_source, value: "user_adjustment" %>
+            <%= f.hidden_field :data_source, value: "user" %>
           </div>
-          <div class="col-md-offset-1 col-md-2 col-sm-4 col-xs-12">
+          <div class="col-md-2 col-sm-4 col-xs-12">
             <div class="form-group" >
-              <h5 class="hidden-md hidden-lg">Reporting Start Date</h5>
+              <h5 class="hidden-md hidden-lg">Start Date</h5>
               <%= f.date_field :reporting_period_start_date, class: 'form-control' %>
             </div>
           </div>
           <div class="col-md-2 col-sm-4 col-xs-12">
             <div class="form-group" >
+              <h5 class="hidden-md hidden-lg">End Date</h5>
+              <%= f.date_field :reporting_period_end_date, class: 'form-control' %>
+            </div>
+          </div>
+          <div class="col-md-1 col-sm-4 col-xs-12">
+            <div class="form-group" >
               <h5 class="hidden-md hidden-lg">Manual Type</h5>
-              <%= f.text_field :manual_type, class: 'form-control' %>
+              <%= f.text_field :manual_class_type, class: 'form-control', value: "RN" %>
             </div>
           </div>
           <div class="col-md-2 col-sm-4 col-xs-12">
@@ -44,10 +56,16 @@
               <%= f.number_field :manual_class_payroll, class: 'form-control' %>
             </div>
           </div>
+          <div class="col-md-1 col-sm-4 col-xs-12">
+            <div class="form-group" >
+              <h5 class="hidden-md hidden-lg">Reporting Type</h5>
+              <%= f.text_field :reporting_type, class: 'form-control', value: "A" %>
+            </div>
+          </div>
           <div class="col-md-2 col-sm-4 col-xs-12">
             <div class="form-group" >
               <h5 class="hidden-md hidden-lg">Payroll Origin</h5>
-              <%= f.text_field :payroll_origin, value: "payroll_adjustment", class: 'form-control' %>
+              <%= f.text_field :payroll_origin, value: "adjustment", class: 'form-control' %>
             </div>
           </div>
             <div class="col-md-2 col-sm-4 col-xs-12">

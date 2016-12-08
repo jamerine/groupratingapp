@@ -8,7 +8,7 @@ class Account < ActiveRecord::Base
 
   validates :policy_number_entered, :presence => true, length: { maximum: 8 }
 
-  enum status: [:active, :inactive, :predecessor, :prospect]
+  enum status: [:active, :inactive, :invalid_policy_number, :predecessor, :prospect]
 
   enum group_rating_qualification: [:accept, :pending_predecessor, :reject]
 
@@ -72,7 +72,7 @@ class Account < ActiveRecord::Base
             unless manual_class.manual_class_base_rate.nil?
               manual_class_group_total_rate = (1 + @group_rating_tier) * manual_class.manual_class_base_rate * (1 +  administrative_rate)
 
-              manual_class_estimated_group_premium = manual_class.payroll_calculations.where("reporting_period_start_date >= :current_payroll_period_lower_date and reporting_period_start_date < :current_payroll_period_upper_date", current_payroll_period_lower_date: group_rating_calc.current_payroll_period_lower_date, current_payroll_period_upper_date: (group_rating_calc.current_payroll_period_lower_date + 1.year)).sum(:manual_class_payroll) * manual_class_group_total_rate
+              manual_class_estimated_group_premium = manual_class.payroll_calculations.where("reporting_period_start_date >= :current_payroll_period_lower_date and reporting_period_start_date <= :current_payroll_period_upper_date", current_payroll_period_lower_date: group_rating_calc.current_payroll_period_lower_date, current_payroll_period_upper_date: group_rating_calc.current_payroll_period_upper_date).sum(:manual_class_payroll) * manual_class_group_total_rate
 
               manual_class.update_attributes(manual_class_group_total_rate: manual_class_group_total_rate, manual_class_estimated_group_premium: manual_class_estimated_group_premium)
             end
@@ -135,7 +135,7 @@ class Account < ActiveRecord::Base
             unless manual_class.manual_class_base_rate.nil?
               manual_class_group_total_rate = (1 + @group_rating_tier) * manual_class.manual_class_base_rate * (1 +  administrative_rate)
 
-              manual_class_estimated_group_premium = manual_class.payroll_calculations.where("reporting_period_start_date >= :current_payroll_period_lower_date and reporting_period_start_date < :current_payroll_period_upper_date", current_payroll_period_lower_date: group_rating_calc.current_payroll_period_lower_date, current_payroll_period_upper_date: (group_rating_calc.current_payroll_period_lower_date + 1.year)).sum(:manual_class_payroll) * manual_class_group_total_rate
+              manual_class_estimated_group_premium = manual_class.payroll_calculations.where("reporting_period_start_date >= :current_payroll_period_lower_date and reporting_period_start_date <= :current_payroll_period_upper_date", current_payroll_period_lower_date: group_rating_calc.current_payroll_period_lower_date, current_payroll_period_upper_date: group_rating_calc.current_payroll_period_upper_date).sum(:manual_class_payroll) * manual_class_group_total_rate
 
               manual_class.update_attributes(manual_class_group_total_rate: manual_class_group_total_rate, manual_class_estimated_group_premium: manual_class_estimated_group_premium)
             end
@@ -167,6 +167,7 @@ class Account < ActiveRecord::Base
     unless self.predecessor?
       @group_rating = GroupRating.where(representative_id: self.representative_id).last
 
+
         # NEGATIVE PAYROLL ON A MANUAL CLASS
 
         if !self.policy_calculation.manual_class_calculations.where("manual_class_current_estimated_payroll < 0 or manual_class_four_year_period_payroll < 0").empty?
@@ -174,9 +175,14 @@ class Account < ActiveRecord::Base
         end
 
       # ----------- Rejection Section -----------
-
       group_rating_range = @group_rating.experience_period_lower_date..@group_rating.experience_period_upper_date
-      if ["CANFI","CANPN","BKPCA","BKPCO","COMB","CANUN"].include? policy_calculation.policy_status
+
+      if policy_calculation.valid_policy_number == 'N'
+        GroupRatingRejection.create(account_id: self.id, reject_reason: 'reject_invalid_policy_number', representative_id: @group_rating.representative_id)
+        GroupRatingException.create(account_id: self.id, exception_reason: 'invalid_policy_number', representative_id: self.representative_id)
+      end
+
+      if ["CANFI","CANPN","BKPCA","BKPCO","COMB","CANUN"].include? policy_calculation.current_coverage_status
         GroupRatingRejection.create(account_id: self.id, reject_reason: 'reject_inactive_policy', representative_id: @group_rating.representative_id)
       end
 
@@ -211,7 +217,7 @@ class Account < ActiveRecord::Base
         end
       end
 
-      if self.group_rating_rejections.pluck(:reject_reason).include? 'reject_pending_predecessor'
+      if  self.group_rating_rejections.pluck(:reject_reason).include? 'reject_pending_predecessor'
          qualification = "pending_predecessor"
       elsif self.group_rating_rejections.count > 0
          qualification = "reject"

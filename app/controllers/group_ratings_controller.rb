@@ -35,7 +35,7 @@ class GroupRatingsController < ApplicationController
 
             ImportProcess.perform_async(@import.process_representative, @import.id, @representative.abbreviated_name, @group_rating.id)
 
-            redirect_to group_ratings_path, notice: "Step 1, Step 2, Step 3, Step 4, Step 5, Step 6, Step 7, Step 8 have been queued."
+            redirect_to group_ratings_path, notice: "Import, processing and group rating have been queued."
           end
         end
     end
@@ -70,6 +70,6 @@ class GroupRatingsController < ApplicationController
   private
 
   def group_rating_params
-    params.require(:group_rating).permit(:process_representative, :experience_period_lower_date,:experience_period_upper_date, :current_payroll_period_lower_date, :representative_id)
+    params.require(:group_rating).permit(:process_representative, :experience_period_lower_date, :experience_period_upper_date, :current_payroll_period_lower_date, :current_payroll_period_upper_date, :representative_id)
   end
 end
