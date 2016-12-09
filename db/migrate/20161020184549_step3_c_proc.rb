@@ -67,6 +67,7 @@ class Step3CProc < ActiveRecord::Migration
         reporting_period_start_date,
         reporting_period_end_date,
         manual_class_payroll,
+        reporting_type,
         policy_transferred,
         transfer_creation_date,
         payroll_origin,
