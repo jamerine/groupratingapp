@@ -43,7 +43,7 @@ class ManualClassCalculation < ActiveRecord::Base
         @manual_class_expected_loss_rate = 0
         @manual_class_base_rate = 0
       else
-        @manual_class_expected_losses = @bwc_base_rate.expected_loss_rate * manual_class_four_year_period_payroll
+        @manual_class_expected_losses = @bwc_base_rate.expected_loss_rate * @manual_class_four_year_sum
         @manual_class_expected_loss_rate = @bwc_base_rate.expected_loss_rate
         @manual_class_base_rate = @bwc_base_rate.base_rate
       end

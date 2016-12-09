@@ -28,26 +28,26 @@ class GroupRatingAllCreate
           representative_number: @policy_exp.representative_number,
           policy_number: @account.policy_number_entered,
           policy_group_number: @policy_exp.policy_group_number,
-          policy_total_four_year_payroll: @policy_exp.policy_total_four_year_payroll,
-          policy_credibility_group: @policy_exp.policy_credibility_group,
-          policy_maximum_claim_value: @policy_exp.policy_maximum_claim_value,
-          policy_credibility_percent: @policy_exp.policy_credibility_percent,
-          policy_total_expected_losses: @policy_exp.policy_total_expected_losses,
-          policy_total_limited_losses: @policy_exp.policy_total_limited_losses,
-          policy_total_claims_count: @policy_exp.policy_total_claims_count,
-          policy_total_modified_losses_group_reduced: @policy_exp.policy_total_modified_losses_group_reduced,
-          policy_total_modified_losses_individual_reduced:
-          @policy_exp.policy_total_modified_losses_individual_reduced,
-          policy_group_ratio:
-          @policy_exp.policy_group_ratio,
-          policy_individual_total_modifier:
-          @policy_exp.policy_individual_total_modifier,
-          policy_individual_experience_modified_rate:
-          @policy_exp.policy_individual_experience_modified_rate,
-          policy_industry_group: @policy_proj.policy_industry_group,
-          policy_total_current_payroll: @policy_proj.policy_total_current_payroll,
-          policy_total_standard_premium: @policy_proj.policy_total_standard_premium,
-          policy_total_individual_premium: @policy_proj.policy_total_individual_premium,
+          # policy_total_four_year_payroll: @policy_exp.policy_total_four_year_payroll,
+          # policy_credibility_group: @policy_exp.policy_credibility_group,
+          # policy_maximum_claim_value: @policy_exp.policy_maximum_claim_value,
+          # policy_credibility_percent: @policy_exp.policy_credibility_percent,
+          # policy_total_expected_losses: @policy_exp.policy_total_expected_losses,
+          # policy_total_limited_losses: @policy_exp.policy_total_limited_losses,
+          # policy_total_claims_count: @policy_exp.policy_total_claims_count,
+          # policy_total_modified_losses_group_reduced: @policy_exp.policy_total_modified_losses_group_reduced,
+          # policy_total_modified_losses_individual_reduced:
+          # @policy_exp.policy_total_modified_losses_individual_reduced,
+          # policy_group_ratio:
+          # @policy_exp.policy_group_ratio,
+          # policy_individual_total_modifier:
+          # @policy_exp.policy_individual_total_modifier,
+          # policy_individual_experience_modified_rate:
+          # @policy_exp.policy_individual_experience_modified_rate,
+          # policy_industry_group: @policy_proj.policy_industry_group,
+          # policy_total_current_payroll: @policy_proj.policy_total_current_payroll,
+          # policy_total_standard_premium: @policy_proj.policy_total_standard_premium,
+          # policy_total_individual_premium: @policy_proj.policy_total_individual_premium,
           currently_assigned_representative_number: @policy_demographic.currently_assigned_representative_number,
           valid_policy_number: @policy_demographic.valid_policy_number,
           current_coverage_status: @policy_demographic.current_coverage_status.strip,
@@ -157,22 +157,22 @@ class GroupRatingAllCreate
                     policy_number: man_class_exp.policy_number,
                     policy_calculation_id: @policy_calculation.id,
                     manual_number: man_class_exp.manual_number,
-                    manual_class_four_year_period_payroll: man_class_exp.manual_class_four_year_period_payroll,
-                    manual_class_expected_loss_rate: man_class_exp.manual_class_expected_loss_rate,
+                    # manual_class_four_year_period_payroll: man_class_exp.manual_class_four_year_period_payroll,
+                    # manual_class_expected_loss_rate: man_class_exp.manual_class_expected_loss_rate,
                     manual_class_base_rate: man_class_exp.manual_class_base_rate,
-                    manual_class_expected_losses: man_class_exp.manual_class_expected_losses,
-                    manual_class_limited_loss_rate: man_class_exp.manual_class_limited_loss_rate,
-                    manual_class_limited_losses: man_class_exp.manual_class_limited_losses,
+                    # manual_class_expected_losses: man_class_exp.manual_class_expected_losses,
+                    # manual_class_limited_loss_rate: man_class_exp.manual_class_limited_loss_rate,
+                    # manual_class_limited_losses: man_class_exp.manual_class_limited_losses,
                     manual_class_industry_group: man_class_proj.manual_class_industry_group,
-                    manual_class_industry_group_premium_total: man_class_proj.manual_class_industry_group_premium_total,
-                    manual_class_current_estimated_payroll: man_class_proj.manual_class_current_estimated_payroll,
-                    manual_class_industry_group_premium_percentage: man_class_proj.manual_class_industry_group_premium_percentage,
-                    manual_class_modification_rate: man_class_proj.manual_class_modification_rate,
-                    manual_class_individual_total_rate: man_class_proj.manual_class_individual_total_rate,
-                    manual_class_group_total_rate: man_class_proj.manual_class_group_total_rate,
-                    manual_class_standard_premium: man_class_proj.manual_class_standard_premium,
+                    # manual_class_industry_group_premium_total: man_class_proj.manual_class_industry_group_premium_total,
+                    # manual_class_current_estimated_payroll: man_class_proj.manual_class_current_estimated_payroll,
+                    # manual_class_industry_group_premium_percentage: man_class_proj.manual_class_industry_group_premium_percentage,
+                    # manual_class_modification_rate: man_class_proj.manual_class_modification_rate,
+                    # manual_class_individual_total_rate: man_class_proj.manual_class_individual_total_rate,
+                    # manual_class_group_total_rate: man_class_proj.manual_class_group_total_rate,
+                    # manual_class_standard_premium: man_class_proj.manual_class_standard_premium,
                     # manual_class_estimated_group_premium: man_class_proj.manual_class_estimated_group_premium,
-                    manual_class_estimated_individual_premium: man_class_proj.manual_class_estimated_individual_premium,
+                    # manual_class_estimated_individual_premium: man_class_proj.manual_class_estimated_individual_premium,
                     data_source: man_class_proj.data_source)
                 else
                   @manual_class_calculation = ManualClassCalculation.where(policy_calculation_id: @policy_calculation.id, manual_number: man_class_exp.manual_number).update_or_create(
@@ -180,22 +180,22 @@ class GroupRatingAllCreate
                     policy_number: man_class_exp.policy_number,
                     policy_calculation_id: @policy_calculation.id,
                     manual_number: man_class_exp.manual_number,
-                    manual_class_four_year_period_payroll: man_class_exp.manual_class_four_year_period_payroll,
-                    manual_class_expected_loss_rate: man_class_exp.manual_class_expected_loss_rate,
+                    # manual_class_four_year_period_payroll: man_class_exp.manual_class_four_year_period_payroll,
+                    # manual_class_expected_loss_rate: man_class_exp.manual_class_expected_loss_rate,
                     manual_class_base_rate: man_class_exp.manual_class_base_rate,
-                    manual_class_expected_losses: man_class_exp.manual_class_expected_losses,
-                    manual_class_limited_loss_rate: man_class_exp.manual_class_limited_loss_rate,
-                    manual_class_limited_losses: man_class_exp.manual_class_limited_losses,
-                    manual_class_industry_group: 0,
-                    manual_class_industry_group_premium_total: 0,
-                    manual_class_current_estimated_payroll: 0,
-                    manual_class_industry_group_premium_percentage: 0,
-                    manual_class_modification_rate: 0,
-                    manual_class_individual_total_rate: 0,
-                    manual_class_group_total_rate: 0,
-                    manual_class_standard_premium: 0,
-                    manual_class_estimated_group_premium: 0,
-                    manual_class_estimated_individual_premium: 0,
+                    # manual_class_expected_losses: man_class_exp.manual_class_expected_losses,
+                    # manual_class_limited_loss_rate: man_class_exp.manual_class_limited_loss_rate,
+                    # manual_class_limited_losses: man_class_exp.manual_class_limited_losses,
+                    # manual_class_industry_group: 0,
+                    # manual_class_industry_group_premium_total: 0,
+                    # manual_class_current_estimated_payroll: 0,
+                    # manual_class_industry_group_premium_percentage: 0,
+                    # manual_class_modification_rate: 0,
+                    # manual_class_individual_total_rate: 0,
+                    # manual_class_group_total_rate: 0,
+                    # manual_class_standard_premium: 0,
+                    # manual_class_estimated_group_premium: 0,
+                    # manual_class_estimated_individual_premium: 0,
                     data_source: man_class_exp.data_source)
               end
               ProcessPayrollAllTransactionsBreakdownByManualClass.where("reporting_period_start_date >= :reporting_period_start_date and representative_number = :representative_number and manual_number = :manual_number and policy_number = :policy_number",  reporting_period_start_date: experience_period_lower_date, representative_number: process_representative, manual_number: @manual_class_calculation.manual_number, policy_number: @manual_class_calculation.policy_number).find_each do |payroll_transaction|
@@ -230,8 +230,9 @@ class GroupRatingAllCreate
               end
         end
 
+        @account.policy_calculation.calculate_experience
+        @account.policy_calculation.calculate_premium
         @account.group_rating
-
   end
 
 end
