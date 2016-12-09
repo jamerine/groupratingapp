@@ -53,17 +53,18 @@ class PolicyCalculation < ActiveRecord::Base
       @policy_total_expected_losses = self.manual_class_calculations.sum(:manual_class_expected_losses)
       @policy_total_current_payroll = self.manual_class_calculations.sum(:manual_class_current_estimated_payroll)
 
-      if policy_total_expected_losses <= 2000
-        @credibility_row = BwcCodesCredibilityMaxLoss.where("expected_losses >= :expected_losses", expected_losses: policy_total_expected_losses).min
+      if @policy_total_expected_losses <= 2000
+        @credibility_row = BwcCodesCredibilityMaxLoss.where("expected_losses >= :expected_losses", expected_losses: @policy_total_expected_losses).min
         @credibility_row.credibility_group = 0
         @credibility_row.expected_losses = 0
         @credibility_row.credibility_percent = 0
         @credibility_row.group_maximum_value = 0
 
-      elsif policy_total_expected_losses >= 1000000
+      elsif @policy_total_expected_losses >= 1000000
         @credibility_row = BwcCodesCredibilityMaxLoss.find_by(expected_losses: 1000000)
       else
-        @credibility_row = BwcCodesCredibilityMaxLoss.where("expected_losses <= :expected_losses", expected_losses: policy_total_expected_losses).min
+        @credibility_row = BwcCodesCredibilityMaxLoss.where("expected_losses >= :expected_losses", expected_losses: @policy_total_expected_losses).min
+        @credibility_row = BwcCodesCredibilityMaxLoss.find_by(credibility_group: (@credibility_row.credibility_group - 1))
       end
 
 
@@ -115,7 +116,7 @@ class PolicyCalculation < ActiveRecord::Base
    end # transaction end
   end
 
-  def caluclate_premium
+  def calculate_premium
     self.transaction do
     #  need policy_individual_experience_modified_rate, administrative_rate for manual_class
       @administrative_rate = (1 + BwcCodesConstantValue.find_by(name: 'administrative_rate', completed_date: nil).rate )
