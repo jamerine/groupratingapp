@@ -5,29 +5,29 @@ class GroupRatingAllCreate
 
   def perform(group_rating_id, experience_period_lower_date, process_representative, representative_id, policy_number)
 
-      @policy_exp = FinalPolicyExperienceCalculation.find_by(policy_number: policy_number, representative_number: process_representative)
-      @policy_proj = FinalPolicyGroupRatingAndPremiumProjection.find_by(policy_number: @policy_exp.policy_number, representative_number: @policy_exp.representative_number)
+      # @policy_exp = FinalPolicyExperienceCalculation.find_by(policy_number: policy_number, representative_number: process_representative)
+      # @policy_proj = FinalPolicyGroupRatingAndPremiumProjection.find_by(policy_number: @policy_exp.policy_number, representative_number: @policy_exp.representative_number)
 
-      @policy_demographic = FinalEmployerDemographicsInformation.find_by(policy_number: @policy_exp.policy_number, representative_number: @policy_exp.representative_number)
+      @policy_demographic = FinalEmployerDemographicsInformation.find_by(policy_number: policy_number, representative_number: process_representative)
 
-      @account = Account.where(policy_number_entered: @policy_exp.policy_number, representative_id: representative_id)
+      @account = Account.where(policy_number_entered: @policy_demographic.policy_number, representative_id: representative_id)
       # @account = Account.where(policy_number_entered: 1638083, representative_id: 17)
       # @account.first.status == "predecessor"
 
         if @account.empty?
-          @account = @account.create(policy_number_entered: @policy_exp.policy_number, representative_id: representative_id, status: 4, name: @policy_demographic.business_name, street_address: @policy_demographic.mailing_address_line_1, street_address_2: @policy_demographic.mailing_address_line_2, city: @policy_demographic.mailing_city, state: @policy_demographic.mailing_state, zip_code: @policy_demographic.mailing_zip_code, weekly_request: true)
+          @account = @account.create(policy_number_entered: @policy_demographic.policy_number, representative_id: representative_id, status: 4, name: @policy_demographic.business_name, street_address: @policy_demographic.mailing_address_line_1, street_address_2: @policy_demographic.mailing_address_line_2, city: @policy_demographic.mailing_city, state: @policy_demographic.mailing_state, zip_code: @policy_demographic.mailing_zip_code, weekly_request: true)
         elsif @account.first.status == "predecessor"
           @account = @account.first
-          @account.update_attributes(policy_number_entered: @policy_exp.policy_number, representative_id: representative_id, name: @policy_demographic.business_name, street_address: @policy_demographic.mailing_address_line_1, street_address_2: @policy_demographic.mailing_address_line_2, city: @policy_demographic.mailing_city, state: @policy_demographic.mailing_state, zip_code: @policy_demographic.mailing_zip_code)
+          @account.update_attributes(policy_number_entered: @policy_demographic.policy_number, representative_id: representative_id, name: @policy_demographic.business_name, street_address: @policy_demographic.mailing_address_line_1, street_address_2: @policy_demographic.mailing_address_line_2, city: @policy_demographic.mailing_city, state: @policy_demographic.mailing_state, zip_code: @policy_demographic.mailing_zip_code)
         else
           @account = @account.first
         end
 
 
       @policy_calculation = PolicyCalculation.where(account_id: @account.id).update_or_create(
-          representative_number: @policy_exp.representative_number,
+          representative_number: @policy_demographic.representative_number,
           policy_number: @account.policy_number_entered,
-          policy_group_number: @policy_exp.policy_group_number,
+          # policy_group_number: @policy_demographic.policy_group_number,
           # policy_total_four_year_payroll: @policy_exp.policy_total_four_year_payroll,
           # policy_credibility_group: @policy_exp.policy_credibility_group,
           # policy_maximum_claim_value: @policy_exp.policy_maximum_claim_value,
@@ -86,17 +86,17 @@ class GroupRatingAllCreate
           coverage_type: @policy_demographic.coverage_type,
           policy_coverage_type: @policy_demographic.policy_coverage_type,
           policy_employer_type: @policy_demographic.policy_employer_type,
-          merit_rate: @policy_demographic.merit_rate,
-          group_code: @policy_demographic.group_code,
-          minimum_premium_percentage: @policy_demographic.minimum_premium_percentage,
-          rate_adjust_factor: @policy_demographic.rate_adjust_factor,
-          em_effective_date: @policy_demographic.em_effective_date,
-          regular_balance_amount: @policy_demographic.regular_balance_amount,
-          attorney_general_balance_amount: @policy_demographic.attorney_general_balance_amount,
-          appealed_balance_amount: @policy_demographic.appealed_balance_amount,
-          pending_balance_amount: @policy_demographic.pending_balance_amount,
-          advance_deposit_amount: @policy_demographic.advance_deposit_amount,
-          data_source: @policy_exp.data_source,
+          # merit_rate: @policy_demographic.merit_rate,
+          # group_code: @policy_demographic.group_code,
+          # minimum_premium_percentage: @policy_demographic.minimum_premium_percentage,
+          # rate_adjust_factor: @policy_demographic.rate_adjust_factor,
+          # em_effective_date: @policy_demographic.em_effective_date,
+          # regular_balance_amount: @policy_demographic.regular_balance_amount,
+          # attorney_general_balance_amount: @policy_demographic.attorney_general_balance_amount,
+          # appealed_balance_amount: @policy_demographic.appealed_balance_amount,
+          # pending_balance_amount: @policy_demographic.pending_balance_amount,
+          # advance_deposit_amount: @policy_demographic.advance_deposit_amount,
+          data_source: @policy_demographic.data_source,
           representative_id: @account.representative_id,
           account_id: @account.id
           )
@@ -132,7 +132,6 @@ class GroupRatingAllCreate
               claim_modified_losses_individual_reduced: claim.claim_modified_losses_individual_reduced,
               data_source: claim.data_source)
           end
-
           ProcessPolicyCoverageStatusHistory.where(representative_number: @policy_calculation.representative_number, policy_number: @policy_calculation.policy_number).find_each do |policy_coverage|
             PolicyCoverageStatusHistory.where(policy_calculation_id: @policy_calculation.id, policy_number: @policy_calculation.policy_number, representative_number: @policy_calculation.representative_number, coverage_effective_date: policy_coverage.coverage_effective_date, coverage_status: policy_coverage.coverage_status).update_or_create(
                     policy_calculation_id: @policy_calculation.id,
@@ -148,22 +147,20 @@ class GroupRatingAllCreate
 
           end
 
-
           FinalManualClassFourYearPayrollAndExpLoss.where(representative_number: @policy_calculation.representative_number, policy_number: @policy_calculation.policy_number).find_each do |man_class_exp|
-              man_class_proj = FinalManualClassGroupRatingAndPremiumProjection.find_by(policy_number: man_class_exp.policy_number, manual_number: man_class_exp.manual_number, representative_number: man_class_exp.representative_number)
-                if !man_class_proj.nil?
                   @manual_class_calculation = ManualClassCalculation.where(policy_calculation_id: @policy_calculation.id, manual_number: man_class_exp.manual_number).update_or_create(
                     representative_number: man_class_exp.representative_number,
                     policy_number: man_class_exp.policy_number,
                     policy_calculation_id: @policy_calculation.id,
                     manual_number: man_class_exp.manual_number,
+                    manual_class_type: man_class_exp.manual_class_type,
                     # manual_class_four_year_period_payroll: man_class_exp.manual_class_four_year_period_payroll,
                     # manual_class_expected_loss_rate: man_class_exp.manual_class_expected_loss_rate,
                     manual_class_base_rate: man_class_exp.manual_class_base_rate,
                     # manual_class_expected_losses: man_class_exp.manual_class_expected_losses,
                     # manual_class_limited_loss_rate: man_class_exp.manual_class_limited_loss_rate,
                     # manual_class_limited_losses: man_class_exp.manual_class_limited_losses,
-                    manual_class_industry_group: man_class_proj.manual_class_industry_group,
+                    manual_class_industry_group: man_class_exp.manual_class_industry_group,
                     # manual_class_industry_group_premium_total: man_class_proj.manual_class_industry_group_premium_total,
                     # manual_class_current_estimated_payroll: man_class_proj.manual_class_current_estimated_payroll,
                     # manual_class_industry_group_premium_percentage: man_class_proj.manual_class_industry_group_premium_percentage,
@@ -173,31 +170,9 @@ class GroupRatingAllCreate
                     # manual_class_standard_premium: man_class_proj.manual_class_standard_premium,
                     # manual_class_estimated_group_premium: man_class_proj.manual_class_estimated_group_premium,
                     # manual_class_estimated_individual_premium: man_class_proj.manual_class_estimated_individual_premium,
-                    data_source: man_class_proj.data_source)
-                else
-                  @manual_class_calculation = ManualClassCalculation.where(policy_calculation_id: @policy_calculation.id, manual_number: man_class_exp.manual_number).update_or_create(
-                    representative_number: man_class_exp.representative_number,
-                    policy_number: man_class_exp.policy_number,
-                    policy_calculation_id: @policy_calculation.id,
-                    manual_number: man_class_exp.manual_number,
-                    # manual_class_four_year_period_payroll: man_class_exp.manual_class_four_year_period_payroll,
-                    # manual_class_expected_loss_rate: man_class_exp.manual_class_expected_loss_rate,
-                    manual_class_base_rate: man_class_exp.manual_class_base_rate,
-                    # manual_class_expected_losses: man_class_exp.manual_class_expected_losses,
-                    # manual_class_limited_loss_rate: man_class_exp.manual_class_limited_loss_rate,
-                    # manual_class_limited_losses: man_class_exp.manual_class_limited_losses,
-                    # manual_class_industry_group: 0,
-                    # manual_class_industry_group_premium_total: 0,
-                    # manual_class_current_estimated_payroll: 0,
-                    # manual_class_industry_group_premium_percentage: 0,
-                    # manual_class_modification_rate: 0,
-                    # manual_class_individual_total_rate: 0,
-                    # manual_class_group_total_rate: 0,
-                    # manual_class_standard_premium: 0,
-                    # manual_class_estimated_group_premium: 0,
-                    # manual_class_estimated_individual_premium: 0,
                     data_source: man_class_exp.data_source)
-              end
+
+
               ProcessPayrollAllTransactionsBreakdownByManualClass.where("reporting_period_start_date >= :reporting_period_start_date and representative_number = :representative_number and manual_number = :manual_number and policy_number = :policy_number",  reporting_period_start_date: experience_period_lower_date, representative_number: process_representative, manual_number: @manual_class_calculation.manual_number, policy_number: @manual_class_calculation.policy_number).find_each do |payroll_transaction|
                 unless @manual_class_calculation.nil? || payroll_transaction.id.nil? || payroll_transaction.manual_number == 0
                   PayrollCalculation.where(representative_number: payroll_transaction.representative_number,
