@@ -58,7 +58,7 @@ class PolicyCalculation < ActiveRecord::Base
         @credibility_row.credibility_group = 0
         @credibility_row.expected_losses = 0
         @credibility_row.credibility_percent = 0
-        @credibility_row.group_maximum_value = 0
+        @credibility_row.group_maximum_value = 250000
 
       elsif @policy_total_expected_losses >= 1000000
         @credibility_row = BwcCodesCredibilityMaxLoss.find_by(expected_losses: 1000000)
@@ -74,6 +74,10 @@ class PolicyCalculation < ActiveRecord::Base
 
       @policy_total_limited_losses = self.manual_class_calculations.sum(:manual_class_limited_losses)
 
+      self.claim_calculations.find_each do |claim|
+        claim.recalculate_experience(@credibility_row.group_maximum_value)
+      end
+
       @claims = self.claim_calculations.where("claim_injury_date >= :experience_period_lower_date and claim_injury_date <= :experience_period_upper_date",  experience_period_lower_date: @group_rating.experience_period_lower_date, experience_period_upper_date: @group_rating.experience_period_upper_date)
 
       if @claims.empty? && @policy_total_expected_losses == 0
@@ -82,9 +86,6 @@ class PolicyCalculation < ActiveRecord::Base
         @policy_group_ratio = 0
         @policy_total_claims_count = 0
       else
-        @claims.each do |claim|
-          claim.recalculate_experience
-        end
         @policy_total_modified_losses_group_reduced = @claims.sum(:claim_modified_losses_group_reduced)
         @policy_total_modified_losses_individual_reduced = @claims.sum(:claim_modified_losses_individual_reduced)
         @policy_total_claims_count = @claims.count
