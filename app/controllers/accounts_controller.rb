@@ -67,6 +67,7 @@ class AccountsController < ApplicationController
     @new_payroll_calculation = PayrollCalculation.new
     @policy_calculation = PolicyCalculation.find_by(account_id: @account.id)
     @affiliates = @account.affiliates
+    @contacts = @account.contacts
   end
 
 
@@ -91,6 +92,13 @@ class AccountsController < ApplicationController
       flash[:notice] = "Account's group rating calculation was successful."
       redirect_to @account
     end
+  end
+
+  def assign
+    @account = Account.find(params[:account_id])
+    @affiliate = Affiliate.find(params[:account][:id])
+    @accounts_affiliate = AccountsAffiliate.create(affiliate_id: @affiliate.id, account_id: @account.id)
+    redirect_to @account
   end
 
   # def group_rating

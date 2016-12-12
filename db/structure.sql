@@ -7697,6 +7697,38 @@ ALTER SEQUENCE accounts_affiliates_id_seq OWNED BY accounts_affiliates.id;
 
 
 --
+-- Name: accounts_contacts; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE accounts_contacts (
+    id integer NOT NULL,
+    account_id integer,
+    contact_id integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: accounts_contacts_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE accounts_contacts_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: accounts_contacts_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE accounts_contacts_id_seq OWNED BY accounts_contacts.id;
+
+
+--
 -- Name: accounts_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -7724,7 +7756,7 @@ CREATE TABLE affiliates (
     first_name character varying,
     last_name character varying,
     role integer DEFAULT 0,
-    email character varying,
+    email_address character varying,
     salesforce_id character varying,
     representative_id integer,
     internal_external integer DEFAULT 0,
@@ -8079,6 +8111,57 @@ CREATE SEQUENCE claim_calculations_id_seq
 --
 
 ALTER SEQUENCE claim_calculations_id_seq OWNED BY claim_calculations.id;
+
+
+--
+-- Name: contacts; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE contacts (
+    id integer NOT NULL,
+    prefix integer DEFAULT 0,
+    first_name character varying,
+    middle_initial character varying,
+    last_name character varying,
+    suffix character varying,
+    email_address character varying,
+    phone_number character varying,
+    phone_extension character varying,
+    mobile_phone character varying,
+    fax_number character varying,
+    contact_type integer DEFAULT 1,
+    salesforce_id character varying,
+    title character varying,
+    address_line_1 character varying,
+    address_line_2 character varying,
+    city character varying,
+    state character varying,
+    zip_code character varying,
+    country character varying,
+    created_by character varying,
+    updated_by character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: contacts_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE contacts_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: contacts_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE contacts_id_seq OWNED BY contacts.id;
 
 
 --
@@ -10940,6 +11023,13 @@ ALTER TABLE ONLY accounts_affiliates ALTER COLUMN id SET DEFAULT nextval('accoun
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY accounts_contacts ALTER COLUMN id SET DEFAULT nextval('accounts_contacts_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY affiliates ALTER COLUMN id SET DEFAULT nextval('affiliates_id_seq'::regclass);
 
 
@@ -11004,6 +11094,13 @@ ALTER TABLE ONLY bwc_codes_policy_effective_dates ALTER COLUMN id SET DEFAULT ne
 --
 
 ALTER TABLE ONLY claim_calculations ALTER COLUMN id SET DEFAULT nextval('claim_calculations_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY contacts ALTER COLUMN id SET DEFAULT nextval('contacts_id_seq'::regclass);
 
 
 --
@@ -11414,6 +11511,14 @@ ALTER TABLE ONLY accounts_affiliates
 
 
 --
+-- Name: accounts_contacts_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY accounts_contacts
+    ADD CONSTRAINT accounts_contacts_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: accounts_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -11499,6 +11604,14 @@ ALTER TABLE ONLY bwc_codes_policy_effective_dates
 
 ALTER TABLE ONLY claim_calculations
     ADD CONSTRAINT claim_calculations_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: contacts_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY contacts
+    ADD CONSTRAINT contacts_pkey PRIMARY KEY (id);
 
 
 --
@@ -11972,6 +12085,20 @@ CREATE INDEX index_accounts_affiliates_on_affiliate_id ON accounts_affiliates US
 
 
 --
+-- Name: index_accounts_contacts_on_account_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_accounts_contacts_on_account_id ON accounts_contacts USING btree (account_id);
+
+
+--
+-- Name: index_accounts_contacts_on_contact_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_accounts_contacts_on_contact_id ON accounts_contacts USING btree (contact_id);
+
+
+--
 -- Name: index_accounts_on_representative_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -12254,6 +12381,22 @@ ALTER TABLE ONLY imports
 
 ALTER TABLE ONLY accounts_affiliates
     ADD CONSTRAINT fk_rails_19f9bc6433 FOREIGN KEY (affiliate_id) REFERENCES affiliates(id);
+
+
+--
+-- Name: fk_rails_216ba210c3; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY accounts_contacts
+    ADD CONSTRAINT fk_rails_216ba210c3 FOREIGN KEY (account_id) REFERENCES accounts(id);
+
+
+--
+-- Name: fk_rails_23828ba563; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY accounts_contacts
+    ADD CONSTRAINT fk_rails_23828ba563 FOREIGN KEY (contact_id) REFERENCES contacts(id);
 
 
 --
@@ -12575,4 +12718,8 @@ INSERT INTO schema_migrations (version) VALUES ('20161212090511');
 INSERT INTO schema_migrations (version) VALUES ('20161212143541');
 
 INSERT INTO schema_migrations (version) VALUES ('20161212145717');
+
+INSERT INTO schema_migrations (version) VALUES ('20161212160309');
+
+INSERT INTO schema_migrations (version) VALUES ('20161212162433');
 
