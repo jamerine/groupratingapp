@@ -67,7 +67,7 @@ class Step100Proc < ActiveRecord::Migration
           representative_number,
           policy_number,
           valid_policy_number,
-          current_coverage_status,
+          REGEXP_REPLACE(current_coverage_status, '\s+$', ''),
           coverage_status_effective_date,
           federal_identification_number,
           REGEXP_REPLACE(business_name, '\s+$', ''),
