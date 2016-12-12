@@ -1,9 +1,29 @@
 
-<%= form_for @affiliate do |f| %>
   <div class="container">
-    <%= link_to 'Back', :back, class: 'btn btn-primary' %>
 
-    <h1>New Affiliate for <%= @account.name  %></h1>
+    <%= link_to 'Back', :back, class: 'btn btn-primary' %>
+    <div class="container">
+      <h3>Add Current Affiliate to <%= @account.name %> </h3>
+      <%= form_for :account, :url => account_assign_path(@account), :html => { :method => "post" } do |t| %>
+
+        <div class="row">
+          <%= t.select :id, @affiliates.collect {|x| [x.first_name + ' ' + x.last_name, x.id]}, {}, class: "form-control" %>
+        </div>
+
+        <div class="form-group col-md-4  col-md-offset-4" >
+          <%= t.submit 'Assign Affiliate', class: 'btn btn-info' %>
+        </div>
+
+      <% end %>
+    </div>
+
+    <br>
+
+    <div class="container">
+
+
+    <%= form_for @affiliate do |f| %>
+    <h3>Create New Affiliate for <%= @account.name  %></h3>
       <div class="row">
         <%= f.hidden_field :account_id, value: "#{@account.id}" %>
 
@@ -23,16 +43,15 @@
       </div>
 
       <div class="form-group col-md-3" >
-        <%= f.label :email %>
-        <%= f.email_field :email, class: "form-control" %>
+        <%= f.label :email_address %>
+        <%= f.email_field :email_address, class: "form-control" %>
       </div>
 
       <div class="form-group col-md-4  col-md-offset-4" >
         <%= f.submit 'Create Affiliate', class: 'btn btn-info' %>
       </div>
 
+      </div>
+    <% end %>
     </div>
-    </div>
-
   </div>
-  <% end %>

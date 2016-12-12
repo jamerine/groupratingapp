@@ -17,8 +17,8 @@
         <td> <%= affiliate.role.titleize %></td>
         <td> <%= affiliate.first_name %></td>
         <td> <%= affiliate.last_name %></td>
-        <td> <%= affiliate.email %></td>
-        <td> <%= link_to 'Edit' %> | <%= link_to 'Delete' %> </td>
+        <td> <%= affiliate.email_address %></td>
+        <td> <%= link_to 'Edit' %> | <%= link_to 'Delete', affiliate_path(id: affiliate.id, account_id: @account.id), method: :delete  %> </td>
       </tr>
       <% end %>
     </tbody>

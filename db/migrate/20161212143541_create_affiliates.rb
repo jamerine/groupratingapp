@@ -4,7 +4,7 @@ class CreateAffiliates < ActiveRecord::Migration
       t.string :first_name
       t.string :last_name
       t.integer :role, default: 0
-      t.string :email
+      t.string :email_address
       t.string :salesforce_id
 
       t.references :representative, index: true, foreign_key: true
