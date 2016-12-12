@@ -18,6 +18,9 @@ Rails.application.routes.draw do
     post :group_rating
   end
 
+  resources :affiliates
+
+
   resources :imports do
     collection { delete :destroy }
   end

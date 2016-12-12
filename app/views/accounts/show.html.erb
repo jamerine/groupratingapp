@@ -58,6 +58,14 @@
   </div>
   <br>
 
+
+
+  <div class="container">
+    <div class="row">
+          <%= render partial: 'affiliates/affiliate', locals: { account: @account, affiliates: @affiliates} %>
+    </div>
+  </div>
+
   <div class="container">
     <% unless @account.predecessor? %>
       <%= link_to "Calc Group Rating", account_edit_group_rating_path(params[:id]), class: 'btn btn-primary', method: :get %>
@@ -73,6 +81,14 @@
         <% end %>
       <% end %>
     </div>
+
+
+
+
+
+
+
+
     <div class="row">
       <h3>Group Rating Information</h3>
         <p>

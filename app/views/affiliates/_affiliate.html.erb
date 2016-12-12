@@ -1,0 +1,26 @@
+<div class="table-responsive">
+  <table class="table">
+    <caption align: "center"><h3>Affiliates</h3> <%= link_to 'Add Affiliate', new_affiliate_path(account_id: params[:id]) %></caption>
+    <thead>
+      <tr>
+        <th>Role</th>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Email</th>
+        <th></th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% @affiliates.find_each do |affiliate| %>
+      <tr>
+        <td> <%= affiliate.role.titleize %></td>
+        <td> <%= affiliate.first_name %></td>
+        <td> <%= affiliate.last_name %></td>
+        <td> <%= affiliate.email %></td>
+        <td> <%= link_to 'Edit' %> | <%= link_to 'Delete' %> </td>
+      </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
