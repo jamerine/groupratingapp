@@ -6,6 +6,9 @@ class Account < ActiveRecord::Base
   has_many :group_rating_rejections, dependent: :destroy
   has_many :group_rating_exceptions, dependent: :destroy
 
+  has_many :accounts_affiliates
+  has_many :affiliates, through: :accounts_affiliates
+
   validates :policy_number_entered, :presence => true, length: { maximum: 8 }
 
   enum status: [:active, :inactive, :invalid_policy_number, :predecessor, :prospect]

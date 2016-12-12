@@ -7665,6 +7665,38 @@ CREATE TABLE accounts (
 
 
 --
+-- Name: accounts_affiliates; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE accounts_affiliates (
+    id integer NOT NULL,
+    account_id integer,
+    affiliate_id integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: accounts_affiliates_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE accounts_affiliates_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: accounts_affiliates_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE accounts_affiliates_id_seq OWNED BY accounts_affiliates.id;
+
+
+--
 -- Name: accounts_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -7681,6 +7713,43 @@ CREATE SEQUENCE accounts_id_seq
 --
 
 ALTER SEQUENCE accounts_id_seq OWNED BY accounts.id;
+
+
+--
+-- Name: affiliates; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE affiliates (
+    id integer NOT NULL,
+    first_name character varying,
+    last_name character varying,
+    role integer DEFAULT 0,
+    email character varying,
+    salesforce_id character varying,
+    representative_id integer,
+    internal_external integer DEFAULT 0,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: affiliates_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE affiliates_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: affiliates_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE affiliates_id_seq OWNED BY affiliates.id;
 
 
 --
@@ -10864,6 +10933,20 @@ ALTER TABLE ONLY accounts ALTER COLUMN id SET DEFAULT nextval('accounts_id_seq':
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY accounts_affiliates ALTER COLUMN id SET DEFAULT nextval('accounts_affiliates_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY affiliates ALTER COLUMN id SET DEFAULT nextval('affiliates_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY bwc_codes_base_rates_exp_loss_rates ALTER COLUMN id SET DEFAULT nextval('bwc_codes_base_rates_exp_loss_rates_id_seq'::regclass);
 
 
@@ -11323,11 +11406,27 @@ ALTER TABLE ONLY versions ALTER COLUMN id SET DEFAULT nextval('versions_id_seq':
 
 
 --
+-- Name: accounts_affiliates_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY accounts_affiliates
+    ADD CONSTRAINT accounts_affiliates_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: accounts_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY accounts
     ADD CONSTRAINT accounts_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: affiliates_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY affiliates
+    ADD CONSTRAINT affiliates_pkey PRIMARY KEY (id);
 
 
 --
@@ -11859,10 +11958,31 @@ ALTER TABLE ONLY versions
 
 
 --
+-- Name: index_accounts_affiliates_on_account_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_accounts_affiliates_on_account_id ON accounts_affiliates USING btree (account_id);
+
+
+--
+-- Name: index_accounts_affiliates_on_affiliate_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_accounts_affiliates_on_affiliate_id ON accounts_affiliates USING btree (affiliate_id);
+
+
+--
 -- Name: index_accounts_on_representative_id; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_accounts_on_representative_id ON accounts USING btree (representative_id);
+
+
+--
+-- Name: index_affiliates_on_representative_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_affiliates_on_representative_id ON affiliates USING btree (representative_id);
 
 
 --
@@ -12129,6 +12249,22 @@ ALTER TABLE ONLY imports
 
 
 --
+-- Name: fk_rails_19f9bc6433; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY accounts_affiliates
+    ADD CONSTRAINT fk_rails_19f9bc6433 FOREIGN KEY (affiliate_id) REFERENCES affiliates(id);
+
+
+--
+-- Name: fk_rails_2fcfb189de; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY accounts_affiliates
+    ADD CONSTRAINT fk_rails_2fcfb189de FOREIGN KEY (account_id) REFERENCES accounts(id);
+
+
+--
 -- Name: fk_rails_35addb0042; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -12174,6 +12310,14 @@ ALTER TABLE ONLY group_rating_exceptions
 
 ALTER TABLE ONLY policy_coverage_status_histories
     ADD CONSTRAINT fk_rails_d66971042d FOREIGN KEY (policy_calculation_id) REFERENCES policy_calculations(id);
+
+
+--
+-- Name: fk_rails_ee74209c96; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY affiliates
+    ADD CONSTRAINT fk_rails_ee74209c96 FOREIGN KEY (representative_id) REFERENCES representatives(id);
 
 
 --
@@ -12427,4 +12571,8 @@ INSERT INTO schema_migrations (version) VALUES ('20161212085259');
 INSERT INTO schema_migrations (version) VALUES ('20161212085537');
 
 INSERT INTO schema_migrations (version) VALUES ('20161212090511');
+
+INSERT INTO schema_migrations (version) VALUES ('20161212143541');
+
+INSERT INTO schema_migrations (version) VALUES ('20161212145717');
 

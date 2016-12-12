@@ -66,6 +66,7 @@ class AccountsController < ApplicationController
     @representative = Representative.find(@account.representative_id)
     @new_payroll_calculation = PayrollCalculation.new
     @policy_calculation = PolicyCalculation.find_by(account_id: @account.id)
+    @affiliates = @account.affiliates
   end
 
 
