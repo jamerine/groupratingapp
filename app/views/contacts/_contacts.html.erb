@@ -1,0 +1,28 @@
+<div class="table-responsive">
+  <table class="table">
+    <caption align: "center"><h3>Contacts</h3> <%= link_to 'Add Contacts', new_contact_path(account_id: params[:id]) %></caption>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Email Address</th>
+        <th>Phone Number</th>
+        <th></th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% @contacts.find_each do |contact| %>
+      <tr>
+        <td> <%= contact.contact_type.humanize %></td>
+        <td> <%= contact.first_name %></td>
+        <td> <%= contact.last_name %></td>
+        <td> <%= contact.email_address %></td>
+        <td> <%= contact.phone_number %></td>
+        <td> <%= link_to 'Edit' %> | <%= link_to 'Delete', contact_path(id: contact.id, account_id: @account.id), method: :delete %> </td>
+      </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

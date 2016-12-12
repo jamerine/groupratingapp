@@ -16,10 +16,12 @@ Rails.application.routes.draw do
     get :edit_group_rating
     post :group_rating_calc
     post :group_rating
+    post :assign
   end
 
   resources :affiliates
 
+  resources :contacts
 
   resources :imports do
     collection { delete :destroy }

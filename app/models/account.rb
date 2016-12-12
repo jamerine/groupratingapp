@@ -9,6 +9,9 @@ class Account < ActiveRecord::Base
   has_many :accounts_affiliates
   has_many :affiliates, through: :accounts_affiliates
 
+  has_many :accounts_contacts
+  has_many :contacts, through: :accounts_contacts
+
   validates :policy_number_entered, :presence => true, length: { maximum: 8 }
 
   enum status: [:active, :inactive, :invalid_policy_number, :predecessor, :prospect]
