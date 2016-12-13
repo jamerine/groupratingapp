@@ -23,7 +23,7 @@ class PolicyExport
       csv.close
     end
 
-    PolicyExportMailer.policy_export(@user.email, @representative.abbreviated_name, csv_string).deliver
+    PolicyExportMailer.policy_export(@user, @representative, csv_string).deliver
 
 
 
