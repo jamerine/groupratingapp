@@ -1,8 +1,8 @@
 ActionMailer::Base.smtp_settings = {
   port:              587,
-  address:           'smtp.mailgun.org',
-  user_name:         ENV['MAILGUN_SMTP_LOGIN'],
-  password:          ENV['MAILGUN_SMTP_PASSWORD'],
+  address:           'smtp.sendgrid.net',
+  user_name:         ENV['SENDGRID_USERNAME'],
+  password:          ENV['SENDGRID_PASSWORD'],
   domain:            'groupratingapp.herokuapp.com',
   authentication:    :plain,
   content_type:      'text/html'
