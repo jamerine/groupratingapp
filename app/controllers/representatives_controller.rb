@@ -8,14 +8,22 @@ class RepresentativesController < ApplicationController
     @policy_calculations = @representative.policy_calculations
     @manual_class_calculations = @representative.manual_class_calculations
     @group_ratings = @representative.group_ratings
-    # @newest_group_rating = @group_ratings.last
-    # @import = Import.find_by(group_rating_id: @newest_group_rating.id)
+    @newest_group_rating = @group_ratings.last
+    @import = Import.find_by(group_rating_id: @newest_group_rating.id)
 
-    respond_to do |format|
-      format.html
-      format.csv { send_data @policy_calculations.to_csv, filename: "#{@representative.abbreviated_name}_policies_#{Date.today}.csv" }
-    end
+    # respond_to do |format|
+    #   format.html
+    #   format.csv { send_data @policy_calculations.to_csv, filename: "#{@representative.abbreviated_name}_policies_#{Date.today}.csv" }
+    # end
 
+
+  end
+
+  def export_policies
+    @representative = Representative.find(params[:representative_id])
+
+    PolicyExport.perform_async(current_user.id, @representative.id)
+    redirect_to @representative
   end
 
   def export_accounts
@@ -34,10 +42,11 @@ class RepresentativesController < ApplicationController
     @representative = Representative.find(params[:representative_id])
     @manual_class_calculations = @representative.manual_class_calculations
 
-    respond_to do |format|
-      format.html
-      format.csv { send_data @manual_class_calculations.to_csv, filename: "#{@representative.abbreviated_name}_manual_classes_#{Date.today}.csv" }
-    end
+    # respond_to do |format|
+    #   format.html
+    #   format.csv { send_data @manual_class_calculations.to_csv, filename: "#{@representative.abbreviated_name}_manual_classes_#{Date.today}.csv" }
+    # end
+
   end
 
 
