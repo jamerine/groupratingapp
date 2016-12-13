@@ -14,7 +14,6 @@ Rails.application.routes.draw do
         sessions: 'users/sessions',
         confirmations: 'users/confirmations',
         registrations: 'users/registrations',
-        sessions: 'users/sessions'
       }
 
   resources :accounts do
