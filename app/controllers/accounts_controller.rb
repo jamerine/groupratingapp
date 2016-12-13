@@ -1,18 +1,17 @@
 class AccountsController < ApplicationController
+
   def index
-    @representatives_users = RepresentativesUser.where(user_id: current_user.id).pluck(:representative_id)
-    @representatives = Representative.where(id: @representatives_users)
     @accounts = Account.where(representative_id: @representatives)
-    if params[:search].present? && params[:representative_number].present?
-      @representative = Representative.find_by(representative_number: params[:representative_number])
+    if params[:search].present? && params[:representative_number].present? && @representatives.where(representative_number: (params[:representative_number]))
+      @representative = @representatives.find_by(representative_number: params[:representative_number])
       @accounts = Account.includes(:group_rating_rejections).where(representative_id: @representative.id).search(params[:search]).paginate(page: params[:page], per_page: 50)
     elsif params[:search].present?
-      @accounts = Account.includes(:group_rating_rejections).search(params[:search]).paginate(page: params[:page], per_page: 50)
-    elsif params[:representative_number].present?
-      @representative = Representative.find_by(representative_number: params[:representative_number])
-      @accounts = Account.includes(:group_rating_rejections).where(representative_id: @representative.id).paginate(page: params[:page], per_page: 50)
+      @accounts = @accounts.includes(:group_rating_rejections).search(params[:search]).paginate(page: params[:page], per_page: 50)
+    elsif params[:representative_number].present? && @representatives.where(representative_number: (params[:representative_number]))
+      @representative = @representatives.find_by(representative_number: params[:representative_number])
+      @accounts = @accounts.includes(:group_rating_rejections).where(representative_id: @representative.id).paginate(page: params[:page], per_page: 50)
     else
-      @accounts = Account.includes(:group_rating_rejections).all.paginate(page: params[:page], per_page: 50)
+      @accounts = @accounts.includes(:group_rating_rejections).all.paginate(page: params[:page], per_page: 50)
     end
   end
 

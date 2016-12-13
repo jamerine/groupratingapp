@@ -40,7 +40,7 @@
           <td><%= account.name %> </td>
           <td><%= account.status.humanize %> </td>
           <td><%= account.group_rating_qualification %></td>
-          <td><%= @representatives.find(account.representative_id).abbreviated_name %></td>
+          <td><%= account.representative.abbreviated_name %></td>
           <td><%= account.updated_at.in_time_zone("America/New_York").strftime("%m/%d/%y @ %I:%M %p") %> </td>
         </tr>
         <% end %>
