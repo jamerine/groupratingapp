@@ -1,9 +1,11 @@
 class PolicyExportMailer < ActionMailer::Base
  default :from => "jason@dittoh.com"
 
-  def policy_export(email, representative_name, csv_string)
+  def policy_export(user, representative, csv_string)
      attachments['report.csv'] = csv_string
-      mail(:to => email, :subject => "#{representative_name} Policy Export")
+     @representative = representative
+     @user = user
+     mail(:to => @user.email, :subject => "#{ @representative.abbreviated_name} Policy Export")
   end
 
 end
