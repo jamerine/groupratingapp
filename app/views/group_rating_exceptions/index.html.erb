@@ -1,7 +1,9 @@
 
 
 <div class="container">
-
+<% if @group_rating_exceptions.empty? %>
+  <h3>No Exceptions Found</h3>
+<% else %>
 <div>
   <table class="table table-hover">
     <thead>
@@ -23,5 +25,5 @@
     </tbody>
   </table>
 </div>
-
+<% end %>
 </div>
