@@ -1,4 +1,6 @@
 require 'sidekiq_calculations'
+require 'csv'
+require 'tempfile'
 
 Sidekiq.configure_client do |config|
   sidekiq_calculations = SidekiqCalculations.new
