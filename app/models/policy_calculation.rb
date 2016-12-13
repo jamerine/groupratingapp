@@ -80,7 +80,7 @@ class PolicyCalculation < ActiveRecord::Base
 
       @claims = self.claim_calculations.where("claim_injury_date >= :experience_period_lower_date and claim_injury_date <= :experience_period_upper_date",  experience_period_lower_date: @group_rating.experience_period_lower_date, experience_period_upper_date: @group_rating.experience_period_upper_date)
 
-      if @claims.empty? && @policy_total_expected_losses == 0
+      if @claims.empty?
         @policy_total_modified_losses_group_reduced = 0
         @policy_total_modified_losses_individual_reduced = 0
         @policy_group_ratio = 0
@@ -89,7 +89,12 @@ class PolicyCalculation < ActiveRecord::Base
         @policy_total_modified_losses_group_reduced = @claims.sum(:claim_modified_losses_group_reduced)
         @policy_total_modified_losses_individual_reduced = @claims.sum(:claim_modified_losses_individual_reduced)
         @policy_total_claims_count = @claims.count
-        @policy_group_ratio = (@policy_total_modified_losses_group_reduced / @policy_total_expected_losses).round(6)
+        @policy_group_ratio =
+        if @policy_total_expected_losses == 0.0
+          0
+        else
+          (@policy_total_modified_losses_group_reduced / @policy_total_expected_losses).round(6)
+        end
       end
 
       @policy_individual_total_modifier =
