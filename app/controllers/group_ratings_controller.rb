@@ -1,11 +1,11 @@
 class GroupRatingsController < ApplicationController
   require 'sidekiq/api'
 
+# @representatives is scoped at the application level
+
   def index
-    @representatives_users = RepresentativesUser.where(user_id: current_user.id).pluck(:representative_id)
-    @reps = Representative.where(id: @representatives_users)
-    @group_ratings = GroupRating.where(representative_id: @reps).includes(:import)
-    @representatives = Representative.where(representative_id: @reps)
+    @group_ratings = GroupRating.where(representative_id: @representatives).includes(:import)
+    @representatives = Representative.where(representative_id: @representatives)
   end
 
   def show
@@ -16,14 +16,12 @@ class GroupRatingsController < ApplicationController
 
   def new
     @group_rating = GroupRating.new
-    @representatives_users = RepresentativesUser.where(user_id: current_user.id).pluck(:representative_id)
-    @representatives = Representative.where(id: @representatives_users)
   end
 
   def create
     stats = Sidekiq::Stats.new.fetch_stats!
     if stats[:retry_size] > 0 || stats[:workers_size] > 0 || stats[:enqueued] > 0
-      redirect_to group_ratings_path, alert: "Please wait for group rating process to finish"
+      redirect_to group_ratings_path, alert: "Please wait for background update to finish."
     else
       @group_rating = GroupRating.where(representative_id: group_rating_params[:representative_id]).destroy_all
       @group_rating = GroupRating.new(group_rating_params)

@@ -1,6 +1,7 @@
 <%= content_tag_for :div, @group_rating do %>
   <div class="container text-center">
     <div class="row">
+      <%= link_to "Delete Group Rating", @group_rating, method: :delete, class: 'btn btn-primary' %>
       <div class="col-md-12">
         <h2><%= @representative.abbreviated_name %> </h2>
         <p></p>
@@ -31,7 +32,7 @@
           <p><%= @group_rating.current_payroll_period_upper_date %></p>
       </div>
     </div>
-    <%= link_to "Delete Group Rating", @group_rating, method: :delete %>
+
   </div>
 
   <div class="container">
