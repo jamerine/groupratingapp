@@ -78,4 +78,18 @@ Rails.application.configure do
   config.active_record.dump_schema_after_migration = false
 
   config.action_mailer.default_url_options = { host: 'http://www.groupratingapp.herokuapp.com' }
+
+  config.action_mailer.smtp_settings = { port: 25 }
+
+  config.action_mailer.delivery_method = :smtp
+
+  config.action_mailer.smtp_settings = {
+    address:              'smtp.gmail.com',
+    port:                 587,
+    domain:               'groupratingapp.herokuapp.com',
+    user_name:            'jason@dittoh.com',
+    password:             '<password>',
+    authentication:       'plain',
+    enable_starttls_auto: true
+  }
 end
