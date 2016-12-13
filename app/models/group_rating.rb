@@ -1,5 +1,5 @@
 class GroupRating < ActiveRecord::Base
-  belongs_to :representive
+  belongs_to :representative
   has_one :import, dependent: :destroy
 
   def self.update_or_create(attributes)
@@ -15,5 +15,5 @@ class GroupRating < ActiveRecord::Base
     obj
   end
 
-  
+
 end

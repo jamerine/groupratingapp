@@ -1,7 +1,8 @@
 class AccountsController < ApplicationController
   def index
-    @accounts = Account.all
-    @representatives = Representative.all
+    @representatives_users = RepresentativesUser.where(user_id: current_user.id).pluck(:representative_id)
+    @representatives = Representative.where(id: @representatives_users)
+    @accounts = Account.where(representative_id: @representatives)
     if params[:search].present? && params[:representative_number].present?
       @representative = Representative.find_by(representative_number: params[:representative_number])
       @accounts = Account.includes(:group_rating_rejections).where(representative_id: @representative.id).search(params[:search]).paginate(page: params[:page], per_page: 50)

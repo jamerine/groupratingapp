@@ -10330,6 +10330,38 @@ ALTER SEQUENCE representatives_id_seq OWNED BY representatives.id;
 
 
 --
+-- Name: representatives_users; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE representatives_users (
+    id integer NOT NULL,
+    user_id integer,
+    representative_id integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: representatives_users_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE representatives_users_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: representatives_users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE representatives_users_id_seq OWNED BY representatives_users.id;
+
+
+--
 -- Name: sc220_rec1_employer_demographics; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -11429,6 +11461,13 @@ ALTER TABLE ONLY representatives ALTER COLUMN id SET DEFAULT nextval('representa
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY representatives_users ALTER COLUMN id SET DEFAULT nextval('representatives_users_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY sc220_rec1_employer_demographics ALTER COLUMN id SET DEFAULT nextval('sc220_rec1_employer_demographics_id_seq'::regclass);
 
 
@@ -11983,6 +12022,14 @@ ALTER TABLE ONLY representatives
 
 
 --
+-- Name: representatives_users_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY representatives_users
+    ADD CONSTRAINT representatives_users_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: sc220_rec1_employer_demographics_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -12316,6 +12363,20 @@ CREATE INDEX index_process_policy_experience_period_peos_on_policy_number ON pro
 
 
 --
+-- Name: index_representatives_users_on_representative_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_representatives_users_on_representative_id ON representatives_users USING btree (representative_id);
+
+
+--
+-- Name: index_representatives_users_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_representatives_users_on_user_id ON representatives_users USING btree (user_id);
+
+
+--
 -- Name: index_users_on_email; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -12357,6 +12418,14 @@ ALTER TABLE ONLY manual_class_calculations
 
 ALTER TABLE ONLY accounts
     ADD CONSTRAINT fk_rails_05a693ad72 FOREIGN KEY (representative_id) REFERENCES representatives(id);
+
+
+--
+-- Name: fk_rails_0b4b078a08; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY representatives_users
+    ADD CONSTRAINT fk_rails_0b4b078a08 FOREIGN KEY (user_id) REFERENCES users(id);
 
 
 --
@@ -12429,6 +12498,14 @@ ALTER TABLE ONLY policy_calculations
 
 ALTER TABLE ONLY imports
     ADD CONSTRAINT fk_rails_8b39e94061 FOREIGN KEY (group_rating_id) REFERENCES group_ratings(id);
+
+
+--
+-- Name: fk_rails_ab01499540; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY representatives_users
+    ADD CONSTRAINT fk_rails_ab01499540 FOREIGN KEY (representative_id) REFERENCES representatives(id);
 
 
 --
@@ -12722,4 +12799,6 @@ INSERT INTO schema_migrations (version) VALUES ('20161212145717');
 INSERT INTO schema_migrations (version) VALUES ('20161212160309');
 
 INSERT INTO schema_migrations (version) VALUES ('20161212162433');
+
+INSERT INTO schema_migrations (version) VALUES ('20161212202044');
 
