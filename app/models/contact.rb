@@ -13,7 +13,11 @@ class Contact < ActiveRecord::Base
   enum prefix: [:dr, :miss, :mr, :mrs, :ms]
 
   def full_name
-    "#{prefix}. #{first_name} #{middle_initial} #{last_name}, #{suffix}"
+    "#{first_name} #{last_name}"
+  end
+
+  def formal_name
+      "#{prefix}. #{first_name} #{middle_initial} #{last_name}, #{suffix}"
   end
 
   # def format_phone_number

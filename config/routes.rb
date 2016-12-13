@@ -10,7 +10,12 @@ Rails.application.routes.draw do
   # ...
   mount Sidekiq::Web, at: '/sidekiq'
 
-  devise_for :users
+  devise_for :users, controllers: {
+        sessions: 'users/sessions',
+        confirmations: 'users/confirmations',
+        registrations: 'users/registrations',
+        sessions: 'users/sessions'
+      }
 
   resources :accounts do
     get :edit_group_rating

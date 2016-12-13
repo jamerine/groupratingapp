@@ -4,10 +4,11 @@
     <thead>
       <tr>
         <th>Type</th>
-        <th>First Name</th>
-        <th>Last Name</th>
+        <th>Name</th>
+        <th>Title</th>
         <th>Email Address</th>
         <th>Phone Number</th>
+        <th>Fax Number</th>
         <th></th>
       </tr>
     </thead>
@@ -16,11 +17,12 @@
       <% @contacts.find_each do |contact| %>
       <tr>
         <td> <%= contact.contact_type.humanize %></td>
-        <td> <%= contact.first_name %></td>
-        <td> <%= contact.last_name %></td>
+        <td> <%= contact.full_name %></td>
+        <td> <%= contact.title %></td>
         <td> <%= contact.email_address %></td>
         <td> <%= contact.phone_number %></td>
-        <td> <%= link_to 'Edit' %> | <%= link_to 'Delete', contact_path(id: contact.id, account_id: @account.id), method: :delete %> </td>
+        <td> <%= contact.fax_number %></td>
+        <td> <%= link_to 'View' %> | <%= link_to 'Delete', contact_path(id: contact.id, account_id: @account.id), method: :delete %> </td>
       </tr>
       <% end %>
     </tbody>

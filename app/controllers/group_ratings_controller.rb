@@ -2,9 +2,10 @@ class GroupRatingsController < ApplicationController
   require 'sidekiq/api'
 
   def index
-    @group_ratings = GroupRating.includes(:import)
-    rep_ids = @group_ratings.pluck(:representative_id).uniq
-    @representatives = Representative.where("id in (?)", rep_ids)
+    @representatives_users = RepresentativesUser.where(user_id: current_user.id).pluck(:representative_id)
+    @reps = Representative.where(id: @representatives_users)
+    @group_ratings = GroupRating.where(representative_id: @reps).includes(:import)
+    @representatives = Representative.where(representative_id: @reps)
   end
 
   def show
@@ -15,7 +16,8 @@ class GroupRatingsController < ApplicationController
 
   def new
     @group_rating = GroupRating.new
-    @representatives = Representative.all
+    @representatives_users = RepresentativesUser.where(user_id: current_user.id).pluck(:representative_id)
+    @representatives = Representative.where(id: @representatives_users)
   end
 
   def create
@@ -35,7 +37,7 @@ class GroupRatingsController < ApplicationController
 
             ImportProcess.perform_async(@import.process_representative, @import.id, @representative.abbreviated_name, @group_rating.id)
 
-            redirect_to group_ratings_path, notice: "Import, processing and group rating have been queued."
+            redirect_to @group_rating, notice: "Import, processing and group rating have been queued."
           end
         end
     end
