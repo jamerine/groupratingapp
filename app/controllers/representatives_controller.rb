@@ -23,6 +23,7 @@ class RepresentativesController < ApplicationController
     @representative = Representative.find(params[:representative_id])
 
     PolicyExport.perform_async(current_user.id, @representative.id)
+    flash[:notice] = "Your policy export is now being generated.  Please checkout your email for your generated file."
     redirect_to @representative
   end
 
