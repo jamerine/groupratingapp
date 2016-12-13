@@ -13,16 +13,17 @@ class PolicyExport
     attributes = @policy_calculations.column_names
 
 
-    CSV.generate(headers: true) do |csv|
+    csv_string = CSV.generate(headers: true) do |csv|
       csv << attributes
 
       @policy_calculations.each do |policy|
         csv << attributes.map{ |attr| policy.send(attr) }
       end
 
-      PolicyExportMailer.policy_export(@user.email, @representative.abbreviated_name, csv).deliver
-      csv.close(unlink_now=false)
+      csv.close
     end
+
+    PolicyExportMailer.policy_export(@user.email, @representative.abbreviated_name, csv_string).deliver
 
 
 
