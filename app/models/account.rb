@@ -162,6 +162,7 @@ class Account < ActiveRecord::Base
       else
         self.update_attributes(group_rating_qualification: @group_rating_qualification, industry_group: @industry_group, group_rating_tier: @group_rating_tier, group_premium: @group_premium, group_savings: @group_savings, group_fees: @group_fees)
       end
+      
     end
   end
 
@@ -178,6 +179,7 @@ class Account < ActiveRecord::Base
 
         if !self.policy_calculation.manual_class_calculations.where("manual_class_current_estimated_payroll < 0 or manual_class_four_year_period_payroll < 0").empty?
           GroupRatingException.create(account_id: self.id, exception_reason: 'manual_class_negative_payroll', representative_id: self.representative_id)
+          GroupRatingRejection.create(account_id: self.id, reject_reason: 'manual_class_negative_payroll', representative_id: @group_rating.representative_id)
         end
 
       # ----------- Rejection Section -----------

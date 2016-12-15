@@ -2,25 +2,37 @@
   <div class="container">
     <div class="row">
       <h3>Policy Information</h3>
-      <div class="col-md-2">
-        <h5>Policy Number</h5>
-        <% if account.predecessor? %>
+      <div class="col-md-1">
+        <h5>Policy</h5>
+        <% if account.predecessor? || account.invalid_policy_number? %>
         <p><%= link_to "#{policy_calculation.policy_number}", policy_calculation_path(@policy_calculation.id), class: 'btn btn-primary disabled'%></p>
         <% else %>
         <p><%= link_to "#{policy_calculation.policy_number}", policy_calculation_path(@policy_calculation.id), class: 'btn btn-primary' %></p>
         <% end %>
       </div>
-      <div class="col-md-2">
-        <h5>Policy Status</h5>
+      <div class="col-md-1">
+        <h5>Status</h5>
         <p><%= policy_calculation.current_coverage_status %></p>
       </div>
-      <div class="col-md-2">
-        <h5>Effective_date</h5>
-        <p><%= policy_calculation.coverage_status_effective_date %></p>
+      <div class="col-md-1">
+        <h5>Status Eff</h5>
+        <p><%= (policy_calculation.coverage_status_effective_date).strftime("%-m/%-d/%y") %></p>
       </div>
-      <div class="col-md-2">
-        <h5>Industry Group</h5>
+      <div class="col-md-1">
+        <h5>Creation</h5>
+        <p><%= (policy_calculation.policy_creation_date).strftime("%-m/%-d/%y") %></p>
+      </div>
+      <div class="col-md-1">
+        <h5>Ind. Grp</h5>
         <p><%= policy_calculation.policy_industry_group %></p>
+      </div>
+      <div class="col-md-1">
+        <h5>Ratio</h5>
+        <p><%= (policy_calculation.policy_group_ratio).round(2) %></p>
+      </div>
+      <div class="col-md-1">
+        <h5>EM</h5>
+        <p><%= (policy_calculation.policy_individual_experience_modified_rate).round(2) %></p>
       </div>
       <div class="col-md-2">
         <h5>Current Payroll</h5>

@@ -1,6 +1,10 @@
 <%= content_tag_for :div, @policy_calculation do %>
   <div class="container">
-    <%= link_to 'Return to Account', account_path(@account.id), class: 'btn btn-default' %>
+    <%= render partial: "shared/account_navbar", locals: { object: @account } %>
+
+    <!-- <%= link_to 'Return to Account', account_path(@account.id), class: 'btn btn-default' %> -->
+
+
 
 
     <div class="jumbotron text-center">
@@ -13,7 +17,6 @@
           <h5>Policy Status:</h5>
           <h4><%= @policy_calculation.current_coverage_status %></h4>
         </div>
-
         <div class="col-md-6">
           <h2><%= @policy_calculation.business_name.titleize %></h2>
           <p><%=  @policy_calculation.mailing_address_line_1.titleize %>, <%=  @policy_calculation.mailing_address_line_2.titleize %><%=  @policy_calculation.mailing_city.titleize %>, <%= @policy_calculation.mailing_state %> <%= @policy_calculation.mailing_zip_code %></p>
@@ -21,6 +24,7 @@
           <%=  @policy_calculation.in_care_name_contact_name %>
           </p>
         </div>
+
         <div class="col-md-3">
           <h5>Policy Updated at:</h5>
           <h4><%= @policy_calculation.updated_at.in_time_zone("America/New_York").strftime("%m/%d/%y @ %I:%M %p") %></h4>

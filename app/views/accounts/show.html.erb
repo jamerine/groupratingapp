@@ -1,17 +1,8 @@
 <%= content_tag_for :div, @account do %>
-  <div class="container">
-    <div class="row">
-
-    </div>
-  </div>
+  <%= render partial: "shared/account_navbar", locals: { object: @account } %>
 
   <div class="container jumbotron">
       <div class="row">
-        <div class="col-md-12">
-          <%= link_to "Edit Account Info", edit_account_path(params[:id]), class: 'btn btn-primary' %>
-
-        </div>
-
         <div class="col-md-4">
           <p>Account:</p>
           <h3><%= @account.name %></h3>
@@ -58,21 +49,9 @@
   </div>
   <br>
   <div class="container">
-    <div class="col-md-5">
+      <%= link_to "Change History", versions_path(item_id: @account.id, item_type: @account.class.name), class: 'btn btn-info', method: :get %>
+      <%= link_to "Edit Account Info", edit_account_path(params[:id]), class: 'btn btn-primary' %>
 
-
-      <div class="dropdown">
-        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Reports
-        <span class="caret"></span></button>
-        <ul class="dropdown-menu">
-          <li><a href="https://s3.amazonaws.com/grouprating/Images/ReportRiskReport.tiff">Risk Report</a></li>
-          <li><a href="https://s3.amazonaws.com/grouprating/Images/ReportSavingsSummary.tiff">Savings Summary</a></li>
-          <li><a href="https://s3.amazonaws.com/grouprating/Images/ReportGroupPacket.tiff">Group Packet</a></li>
-          <li><a href="https://s3.amazonaws.com/grouprating/Images/RepoortGroupRetro.tiff">Group Retro Packet</a></li>
-          <li><a href="https://s3.amazonaws.com/grouprating/Images/ReportROCReport.tiff">ROC Report</a></li>
-        </ul>
-      </div>
-    </div>
   </div>
 
   <div class="container">
@@ -88,41 +67,41 @@
     </div>
   </div>
 
-<br>
-
-
-
-
-
-
-
+  <br>
+  <div class="container">
+      <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Reports
+      <span class="caret"></span></button>
+      <ul class="dropdown-menu">
+        <li><a href="https://s3.amazonaws.com/grouprating/Images/ReportRiskReport.tiff">Risk Report</a></li>
+        <li><a href="https://s3.amazonaws.com/grouprating/Images/ReportSavingsSummary.tiff">Savings Summary</a></li>
+        <li><a href="https://s3.amazonaws.com/grouprating/Images/ReportGroupPacket.tiff">Group Packet</a></li>
+        <li><a href="https://s3.amazonaws.com/grouprating/Images/RepoortGroupRetro.tiff">Group Retro Packet</a></li>
+        <li><a href="https://s3.amazonaws.com/grouprating/Images/ReportROCReport.tiff">ROC Report</a></li>
+      </ul>
+  <% unless @account.predecessor? || @account.invalid_policy_number? %>
+    <%= link_to "Process", account_edit_group_rating_path(params[:id]), class: 'btn btn-primary', method: :get %>
+  <% end %>
+</div>
 
 <div class="container">
     <div class="row">
-      <h3>Group Rating Information</h3>
-        <% unless @account.predecessor? %>
-          <%= link_to "Calc Group Rating", account_edit_group_rating_path(params[:id]), class: 'btn btn-primary', method: :get %>
-          <%= link_to "Change History", versions_path(item_id: @account.id, item_type: @account.class.name), class: 'btn btn-info', method: :get %>
-        <% end %>
+      <h3>Current Year Program Qualification</h3>
+      <% if @account.user_override %>
+      <p>USER OVERRIDE <input type="checkbox" checked="checked" disabled></p>
+      <% end %>
         <div class="row">
           <% unless @account.group_rating_exceptions.empty? %>
-            <h3>Group Rating Exceptions</h3>
+            <h4>Group Rating Exceptions:</h4>
             <% @account.group_rating_exceptions.each do |exception| %>
               <div class="col-md-4">
                 <h5><%= exception.exception_reason.humanize %></h5>
               </div>
             <% end %>
           <% end %>
-        <p>
-          USER OVERRIDE
-        <% if @account.user_override %>
-          <input type="checkbox" checked="checked" disabled>
-        <% else %>
-          <input type="checkbox" disabled>
-        <% end %>
-      </p>
+        </div>
 
-        <% unless @account.accept? %>
+    <!-- <div class="row">
+         <% unless @account.accept? %>
           <div class="col-md-12">
             <p>Rejections:</p>
             <h5><% @account.group_rating_rejections.each do |rejection| %>
@@ -131,18 +110,14 @@
             </h5>
           </div>
         <% end %>
+
         <div class="col-md-2">
           <p>Qualification:</p>
           <h5><%= @account.group_rating_qualification %></h5>
         </div>
-
         <div class="col-md-2">
           <p>Discount Tier:</p>
           <h5><%= @account.group_rating_tier %></h5>
-        </div>
-        <div class="col-md-2">
-          <p>Group Number:</p>
-          <h5><%= @account.group_rating_group_number %></h5>
         </div>
         <div class="col-md-2">
           <p>Premium:</p>
@@ -156,11 +131,122 @@
           <p>Fees:</p>
           <h5><%= number_to_currency(@account.group_fees) %></h5>
         </div>
-    </div>
-
-
+    </div> -->
+    <table class="table table-hover table-striped">
+      <thead>
+        <tr>
+          <th>Program</th>
+          <th>Qualification</th>
+          <th>Discount</th>
+          <th>Premium</th>
+          <th>Savings</th>
+          <th>Fees</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Group Rating</td>
+          <td><%= @account.group_rating_qualification %> </td>
+          <td><%= @account.group_rating_tier %> </td>
+          <td><%= number_to_currency(@account.group_premium) %></td>
+          <td><%= number_to_currency(@account.group_savings) %></td>
+          <td><%= number_to_currency(@account.group_fees) %> </td>
+          <% if  @account.group_rating_qualification == 'accept'  %>
+            <td><%= link_to 'Enroll','#', class:'btn btn-info' %> </td>
+          <% else %>
+            <td><%= link_to 'Enroll','#', class:'btn btn-info disabled' %> </td>
+          <% end %>
+        </tr>
+        <tr>
+          <td>Group Retro</td>
+          <td>accept</td>
+          <td>-.30</td>
+          <td><%= number_to_currency(@account.policy_calculation.policy_total_individual_premium * 0.7) %></td>
+          <td><%= number_to_currency(@account.policy_calculation.policy_total_individual_premium - (@account.policy_calculation.policy_total_individual_premium * 0.7)) %></td>
+          <td><%= number_to_currency(@account.group_fees) %> </td>
+          <td><%= link_to 'Enroll','#', class:'btn btn-info' %> </td>
+        </tr>
+        <tr>
+          <td>Individual Retro</td>
+          <td>reject</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td><%= number_to_currency(@account.group_fees) %></td>
+          <td><%= link_to 'Enroll','#' ,class: 'btn btn-info disabled'%> </td>
+        </tr>
+        <tr>
+          <td>One Claim</td>
+          <td>reject</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td><%= number_to_currency(@account.group_fees) %></td>
+          <td><%= link_to 'Enroll','#' ,class: 'btn btn-info disabled'%> </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
-</div
+</div>
+
+
+
+<div class="container">
+    <div class="row">
+      <h3>Program History</h3>
+    <table class="table table-hover table-striped">
+      <thead>
+        <tr>
+          <th>Eff Date</th>
+          <th>End Date</th>
+          <th>Program</th>
+          <th>Fee</th>
+          <th>Paid</th>
+          <th>Invoice Number</th>
+          <th>AC2 Date</th>
+          <th>Contract Date</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><%= Date.parse("2016-07-01").strftime("%-m/%-d/%y")  %></td>
+          <td><%= Date.parse("2017-06-30").strftime("%-m/%-d/%y")  %></td>
+          <td>Group Rating</td>
+          <td><%= number_to_currency(@account.group_fees) %></td>
+          <td><%= number_to_currency(0) %></td>
+          <td>ARM100120</td>
+          <td><%= Date.parse("2016-03-30").strftime("%-m/%-d/%y")  %></td>
+          <td><%= Date.parse("2016-03-30").strftime("%-m/%-d/%y")  %></td>
+          <td><%= link_to 'View','#' %></td>
+        </tr>
+        <tr>
+          <td><%= Date.parse("2015-07-01").strftime("%-m/%-d/%y")  %></td>
+          <td><%= Date.parse("2016-06-30").strftime("%-m/%-d/%y")  %></td>
+          <td>Group Rating</td>
+          <td><%= number_to_currency(@account.group_fees) %></td>
+          <td><%= number_to_currency(@account.group_fees) %></td>
+          <td>ARM050020</td>
+          <td><%= Date.parse("2015-03-30").strftime("%-m/%-d/%y")  %></td>
+          <td><%= Date.parse("2015-03-30").strftime("%-m/%-d/%y")  %></td>
+          <td><%= link_to 'View','#' %></td>
+        </tr>
+        <tr>
+          <td><%= Date.parse("2014-07-01").strftime("%-m/%-d/%y")  %></td>
+          <td><%= Date.parse("2015-06-30").strftime("%-m/%-d/%y")  %></td>
+          <td>Group Rating</td>
+          <td><%= number_to_currency(@account.group_fees) %></td>
+          <td><%= number_to_currency(@account.group_fees) %></td>
+          <td>ARM000984</td>
+          <td><%= Date.parse("2014-04-26").strftime("%-m/%-d/%y")  %></td>
+          <td><%= Date.parse("2014-04-15").strftime("%-m/%-d/%y")  %></td>
+          <td><%= link_to 'View','#' %></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
 
 
 <%= render partial: 'policy_calculations/policy_snapshot', locals: { policy_calculation: @policy_calculation, account: @account} %>
