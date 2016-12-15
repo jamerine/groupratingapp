@@ -32,6 +32,18 @@
   margin-left: 25px;
 }
 
+@media (max-width: 767px) {
+nav .account-header {
+        display:none;
+  }
+}
+
+
 body {
-  padding-top: 70px;
+  padding-top: 120px;
+}
+
+.account-header {
+  margin-top: 50px;
+  text-align: center;
 }
