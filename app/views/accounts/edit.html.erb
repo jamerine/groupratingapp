@@ -1,5 +1,7 @@
 <div class="container">
+  <%= render partial: "shared/account_navbar", locals: { object: @account } %>
   <div class="jumbotron text-center">
+
     <h1>Edit Account</h1>
     <div class="row">
       <%= form_for @account do |f| %>
