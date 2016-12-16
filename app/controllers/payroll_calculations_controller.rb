@@ -17,12 +17,16 @@ class PayrollCalculationsController < ApplicationController
       if @payroll_calculation.data_source != 'bwc'
         @manual_class_calculation = @payroll_calculation.manual_class_calculation
         @policy_calculation = @manual_class_calculation.policy_calculation
+        @manual_class_calculations = @policy_calculation.manual_class_calculations
         @policy_calculation.calculate_experience
       end
+      @message = "Payroll was added."
       redirect_to policy_calculation_path(@policy_calculation.id), notice: "Payroll has been adjusted"
     else
+      @message = "Payroll couldn't be added. Try again."
       redirect_to manual_class_calculation_path(@payroll_calculation.manual_class_calculation_id), alert: "Payroll adjustment failed"
     end
+
   end
 
   def destroy
@@ -32,13 +36,20 @@ class PayrollCalculationsController < ApplicationController
     if @payroll_calculation.destroy
       @manual_class_calculation.policy_calculation.calculate_experience
       @process_payroll.delete
-      flash[:notice] = "Import was deleted successfully."
-      redirect_to @manual_class_calculation
+      @message = "Payroll was deleted."
+      @payroll_calculations = PayrollCalculation.where(manual_class_calculation_id: @manual_class_calculation.id )
+      # redirect_to @manual_class_calculation
     else
-      @process_payroll.delete
-      flash.now[:alert] = "There was an error deleting the import."
-      redirect_to @manual_class_calculation
+      message = "Payroll couldn't be deleted. Try again."
+      @payroll_calculations = PayrollCalculation.where(manual_class_calculation_id: @manual_class_calculation.id )
+      # redirect_to @manual_class_calculation
     end
+
+    respond_to do |format|
+      format.html { result ? flash[:notice] = @message : flash[:alert] = @message }
+      format.js
+    end
+
   end
 
   private
