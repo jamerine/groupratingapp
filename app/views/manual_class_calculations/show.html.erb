@@ -81,8 +81,9 @@
   <div class="container text-center">
     <br>
     <h2><%= pluralize_without_count(@manual_class_calculation.payroll_calculations.count, 'Payroll Range') %></h2>
-
-    <%= render partial: 'payroll_calculations/manual_class_payroll', locals: { payroll_calculations: @payroll_calculations} %>
+    <div class="payroll-calc">
+      <%= render partial: 'payroll_calculations/manual_class_payroll', locals: { payroll_calculations: @payroll_calculations} %>
+    </div>
 
   </div>
 

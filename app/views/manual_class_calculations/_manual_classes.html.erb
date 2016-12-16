@@ -9,9 +9,9 @@
       <div class="col-md-1 col-sm-4 col-xs-6 hidden-sm hidden-xs">
         <h5>Industry Group</h5>
       </div>
-      <div class="col-md-1 col-sm-4 col-xs-6 hidden-sm hidden-xs">
+      <!-- <div class="col-md-1 col-sm-4 col-xs-6 hidden-sm hidden-xs">
         <h5>Four Year Payroll</h5>
-      </div>
+      </div> -->
       <div class="col-md-1 col-sm-4 col-xs-6 hidden-sm hidden-xs">
         <h5>Current Payroll</h5>
       </div>
@@ -23,6 +23,9 @@
       </div>
       <div class="col-md-2 col-sm-4 col-xs-6 hidden-sm hidden-xs">
         <h5>Start Date</h5>
+      </div>
+      <div class="col-md-2 col-sm-4 col-xs-6 hidden-sm hidden-xs">
+        <h5>End Date</h5>
       </div>
       <div class="col-md-2 col-sm-4 col-xs-6 hidden-sm hidden-xs">
         <h5>Manual Class Payroll</h5>
@@ -39,10 +42,10 @@
             <h5 class="hidden-md hidden-lg">Industry Group</h5>
             <p><%= manual_class_calculation.manual_class_industry_group %></p>
           </div>
-          <div class="col-md-1 col-sm-4 col-xs-6">
+          <!-- <div class="col-md-1 col-sm-4 col-xs-6">
             <h5 class="hidden-md hidden-lg">Four Year Payroll</h5>
             <p><%= number_to_currency(manual_class_calculation.manual_class_four_year_period_payroll, precision: 0) %></p>
-          </div>
+          </div> -->
           <div class="col-md-1 col-sm-4 col-xs-6">
             <h5 class="hidden-md hidden-lg">Current Payroll</h5>
             <p><%= number_to_currency(manual_class_calculation.manual_class_current_estimated_payroll, precision: 0) %></p>
@@ -62,7 +65,7 @@
             </p>
           </div>
           <div class="hidden-sm hidden-xs">
-            <%= render partial: 'payroll_calculations/form_2', locals: { payroll_calculation: @new_payroll_calculation, manual_class_calculation: manual_class_calculation}%>
+              <%= render partial: 'payroll_calculations/form_2', locals: { payroll_calculation: @new_payroll_calculation, manual_class_calculation: manual_class_calculation} %>
           </div>
       </div>
   <% end %>

@@ -68,7 +68,7 @@
         <% if payroll_calculation.data_source == 'bwc' %>
           <p class="hidden-sm hidden-xs"><small>uneditable</small></p>
         <% else %>
-          <p> <%= link_to 'Delete', payroll_calculation_path(id: payroll_calculation.id), method: :delete %></p>
+          <p> <%= link_to 'Delete', payroll_calculation_path(id: payroll_calculation.id), method: :delete, remote: true %></p>
         <% end %>
       </div>
 </div>

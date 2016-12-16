@@ -1,13 +1,19 @@
-<%= form_for payroll_calculation do |f| %>
+<%= form_for payroll_calculation, remote: true do |f| %>
          <%= f.hidden_field :manual_class_calculation_id, value: "#{manual_class_calculation.id}" %>
           <%= f.hidden_field :manual_number, value: "#{manual_class_calculation.manual_number}" %>
           <%= f.hidden_field :policy_number, value: "#{manual_class_calculation.policy_number}" %>
           <%= f.hidden_field :representative_number, value: "#{manual_class_calculation.representative_number}" %>
           <%= f.hidden_field :payroll_origin, value: "adjustment" %>
           <%= f.hidden_field :data_source, value: "user" %>
+
           <div class="col-md-2 col-sm-4 col-xs-6">
             <div class="form-group" >
               <%= f.date_field :reporting_period_start_date, class: 'form-control' %>
+            </div>
+          </div>
+          <div class="col-md-2 col-sm-4 col-xs-6">
+            <div class="form-group" >
+              <%= f.date_field :reporting_period_end_date, class: 'form-control' %>
             </div>
           </div>
           <div class="col-md-2 col-sm-4 col-xs-6 ">

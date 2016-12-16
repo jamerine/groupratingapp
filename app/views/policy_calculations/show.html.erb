@@ -3,10 +3,6 @@
     <%= render partial: "shared/account_navbar", locals: { object: @account } %>
 
     <!-- <%= link_to 'Return to Account', account_path(@account.id), class: 'btn btn-default' %> -->
-
-
-
-
     <div class="jumbotron text-center">
       <div class="row">
         <div class="col-md-3">
@@ -114,8 +110,7 @@
       </div>
     </div>
   </div>
-
-  <%= render partial: 'manual_class_calculations/manual_classes', locals: { manual_class_calculations: @manual_class_calculations, policy_calculation: @policy_calculation} %>
+    <%= render partial: 'manual_class_calculations/manual_classes', locals: { manual_class_calculations: @manual_class_calculations, policy_calculation: @policy_calculation} %>
   <%= render partial: 'claim_calculations/claims', locals: { claims: @policy_calculation.claim_calculations } %>
   <%= render partial: 'policy_coverage_status_histories/policy_coverage_status_histories', locals: { status_histories: @policy_calculation.policy_coverage_status_histories } %>
 <% end %>
