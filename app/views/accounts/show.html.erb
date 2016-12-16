@@ -147,7 +147,7 @@
       <tbody>
         <tr>
           <td>Group Rating</td>
-          <td><%= @account.group_rating_qualification %> </td>
+          <td><%= link_to @account.group_rating_qualification, '#', "data-toggle" => "modal", "data-target" => "#rejectModal", "data-rejections" => @account.group_rating_rejections %> </td>
           <td><%= @account.group_rating_tier %> </td>
           <td><%= number_to_currency(@account.group_premium) %></td>
           <td><%= number_to_currency(@account.group_savings) %></td>
@@ -160,7 +160,7 @@
         </tr>
         <tr>
           <td>Group Retro</td>
-          <td>accept</td>
+          <td><%= link_to 'accept' %></td>
           <td>-.30</td>
           <td><%= number_to_currency(@account.policy_calculation.policy_total_individual_premium * 0.7) %></td>
           <td><%= number_to_currency(@account.policy_calculation.policy_total_individual_premium - (@account.policy_calculation.policy_total_individual_premium * 0.7)) %></td>
@@ -169,7 +169,7 @@
         </tr>
         <tr>
           <td>Individual Retro</td>
-          <td>reject</td>
+          <td><%= link_to 'reject' %></td>
           <td></td>
           <td></td>
           <td></td>
@@ -178,7 +178,7 @@
         </tr>
         <tr>
           <td>One Claim</td>
-          <td>reject</td>
+          <td><%= link_to 'reject' %></td>
           <td></td>
           <td></td>
           <td></td>
@@ -219,7 +219,7 @@
           <td>ARM100120</td>
           <td><%= Date.parse("2016-03-30").strftime("%-m/%-d/%y")  %></td>
           <td><%= Date.parse("2016-03-30").strftime("%-m/%-d/%y")  %></td>
-          <td><%= link_to 'View','#' %></td>
+          <td><%= link_to 'View' %></td>
         </tr>
         <tr>
           <td><%= Date.parse("2015-07-01").strftime("%-m/%-d/%y")  %></td>
@@ -230,7 +230,7 @@
           <td>ARM050020</td>
           <td><%= Date.parse("2015-03-30").strftime("%-m/%-d/%y")  %></td>
           <td><%= Date.parse("2015-03-30").strftime("%-m/%-d/%y")  %></td>
-          <td><%= link_to 'View','#' %></td>
+          <td><%= link_to 'View' %></td>
         </tr>
         <tr>
           <td><%= Date.parse("2014-07-01").strftime("%-m/%-d/%y")  %></td>
@@ -241,10 +241,37 @@
           <td>ARM000984</td>
           <td><%= Date.parse("2014-04-26").strftime("%-m/%-d/%y")  %></td>
           <td><%= Date.parse("2014-04-15").strftime("%-m/%-d/%y")  %></td>
-          <td><%= link_to 'View','#' %></td>
+          <td><%= link_to 'View' %></td>
         </tr>
       </tbody>
     </table>
+  </div>
+</div>
+
+<div class="modal fade" id="rejectModal" role="dialog">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Program Rejections</h4>
+        </div>
+        <div class="modal-body">
+          <ul>
+          <% if @account.group_rating_rejections.empty? %>
+              <h3>No Rejections</h3>
+          <% else %>
+            <% @account.group_rating_rejections.find_each do |reject| %>
+              <li><%= reject.reject_reason.humanize %></li>
+            <% end %>
+          <% end %>
+          </ul>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
