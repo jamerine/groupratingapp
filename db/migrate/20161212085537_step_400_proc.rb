@@ -179,6 +179,19 @@ class Step400Proc < ActiveRecord::Migration
     WHERE mce.policy_number = t2.policy_number and mce.representative_number = t2.representative_number and (mce.representative_number is not null);
 
 
+    DELETE FROM process_policy_experience_period_peos
+        WHERE id IN (SELECT id
+           FROM (SELECT id, ROW_NUMBER() OVER (partition BY representative_number,
+                          policy_type,
+                          policy_number,
+                          manual_class_sf_peo_lease_effective_date,
+		          manual_class_sf_peo_lease_termination_date,
+		          manual_class_si_peo_lease_effective_date,
+		          manual_class_si_peo_lease_termination_date)
+                          AS rnum
+                          FROM process_policy_experience_period_peos) t
+         WHERE t.rnum > 1);
+
     end;
 
       $BODY$
