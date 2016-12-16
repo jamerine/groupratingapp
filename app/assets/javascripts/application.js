@@ -15,7 +15,3 @@
 //= require turbolinks
 //= require bootstrap
 //= require_tree .
-
-$(document).on("click", ".rejectModal", function () {
-     var rejections = $(this).data('rejections');
-     $(".modal-body #bookId").innerHTML( rejections );
