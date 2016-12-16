@@ -16,11 +16,11 @@
       </div>
       <div class="col-md-1">
         <h5>Status Eff</h5>
-        <p><%= (policy_calculation.coverage_status_effective_date).strftime("%-m/%-d/%y") %></p>
+        <p><%= (policy_calculation.try(:coverage_status_effective_date).try(:strftime,"%-m/%-d/%y")) %></p>
       </div>
       <div class="col-md-1">
         <h5>Creation</h5>
-        <p><%= (policy_calculation.policy_creation_date).strftime("%-m/%-d/%y") %></p>
+        <p><%= (policy_calculation.try(:policy_creation_date).try(:strftime, "%-m/%-d/%y"))  %></p>
       </div>
       <div class="col-md-1">
         <h5>Ind. Grp</h5>

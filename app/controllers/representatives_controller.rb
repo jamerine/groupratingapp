@@ -9,7 +9,6 @@ class RepresentativesController < ApplicationController
     @manual_class_calculations = @representative.manual_class_calculations
     @group_ratings = @representative.group_ratings
     @newest_group_rating = @group_ratings.last
-    @import = Import.find_by(group_rating_id: @newest_group_rating.id)
 
     # respond_to do |format|
     #   format.html
