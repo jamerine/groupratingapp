@@ -1,6 +1,7 @@
 <div class="container">
   <%= render partial: "shared/account_navbar", locals: { object: @account } %>
-  
+  <%= link_to 'Back', :back, class: 'btn btn-primary' %>
+  <br>
   <div class="jumbotron text-center">
     <h1>Calculate Group Rating</h1>
     <div class="row">

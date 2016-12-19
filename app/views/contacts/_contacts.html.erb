@@ -8,7 +8,6 @@
         <th>Title</th>
         <th>Email Address</th>
         <th>Phone Number</th>
-        <th>Fax Number</th>
         <th></th>
       </tr>
     </thead>
@@ -20,8 +19,7 @@
         <td> <%= contact.full_name %></td>
         <td> <%= contact.title %></td>
         <td> <%= contact.email_address %></td>
-        <td> <%= contact.phone_number %></td>
-        <td> <%= contact.fax_number %></td>
+        <td> <%= number_to_phone(contact.phone_number) %></td>
         <td> <%= link_to 'View' %> | <%= link_to 'Delete', contact_path(id: contact.id, account_id: @account.id), method: :delete %> </td>
       </tr>
       <% end %>

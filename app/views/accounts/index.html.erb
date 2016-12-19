@@ -4,44 +4,12 @@
     <%= link_to 'Create New Account', new_account_path, class: 'btn btn-primary' %>
   </div>
 
-  <%= form_tag(accounts_path, :method => "get", id: "search-form") do %>
+  <%= form_tag(accounts_path, :method => "get", id: "search-form", remote: true ) do %>
       <%= render partial: 'shared/representative_policy_search', locals: {representatives: @representatives} %>
   <% end %>
 
-
-  <% if @accounts.empty? %>
-    <h3>No Accounts Found</h3>
-    <% else %>
-  <div>
     <br>
-    <p>Total Accounts: <%= @accounts.count %></p>
-    <table class="table table-hover" id="accountTable">
-      <thead>
-        <tr class="header">
-          <th>Policy Number</th>
-          <th>Account Name</th>
-          <th>Status</th>
-          <th>Group Rating Qualification</th>
-          <th>Representative</th>
-          <th>Updated Date</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @accounts.order("representative_id asc, status desc, name asc").each do |account| %>
-        <tr>
-          <td><%= link_to "#{account.policy_calculation.policy_number}",account_path(account.id), class: 'btn btn-info' %> </td>
-          <td><%= account.name %> </td>
-          <td><%= account.status.humanize %> </td>
-          <td><%= account.group_rating_qualification %></td>
-          <td><%= account.representative.abbreviated_name %></td>
-          <td><%= account.updated_at.in_time_zone("America/New_York").strftime("%m/%d/%y @ %I:%M %p") %> </td>
-        </tr>
-        <% end %>
+    <%= render partial: 'accounts/list', locals: {accounts: @accounts} %>
 
-      </tbody>
-    </table>
-    <%= will_paginate @accounts %>
-  </div>
-  <% end %>
 
 </div>

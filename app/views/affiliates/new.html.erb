@@ -5,11 +5,9 @@
     <div class="container">
       <h3>Add Current Affiliate to <%= @account.name %> </h3>
       <%= form_for :account, :url => account_assign_path(@account), :html => { :method => "post" } do |t| %>
-
         <div class="row">
-          <%= t.select :id, @affiliates.collect {|x| [x.first_name + ' ' + x.last_name, x.id]}, {include_blank: "none"}, class: "form-control" %>
+          <%= t.select :id, @affiliates.collect {|x| [x.first_name + ' ' + x.last_name + ' - ' + x.role.upcase, x.id]}, {include_blank: "none"}, class: "form-control" %>
         </div>
-
         <div class="form-group col-md-4  col-md-offset-4" >
           <%= t.submit 'Assign Affiliate', class: 'btn btn-info' %>
         </div>
