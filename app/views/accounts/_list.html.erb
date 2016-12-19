@@ -1,0 +1,33 @@
+<div id="filter_accounts">
+  <div>
+    <%= page_entries_info accounts %>
+  </div>
+
+  <table class="table table-hover" id="accountTable">
+    <thead>
+      <tr class="header">
+        <th>Policy Number</th>
+        <th>Account Name</th>
+        <th>Status</th>
+        <th>Group Rating Qualification</th>
+        <th>Representative</th>
+        <th>Updated Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% accounts.order("representative_id asc, status desc, name asc").each do |account| %>
+      <tr>
+        <td><%= link_to "#{account.policy_calculation.policy_number}",account_path(account.id), class: 'btn btn-info' %> </td>
+        <td><%= account.name %> </td>
+        <td><%= account.status.humanize %> </td>
+        <td><%= account.group_rating_qualification %></td>
+        <td><%= account.representative.abbreviated_name %></td>
+        <td><%= account.updated_at.in_time_zone("America/New_York").strftime("%m/%d/%y @ %I:%M %p") %> </td>
+      </tr>
+      <% end %>
+
+    </tbody>
+  </table>
+
+<%= will_paginate accounts %>
+</div>

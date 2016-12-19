@@ -37,7 +37,8 @@ class Account < ActiveRecord::Base
   end
 
   def self.search_name(search_name)
-    where("name LIKE ?", "%#{search_name}%")
+    search_name = search_name.downcase
+    where("LOWER(name) LIKE ?", "%#{search_name}%")
   end
 
   def group_rating_calc(args = {})

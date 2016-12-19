@@ -18,6 +18,12 @@ class AccountsController < ApplicationController
     else
       @accounts = @accounts.includes(:group_rating_rejections).all.paginate(page: params[:page], per_page: 50)
     end
+
+    respond_to do |format|
+      format.html
+      format.js
+    end
+
   end
 
   def new

@@ -1,40 +1,14 @@
 <div class="container">
   <div class="jumbotron text-center">
-    <h1>Group Rating Exceptions</h1>
+    <h1>Exceptions</h1>
   </div>
-  <%= form_tag(group_rating_exceptions_path, :method => "get", id: "search-form") do %>
-    <%= render partial: 'shared/representative_policy_search', locals: {representatives: @representatives} %>
+
+  <%= form_tag(group_rating_exceptions_path, :method => "get", id: "search-form", remote: true ) do %>
+      <%= render partial: 'shared/representative_policy_search', locals: {representatives: @representatives} %>
   <% end %>
 
-<% if @group_rating_exceptions.empty? %>
-  <h3>No Exceptions Found</h3>
-<% else %>
-<div>
-<%= will_paginate @group_rating_exceptions %>
-  <p>Total Exceptions: <%= @group_rating_exceptions.count %></p>
-  <table class="table table-hover">
-    <thead>
-      <tr>
-        <th>Policy Number</th>
-        <th>Account Name</th>
-        <th>Exception Reason</th>
-        <th>Representative</th>
-        <th>Action</th>
-      </tr>
-    </thead>
-    <tbody>
-     <% @group_rating_exceptions.order("representative_id").each do |group_rating_exception| %>
-      <tr>
-        <td><%= link_to "#{group_rating_exception.account.policy_number_entered}", account_path(group_rating_exception.account.id), class: 'btn btn-info' %> </td>
-        <td><%= group_rating_exception.account.name %> </td>
-        <td><%= group_rating_exception.exception_reason.humanize.titleize %> </td>
-        <td><%= group_rating_exception.representative.abbreviated_name %> </td>
-        <td><%= link_to 'resolve' %></td>
-      </tr>
-      <% end %>
+    <br>
+    <%= render partial: 'group_rating_exceptions/list', locals: {group_rating_exceptions: @group_rating_exceptions} %>
 
-    </tbody>
-  </table>
-</div>
-<% end %>
+
 </div>
