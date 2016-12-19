@@ -3,7 +3,7 @@
     <div class="row">
       <h3>Policy Information</h3>
       <div class="col-md-1">
-        <h5>Policy</h5>
+        <h5>Policy #</h5>
         <% if account.predecessor? || account.invalid_policy_number? %>
         <p><%= link_to "#{policy_calculation.policy_number}", policy_calculation_path(@policy_calculation.id), class: 'btn btn-primary disabled'%></p>
         <% else %>
@@ -17,10 +17,6 @@
       <div class="col-md-1">
         <h5>Status Eff</h5>
         <p><%= (policy_calculation.try(:coverage_status_effective_date).try(:strftime,"%-m/%-d/%y")) %></p>
-      </div>
-      <div class="col-md-1">
-        <h5>Creation</h5>
-        <p><%= (policy_calculation.try(:policy_creation_date).try(:strftime, "%-m/%-d/%y"))  %></p>
       </div>
       <div class="col-md-1">
         <h5>Ind. Grp</h5>

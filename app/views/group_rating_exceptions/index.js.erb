@@ -1,0 +1,4 @@
+<% js = escape_javascript(
+  render(partial: 'group_rating_exceptions/list', locals: { group_rating_exceptions: @group_rating_exceptions })
+) %>
+$("#filter_exceptions").html("<%= js %>");

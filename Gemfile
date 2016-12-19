@@ -56,8 +56,8 @@ gem 'rubyzip'
 # For versioning
 gem 'paper_trail'
 
-# Use mailgun to send emails
-gem 'mailgun-ruby', '~>1.0.3', require: 'mailgun'
+# For filtering views
+gem 'filterrific'
 
 # Use Unicorn as the app server
 # gem 'unicorn'
