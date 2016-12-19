@@ -13,11 +13,11 @@
     <h3>No Accounts Found</h3>
     <% else %>
   <div>
-    <%= will_paginate @accounts %>
+    <br>
     <p>Total Accounts: <%= @accounts.count %></p>
-    <table class="table table-hover">
+    <table class="table table-hover" id="accountTable">
       <thead>
-        <tr>
+        <tr class="header">
           <th>Policy Number</th>
           <th>Account Name</th>
           <th>Status</th>
