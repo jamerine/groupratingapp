@@ -36,6 +36,9 @@ class Account < ActiveRecord::Base
     where("policy_number_entered = ?", "#{search}")
   end
 
+  def self.search_name(search_name)
+    where("name LIKE ?", "%#{search_name}%")
+  end
 
   def group_rating_calc(args = {})
     # MANUAL EDIT OF GROUP RATING METHOD
@@ -162,7 +165,7 @@ class Account < ActiveRecord::Base
       else
         self.update_attributes(group_rating_qualification: @group_rating_qualification, industry_group: @industry_group, group_rating_tier: @group_rating_tier, group_premium: @group_premium, group_savings: @group_savings, group_fees: @group_fees)
       end
-      
+
     end
   end
 
