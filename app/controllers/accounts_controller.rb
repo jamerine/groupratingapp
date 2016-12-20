@@ -4,19 +4,19 @@ class AccountsController < ApplicationController
     @accounts = Account.where(representative_id: @representatives)
     if params[:search].present? && params[:representative_number].present?
       @representative = @representatives.find_by(representative_number: params[:representative_number])
-      @accounts = @accounts.includes(:group_rating_rejections).where(representative_id: @representative.id).search(params[:search]).paginate(page: params[:page], per_page: 50)
+      @accounts = @accounts.where(representative_id: @representative.id).search(params[:search]).paginate(page: params[:page], per_page: 50)
     elsif params[:search_name].present? && params[:representative_number].present?
       @representative = @representatives.find_by(representative_number: params[:representative_number])
-      @accounts = @accounts.includes(:group_rating_rejections).where(representative_id: @representative.id).search_name(params[:search_name]).paginate(page: params[:page], per_page: 50)
+      @accounts = @accounts.where(representative_id: @representative.id).search_name(params[:search_name]).paginate(page: params[:page], per_page: 50)
     elsif params[:search].present?
-      @accounts = @accounts.includes(:group_rating_rejections).search(params[:search]).paginate(page: params[:page], per_page: 50)
+      @accounts = @accounts.search(params[:search]).paginate(page: params[:page], per_page: 50)
     elsif params[:search_name].present?
-      @accounts = @accounts.includes(:group_rating_rejections).search_name(params[:search_name]).paginate(page: params[:page], per_page: 50)
+      @accounts = @accounts.search_name(params[:search_name]).paginate(page: params[:page], per_page: 50)
     elsif params[:representative_number].present?
       @representative = @representatives.find_by(representative_number: params[:representative_number])
-      @accounts = @accounts.includes(:group_rating_rejections).where(representative_id: @representative.id).paginate(page: params[:page], per_page: 50)
+      @accounts = @accounts.where(representative_id: @representative.id).paginate(page: params[:page], per_page: 50)
     else
-      @accounts = @accounts.includes(:group_rating_rejections).all.paginate(page: params[:page], per_page: 50)
+      @accounts = @accounts.all.paginate(page: params[:page], per_page: 50)
     end
 
     respond_to do |format|
@@ -52,7 +52,11 @@ class AccountsController < ApplicationController
     @representative = Representative.find(@account.representative_id)
     @policy_calculation = PolicyCalculation.find_by(account_id: @account.id)
     @statuses = Account.statuses
-
+    @mailing_address = {:address_type => "mailing", :address_line_1 => @policy_calculation.mailing_address_line_1, :address_line_2 => @policy_calculation.mailing_address_line_2, :city => @policy_calculation.mailing_city, :state => @policy_calculation.mailing_state, :zip_code => @policy_calculation.mailing_zip_code}
+    @location_address = {:address_type => "location", :address_line_1 => @policy_calculation.location_address_line_1, :address_line_2 => @policy_calculation.location_address_line_2, :city => @policy_calculation.location_city, :state => @policy_calculation.location_state, :zip_code => @policy_calculation.location_zip_code}
+    @locations = []
+    @locations.push(@mailing_address)
+    @locations.push(@location_address)
   end
 
   def update
@@ -112,6 +116,12 @@ class AccountsController < ApplicationController
     redirect_to @account
   end
 
+  def assign_address
+    @account = Account.find(params[:account_id])
+
+    redirect_to @account
+  end
+
   # def group_rating
   #   @account = Account.find(params[:account_id])
   #   @account.group_ratings
@@ -125,7 +135,5 @@ class AccountsController < ApplicationController
   def account_params
     params.require(:account).permit(:representative_id, :name, :policy_number_entered, :street_address, :street_address_2, :city, :state, :zip_code, :business_phone_number, :business_email_address, :website_url, :group_rating_qualification, :group_rating_tier, :group_fees, :user_override, :industry_group, :group_dues, :total_costs, :status, :federal_identification_number, :cycle_date, :request_date, :quarterly_request, :weekly_request, :ac3_approval)
   end
-
-
 
 end

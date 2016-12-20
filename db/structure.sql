@@ -795,7 +795,7 @@ CREATE FUNCTION proc_process_flat_pemhs() RETURNS void
         rrr_participation_indicator,
         rrr_tier,
         rrr_policy_claim_limit,
-        rrr_minimum_permium_percentage,
+        rrr_minimum_premium_percentage,
         deductible_participation_indicator,
         deductible_level,
         deductible_stop_loss_indicator,
@@ -849,7 +849,7 @@ CREATE FUNCTION proc_process_flat_pemhs() RETURNS void
         substring(single_rec,85,1) /* rrr_participation_indicator */,
         cast_to_int(substring(single_rec,86,1)) /* rrr_tier */,
         cast_to_int(substring(single_rec,87,6)) /* rrr_policy_claim_limit */,
-        cast_to_int(substring(single_rec,93,3)) /* rrr_minimum_permium_percentage */,
+        cast_to_int(substring(single_rec,93,3)) /* rrr_minimum_premium_percentage */,
         substring(single_rec,96,1) /* deductible_participation_indicator */,
         cast_to_int(substring(single_rec,97,6)) /* deductible_level */,
         substring(single_rec,103,1) /* deductible_stop_loss_indicator */,
@@ -6681,6 +6681,19 @@ CREATE FUNCTION proc_step_400(process_representative integer, experience_period_
     WHERE mce.policy_number = t2.policy_number and mce.representative_number = t2.representative_number and (mce.representative_number is not null);
 
 
+    DELETE FROM process_policy_experience_period_peos
+        WHERE id IN (SELECT id
+           FROM (SELECT id, ROW_NUMBER() OVER (partition BY representative_number,
+                          policy_type,
+                          policy_number,
+                          manual_class_sf_peo_lease_effective_date,
+		          manual_class_sf_peo_lease_termination_date,
+		          manual_class_si_peo_lease_effective_date,
+		          manual_class_si_peo_lease_termination_date)
+                          AS rnum
+                          FROM process_policy_experience_period_peos) t
+         WHERE t.rnum > 1);
+
     end;
 
       $$;
@@ -9456,7 +9469,7 @@ CREATE TABLE pemh_detail_records (
     rrr_participation_indicator character varying,
     rrr_tier integer,
     rrr_policy_claim_limit integer,
-    rrr_minimum_permium_percentage integer,
+    rrr_minimum_premium_percentage integer,
     deductible_participation_indicator character varying,
     deductible_level integer,
     deductible_stop_loss_indicator character varying,
@@ -9744,6 +9757,70 @@ CREATE SEQUENCE policy_coverage_status_histories_id_seq
 --
 
 ALTER SEQUENCE policy_coverage_status_histories_id_seq OWNED BY policy_coverage_status_histories.id;
+
+
+--
+-- Name: policy_program_histories; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE policy_program_histories (
+    id integer NOT NULL,
+    policy_calculation_id integer,
+    representative_id integer,
+    representative_number integer,
+    policy_number integer,
+    business_sequence_number integer,
+    experience_modifier_rate double precision,
+    em_effective_date date,
+    policy_year integer,
+    reporting_period_start_date date,
+    reporting_period_end_date date,
+    group_participation_indicator character varying,
+    group_code integer,
+    group_type character varying,
+    rrr_participation_indicator character varying,
+    rrr_tier integer,
+    rrr_policy_claim_limit integer,
+    rrr_minimum_premium_percentage integer,
+    deductible_participation_indicator character varying,
+    deductible_level integer,
+    deductible_stop_loss_indicator character varying,
+    deductible_discount_percentage integer,
+    ocp_participation_indicator character varying,
+    ocp_participation integer,
+    ocp_first_year_of_participation integer,
+    grow_ohio_participation_indicator character varying,
+    em_cap_participation_indicator character varying,
+    drug_free_program_participation_indicator character varying,
+    drug_free_program_type character varying,
+    drug_free_program_participation_level character varying,
+    drug_free_program_discount_eligiblity_indicator character varying,
+    issp_participation_indicator character varying,
+    issp_discount_eligibility_indicator character varying,
+    twbns_participation_indicator character varying,
+    twbns_discount_eligibility_indicator character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: policy_program_histories_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE policy_program_histories_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: policy_program_histories_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE policy_program_histories_id_seq OWNED BY policy_program_histories.id;
 
 
 --
@@ -11370,6 +11447,13 @@ ALTER TABLE ONLY policy_coverage_status_histories ALTER COLUMN id SET DEFAULT ne
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY policy_program_histories ALTER COLUMN id SET DEFAULT nextval('policy_program_histories_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY process_manual_class_four_year_payroll_with_conditions ALTER COLUMN id SET DEFAULT nextval('process_manual_class_four_year_payroll_with_conditions_id_seq'::regclass);
 
 
@@ -11918,6 +12002,14 @@ ALTER TABLE ONLY policy_coverage_status_histories
 
 
 --
+-- Name: policy_program_histories_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY policy_program_histories
+    ADD CONSTRAINT policy_program_histories_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: process_manual_class_four_year_payroll_with_conditions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -12335,6 +12427,20 @@ CREATE INDEX index_policy_coverage_status_histories_on_representative_id ON poli
 
 
 --
+-- Name: index_policy_program_histories_on_policy_calculation_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_policy_program_histories_on_policy_calculation_id ON policy_program_histories USING btree (policy_calculation_id);
+
+
+--
+-- Name: index_policy_program_histories_on_representative_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_policy_program_histories_on_representative_id ON policy_program_histories USING btree (representative_id);
+
+
+--
 -- Name: index_pr_pol_num_and_man_num_rep; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -12453,6 +12559,14 @@ ALTER TABLE ONLY accounts_affiliates
 
 
 --
+-- Name: fk_rails_1e80e7d41e; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY policy_program_histories
+    ADD CONSTRAINT fk_rails_1e80e7d41e FOREIGN KEY (policy_calculation_id) REFERENCES policy_calculations(id);
+
+
+--
 -- Name: fk_rails_216ba210c3; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -12498,6 +12612,14 @@ ALTER TABLE ONLY policy_calculations
 
 ALTER TABLE ONLY imports
     ADD CONSTRAINT fk_rails_8b39e94061 FOREIGN KEY (group_rating_id) REFERENCES group_ratings(id);
+
+
+--
+-- Name: fk_rails_96963e09a8; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY policy_program_histories
+    ADD CONSTRAINT fk_rails_96963e09a8 FOREIGN KEY (representative_id) REFERENCES representatives(id);
 
 
 --
@@ -12801,4 +12923,6 @@ INSERT INTO schema_migrations (version) VALUES ('20161212160309');
 INSERT INTO schema_migrations (version) VALUES ('20161212162433');
 
 INSERT INTO schema_migrations (version) VALUES ('20161212202044');
+
+INSERT INTO schema_migrations (version) VALUES ('20161220120712');
 
