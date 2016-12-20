@@ -1,14 +1,11 @@
-class CreatePemhDetailRecords < ActiveRecord::Migration
+class CreatePolicyProgramHistories < ActiveRecord::Migration
   def change
-    create_table :pemh_detail_records do |t|
+    create_table :policy_program_histories do |t|
+      t.references :policy_calculation, index: true, foreign_key: true
+      t.references :representative, index: true, foreign_key: true
       t.integer :representative_number
-      t.integer :record_type
-      t.integer :requestor_number
       t.integer :policy_number
       t.integer :business_sequence_number
-      t.string :valid_policy_number
-      t.string :current_coverage_status
-      t.date :coverage_status_effective_date
       t.float :experience_modifier_rate
       t.date :em_effective_date
       t.integer :policy_year
@@ -38,7 +35,6 @@ class CreatePemhDetailRecords < ActiveRecord::Migration
       t.string :issp_discount_eligibility_indicator
       t.string :twbns_participation_indicator
       t.string :twbns_discount_eligibility_indicator
-
 
       t.timestamps null: false
     end

@@ -4,7 +4,20 @@
   </div>
 
   <%= form_tag(group_rating_exceptions_path, :method => "get", id: "search-form", remote: true ) do %>
-      <%= render partial: 'shared/representative_policy_search', locals: {representatives: @representatives} %>
+    <div class="form-inline">
+      <div class="form-group">
+        <%= select_tag(:representative_number, options_from_collection_for_select(@representatives, :representative_number, :abbreviated_name, params[:representative_number]), include_blank: "All Representatives", class: 'dropdown-toggle form-control')%>
+      </div>
+      
+      <!-- <div class="form-group">
+        <%= text_field_tag :search, params[:search], placeholder: "Search Policy Number", class: 'form-control' %>
+      </div>
+      <div class="form-group">
+        <%= text_field_tag :search_name, params[:search_name], placeholder: "Search Account Name", class: 'form-control' %>
+      </div> -->
+    <%= submit_tag "Search", name: nil, class: 'btn btn-primary' %>
+    </div>
+
   <% end %>
 
     <br>

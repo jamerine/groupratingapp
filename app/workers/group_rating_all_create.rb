@@ -5,14 +5,9 @@ class GroupRatingAllCreate
 
   def perform(group_rating_id, experience_period_lower_date, process_representative, representative_id, policy_number)
 
-      # @policy_exp = FinalPolicyExperienceCalculation.find_by(policy_number: policy_number, representative_number: process_representative)
-      # @policy_proj = FinalPolicyGroupRatingAndPremiumProjection.find_by(policy_number: @policy_exp.policy_number, representative_number: @policy_exp.representative_number)
-
       @policy_demographic = FinalEmployerDemographicsInformation.find_by(policy_number: policy_number, representative_number: process_representative)
 
       @account = Account.where(policy_number_entered: @policy_demographic.policy_number, representative_id: representative_id)
-      # @account = Account.where(policy_number_entered: 1638083, representative_id: 17)
-      # @account.first.status == "predecessor"
 
         if @account.empty?
           @account = @account.create(policy_number_entered: @policy_demographic.policy_number, representative_id: representative_id, status: 4, name: @policy_demographic.business_name, street_address: @policy_demographic.mailing_address_line_1, street_address_2: @policy_demographic.mailing_address_line_2, city: @policy_demographic.mailing_city, state: @policy_demographic.mailing_state, zip_code: @policy_demographic.mailing_zip_code, weekly_request: true)
@@ -27,27 +22,6 @@ class GroupRatingAllCreate
       @policy_calculation = PolicyCalculation.where(account_id: @account.id).update_or_create(
           representative_number: @policy_demographic.representative_number,
           policy_number: @account.policy_number_entered,
-          # policy_group_number: @policy_demographic.policy_group_number,
-          # policy_total_four_year_payroll: @policy_exp.policy_total_four_year_payroll,
-          # policy_credibility_group: @policy_exp.policy_credibility_group,
-          # policy_maximum_claim_value: @policy_exp.policy_maximum_claim_value,
-          # policy_credibility_percent: @policy_exp.policy_credibility_percent,
-          # policy_total_expected_losses: @policy_exp.policy_total_expected_losses,
-          # policy_total_limited_losses: @policy_exp.policy_total_limited_losses,
-          # policy_total_claims_count: @policy_exp.policy_total_claims_count,
-          # policy_total_modified_losses_group_reduced: @policy_exp.policy_total_modified_losses_group_reduced,
-          # policy_total_modified_losses_individual_reduced:
-          # @policy_exp.policy_total_modified_losses_individual_reduced,
-          # policy_group_ratio:
-          # @policy_exp.policy_group_ratio,
-          # policy_individual_total_modifier:
-          # @policy_exp.policy_individual_total_modifier,
-          # policy_individual_experience_modified_rate:
-          # @policy_exp.policy_individual_experience_modified_rate,
-          # policy_industry_group: @policy_proj.policy_industry_group,
-          # policy_total_current_payroll: @policy_proj.policy_total_current_payroll,
-          # policy_total_standard_premium: @policy_proj.policy_total_standard_premium,
-          # policy_total_individual_premium: @policy_proj.policy_total_individual_premium,
           currently_assigned_representative_number: @policy_demographic.currently_assigned_representative_number,
           valid_policy_number: @policy_demographic.valid_policy_number,
           current_coverage_status: @policy_demographic.current_coverage_status.strip,
@@ -86,16 +60,6 @@ class GroupRatingAllCreate
           coverage_type: @policy_demographic.coverage_type,
           policy_coverage_type: @policy_demographic.policy_coverage_type,
           policy_employer_type: @policy_demographic.policy_employer_type,
-          # merit_rate: @policy_demographic.merit_rate,
-          # group_code: @policy_demographic.group_code,
-          # minimum_premium_percentage: @policy_demographic.minimum_premium_percentage,
-          # rate_adjust_factor: @policy_demographic.rate_adjust_factor,
-          # em_effective_date: @policy_demographic.em_effective_date,
-          # regular_balance_amount: @policy_demographic.regular_balance_amount,
-          # attorney_general_balance_amount: @policy_demographic.attorney_general_balance_amount,
-          # appealed_balance_amount: @policy_demographic.appealed_balance_amount,
-          # pending_balance_amount: @policy_demographic.pending_balance_amount,
-          # advance_deposit_amount: @policy_demographic.advance_deposit_amount,
           data_source: @policy_demographic.data_source,
           representative_id: @account.representative_id,
           account_id: @account.id
@@ -144,6 +108,45 @@ class GroupRatingAllCreate
                     lapse_days: policy_coverage.lapse_days,
                     data_source: policy_coverage.data_source
                 )
+          end
+
+          PemhDetailRecord.where(representative_number: @policy_calculation.representative_number, policy_number: @policy_calculation.policy_number).find_each do |policy_program_history|
+            PolicyProgramHistory.where(policy_calculation_id: @policy_calculation.id, representative_id: @policy_calculation.representative_id, reporting_period_start_date: policy_program_history.reporting_period_start_date, reporting_period_end_date: policy_program_history.reporting_period_end_date).update_or_create(
+              representative_id: @policy_calculation.representative_id,
+              policy_calculation_id: @policy_calculation.id,
+              representative_number: policy_program_history.representative_number,
+              policy_number: policy_program_history.policy_number,
+              business_sequence_number: policy_program_history.business_sequence_number,
+              experience_modifier_rate: policy_program_history.experience_modifier_rate,
+              em_effective_date: policy_program_history.em_effective_date,
+              policy_year: policy_program_history.policy_year,
+              reporting_period_start_date: policy_program_history.reporting_period_start_date,
+              reporting_period_end_date: policy_program_history.reporting_period_end_date,
+              group_participation_indicator: policy_program_history.group_participation_indicator,
+              group_code: policy_program_history.group_code,
+              group_type: policy_program_history.group_type,
+              rrr_participation_indicator: policy_program_history.rrr_participation_indicator,
+              rrr_tier: policy_program_history.rrr_tier,
+              rrr_policy_claim_limit: policy_program_history.rrr_policy_claim_limit,
+              rrr_minimum_premium_percentage: policy_program_history.rrr_minimum_premium_percentage,
+              deductible_participation_indicator: policy_program_history.deductible_participation_indicator,
+              deductible_level: policy_program_history.deductible_level,
+              deductible_stop_loss_indicator: policy_program_history.deductible_stop_loss_indicator,
+              deductible_discount_percentage: policy_program_history.deductible_discount_percentage,
+              ocp_participation_indicator: policy_program_history.ocp_participation_indicator,
+              ocp_participation: policy_program_history.ocp_participation,
+              ocp_first_year_of_participation: policy_program_history.ocp_first_year_of_participation,
+              grow_ohio_participation_indicator: policy_program_history.grow_ohio_participation_indicator,
+              em_cap_participation_indicator: policy_program_history.em_cap_participation_indicator,
+              drug_free_program_participation_indicator: policy_program_history.drug_free_program_participation_indicator,
+              drug_free_program_type: policy_program_history.drug_free_program_type,
+              drug_free_program_participation_level: policy_program_history.drug_free_program_participation_level,
+              drug_free_program_discount_eligiblity_indicator: policy_program_history.drug_free_program_discount_eligiblity_indicator,
+              issp_participation_indicator: policy_program_history.issp_participation_indicator,
+              issp_discount_eligibility_indicator: policy_program_history.issp_discount_eligibility_indicator,
+              twbns_participation_indicator: policy_program_history.twbns_participation_indicator,
+              twbns_discount_eligibility_indicator: policy_program_history.twbns_discount_eligibility_indicator
+            )
 
           end
 

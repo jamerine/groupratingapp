@@ -58,7 +58,19 @@
 
       <% end %>
 
-    </div>
-    </div>
+      </div>
 
+    </div>
+    <div class="container">
+      <%= form_for :account, :url => account_assign_address_path(@account), :html => { :method => "post" } do |t| %>
+        <div class="row">
+          <%= t.select :id, @locations, {include_blank: "none"}, class: "form-control" %>
+        </div>
+        <div class="form-group col-md-4  col-md-offset-4" >
+          <%= t.submit 'Assign Affiliate', class: 'btn btn-info' %>
+        </div>
+
+      <% end %>
+
+    </div>
   </div>

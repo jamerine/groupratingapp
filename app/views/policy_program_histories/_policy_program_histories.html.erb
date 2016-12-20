@@ -1,0 +1,114 @@
+  <h2>Policy Program History - 1</h2>
+  <table class="table table-hover table-striped table-bordered" id="programHistoryTable">
+    <thead class="list-group active">
+      <tr class="header bg-primary">
+        <th></th>
+        <th>Start Date</th>
+        <th>End Date</th>
+        <th>EM Rate</th>
+        <th>Group</th>
+        <th>Group Code</th>
+        <th>Group Type</th>
+        <th>RRR</th>
+        <th>Deduct.</th>
+        <th>One Claim</th>
+        <th>Grow Ohio</th>
+        <th>EM Cap</th>
+        <th>Drug Free</th>
+        <th>ISSP</th>
+        <th>TWBNS</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% program_histories.order("reporting_period_start_date desc").each do |program_history| %>
+      <tr>
+        <td><%= link_to "View", policy_program_history_path(program_history.id), class: 'btn btn-info' %></td>
+        <td><%= program_history.try(:reporting_period_start_date).try(:strftime,"%-m/%-d/%y") %></td>
+        <td><%= program_history.try(:reporting_period_end_date).try(:strftime,"%-m/%-d/%y") %></td>
+        <td><%= program_history.experience_modifier_rate %></td>
+        <td><%= program_history.group_participation_indicator %></td>
+        <td><%= program_history.group_code %></td>
+        <td><%= program_history.group_type %></td>
+        <td><%= program_history.rrr_participation_indicator %></td>
+        <td><%= program_history.deductible_participation_indicator %></td>
+        <td><%= program_history.ocp_participation_indicator %></td>
+        <td><%= program_history.grow_ohio_participation_indicator %></td>
+        <td><%= program_history.em_cap_participation_indicator %></td>
+        <td><%= program_history.drug_free_program_participation_indicator %></td>
+        <td><%= program_history.issp_participation_indicator %></td>
+        <td><%= program_history.twbns_participation_indicator %></td>
+      </tr>
+      <% end %>
+
+    </tbody>
+  </table>
+
+
+  <h2>Policy Program History - 2</h2>
+  <table class="table table-hover table-striped table-condensed table-bordered table-responsive" id="programHistoryTable">
+    <thead class="list-group active">
+      <tr class="header bg-primary">
+        <th>Start Date</th>
+        <th>End Date</th>
+        <th>EM Rate</th>
+        <th>Group</th>
+        <th>Group Code</th>
+        <th>Group Type</th>
+        <th>RRR</th>
+        <th>RRR Tier</th>
+        <th>RRR Claim Lmt</th>
+        <th>RRR Min Prem.</th>
+        <th>Deduct.</th>
+        <th>Deduct. Lvl</th>
+        <th>Deduct. Stop Loss</th>
+        <th>Deduct. Discount</th>
+        <th>One Claim</th>
+        <th>One Claim Part.</th>
+        <th>One Claim 1st Yr</th>
+        <th>Grow Ohio</th>
+        <th>EM Cap</th>
+        <th>Drug Free</th>
+        <th>Drug Free Prog. Type</th>
+        <th>Drug Free Part. Lvl</th>
+        <th>Drug Free Disc.</th>
+        <th>ISSP Part.</th>
+        <th>ISSP Disc. Elig.</th>
+        <th>TWBNS Part.</th>
+        <th>TWBNS Disc. Elig.</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% program_histories.order("reporting_period_start_date desc").each do |program_history| %>
+      <tr>
+        <td><%= program_history.try(:reporting_period_start_date).try(:strftime,"%-m/%-d/%y") %></td>
+        <td><%= program_history.try(:reporting_period_end_date).try(:strftime,"%-m/%-d/%y") %></td>
+        <td><%= program_history.experience_modifier_rate %></td>
+        <td><%= program_history.group_participation_indicator %></td>
+        <td><%= program_history.group_code %></td>
+        <td><%= program_history.group_type %></td>
+        <td><%= program_history.rrr_participation_indicator %></td>
+        <td><%= program_history.rrr_tier %></td>
+        <td><%= program_history.rrr_policy_claim_limit %></td>
+        <td><%= program_history.rrr_minimum_premium_percentage %></td>
+        <td><%= program_history.deductible_participation_indicator %></td>
+        <td><%= program_history.deductible_level %></td>
+        <td><%= program_history.deductible_stop_loss_indicator %></td>
+        <td><%= program_history.deductible_discount_percentage %></td>
+        <td><%= program_history.ocp_participation_indicator %></td>
+        <td><%= program_history.ocp_participation %></td>
+        <td><%= program_history.ocp_first_year_of_participation %></td>
+        <td><%= program_history.grow_ohio_participation_indicator %></td>
+        <td><%= program_history.em_cap_participation_indicator %></td>
+        <td><%= program_history.drug_free_program_participation_indicator %></td>
+        <td><%= program_history.drug_free_program_type %></td>
+        <td><%= program_history.drug_free_program_participation_level %></td>
+        <td><%= program_history.drug_free_program_discount_eligiblity_indicator %></td>
+        <td><%= program_history.issp_participation_indicator %></td>
+        <td><%= program_history.issp_discount_eligibility_indicator %></td>
+        <td><%= program_history.twbns_participation_indicator %></td>
+        <td><%= program_history.twbns_discount_eligibility_indicator %></td>
+      </tr>
+      <% end %>
+
+    </tbody>
+  </table>
