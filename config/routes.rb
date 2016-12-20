@@ -21,6 +21,7 @@ Rails.application.routes.draw do
     post :group_rating_calc
     post :group_rating
     post :assign
+    post :assign_address
   end
 
   resources :affiliates
@@ -42,6 +43,8 @@ Rails.application.routes.draw do
   resources :claim_calculations
 
   resources :policy_coverage_status_histories
+
+  resources :policy_program_histories
 
   resources :final_policy_group_rating_and_premium_projections
 
