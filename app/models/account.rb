@@ -25,6 +25,16 @@ class Account < ActiveRecord::Base
     obj
   end
 
+  def build_or_assign_policy_calculation(attributes)
+    if self.policy_calculation.policy_number == attributes[:policy_number]
+      obj = self.policy_calculation.assign_attributes(attributes)
+    else
+      obj = self.build_policy_calculation(attributes)
+    end
+    obj
+  end
+
+
   # def self.assign_or_new(attributes)
   #   obj = first || new
   #   obj.assign_attributes(attributes)
