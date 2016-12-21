@@ -8,6 +8,7 @@ class ClaimCalculation < ActiveRecord::Base
     obj
   end
 
+
   def recalculate_experience(group_maximum_value)
     @policy_calculation = self.policy_calculation
 

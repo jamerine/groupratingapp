@@ -19,6 +19,7 @@ class PayrollCalculationsController < ApplicationController
         @policy_calculation = @manual_class_calculation.policy_calculation
         @manual_class_calculations = @policy_calculation.manual_class_calculations
         @policy_calculation.calculate_experience
+        @policy_calculation.account.group_rating
       end
       @message = "Payroll was added."
       redirect_to policy_calculation_path(@policy_calculation.id), notice: "Payroll has been adjusted"
@@ -35,6 +36,7 @@ class PayrollCalculationsController < ApplicationController
     @process_payroll = ProcessPayrollAllTransactionsBreakdownByManualClass.find(@payroll_calculation.process_payroll_all_transactions_breakdown_by_manual_class_id)
     if @payroll_calculation.destroy
       @manual_class_calculation.policy_calculation.calculate_experience
+      @manual_class_calculation.policy_calculation.account.group_rating
       @process_payroll.delete
       @message = "Payroll was deleted."
       @payroll_calculations = PayrollCalculation.where(manual_class_calculation_id: @manual_class_calculation.id )
