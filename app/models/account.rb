@@ -183,7 +183,7 @@ class Account < ActiveRecord::Base
 
   def group_rating_reject
     self.group_rating_rejections.destroy_all
-    self.group_rating_exceptions.destroy_all
+    self.group_rating_exceptions.where(resolved: false).destroy_all
 
     unless self.predecessor?
       @group_rating = GroupRating.where(representative_id: self.representative_id).last
@@ -192,7 +192,9 @@ class Account < ActiveRecord::Base
         # NEGATIVE PAYROLL ON A MANUAL CLASS
 
         if !self.policy_calculation.manual_class_calculations.where("manual_class_current_estimated_payroll < 0 or manual_class_four_year_period_payroll < 0").empty?
-          GroupRatingException.create(account_id: self.id, exception_reason: 'manual_class_negative_payroll', representative_id: self.representative_id)
+          if self.group_rating_exceptions.where(exception_reason: 'manual_class_negative_payroll', resolved: true).empty
+            GroupRatingException.create(account_id: self.id, exception_reason: 'manual_class_negative_payroll', representative_id: self.representative_id)
+          end
           GroupRatingRejection.create(account_id: self.id, reject_reason: 'manual_class_negative_payroll', representative_id: @group_rating.representative_id)
         end
 
@@ -201,7 +203,9 @@ class Account < ActiveRecord::Base
 
       if policy_calculation.valid_policy_number == 'N'
         GroupRatingRejection.create(account_id: self.id, reject_reason: 'reject_invalid_policy_number', representative_id: @group_rating.representative_id)
-        GroupRatingException.create(account_id: self.id, exception_reason: 'invalid_policy_number', representative_id: self.representative_id)
+        if self.group_rating_exceptions.where(exception_reason: 'invalid_policy_number', resolved: true).empty?
+          GroupRatingException.create(account_id: self.id, exception_reason: 'invalid_policy_number', representative_id: self.representative_id)
+        end
       end
 
       if ["CANFI","CANPN","BKPCA","BKPCO","COMB","CANUN"].include? policy_calculation.current_coverage_status
@@ -279,9 +283,13 @@ class Account < ActiveRecord::Base
 
            if lapse_sum >= 60
              GroupRatingRejection.create(account_id: self.id, reject_reason: 'reject_60+_lapse', representative_id: self.representative_id)
-             GroupRatingException.create(account_id: self.id, exception_reason: 'group_rating_60+_lapse', representative_id: self.representative_id)
+             if self.group_rating_exceptions.where(exception_reason: 'group_rating_60+_lapse', resolved: true).empty?
+               GroupRatingException.create(account_id: self.id, exception_reason: 'group_rating_60+_lapse', representative_id: self.representative_id)
+             end
            elsif lapse_sum < 60 && lapse_sum >= 40
-             GroupRatingException.create(account_id: self.id, exception_reason: 'group_rating_40-60_lapse', representative_id: self.representative_id)
+             if self.group_rating_exceptions.where(exception_reason: 'group_rating_60+_lapse', resolved: true).empty?
+               GroupRatingException.create(account_id: self.id, exception_reason: 'group_rating_40-60_lapse', representative_id: self.representative_id)
+             end
            end
 
             if self.group_rating_rejections.count > 0

@@ -17,8 +17,31 @@ class PayrollCalculationsController < ApplicationController
       if @payroll_calculation.data_source != 'bwc'
         @manual_class_calculation = @payroll_calculation.manual_class_calculation
         @policy_calculation = @manual_class_calculation.policy_calculation
-        @manual_class_calculations = @policy_calculation.manual_class_calculations
         @policy_calculation.calculate_experience
+        @policy_calculation.calculate_premium
+        @policy_calculation.account.group_rating
+      end
+      @message = "Payroll was added."
+      redirect_to manual_class_calculation_path(@payroll_calculation.manual_class_calculation_id), notice: "Payroll has been adjusted"
+    else
+      @message = "Payroll couldn't be added. Try again."
+      redirect_to manual_class_calculation_path(@payroll_calculation.manual_class_calculation_id), alert: "Payroll adjustment failed"
+    end
+  end
+
+  def create_form_2
+    @payroll_calculation = PayrollCalculation.new(payroll_calculation_params)
+
+    @process_payroll = ProcessPayrollAllTransactionsBreakdownByManualClass.new(representative_number: @payroll_calculation.representative_number, policy_number: @payroll_calculation.policy_number, manual_number: @payroll_calculation.manual_number, manual_class_type: @payroll_calculation.manual_class_type, reporting_period_start_date: @payroll_calculation.reporting_period_start_date, reporting_period_end_date: @payroll_calculation.reporting_period_end_date,  manual_class_payroll: @payroll_calculation.manual_class_payroll, payroll_origin: @payroll_calculation.payroll_origin, data_source: @payroll_calculation.data_source)
+
+    @process_payroll.save!
+    @payroll_calculation.process_payroll_all_transactions_breakdown_by_manual_class_id = @process_payroll.id
+    if @payroll_calculation.save
+      if @payroll_calculation.data_source != 'bwc'
+        @manual_class_calculation = @payroll_calculation.manual_class_calculation
+        @policy_calculation = @manual_class_calculation.policy_calculation
+        @policy_calculation.calculate_experience
+        @policy_calculation.calculate_premium
         @policy_calculation.account.group_rating
       end
       @message = "Payroll was added."
@@ -36,6 +59,7 @@ class PayrollCalculationsController < ApplicationController
     @process_payroll = ProcessPayrollAllTransactionsBreakdownByManualClass.find(@payroll_calculation.process_payroll_all_transactions_breakdown_by_manual_class_id)
     if @payroll_calculation.destroy
       @manual_class_calculation.policy_calculation.calculate_experience
+      @manual_class_calculation.policy_calculation.calculate_premium
       @manual_class_calculation.policy_calculation.account.group_rating
       @process_payroll.delete
       @message = "Payroll was deleted."
