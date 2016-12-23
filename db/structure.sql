@@ -8659,7 +8659,8 @@ CREATE TABLE group_rating_exceptions (
     representative_id integer,
     exception_reason character varying,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    resolved boolean
 );
 
 
@@ -12925,4 +12926,6 @@ INSERT INTO schema_migrations (version) VALUES ('20161212162433');
 INSERT INTO schema_migrations (version) VALUES ('20161212202044');
 
 INSERT INTO schema_migrations (version) VALUES ('20161220120712');
+
+INSERT INTO schema_migrations (version) VALUES ('20161223122345');
 

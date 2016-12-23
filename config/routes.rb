@@ -52,7 +52,9 @@ Rails.application.routes.draw do
     collection {get 'create_policy_objects'}
   end
 
-  resources :group_rating_exceptions
+  resources :group_rating_exceptions do
+    post :resolve
+  end
 
   resources :representatives do
     post :fee_calculations

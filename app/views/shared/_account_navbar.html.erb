@@ -11,8 +11,11 @@
             <!-- <div class="col-md-3">
               <p class="navbar-text">Representative: <%= @account.representative.abbreviated_name %></p>
             </div> -->
-            <div class="col-md-4">
-              <p class="navbar-text">Account Status: <%= @account.status.humanize %></p>
+            <div class="col-md-2">
+              <p class="navbar-text">Account: <%= @account.status.humanize %></p>
+            </div>
+            <div class="col-md-2">
+              <p class="navbar-text">Policy: <%= @account.policy_calculation.current_coverage_status.humanize %></p>
             </div>
           </div>
         <!-- </ul> -->
