@@ -13,8 +13,8 @@
           <h3><small>Acccount:</small></h3>
           <h3><%= @account.name.titleize %></h3>
           <h3><small>Address:</small></h3>
-          <h4><%=  @account.street_address.titleize %>, <%=  @account.street_address_2.titleize %></h4>
-          <h4> <%=  @account.city.titleize %>, <%= @account.state %> <%= @account.zip_code %></h4>
+          <h4><%=  @account.try(:street_address).try(:titleize) %>, <%=  @account.try(:street_address_2).try(:titleize) %></h4>
+          <h4> <%=  @account.try(:city).try(:titleize) %>, <%= @account.try(:state) %> <%= @account.zip_code %></h4>
         </div>
         <div class="col-md-3">
           <h3><small>Account Status:</small></h3>
@@ -27,31 +27,7 @@
     </div>
   </div>
 
-  <!-- <div class="container">
-    <div class="page-header">
-      <div class="row">
-        <div class="col-md-12">
-          <h1> <small>Policy: </small><%= @account.policy_calculation.policy_number %> <small>|</small> <small>Account: </small><%= @account.name.titleize %></h1>
-          <h3><%= @account.policy_calculation.policy_number %></h3>
-        </div>
-      </div>
-        <div class="col-md-6">
-          <h3><small>Acccount:</small></h3>
-          <h3><%= @account.name.titleize %></h3>
-          <h3><small>Address:</small></h3>
-          <h4><%=  @account.street_address.titleize %>, <%=  @account.street_address_2.titleize %></h4>
-          <h4> <%=  @account.city.titleize %>, <%= @account.state %> <%= @account.zip_code %></h4>
-        </div>
-        <div class="col-md-3">
-          <h3><small>Account Status:</small></h3>
-          <h3><%= @account.status %></h3>
-          <h3><small>Updated On:</small></h3>
-          <h4><%= @account.updated_at.in_time_zone("America/New_York").strftime("%m/%d/%y %I:%M %p") %></h4>
-        </div>
-      </div>
-      <%= link_to "Edit Account Info", edit_account_path(params[:id]), class: 'btn btn-primary' %>
-    </div>
-  </div> -->
+
 
   <div class="container">
     <div class="row">
@@ -96,38 +72,7 @@
           <% end %>
         </div>
 
-    <!-- <div class="row">
-         <% unless @account.accept? %>
-          <div class="col-md-12">
-            <p>Rejections:</p>
-            <h5><% @account.group_rating_rejections.each do |rejection| %>
-                <%= rejection.reject_reason %>,
-                <% end %>
-            </h5>
-          </div>
-        <% end %>
 
-        <div class="col-md-2">
-          <p>Qualification:</p>
-          <h5><%= @account.group_rating_qualification %></h5>
-        </div>
-        <div class="col-md-2">
-          <p>Discount Tier:</p>
-          <h5><%= @account.group_rating_tier %></h5>
-        </div>
-        <div class="col-md-2">
-          <p>Premium:</p>
-          <h5><%= number_to_currency(@account.group_premium) %></h5>
-        </div>
-        <div class="col-md-2">
-          <p>Savings:</p>
-          <h5><%= number_to_currency(@account.group_savings) %></h5>
-        </div>
-        <div class="col-md-2">
-          <p>Fees:</p>
-          <h5><%= number_to_currency(@account.group_fees) %></h5>
-        </div>
-    </div> -->
     <table class="table table-hover table-striped">
       <thead>
         <tr>

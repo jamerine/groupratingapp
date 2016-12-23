@@ -8,8 +8,8 @@
       <tr class="header">
         <th>Policy Number</th>
         <th>Account Name</th>
-        <th>Status</th>
-        <th>Group Rating Qualification</th>
+        <th>Account Status</th>
+        <th>Policy Status</th>
         <th>Representative</th>
         <th>Updated Date</th>
       </tr>
@@ -18,9 +18,9 @@
       <% accounts.order("representative_id asc, status desc, name asc").each do |account| %>
       <tr>
         <td><%= link_to "#{account.policy_calculation.policy_number}",account_path(account.id), class: 'btn btn-info' %> </td>
-        <td><%= account.name %> </td>
+        <td><%= account.try(:name).try(:titleize) %> </td>
         <td><%= account.status.humanize %> </td>
-        <td><%= account.group_rating_qualification %></td>
+        <td><%= account.policy_calculation.current_coverage_status %></td>
         <td><%= account.representative.abbreviated_name %></td>
         <td><%= account.updated_at.in_time_zone("America/New_York").strftime("%m/%d/%y @ %I:%M %p") %> </td>
       </tr>

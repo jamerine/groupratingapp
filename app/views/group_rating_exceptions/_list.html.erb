@@ -1,9 +1,6 @@
-<div id="filter_exceptions">
-  <div>
-    <%= page_entries_info group_rating_exceptions %>
-  </div>
 
 <table class="table table-hover">
+  <%= page_entries_info group_rating_exceptions %>
   <thead>
     <tr>
       <th>Policy Number</th>
@@ -20,12 +17,10 @@
       <td><%= group_rating_exception.account.name %> </td>
       <td><%= group_rating_exception.exception_reason.humanize.titleize %> </td>
       <td><%= group_rating_exception.representative.abbreviated_name %> </td>
-      <td><%= link_to 'resolve' %></td>
+      <td><%= link_to 'resolve', group_rating_exception_resolve_path(group_rating_exception_id: group_rating_exception.id, group_rating_exceptions: group_rating_exceptions.ids), method: :post %></td>
     </tr>
-    <% end %>
+  <% end %>
 
   </tbody>
 </table>
-
 <%= will_paginate group_rating_exceptions %>
-</div>

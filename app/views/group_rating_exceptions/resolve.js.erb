@@ -1,0 +1,2 @@
+$("#filter_exceptions").html("<%= escape_javascript(render partial: 'group_rating_exceptions/list', locals: { group_rating_exceptions: @group_rating_exceptions} ) %>");
+$('.flash').prepend("<div class='alert alert-success'><button type='button' class='close' data-dismiss='alert'>&times;</button><%= @message %></div>");
