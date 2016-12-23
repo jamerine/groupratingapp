@@ -192,7 +192,7 @@ class Account < ActiveRecord::Base
         # NEGATIVE PAYROLL ON A MANUAL CLASS
 
         if !self.policy_calculation.manual_class_calculations.where("manual_class_current_estimated_payroll < 0 or manual_class_four_year_period_payroll < 0").empty?
-          if self.group_rating_exceptions.where(exception_reason: 'manual_class_negative_payroll', resolved: true).empty
+          if self.group_rating_exceptions.where(exception_reason: 'manual_class_negative_payroll', resolved: true).empty?
             GroupRatingException.create(account_id: self.id, exception_reason: 'manual_class_negative_payroll', representative_id: self.representative_id)
           end
           GroupRatingRejection.create(account_id: self.id, reject_reason: 'manual_class_negative_payroll', representative_id: @group_rating.representative_id)
