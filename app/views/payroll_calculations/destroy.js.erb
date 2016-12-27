@@ -1,5 +1,6 @@
  <% if @payroll_calculation.destroyed? %>
   $(".payroll-calc").html("<%= escape_javascript(render partial: 'payroll_calculations/manual_class_payroll', locals: { payroll_calculations: @payroll_calculations} ) %>");
+  $(".manual_class_information").html("<%= escape_javascript(render partial: 'manual_class_calculations/manual_class_information', locals: { manual_class_calculation: @manual_class_calculation }) %>");
   $('.flash').prepend("<div class='alert alert-success'><button type='button' class='close' data-dismiss='alert'>&times;</button><%= @message %></div>");
  <% else %>
   $('.flash').prepend("<div class='alert alert-danger'><button type='button' class='close' data-dismiss='alert'>&times;</button><%= @message %></div>");

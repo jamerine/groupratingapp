@@ -23,15 +23,14 @@ class GroupRatingExceptionsController < ApplicationController
   def resolve
     @group_rating_exception = GroupRatingException.find(params[:group_rating_exception_id])
     @group_rating_exceptions = GroupRatingException.where("id in (?)", params[:group_rating_exceptions])
-    @group_rating_exceptions.delete(@group_rating_exception)
     @group_rating_exception.assign_attributes(resolved: true)
+    @group_rating_exceptions = @group_rating_exceptions.where("id != (?)", @group_rating_exception.id)
     if @group_rating_exception.save
       @message = "Exception was resolved"
       redirect_to group_rating_exceptions_path, notice: 'Exception was resolved.'
     else
       @message = "Exception was not resolved. Try again."
       redirect_to group_rating_exceptions_path, alert: 'Exception was not resolved. Try again.'
-
     end
 
   end

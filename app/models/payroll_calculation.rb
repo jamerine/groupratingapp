@@ -8,6 +8,9 @@ class PayrollCalculation < ActiveRecord::Base
   validates :payroll_origin, :presence => true
   validates :data_source, :presence => true
 
+  # after_create :calculate
+  # after_destroy :calculate
+
   def self.update_or_create(attributes)
     obj = first || new
     obj.assign_attributes(attributes)
@@ -21,5 +24,12 @@ class PayrollCalculation < ActiveRecord::Base
   #   obj
   # end
 
+  private
+
+  def calculate
+    self.manual_class_calculation.policy_calculation.calculate_experience
+    self.manual_class_calculation.policy_calculation.calculate_premium
+    self.manual_class_calculation.policy_calculation.account.group_rating
+  end
 
 end
