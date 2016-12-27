@@ -1,5 +1,7 @@
 class PayrollCalculationsController < ApplicationController
 
+
+
   def new
     @manual_class_calculation = ManualClassCalculation.find(params[:id])
     @payroll_calculation = PayrollCalculation.new
@@ -58,23 +60,23 @@ class PayrollCalculationsController < ApplicationController
     @manual_class_calculation = @payroll_calculation.manual_class_calculation
     @process_payroll = ProcessPayrollAllTransactionsBreakdownByManualClass.find(@payroll_calculation.process_payroll_all_transactions_breakdown_by_manual_class_id)
     if @payroll_calculation.destroy
-      @manual_class_calculation.policy_calculation.calculate_experience
-      @manual_class_calculation.policy_calculation.calculate_premium
-      @manual_class_calculation.policy_calculation.account.group_rating
+      @policy_calculation.calculate_experience
+      @policy_calculation.calculate_premium
+      @policy_calculation.account.group_rating
       @process_payroll.delete
       @message = "Payroll was deleted."
       @payroll_calculations = PayrollCalculation.where(manual_class_calculation_id: @manual_class_calculation.id )
-      # redirect_to @manual_class_calculation
+      redirect_to @manual_class_calculation, notice: "Payroll has been deleted"
     else
       message = "Payroll couldn't be deleted. Try again."
       @payroll_calculations = PayrollCalculation.where(manual_class_calculation_id: @manual_class_calculation.id )
-      # redirect_to @manual_class_calculation
+      redirect_to @manual_class_calculation, alert: "Payroll adjustment failed"
     end
 
-    respond_to do |format|
-      format.html { result ? flash[:notice] = @message : flash[:alert] = @message }
-      format.js
-    end
+    # respond_to do |format|
+    #   format.html { result ? flash[:notice] = @message : flash[:alert] = @message }
+    #   format.js
+    # end
 
   end
 
