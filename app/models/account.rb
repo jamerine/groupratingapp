@@ -18,6 +18,8 @@ class Account < ActiveRecord::Base
 
   enum group_rating_qualification: [:accept, :pending_predecessor, :reject]
 
+  
+
   def self.update_or_create(attributes)
     obj = first || new
     obj.assign_attributes(attributes)
@@ -183,7 +185,7 @@ class Account < ActiveRecord::Base
 
   def group_rating_reject
     self.group_rating_rejections.destroy_all
-    self.group_rating_exceptions.where(resolved: false).destroy_all
+    self.group_rating_exceptions.where(resolved: nil).destroy_all
 
     unless self.predecessor?
       @group_rating = GroupRating.where(representative_id: self.representative_id).last
@@ -287,7 +289,7 @@ class Account < ActiveRecord::Base
                GroupRatingException.create(account_id: self.id, exception_reason: 'group_rating_60+_lapse', representative_id: self.representative_id)
              end
            elsif lapse_sum < 60 && lapse_sum >= 40
-             if self.group_rating_exceptions.where(exception_reason: 'group_rating_60+_lapse', resolved: true).empty?
+             if self.group_rating_exceptions.where(exception_reason: 'group_rating_40-60_lapse', resolved: true).empty?
                GroupRatingException.create(account_id: self.id, exception_reason: 'group_rating_40-60_lapse', representative_id: self.representative_id)
              end
            end
