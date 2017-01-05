@@ -1,13 +1,7 @@
 require 'sidekiq/web'
 
-
-
 Rails.application.routes.draw do
 
-
-
-  # mount Resque::Server.new, at: "/resque"
-  # ...
   mount Sidekiq::Web, at: '/sidekiq'
 
   devise_for :users, controllers: {
@@ -27,6 +21,10 @@ Rails.application.routes.draw do
   resources :affiliates
 
   resources :contacts
+
+  resources :quotes
+
+  resources :account_programs
 
   resources :imports do
     collection { delete :destroy }

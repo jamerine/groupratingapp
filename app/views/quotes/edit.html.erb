@@ -1,0 +1,104 @@
+<%= render partial: "shared/account_navbar", locals: { object: @account } %>
+<div class="container">
+  <%= link_to 'Back', @account, class: 'btn btn-primary' %>
+
+    <%= form_for @quote do |f| %>
+    <h3>Quote Information</h3>
+    <br>
+    <div class="row">
+      <div class="col-md-3">
+        <label>Program type</label>
+        <h4> <%= @quote.try(:program_type).try(:titleize) %> </h4>
+      </div>
+      <div class="col-md-3">
+        <div class="form-group" >
+          <%= f.label :invoice_number %>
+          <%= f.text_field :invoice_number, class: "form-control" %>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="form-group">
+          <%= f.label :status %>
+          <%= f.select :status, options_for_select(@statuses.collect { |s| [s[0].humanize, s[0]] }, selected: @quote.status), {} , class: "form-control" %>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <label>Fees</label>
+        <h4> <%= number_to_currency(@quote.try(:fees)) %> </h4>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-2">
+        <label>Quote period start</label>
+        <h4><%= @quote.effective_start_date.strftime("%-m/%-d/%y") %></h4>
+      </div>
+      <div class="col-md-2">
+        <label>Quote period end</label>
+        <h4><%= @quote.effective_end_date.strftime("%-m/%-d/%y")  %> </h4>
+      </div>
+      <div class="col-md-2">
+        <label>Quote creation date</label>
+        <h4><%= @quote.created_at.strftime("%-m/%-d/%y") %></h4>
+      </div>
+      <div class="col-md-2">
+        <div class="form-group" >
+            <%= f.label 'Quote sent:' %>
+            <%= f.date_field :quote_sent_date, class: "form-control" %>
+        </div>
+      </div>
+    </div>
+    <br>
+    <div class="row">
+      <div class="col-md-2">
+        <div class="form-group" >
+          <%= f.label 'ac2 Signed' %>
+          <%= f.date_field :ac2_signed_on, class: "form-control" %>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="form-group" >
+          <%= f.label 'AC26 Signed:' %>
+          <%= f.date_field :ac26_signed_on, class: "form-control" %>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="form-group" >
+          <%= f.label 'U153 Signed:' %>
+          <%= f.date_field :u153_signed_on, class: "form-control" %>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="form-group" >
+          <%= f.label "Contract Signed:" %>
+          <%= f.date_field :contract_signed_on, class: "form-control" %>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="form-group" >
+          <%= f.label "Questionnaire Signed:" %>
+          <%= f.date_field :questionnaire_signed_on, class: "form-control" %>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group col-md-4  col-md-offset-4" >
+      <%= f.submit 'Save', class: 'btn btn-info' %>
+    </div>
+    <% end %>
+</div>
+<div class="container">
+  <h3>Quote Actions</h3>
+      <div class="col-md-3">
+        <p><%= link_to 'View Quote', '#', class: 'btn btn-primary' %> </p>
+      </div>
+      <div class="col-md-3">
+        <%= link_to 'Enroll Account in Program', new_account_program_path(quote_id: @quote.id), class: 'btn btn-primary' %>
+      </div>
+      <div class="col-md-3">
+        <%= link_to 'Send Quote to Customer','#', class: 'btn btn-info' %>
+      </div>
+      <div class="col-md-3">
+        <%= link_to 'Delete Quote', quote_path(params[:id]), method: :delete, class: 'btn btn-danger' %>
+      </div>
+    </div>
+</div>
