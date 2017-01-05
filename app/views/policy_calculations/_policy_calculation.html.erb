@@ -1,141 +1,105 @@
-<%= content_tag_for :div, policy_calculation do %>
-  <div class="container">
-    <div class="text-center">
-      <h2>BWC Policy Demographics</h2>
-      <div class="row">
+<div class="jumbotron text-center">
+  <div class="row">
+    <div class="col-md-3">
+      <h5>Policy Number:</h5>
+      <h4><%= @policy_calculation.policy_number %></h4>
+      <h5>Policy Type:</h5>
 
-        <div class="col-md-3">
-          <h5>Policy Number:</h5>
-          <h3><%= policy_calculation.policy_number %></h3>
-          <h5>Policy Status:</h5>
-          <h3><%= policy_calculation.current_coverage_status %></h3>
-        </div>
-
-        <div class="col-md-6">
-          <h2><%= policy_calculation.business_name %></h2>
-          <p><%=  policy_calculation.mailing_address_line_1 %>, <%=  policy_calculation.mailing_address_line_2 %><%=  policy_calculation.mailing_city %>, <%= policy_calculation.mailing_state %> <%= policy_calculation.mailing_zip_code %></p>
-          <p>
-          <%=  policy_calculation.in_care_name_contact_name %>
-          </p>
-        </div>
-        <div class="col-md-3">
-          <h5>Policy Updated at:</h5>
-          <h4><%= policy_calculation.updated_at.in_time_zone("America/New_York") %></h4>
-          <h5>Status Effective Date:</h5>
-          <h4><%= policy_calculation.coverage_status_effective_date %></h4>
-        </div>
-      </div>
+      <h5>Policy Status:</h5>
+      <h4><%= @policy_calculation.current_coverage_status %></h4>
     </div>
-  </div>
+    <div class="col-md-6">
+      <h2><%= @policy_calculation.business_name.titleize %></h2>
+      <p>Mailing: <%=  @policy_calculation.mailing_address_line_1.try(:titleize) %>, <%=  @policy_calculation.mailing_address_line_2.try(:titleize) %><%=  @policy_calculation.mailing_city.try(:titleize) %>, <%= @policy_calculation.mailing_state.try(:upcase) %> <%= @policy_calculation.mailing_zip_code %></p>
+      <p>Location: <%=  @policy_calculation.location_address_line_1.try(:titleize) %>, <%=  @policy_calculation.location_address_line_2.try(:titleize) %><%=  @policy_calculation.location_city.try(:titleize) %>, <%= @policy_calculation.location_state.try(:upcase) %> <%= @policy_calculation.location_zip_code %></p>
+    </div>
 
-<div class="container text-center">
-    <h2>Premium Projections</h2>
-    <div class="row text-center">
-      <div class="col-md-2 col-sm-4 col-xs-6">
-        <h5>Qualification</h5>
-        <p><%= policy_calculation.group_rating_qualification %></p>
-      </div>
-      <div class="col-md-2 col-sm-4 col-xs-6 ">
-        <h5>Group Rating Tier</h5>
-        <p><%= policy_calculation.group_rating_tier %></p>
-      </div>
-      <div class="col-md-2 col-sm-4 col-xs-6 ">
-        <h5>Industry Group</h5>
-        <p><%= policy_calculation.policy_industry_group %></p>
-      </div>
-      <div class="col-md-2 col-sm-4 col-xs-6 ">
-        <h5>Group Number</h5>
-        <p><%= policy_calculation.group_rating_group_number %></p>
-      </div>
-      <div class="col-md-2 col-sm-4 col-xs-6 ">
-        <h5>Current Payroll</h5>
-        <p><%= number_to_currency(policy_calculation.policy_total_current_payroll) %></p>
-      </div>
-      <div class="col-md-2 col-sm-4 col-xs-6 ">
-        <h5>Standard Premium</h5>
-        <p><%= number_to_currency(policy_calculation.policy_total_standard_premium) %></p>
-      </div>
-      <div class="col-md-2 col-sm-4 col-xs-6 ">
-        <h5>Individual Premium</h5>
-        <p><%= number_to_currency(policy_calculation.policy_total_individual_premium) %></p>
-      </div>
-      <div class="col-md-2 col-sm-4 col-xs-6 ">
-        <h5>Group Premium</h5>
-        <p><%= number_to_currency(policy_calculation.policy_total_group_premium) %></p>
-      </div>
-      <div class="col-md-2 col-sm-4 col-xs-6 ">
-        <h5>Group Savings</h5>
-        <p><%= number_to_currency(policy_calculation.policy_total_group_savings) %></p>
-      </div>
-      <div class="col-md-2 col-sm-4 col-xs-6">
-        <h5>Group Fees</h5>
-        <p><%= number_to_currency(policy_calculation.policy_group_fees) %></p>
-      </div>
-      <div class="col-md-2 col-sm-4 col-xs-6 ">
-        <h5>Group Dues</h5>
-        <p><%= number_to_currency(policy_calculation.policy_group_dues) %></p>
-      </div>
-      <div class="col-md-2 col-sm-4 col-xs-6">
-        <h5>Total Cost</h5>
-        <p><%= number_to_currency(policy_calculation.policy_total_costs) %></p>
-      </div>
+    <div class="col-md-3">
+      <h5>Policy Updated at:</h5>
+      <h4><%= @policy_calculation.updated_at.in_time_zone("America/New_York").strftime("%m/%d/%y @ %I:%M %p") %></h4>
+      <h5>Status Effective Date:</h5>
+      <h4><%= @policy_calculation.coverage_status_effective_date.strftime("%b %d, %Y") %></h4>
+      <h5>Policy Creation Date:</h5>
+      <h4><%= @policy_calculation.policy_creation_date.strftime("%b %d, %Y") %></h4>
+    </div>
   </div>
 </div>
+</div>
 
-  <div class="container text-center">
-        <h2>Experience History</h2>
-    <div class="row text-center">
-      <div class="col-md-2 col-sm-4 col-xs-6">
-        <h5>Total Payroll</h5>
-        <p><%= number_to_currency(policy_calculation.policy_total_four_year_payroll) %></p>
-      </div>
-      <div class="col-md-2 col-sm-4 col-xs-6">
-        <h5>Credibility Group</h5>
-        <p><%= policy_calculation.policy_credibility_group %></p>
-      </div>
-      <div class="col-md-2 col-sm-4 col-xs-6">
-        <h5>Credibility %</h5>
-        <p><%= policy_calculation.policy_credibility_percent %></p>
-      </div>
-      <div class="col-md-2 col-sm-4 col-xs-6">
-        <h5>Max Claim Value</h5>
-        <p><%= number_to_currency(policy_calculation.policy_maximum_claim_value) %></p>
-      </div>
-      <div class="col-md-2 col-sm-4 col-xs-6">
-        <h5>TEL</h5>
-        <p><%= number_to_currency(policy_calculation.policy_total_expected_losses) %></p>
-      </div>
-      <div class="col-md-2 col-sm-4 col-xs-6">
-        <h5>TLL</h5>
-        <p><%= number_to_currency(policy_calculation.policy_total_limited_losses) %></p>
-      </div>
-      <div class="col-md-2 col-sm-4 col-xs-6">
-        <h5>Claim Count</h5>
-        <p><%= policy_calculation.policy_total_claims_count %></p>
-      </div>
-      <div class="col-md-2 col-sm-4 col-xs-6">
-        <h5>Group TML</h5>
-        <p><%= number_to_currency(policy_calculation.policy_total_modified_losses_group_reduced) %></p>
-      </div>
-      <div class="col-md-2 col-sm-4 col-xs-6">
-        <h5>Ind TML</h5>
-        <p><%= number_to_currency(policy_calculation.policy_total_modified_losses_individual_reduced) %></p>
-      </div>
-      <div class="col-md-2 col-sm-4 col-xs-6">
-        <h5>Group Ratio</h5>
-        <p><%= policy_calculation.policy_group_ratio %></p>
-      </div>
-      <div class="col-md-2 col-sm-4 col-xs-6">
-        <h5>Ind TM</h5>
-        <p><%= policy_calculation.policy_individual_total_modifier %></p>
-      </div>
-      <div class="col-md-2 col-sm-4 col-xs-6">
-        <h5>Ind EMR</h5>
-        <p><%= policy_calculation.policy_individual_experience_modified_rate %></p>
-      </div>
-    </div>
+<div class="container text-center">
+<%= link_to "Change History", versions_path(item_id: @policy_calculation.id, item_type: @policy_calculation.class.name), class: 'btn btn-info', method: :get %>
+
+<h2>Policy Premium Projections</h2>
+<div class="row text-center">
+  <div class="col-md-3 col-sm-4 col-xs-6 ">
+    <h5>Industry Group</h5>
+    <p><%= @policy_calculation.policy_industry_group %></p>
   </div>
+  <div class="col-md-3 col-sm-4 col-xs-6 ">
+    <h5>Current Payroll</h5>
+    <p><%= number_to_currency(@policy_calculation.policy_total_current_payroll) %></p>
+  </div>
+  <div class="col-md-3 col-sm-4 col-xs-6 ">
+    <h5>Standard Premium</h5>
+    <p><%= number_to_currency(@policy_calculation.policy_total_standard_premium) %></p>
+  </div>
+  <div class="col-md-3 col-sm-4 col-xs-6 ">
+    <h5>Individual Premium</h5>
+    <p><%= number_to_currency(@policy_calculation.policy_total_individual_premium) %></p>
+  </div>
+</div>
+</div>
 
-  <%= render partial: 'manual_class_calculations/manual_classes', locals: { manual_class_calculations: policy_calculation.manual_class_calculations, policy_calculation: policy_calculation} %>
-  <%= render partial: 'claim_calculations/claims', locals: { claims: policy_calculation.claim_calculations } %>
-<% end %>
+<div class="container text-center">
+    <h2>Policy Experience History</h2>
+<div class="row text-center">
+  <div class="col-md-2 col-sm-4 col-xs-6">
+    <h5>Total Payroll</h5>
+    <p><%= number_to_currency(@policy_calculation.policy_total_four_year_payroll) %></p>
+  </div>
+  <div class="col-md-2 col-sm-4 col-xs-6">
+    <h5>Credibility Group</h5>
+    <p><%= @policy_calculation.policy_credibility_group %></p>
+  </div>
+  <div class="col-md-2 col-sm-4 col-xs-6">
+    <h5>Credibility %</h5>
+    <p><%= @policy_calculation.policy_credibility_percent %></p>
+  </div>
+  <div class="col-md-2 col-sm-4 col-xs-6">
+    <h5>Max Claim Value</h5>
+    <p><%= number_to_currency(@policy_calculation.policy_maximum_claim_value) %></p>
+  </div>
+  <div class="col-md-2 col-sm-4 col-xs-6">
+    <h5>TEL</h5>
+    <p><%= number_to_currency(@policy_calculation.policy_total_expected_losses) %></p>
+  </div>
+  <div class="col-md-2 col-sm-4 col-xs-6">
+    <h5>TLL</h5>
+    <p><%= number_to_currency(@policy_calculation.policy_total_limited_losses) %></p>
+  </div>
+  <div class="col-md-2 col-sm-4 col-xs-6">
+    <h5>Claim Count</h5>
+    <p><%= @policy_calculation.policy_total_claims_count %></p>
+  </div>
+  <div class="col-md-2 col-sm-4 col-xs-6">
+    <h5>Group TML</h5>
+    <p><%= number_to_currency(@policy_calculation.policy_total_modified_losses_group_reduced) %></p>
+  </div>
+  <div class="col-md-2 col-sm-4 col-xs-6">
+    <h5>Ind TML</h5>
+    <p><%= number_to_currency(@policy_calculation.policy_total_modified_losses_individual_reduced) %></p>
+  </div>
+  <div class="col-md-2 col-sm-4 col-xs-6">
+    <h5>Group Ratio</h5>
+    <p><%= @policy_calculation.policy_group_ratio %></p>
+  </div>
+  <div class="col-md-2 col-sm-4 col-xs-6">
+    <h5>Ind TM</h5>
+    <p><%= @policy_calculation.policy_individual_total_modifier %></p>
+  </div>
+  <div class="col-md-2 col-sm-4 col-xs-6">
+    <h5>Ind EMR</h5>
+    <p><%= @policy_calculation.policy_individual_experience_modified_rate %></p>
+  </div>
+</div>
+</div>

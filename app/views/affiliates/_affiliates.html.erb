@@ -12,7 +12,7 @@
     </thead>
 
     <tbody>
-      <% @affiliates.find_each do |affiliate| %>
+      <% affiliates.find_each do |affiliate| %>
       <tr>
         <td> <%= affiliate.role.titleize %></td>
         <td> <%= affiliate.first_name %></td>

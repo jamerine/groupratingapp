@@ -29,6 +29,11 @@ class CreateAccounts < ActiveRecord::Migration
       t.boolean   :weekly_request
       t.boolean   :ac3_approval
       t.boolean   :user_override
+      t.string    :group_retro_qualification
+      t.string    :group_retro_tier
+      t.integer   :group_retro_group_number
+      t.float     :group_retro_premium
+      t.float     :group_retro_savings
 
       t.timestamps null: false
     end

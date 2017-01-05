@@ -1,1 +1,173 @@
-<h1>This shows the program history info</h1>
+<%= render partial: "shared/account_navbar", locals: { object: @account } %>
+<div class="container">
+  <div class="row">
+  <%= link_to "Back", @policy_program_history.policy_calculation, class: 'btn btn-primary' %>
+  </div>
+  <br>
+</div>
+<div class="container text-center">
+  <div class="jumbotron">
+    <div class="row">
+      <h1>Policy Program History</h1>
+      <br>
+      <div class="col-md-3">
+        <p>Reporting Period</p>
+        <h4> <%= @policy_program_history.try(:reporting_period_start_date).strftime("%-m/%-d/%y") %> - <%= @policy_program_history.try(:reporting_period_end_date).strftime("%-m/%-d/%y") %> </h4>
+      </div>
+      <div class="col-md-3">
+        <p>EM Effective Date</p>
+        <h4> <%= @policy_program_history.try(:em_effective_date).strftime("%-m/%-d/%y") %> </h4>
+      </div>
+      <div class="col-md-3">
+        <p>EM Rate</p>
+        <h4> <%= @policy_program_history.try(:experience_modifier_rate) %> </h4>
+      </div>
+      <div class="col-md-3">
+        <p>Policy Year</p>
+        <h4> <%= @policy_program_history.policy_year %> </h4>
+      </div>
+    </div>
+  </div>
+
+    <div class="row well well-sm" style="background-color: white;">
+      <div class="col-md-2">
+        <h4> Group Rating </h4>
+      </div>
+      <div class="col-md-2">
+        <p>Group Participation</p>
+        <h4> <%= @policy_program_history.group_participation_indicator %> </h4>
+      </div>
+      <div class="col-md-2">
+        <p>Group Code</p>
+        <h4> <%= @policy_program_history.group_code %> </h4>
+      </div>
+      <div class="col-md-2">
+        <p>Group Type</p>
+        <h4> <%= @policy_program_history.group_type %> </h4>
+      </div>
+    </div>
+    <div class="row well well-sm">
+      <div class="col-md-2">
+        <h4>RRR</h4>
+      </div>
+      <div class="col-md-2">
+        <p>RRR Participation</p>
+        <h4> <%= @policy_program_history.rrr_participation_indicator %> </h4>
+      </div>
+      <div class="col-md-2">
+        <p>RRR Tier</p>
+        <h4> <%= @policy_program_history.rrr_tier %> </h4>
+      </div>
+      <div class="col-md-2">
+        <p>RRR Policy Claim Limit</p>
+        <h4> <%= @policy_program_history.rrr_policy_claim_limit %> </h4>
+      </div>
+      <div class="col-md-2">
+        <p>RRR Min. Prem %</p>
+        <h4> <%= @policy_program_history.rrr_minimum_premium_percentage %> </h4>
+      </div>
+    </div>
+    <div class="row well well-sm" style="background-color: white;">
+      <div class="col-md-2">
+        <h4>Deductible</h4>
+      </div>
+      <div class="col-md-2">
+        <p>Deductible Participation</p>
+        <h4> <%= @policy_program_history.deductible_participation_indicator %> </h4>
+      </div>
+      <div class="col-md-2">
+        <p>Deductible Level</p>
+        <h4> <%= @policy_program_history.deductible_level %> </h4>
+      </div>
+      <div class="col-md-2">
+        <p>Deductible Stop Loss</p>
+        <h4> <%= @policy_program_history.deductible_stop_loss_indicator %> </h4>
+      </div>
+      <div class="col-md-2">
+        <p>Deductible Discount %</p>
+        <h4> <%= @policy_program_history.deductible_discount_percentage %> </h4>
+      </div>
+    </div>
+    <div class="row well well-sm">
+      <div class="col-md-2">
+        <h4>One Claim Program</h4>
+      </div>
+      <div class="col-md-2">
+        <p>One Claim Participation</p>
+        <h4> <%= @policy_program_history.ocp_participation_indicator %> </h4>
+      </div>
+      <div class="col-md-2">
+        <p>One Claim</p>
+        <h4> <%= @policy_program_history.ocp_participation %> </h4>
+      </div>
+      <div class="col-md-2">
+        <p>One Claim 1st Year</p>
+        <h4> <%= @policy_program_history.ocp_first_year_of_participation %> </h4>
+      </div>
+    </div>
+    <div class="row well well-sm" style="background-color: white;">
+      <div class="col-md-2">
+        <h4>Grow Ohio</h4>
+      </div>
+      <div class="col-md-2">
+        <p>Grow Ohio Participation</p>
+        <h4> <%= @policy_program_history.grow_ohio_participation_indicator %> </h4>
+      </div>
+    </div>
+    <div class="row well well-sm">
+      <div class="col-md-2">
+        <h4>EM Cap</h4>
+      </div>
+      <div class="col-md-2">
+        <p>EM Cap Participation</p>
+        <h4> <%= @policy_program_history.em_cap_participation_indicator %> </h4>
+      </div>
+    </div>
+    <div class="row well well-sm" style="background-color: white;">
+      <div class="col-md-2">
+        <h4>Drug Free Program</h4>
+      </div>
+      <div class="col-md-2">
+        <p>Drug Free Participation</p>
+        <h4> <%= @policy_program_history.drug_free_program_participation_indicator %> </h4>
+      </div>
+      <div class="col-md-2">
+        <p>Drug Free Type</p>
+        <h4> <%= @policy_program_history.drug_free_program_type %> </h4>
+      </div>
+      <div class="col-md-2">
+        <p>Participation Level</p>
+        <h4> <%= @policy_program_history.drug_free_program_participation_level %> </h4>
+      </div>
+      <div class="col-md-2">
+        <p>Discount Eligibility</p>
+        <h4> <%= @policy_program_history.drug_free_program_discount_eligiblity_indicator %> </h4>
+      </div>
+    </div>
+    <div class="row well well-sm">
+      <div class="col-md-2">
+        <h4>ISSP</h4>
+      </div>
+      <div class="col-md-2">
+        <p>ISSP Participation</p>
+        <h4> <%= @policy_program_history.issp_participation_indicator %> </h4>
+      </div>
+      <div class="col-md-2">
+        <p>Discount Eligibility</p>
+        <h4> <%= @policy_program_history.issp_discount_eligibility_indicator %> </h4>
+      </div>
+    </div>
+    <div class="row well well-sm" style="background-color: white;">
+      <div class="col-md-2">
+        <h4>TWBNS</h4>
+      </div>
+      <div class="col-md-2">
+        <p>TWBNS Participation</p>
+        <h4> <%= @policy_program_history.twbns_participation_indicator %> </h4>
+      </div>
+      <div class="col-md-2">
+        <p>Discount Eligibility</p>
+        <h4> <%= @policy_program_history.twbns_discount_eligibility_indicator %> </h4>
+      </div>
+    </div>
+</div>

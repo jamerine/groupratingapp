@@ -1,4 +1,5 @@
-  <h2>Policy Program History</h2>
+<div class="container text-center">
+  <h2>BWC Policy Program History</h2>
   <table class="table table-hover table-striped table-bordered" id="programHistoryTable">
     <thead class="list-group active">
       <tr class="header bg-primary">
@@ -22,7 +23,7 @@
     <tbody>
       <% program_histories.order("reporting_period_start_date desc").each do |program_history| %>
       <tr>
-        <td><%= link_to "View", policy_program_history_path(program_history.id), class: 'btn btn-info' %></td>
+        <td><%= link_to "View", policy_program_history_path(program_history.id), class: 'btn btn-sm btn-info' %></td>
         <td><%= program_history.try(:reporting_period_start_date).try(:strftime,"%-m/%-d/%y") %></td>
         <td><%= program_history.try(:reporting_period_end_date).try(:strftime,"%-m/%-d/%y") %></td>
         <td><%= program_history.experience_modifier_rate %></td>
@@ -42,3 +43,4 @@
 
     </tbody>
   </table>
+</div>
