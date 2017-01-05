@@ -1,16 +1,16 @@
 class Account < ActiveRecord::Base
   has_paper_trail :ignore => [:user_override, :created_at, :updated_at, :weekly_request, :representative_id], :on => [:update]
 
-  has_one :policy_calculation, dependent: :destroy
   belongs_to :representative
-  has_many :group_rating_rejections, dependent: :destroy
-  has_many :group_rating_exceptions, dependent: :destroy
-
+  has_many :account_programs, dependent: :destroy
   has_many :accounts_affiliates
-  has_many :affiliates, through: :accounts_affiliates
-
   has_many :accounts_contacts
+  has_many :affiliates, through: :accounts_affiliates
   has_many :contacts, through: :accounts_contacts
+  has_many :group_rating_exceptions, dependent: :destroy
+  has_many :group_rating_rejections, dependent: :destroy
+  has_one :policy_calculation, dependent: :destroy
+  has_one :quote, dependent: :destroy
 
   validates :policy_number_entered, :presence => true, length: { maximum: 8 }
 
@@ -18,7 +18,7 @@ class Account < ActiveRecord::Base
 
   enum group_rating_qualification: [:accept, :pending_predecessor, :reject]
 
-  
+
 
   def self.update_or_create(attributes)
     obj = first || new

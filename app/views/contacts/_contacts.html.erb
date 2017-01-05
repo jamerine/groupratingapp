@@ -13,7 +13,7 @@
     </thead>
 
     <tbody>
-      <% @contacts.find_each do |contact| %>
+      <% contacts.find_each do |contact| %>
       <tr>
         <td> <%= contact.contact_type.humanize %></td>
         <td> <%= contact.full_name %></td>

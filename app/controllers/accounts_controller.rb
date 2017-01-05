@@ -75,14 +75,12 @@ class AccountsController < ApplicationController
 
 
   def show
-    @account = Account.includes(:group_rating_rejections, :group_rating_exceptions).find(params[:id])
+    @account = Account.includes(:group_rating_rejections, :group_rating_exceptions, :policy_calculation, :affiliates, :contacts, :quote, :account_programs).find(params[:id])
     @account_changes = @account.versions.map{|v| [v.created_at, v.changeset]}
     @statuses = Account.statuses
     @representative = Representative.find(@account.representative_id)
     @new_payroll_calculation = PayrollCalculation.new
-    @policy_calculation = PolicyCalculation.find_by(account_id: @account.id)
-    @affiliates = @account.affiliates
-    @contacts = @account.contacts
+
   end
 
 

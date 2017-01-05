@@ -5,9 +5,9 @@
       <div class="col-md-1">
         <h5>Policy #</h5>
         <% if account.predecessor? || account.invalid_policy_number? %>
-        <p><%= link_to "#{policy_calculation.policy_number}", policy_calculation_path(@policy_calculation.id), class: 'btn btn-primary disabled'%></p>
+        <p><%= link_to "#{policy_calculation.policy_number}", policy_calculation_path(policy_calculation.id), class: 'btn btn-primary disabled'%></p>
         <% else %>
-        <p><%= link_to "#{policy_calculation.policy_number}", policy_calculation_path(@policy_calculation.id), class: 'btn btn-primary' %></p>
+        <p><%= link_to "#{policy_calculation.policy_number}", policy_calculation_path(policy_calculation.id), class: 'btn btn-primary' %></p>
         <% end %>
       </div>
       <div class="col-md-1">

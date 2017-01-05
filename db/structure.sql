@@ -7639,6 +7639,56 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
+-- Name: account_programs; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE account_programs (
+    id integer NOT NULL,
+    account_id integer,
+    program_type integer,
+    status integer,
+    fees_amount double precision,
+    paid_amount double precision,
+    invoice_number character varying,
+    quote_generated character varying,
+    quote_date date,
+    quote_sent_date date,
+    effective_start_date date,
+    effective_end_date date,
+    ac2_signed_on date,
+    ac26_signed_on date,
+    u153_signed_on date,
+    contract_signed_on date,
+    questionnaire_signed_on date,
+    invoice_received_on date,
+    program_paid_on date,
+    group_rating_group_number integer,
+    group_retro_group_number integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: account_programs_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE account_programs_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: account_programs_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE account_programs_id_seq OWNED BY account_programs.id;
+
+
+--
 -- Name: accounts; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -7672,6 +7722,11 @@ CREATE TABLE accounts (
     weekly_request boolean,
     ac3_approval boolean,
     user_override boolean,
+    group_retro_qualification character varying,
+    group_retro_tier character varying,
+    group_retro_group_number integer,
+    group_retro_premium double precision,
+    group_retro_savings double precision,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
 );
@@ -8658,9 +8713,9 @@ CREATE TABLE group_rating_exceptions (
     account_id integer,
     representative_id integer,
     exception_reason character varying,
+    resolved boolean,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
-    resolved boolean
+    updated_at timestamp without time zone NOT NULL
 );
 
 
@@ -10291,6 +10346,53 @@ ALTER SEQUENCE process_policy_experience_period_peos_id_seq OWNED BY process_pol
 
 
 --
+-- Name: quotes; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE quotes (
+    id integer NOT NULL,
+    account_id integer,
+    program_type integer,
+    status integer,
+    fees double precision,
+    amount double precision,
+    invoice_number character varying,
+    quote_generated character varying,
+    quote_date date,
+    quote_sent_date date,
+    effective_start_date date,
+    effective_end_date date,
+    ac2_signed_on date,
+    ac26_signed_on date,
+    u153_signed_on date,
+    contract_signed_on date,
+    questionnaire_signed_on date,
+    invoice_signed_on date,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: quotes_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE quotes_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: quotes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE quotes_id_seq OWNED BY quotes.id;
+
+
+--
 -- Name: rate_detail_records; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -11119,6 +11221,13 @@ ALTER SEQUENCE versions_id_seq OWNED BY versions.id;
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY account_programs ALTER COLUMN id SET DEFAULT nextval('account_programs_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY accounts ALTER COLUMN id SET DEFAULT nextval('accounts_id_seq'::regclass);
 
 
@@ -11525,6 +11634,13 @@ ALTER TABLE ONLY process_policy_experience_period_peos ALTER COLUMN id SET DEFAU
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY quotes ALTER COLUMN id SET DEFAULT nextval('quotes_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY rate_detail_records ALTER COLUMN id SET DEFAULT nextval('rate_detail_records_id_seq'::regclass);
 
 
@@ -11624,6 +11740,14 @@ ALTER TABLE ONLY users ALTER COLUMN id SET DEFAULT nextval('users_id_seq'::regcl
 --
 
 ALTER TABLE ONLY versions ALTER COLUMN id SET DEFAULT nextval('versions_id_seq'::regclass);
+
+
+--
+-- Name: account_programs_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY account_programs
+    ADD CONSTRAINT account_programs_pkey PRIMARY KEY (id);
 
 
 --
@@ -12091,6 +12215,14 @@ ALTER TABLE ONLY process_policy_experience_period_peos
 
 
 --
+-- Name: quotes_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY quotes
+    ADD CONSTRAINT quotes_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: rate_detail_records_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -12208,6 +12340,13 @@ ALTER TABLE ONLY users
 
 ALTER TABLE ONLY versions
     ADD CONSTRAINT versions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: index_account_programs_on_account_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_account_programs_on_account_id ON account_programs USING btree (account_id);
 
 
 --
@@ -12470,6 +12609,13 @@ CREATE INDEX index_process_policy_experience_period_peos_on_policy_number ON pro
 
 
 --
+-- Name: index_quotes_on_account_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_quotes_on_account_id ON quotes USING btree (account_id);
+
+
+--
 -- Name: index_representatives_users_on_representative_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -12600,11 +12746,27 @@ ALTER TABLE ONLY group_ratings
 
 
 --
+-- Name: fk_rails_36d54169fc; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY quotes
+    ADD CONSTRAINT fk_rails_36d54169fc FOREIGN KEY (account_id) REFERENCES accounts(id);
+
+
+--
 -- Name: fk_rails_3fd03272a6; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY policy_calculations
     ADD CONSTRAINT fk_rails_3fd03272a6 FOREIGN KEY (account_id) REFERENCES accounts(id);
+
+
+--
+-- Name: fk_rails_4b61f12937; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY account_programs
+    ADD CONSTRAINT fk_rails_4b61f12937 FOREIGN KEY (account_id) REFERENCES accounts(id);
 
 
 --
@@ -12927,5 +13089,6 @@ INSERT INTO schema_migrations (version) VALUES ('20161212202044');
 
 INSERT INTO schema_migrations (version) VALUES ('20161220120712');
 
-INSERT INTO schema_migrations (version) VALUES ('20161223122345');
+INSERT INTO schema_migrations (version) VALUES ('20161227211225');
 
+INSERT INTO schema_migrations (version) VALUES ('20170104152306');
