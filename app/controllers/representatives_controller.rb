@@ -28,13 +28,10 @@ class RepresentativesController < ApplicationController
 
   def export_accounts
     @representative = Representative.find(params[:representative_id])
-    @accounts = @representative.accounts
+    AccountPolicyExport.perform_async(current_user.id, @representative.id)
 
-    respond_to do |format|
-      format.html
-      format.csv { send_data @accounts.to_csv, filename: "#{@representative.abbreviated_name}_accounts_#{Date.today}.csv" }
-    end
-
+    flash[:notice] = "Your Accounts and Policies export is now being generated.  Please checkout your email for your generated file."
+    redirect_to @representative
   end
 
 
