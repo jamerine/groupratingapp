@@ -84,7 +84,7 @@ class PayrollCalculationsController < ApplicationController
   private
 
   def payroll_calculation_params
-    params.require(:payroll_calculation).permit(:representative_number, :policy_number, :manual_class_calculation_id, :manual_number, :manual_class_type, :reporting_period_start_date, :reporting_period_end_date, :manual_class_payroll, :payroll_origin, :data_source)
+    params.require(:payroll_calculation).permit(:representative_number, :policy_number, :manual_class_calculation_id, :manual_number, :manual_class_type, :reporting_period_start_date, :reporting_period_end_date, :manual_class_payroll, :payroll_origin, :reporting_type, :data_source)
   end
 
 end
