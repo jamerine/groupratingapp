@@ -88,7 +88,7 @@ class Account < ActiveRecord::Base
         if !group_rating_rows.empty?
           administrative_rate = BwcCodesConstantValue.find_by("name = 'administrative_rate' and completed_date is null").rate
           @group_rating_tier = group_rating_rows.min.market_rate
-
+          @group_rating_group_number =  group_rating_rows.find_by(market_rate: @group_rating_tier).ac26_group_level
           # manual_classes = policy_calculation.manual_class_calculations
           policy_calculation.manual_class_calculations.each do |manual_class|
             unless manual_class.manual_class_base_rate.nil?
@@ -105,11 +105,13 @@ class Account < ActiveRecord::Base
           @group_savings = (policy_calculation.policy_total_individual_premium - @group_premium).round(0)
 
         else
+          @group_rating_group_number = nil
           @group_premium = nil
           @group_savings = nil
           @group_rating_tier = nil
         end
       else
+        @group_rating_group_number = nil
         @group_premium = nil
         @group_savings = nil
         @group_rating_tier = nil
@@ -122,9 +124,9 @@ class Account < ActiveRecord::Base
       if args["group_fees"].nil? || args["group_fees"].empty?
         self.fee_calculation(@group_rating_qualification, @group_rating_tier, @group_savings)
 
-        self.update_attributes(user_override: @user_override, group_rating_qualification: @group_rating_qualification, industry_group: @industry_group, group_rating_tier: @group_rating_tier, group_premium: @group_premium, group_savings: @group_savings, group_fees: @group_fees)
+        self.update_attributes(user_override: @user_override, group_rating_qualification: @group_rating_qualification, industry_group: @industry_group, group_rating_tier: @group_rating_tier, group_premium: @group_premium, group_savings: @group_savings, group_fees: @group_fees, group_rating_group_number: @group_rating_group_number)
       else
-        self.update_attributes(user_override: @user_override, group_rating_qualification: @group_rating_qualification, industry_group: @industry_group, group_rating_tier: @group_rating_tier, group_premium: @group_premium, group_savings: @group_savings, group_fees: args["group_fees"])
+        self.update_attributes(user_override: @user_override, group_rating_qualification: @group_rating_qualification, industry_group: @industry_group, group_rating_tier: @group_rating_tier, group_premium: @group_premium, group_savings: @group_savings, group_fees: args["group_fees"], group_rating_group_number: @group_rating_group_number)
       end
   end
 
@@ -151,7 +153,7 @@ class Account < ActiveRecord::Base
           administrative_rate = BwcCodesConstantValue.find_by("name = 'administrative_rate' and completed_date is null").rate
 
           @group_rating_tier = group_rating_rows.min.market_rate
-
+          @group_rating_group_number =  group_rating_rows.find_by(market_rate: @group_rating_tier).ac26_group_level
           # manual_classes = policy_calculation.manual_class_calculations
           policy_calculation.manual_class_calculations.each do |manual_class|
             unless manual_class.manual_class_base_rate.nil?
@@ -174,9 +176,9 @@ class Account < ActiveRecord::Base
       self.fee_calculation(@group_rating_qualification, @group_rating_tier, @group_savings)
 
       if user_override
-        self.update_attributes(user_override: user_override, group_rating_qualification: @group_rating_qualification, industry_group: @industry_group, group_rating_tier: @group_rating_tier, group_premium: @group_premium, group_savings: @group_savings, group_fees: @group_fees)
+        self.update_attributes(user_override: user_override, group_rating_qualification: @group_rating_qualification, industry_group: @industry_group, group_rating_tier: @group_rating_tier, group_premium: @group_premium, group_savings: @group_savings, group_fees: @group_fees, group_rating_group_number: @group_rating_group_number)
       else
-        self.update_attributes(group_rating_qualification: @group_rating_qualification, industry_group: @industry_group, group_rating_tier: @group_rating_tier, group_premium: @group_premium, group_savings: @group_savings, group_fees: @group_fees)
+        self.update_attributes(group_rating_qualification: @group_rating_qualification, industry_group: @industry_group, group_rating_tier: @group_rating_tier, group_premium: @group_premium, group_savings: @group_savings, group_fees: @group_fees, group_rating_group_number: @group_rating_group_number)
       end
 
     end

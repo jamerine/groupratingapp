@@ -13,13 +13,17 @@
       <%= form_for [@quote] do |f| %>
       <%= f.hidden_field :account_id, value: @account.id %>
       <div class="row">
-        <div class="form-group col-md-3 col-md-offset-1" >
-          <%= f.label :program_type %>
-          <%= f.select :program_type, options_for_select(@program_types.collect { |s| [s[0].humanize, s[0]] }, selected: params[:program_type]), {} , class: "form-control" %>
-        </div>
         <div class="form-group col-md-3" >
           <%= f.label :status %>
           <%= f.select :status, options_for_select(@statuses.collect { |s| [s[0].humanize, s[0]] }, selected: 'quoted'), {} , class: "form-control" %>
+        </div>
+        <div class="form-group col-md-3" >
+          <%= f.label :program_type %>
+          <%= f.select :program_type, options_for_select(@program_types.collect { |s| [s[0].humanize, s[0]] }, selected: params[:program_type]), {} , class: "form-control" %>
+        </div>
+        <div class="form-group col-md-2" >
+          <%= f.label :group_code %>
+          <%= f.text_field :group_code, class: "form-control", value: @account.group_rating_group_number %>
         </div>
         <div class="form-group col-md-3" >
           <%= f.label :fees %>

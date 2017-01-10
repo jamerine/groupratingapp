@@ -1,6 +1,4 @@
 <%= content_tag_for :div, policy_calculation do %>
-  <div class="container">
-    <div class="row">
       <h3>Policy Information</h3>
       <div class="col-md-1">
         <h5>Policy #</h5>
@@ -38,6 +36,4 @@
         <h5>Individual Premium</h5>
         <p><%= number_to_currency(policy_calculation.policy_total_individual_premium, precision: 0) %></p>
       </div>
-    </div>
-  </div>
 <% end %>

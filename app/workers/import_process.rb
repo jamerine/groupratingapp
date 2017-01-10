@@ -54,7 +54,7 @@ class ImportProcess
       ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/MREMPFILE", "mremps", import_id, group_rating_id)
       ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/PCOMBFILE", "pcombs", import_id, group_rating_id)
       ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/PHMGNFILE", "phmgns", import_id, group_rating_id)
-      ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/SC220FILE", "sc220s", import_id, group_rating_id)
+      # ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/SC220FILE", "sc220s", import_id, group_rating_id)
       ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/SC230FILE", "sc230s", import_id, group_rating_id)
       ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/RATEFILE", "rates", import_id, group_rating_id)
       ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/PDEMOFILE", "pdemos", import_id, group_rating_id)

@@ -15,7 +15,7 @@ class CreateAccounts < ActiveRecord::Migration
       t.integer    :group_rating_qualification
       t.integer   :industry_group
       t.float     :group_rating_tier
-      t.integer   :group_rating_group_number
+      t.string   :group_rating_group_number
       t.float     :group_premium
       t.float     :group_savings
       t.float     :group_fees
@@ -31,7 +31,7 @@ class CreateAccounts < ActiveRecord::Migration
       t.boolean   :user_override
       t.string    :group_retro_qualification
       t.string    :group_retro_tier
-      t.integer   :group_retro_group_number
+      t.string   :group_retro_group_number
       t.float     :group_retro_premium
       t.float     :group_retro_savings
 

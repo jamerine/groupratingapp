@@ -1,30 +1,30 @@
-<div class="container text-center">
-  <h2>Account Programs History</h2>
-  <table class="table table-hover table-striped table-condensed" id="accountProgramTable">
+  <h3>Account Programs History</h3>
+  <table class="table table-hover table-striped" id="accountProgramTable">
     <thead class="list-group active">
       <tr class="header ">
-        <th>Start Date</th>
-        <th>End Date</th>
+        <th>Program Period</th>
         <th>Program Type</th>
+        <th>Group Code</th>
         <th>Invoice Number</th>
         <th>Fees</th>
         <th>Paid Amount</th>
+        <th></th>
         <th></th>
       </tr>
     </thead>
     <tbody>
       <% @account.account_programs.order("effective_start_date desc").each do |account_program| %>
       <tr>
-        <td><%= account_program.try(:effective_start_date).try(:strftime,"%-m/%-d/%y") %></td>
-        <td><%= account_program.effective_end_date.try(:strftime,"%-m/%-d/%y") %></td>
+        <td><%= account_program.try(:effective_start_date).try(:strftime,"%-m/%-d/%y") %> - <%= account_program.effective_end_date.try(:strftime,"%-m/%-d/%y") %></td>
         <td><%= account_program.program_type.humanize %></td>
+        <td><%= account_program.group_code %></td>
         <td><%= account_program.invoice_number %></td>
-        <td><%= account_program.fees_amount %></td>
-        <td><%= account_program.paid_amount %></td>
-        <td><%= link_to "View", account_program_path(account_program.id), class: 'btn btn-sm btn-info' %></td>
+        <td><%= number_to_currency(account_program.try(:fees_amount)) %></td>
+        <td><%= number_to_currency(account_program.try(:paid_amount)) %></td>
+        <td><%= link_to "View", edit_account_program_path(account_program.id), class: 'btn btn-sm btn-info'%></td>
+        <td></td>
       </tr>
       <% end %>
 
     </tbody>
   </table>
-</div>
