@@ -1,44 +1,51 @@
 <%= render partial: "shared/account_navbar", locals: { object: @account } %>
 <div class="container">
-  <%= link_to 'Back', @account, class: 'btn btn-primary' %>
+  <div class="row">
 
+
+    <div class="col-md-1">
+      <%= link_to 'Back', @account, class: 'btn btn-primary' %>
+    </div>
+    <div class="col-md-1 col-md-offset-8">
+      <%= link_to 'Delete Quote', quote_path(params[:id]), method: :delete, class: 'btn btn-danger', data: {confirm: 'Are you sure you want to delete this quote?'} %>
+    </div>
+  </div>
     <%= form_for @quote do |f| %>
     <h3>Quote Information</h3>
+    <%= link_to 'View Quote Packet', '#', class: 'btn btn-success'%>
     <br>
     <div class="row">
-      <div class="col-md-3">
-        <label>Program type</label>
-        <h4> <%= @quote.try(:program_type).try(:titleize) %> </h4>
-      </div>
-      <div class="col-md-3">
-        <div class="form-group" >
-          <%= f.label :invoice_number %>
-          <%= f.text_field :invoice_number, class: "form-control" %>
-        </div>
-      </div>
-      <div class="col-md-3">
+      <div class="col-md-2">
         <div class="form-group">
           <%= f.label :status %>
           <%= f.select :status, options_for_select(@statuses.collect { |s| [s[0].humanize, s[0]] }, selected: @quote.status), {} , class: "form-control" %>
         </div>
       </div>
+      <div class="col-md-2">
+        <label>Program type</label>
+        <h4> <%= @quote.try(:program_type).try(:titleize) %> </h4>
+      </div>
       <div class="col-md-3">
+          <label>Invoice Number</label>
+          <h4><%= @quote.invoice_number %></h4>
+      </div>
+      <div class="col-md-2">
         <label>Fees</label>
         <h4> <%= number_to_currency(@quote.try(:fees)) %> </h4>
+      </div>
+      <div class="col-md-2">
+        <label>Group Code</label>
+        <h4> <%= @quote.group_code %> </h4>
       </div>
     </div>
     <div class="row">
       <div class="col-md-2">
-        <label>Quote period start</label>
-        <h4><%= @quote.effective_start_date.strftime("%-m/%-d/%y") %></h4>
-      </div>
-      <div class="col-md-2">
-        <label>Quote period end</label>
-        <h4><%= @quote.effective_end_date.strftime("%-m/%-d/%y")  %> </h4>
+        <label>Quote Period</label>
+        <h4><%= @quote.effective_start_date.strftime("%m/%d/%y") %> - <%= @quote.effective_end_date.strftime("%m/%d/%y")  %> </h4>
       </div>
       <div class="col-md-2">
         <label>Quote creation date</label>
-        <h4><%= @quote.created_at.strftime("%-m/%-d/%y") %></h4>
+        <h4><%= @quote.created_at.strftime("%m/%d/%y") %></h4>
       </div>
       <div class="col-md-2">
         <div class="form-group" >
@@ -84,21 +91,28 @@
     <div class="form-group col-md-4  col-md-offset-4" >
       <%= f.submit 'Save', class: 'btn btn-info' %>
     </div>
-    <% end %>
+    <%
+   end %>
 </div>
 <div class="container">
-  <h3>Quote Actions</h3>
+    <div class="row">
+      <h3>Quote Process</h3>
       <div class="col-md-3">
-        <p><%= link_to 'View Quote', '#', class: 'btn btn-primary' %> </p>
+        <h4>Step 1</h4>
+        <%= link_to 'Send Packet to Customer','#', class: 'btn btn-info' %>
+      </div>
+      <div class="col-md-1">
+        <span class="glyphicon glyphicon-arrow-right" style="font-size:3.0em;"></span>
       </div>
       <div class="col-md-3">
+        <h4>Step 2</h4>
+        <% if @quote.quote_sent_date %>
         <%= link_to 'Enroll Account in Program', new_account_program_path(quote_id: @quote.id), class: 'btn btn-primary' %>
+        <% else %>
+        <%= link_to 'Enroll Account in Program', new_account_program_path(quote_id: @quote.id), class: 'btn btn-primary disabled'  %>
+        <% end %>
       </div>
-      <div class="col-md-3">
-        <%= link_to 'Send Quote to Customer','#', class: 'btn btn-info' %>
-      </div>
-      <div class="col-md-3">
-        <%= link_to 'Delete Quote', quote_path(params[:id]), method: :delete, class: 'btn btn-danger' %>
-      </div>
+
     </div>
+
 </div>

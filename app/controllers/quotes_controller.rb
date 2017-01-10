@@ -10,11 +10,12 @@ class QuotesController < ApplicationController
 
   def create
     @account = Account.find(params[:quote][:account_id])
+    @quote = Quote.new(quote_params)
     if !@account.quote.nil?
       @account.quote.destroy!
     end
-    @quote = Quote.new(quote_params)
     if @quote.save
+      @quote.generate_invoice_number
       redirect_to edit_quote_path(@quote), notice: "Quote successfully created"
     else
       render :new
@@ -57,7 +58,7 @@ class QuotesController < ApplicationController
   private
 
   def quote_params
-    params.require(:quote).permit(:account_id, :program_type, :fees, :amount, :invoice_number, :quote_date, :effective_start_date, :effective_end_date, :status, :ac2_received_on, :ac26_received_on, :u53_received_on, :contract_signed_on, :questionnaire_received_on)
+    params.require(:quote).permit(:account_id, :program_type, :fees, :amount, :group_code, :invoice_number, :quote_date, :quote_sent_date, :effective_start_date, :effective_end_date, :status, :ac2_signed_on, :ac26_signed_on, :u153_signed_on, :contract_signed_on, :questionnaire_signed_on)
   end
 
 end

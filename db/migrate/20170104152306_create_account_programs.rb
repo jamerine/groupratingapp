@@ -19,8 +19,8 @@ class CreateAccountPrograms < ActiveRecord::Migration
       t.date :questionnaire_signed_on
       t.date :invoice_received_on
       t.date :program_paid_on
-      t.integer :group_rating_group_number
-      t.integer :group_retro_group_number
+      t.string :group_code
+      t.string :check_number
 
 
       t.timestamps null: false
