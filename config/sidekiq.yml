@@ -37,4 +37,4 @@ production:
   - claim_update_create_process
   - policy_export
   - account_policy_export
-  - weekly_159_request
+  - weekly_request
