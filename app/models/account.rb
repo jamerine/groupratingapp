@@ -333,12 +333,18 @@ class Account < ActiveRecord::Base
 
 
   def self.to_csv
-    attributes = self.column_names
+    @accounts = Account.joins(:policy_calculation).select("accounts.*, policy_calculations.*").limit(5).offset(1000)
 
+    attributes = Account.column_names
+    PolicyCalculation.column_names.each do |p|
+      unless p == 'id' || p == 'representative_number' || p == 'policy_number' || p ==  'data_source' || p == 'created_at' || p == 'updated_at' || p == 'representative_id'|| p == 'account_id' || p == 'federal_identification_number'
+        attributes << p
+      end
+    end
     CSV.generate(headers: true) do |csv|
       csv << attributes
 
-      all.each do |account|
+      @accounts.each do |account|
         csv << attributes.map{ |attr| account.send(attr) }
       end
     end
