@@ -58,6 +58,7 @@ class PayrollCalculationsController < ApplicationController
   def destroy
     @payroll_calculation = PayrollCalculation.find(params[:id])
     @manual_class_calculation = @payroll_calculation.manual_class_calculation
+    @policy_calculation = @manual_class_calculation.policy_calculation
     @process_payroll = ProcessPayrollAllTransactionsBreakdownByManualClass.find(@payroll_calculation.process_payroll_all_transactions_breakdown_by_manual_class_id)
     if @payroll_calculation.destroy
       @policy_calculation.calculate_experience
