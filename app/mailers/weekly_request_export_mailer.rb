@@ -1,7 +1,7 @@
-class Weekly159RequestExportMailer < ActionMailer::Base
+class WeeklyRequestExportMailer < ActionMailer::Base
  default :from => "jason@dittoh.com"
 
-  def weekly_159_request_export(user, representative, csv_string)
+  def weekly_request_export(user, representative, csv_string)
      attachments['report.csv'] = csv_string
      @representative = representative
      @user = user
