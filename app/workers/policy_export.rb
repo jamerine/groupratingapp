@@ -24,12 +24,5 @@ class PolicyExport
     end
 
     PolicyExportMailer.policy_export(@user, @representative, csv_string).deliver
-
-
-
-
-
-
-
   end
 end

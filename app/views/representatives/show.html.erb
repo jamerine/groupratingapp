@@ -12,7 +12,7 @@
           <h5>abbreviated Name:</h5>
           <h3><%= @representative.abbreviated_name %></h3>
 
-          <%= link_to "Account Export", representative_export_accounts_path(params[:id], format: "csv"), class: 'btn btn-default disabled' %>
+          <%= link_to "Account Export", representative_export_accounts_path(params[:id], format: "csv"), class: 'btn btn-default' %>
           <%= link_to "Policy Export", representative_export_policies_path(params[:id]), class: 'btn btn-default' %>
           <%= link_to "Manual Class Export", representative_export_manual_classes_path(params[:id], format: "csv"), class: 'btn btn-default disabled'  %>
           <br>
