@@ -7,7 +7,7 @@ class AccountPolicyExport
   def perform(current_user_id, representative_id)
     @user = User.find(current_user_id)
     @representative = Representative.find(representative_id)
-    @accounts = Account.joins(:policy_calculation).select("accounts.*, policy_calculations.*").where("representative_id = ?", representative_id)
+    @accounts = Account.joins(:policy_calculation).select("accounts.*, policy_calculations.*").where("accounts.representative_id = ?", representative_id)
 
     attributes = Account.column_names
     PolicyCalculation.column_names.each do |p|
