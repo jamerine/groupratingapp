@@ -38,7 +38,11 @@ class RepresentativesController < ApplicationController
   def export_manual_classes
     @representative = Representative.find(params[:representative_id])
     @manual_class_calculations = @representative.manual_class_calculations
+    Weekly159Request.perform_async(current_user.id, @representative.id)
 
+    flash[:notice] = "Your Weekly 159 request export is now being generated.  Please checkout your email for your generated file."
+    redirect_to @representative
+    
     # respond_to do |format|
     #   format.html
     #   format.csv { send_data @manual_class_calculations.to_csv, filename: "#{@representative.abbreviated_name}_manual_classes_#{Date.today}.csv" }
@@ -49,7 +53,8 @@ class RepresentativesController < ApplicationController
 
   def export_159_request_weekly
     @representative = Representative.find(params[:representative_id])
-    @accounts = @representative.accounts.where("weekly_request = true or request_date is null or status in (0,3)")
+    @accounts = @representative.accounts.where("weekly_request = true or request_date is null or status in (0,3,4)")
+
 
     respond_to do |format|
       format.html
