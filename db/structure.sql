@@ -7662,8 +7662,8 @@ CREATE TABLE account_programs (
     questionnaire_signed_on date,
     invoice_received_on date,
     program_paid_on date,
-    group_rating_group_number integer,
-    group_retro_group_number integer,
+    group_code character varying,
+    check_number character varying,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
 );
@@ -7708,7 +7708,7 @@ CREATE TABLE accounts (
     group_rating_qualification integer,
     industry_group integer,
     group_rating_tier double precision,
-    group_rating_group_number integer,
+    group_rating_group_number character varying,
     group_premium double precision,
     group_savings double precision,
     group_fees double precision,
@@ -7724,7 +7724,7 @@ CREATE TABLE accounts (
     user_override boolean,
     group_retro_qualification character varying,
     group_retro_tier character varying,
-    group_retro_group_number integer,
+    group_retro_group_number character varying,
     group_retro_premium double precision,
     group_retro_savings double precision,
     created_at timestamp without time zone NOT NULL,
@@ -10368,6 +10368,7 @@ CREATE TABLE quotes (
     contract_signed_on date,
     questionnaire_signed_on date,
     invoice_signed_on date,
+    group_code character varying,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
 );
@@ -13092,3 +13093,4 @@ INSERT INTO schema_migrations (version) VALUES ('20161220120712');
 INSERT INTO schema_migrations (version) VALUES ('20161227211225');
 
 INSERT INTO schema_migrations (version) VALUES ('20170104152306');
+

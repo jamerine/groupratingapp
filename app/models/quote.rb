@@ -5,4 +5,10 @@ class Quote < ActiveRecord::Base
 
   enum status: [:quoted, :sent, :accepted]
 
+  def generate_invoice_number
+    policy_year = self.effective_end_date.strftime("%Y")
+    s = "#{self.account.representative.representative_number}-#{self.account.policy_number_entered}-#{policy_year}-#{self.id}"
+    update_attributes(invoice_number: s)
+  end
+
 end

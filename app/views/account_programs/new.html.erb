@@ -12,6 +12,7 @@
     <br>
       <%= form_for [@account_program] do |f| %>
       <%= f.hidden_field :account_id, value: @account.id %>
+      <%= f.hidden_field :quote_id, value: @quote.id %>
       <%= f.hidden_field :effective_start_date, value: @quote.effective_start_date %>
       <%= f.hidden_field :effective_end_date, value: @quote.effective_end_date %>
       <%= f.hidden_field :quote_date, value: @quote.quote_date %>
@@ -19,18 +20,17 @@
       <%= f.hidden_field :program_type, value: @quote.program_type %>
       <%= f.hidden_field :fees_amount, value: @quote.fees %>
       <%= f.hidden_field :quote_generated, value: @quote.quote_generated %>
+      <%= f.hidden_field :invoice_number, value: @quote.invoice_number %>
+      <%= f.hidden_field :group_code, value: @quote.group_code %>
+
       <div class="row">
         <div class="form-group col-md-2" >
           <p>Program Type</p>
           <h4> <%= @quote.program_type.titleize %> </h4>
         </div>
-        <div class="form-group col-md-2" >
-          <p>Program Start Date</p>
-          <h4> <%= @quote.effective_start_date.try(:strftime,"%m/%d/%y") %> </h4>
-        </div>
-        <div class="form-group col-md-2" >
-          <p>Program End Date</p>
-          <h4> <%= @quote.effective_end_date.try(:strftime,"%m/%d/%y") %> </h4>
+        <div class="form-group col-md-4" >
+          <p>Program Period</p>
+          <h4> <%= @quote.effective_start_date.try(:strftime,"%B %d, %Y") %> - <%= @quote.effective_end_date.try(:strftime,"%B %d, %Y") %> </h4>
         </div>
         <div class="form-group col-md-2" >
           <p>Quoted Date</p>
@@ -40,42 +40,49 @@
           <p>Quote Sent Date</p>
           <h4> <%= @quote.quote_sent_date.try(:strftime,"%m/%d/%y") %> </h4>
         </div>
-
+      </div>
+      <div class="row">
+        <div class="form-group col-md-2 col-md-offset-1" >
+          <p>AC2 Signed On:</p>
+          <h4> <%= @quote.ac2_signed_on.try(:strftime,"%m/%d/%y") || "N/A" %> </h4>
+        </div>
+        <div class="form-group col-md-2" >
+          <p>AC26 Signed On:</p>
+          <h4> <%= @quote.ac26_signed_on.try(:strftime,"%m/%d/%y") || "N/A" %> </h4>
+        </div>
+        <div class="form-group col-md-2" >
+          <p>U153 Signed On:</p>
+          <h4> <%= @quote.u153_signed_on.try(:strftime,"%m/%d/%y") || "N/A" %> </h4>
+        </div>
+        <div class="form-group col-md-2" >
+          <p>Contract Signed On::</p>
+          <h4> <%= @quote.contract_signed_on.try(:strftime,"%m/%d/%y") || "N/A" %> </h4>
+        </div>
+        <div class="form-group col-md-2" >
+          <p>Questionnaire Signed On::</p>
+          <h4> <%= @quote.questionnaire_signed_on.try(:strftime,"%m/%d/%y") || "N/A" %> </h4>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-3">
+          <p>Invoice Number</p>
+          <h4> <%= @quote.invoice_number %> </h4>
+        </div>
         <div class="form-group col-md-2" >
           <p>Fees Amount</p>
           <h4> <%= number_to_currency(@quote.fees) %> </h4>
         </div>
-      </div>
-      <div class="row">
-        <div class="form-group col-md-2 col-md-offset-1" >
-          <%= f.label :ac2_signed_on %>
-          <%= f.date_field :ac2_signed_on, class: "form-control", value: @quote.ac2_signed_on %>
-        </div>
-        <div class="form-group col-md-2" >
-          <%= f.label :ac26_signed_on %>
-          <%= f.date_field :ac26_signed_on, class: "form-control", value: @quote.ac26_signed_on %>
-        </div>
-        <div class="form-group col-md-2" >
-          <%= f.label :u153_signed_on %>
-          <%= f.date_field :u153_signed_on, class: "form-control", value: @quote.u153_signed_on %>
-        </div>
-        <div class="form-group col-md-2" >
-          <%= f.label :contract_signed_on %>
-          <%= f.date_field :contract_signed_on, class: "form-control", value: @quote.contract_signed_on %>
-        </div>
-        <div class="form-group col-md-2" >
-          <%= f.label :questionnaire_signed_on %>
-          <%= f.date_field :questionnaire_signed_on, class: "form-control", value: @quote.questionnaire_signed_on %>
-        </div>
-      </div>
-      <div class="row">
-        <div class="form-group col-md-3 col-md-offset-3">
-          <%= f.label :invoice_number %>
-          <%= f.text_field :invoice_number, class: "form-control", value: @quote.invoice_number %>
-        </div>
-        <div class="form-group col-md-3">
+        <div class="form-group col-md-2">
           <%= f.label :paid_amount %>
           <%= f.number_field :paid_amount, class: "form-control" %>
+        </div>
+        <div class="form-group col-md-2">
+          <%= f.label :check_number %>
+          <%= f.number_field :check_number, class: "form-control" %>
+        </div>
+        <div class="form-group col-md-2">
+          <%= f.label :program_paid_on %>
+          <%= f.date_field :program_paid_on, class: "form-control" %>
         </div>
       </div>
       <div class="form-group col-md-4  col-md-offset-4" >

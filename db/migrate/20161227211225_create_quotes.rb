@@ -18,6 +18,7 @@ class CreateQuotes < ActiveRecord::Migration
       t.date :contract_signed_on
       t.date :questionnaire_signed_on
       t.date :invoice_signed_on
+      t.string :group_code
 
       t.timestamps null: false
     end
