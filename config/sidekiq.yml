@@ -38,3 +38,4 @@ production:
   - policy_export
   - account_policy_export
   - weekly_request
+  - group_rating_mark_complete
