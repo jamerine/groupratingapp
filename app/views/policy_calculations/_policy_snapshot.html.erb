@@ -22,11 +22,19 @@
       </div>
       <div class="col-md-1">
         <h5>Ratio</h5>
-        <p><%= (policy_calculation.policy_group_ratio).round(2) %></p>
+        <% if policy_calculation.policy_group_ratio.nil? %>
+        <p></p>
+        <% else %>
+        <p><%= policy_calculation.try(:policy_group_ratio).round(2) %></p>
+        <% end %>
       </div>
       <div class="col-md-1">
         <h5>EM</h5>
-        <p><%= (policy_calculation.policy_individual_experience_modified_rate).round(2) %></p>
+        <% if policy_calculation.policy_individual_experience_modified_rate.nil? %>
+        <p></p>
+        <% else %>
+        <p><%= policy_calculation.try(:policy_individual_experience_modified_rate).round(2) %></p>
+        <% end %>
       </div>
       <div class="col-md-2">
         <h5>Current Payroll</h5>
