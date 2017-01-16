@@ -20,8 +20,8 @@
     { representative_number: 217564, abbreviated_name: 'ECP', company_name: 'Employers Choice Plus' },
     { representative_number: 218373, abbreviated_name: 'ERSCO', company_name: 'Employer Risk Solutions Company' },
     { representative_number: 1714, abbreviated_name: 'GCADA', company_name: 'Greater Cleveland Automobile Dealers' },
-    { representative_number: 1706, abbreviated_name: 'GMSCLI', company_name: 'Group Management Services' },
-    { representative_number: 217381, abbreviated_name: 'GMSPRO', company_name: 'Group Management Services' },
+    { representative_number: 1706, abbreviated_name: 'GMSCLI', company_name: 'Group Management Services Clients' },
+    { representative_number: 217381, abbreviated_name: 'GMSPRO', company_name: 'Group Management Services Prospects' },
     { representative_number: 1796, abbreviated_name: 'MAAG' , company_name: 'Maag'},
     { representative_number: 1740, abbreviated_name: 'MATRIX', company_name: 'Matrix' },
     { representative_number: 220217, abbreviated_name: 'MMHR2', company_name: 'Minute Man HR' },
@@ -41,6 +41,7 @@ User.create({email: 'paul@dittoh.com', password: 'password'})
 User.create({email: 'millercj320@gmail.com', password: 'password'})
 User.create({email: 'dmaag@alternativeriskltd.com', password: 'tigers'})
 User.create({email: 'steve.chmielewski@minutemenhr.com', password: 'indians'})
+
 
 
 RepresentativesUser.create({user_id: 1, representative_id: 1})
@@ -81,3 +82,17 @@ RepresentativesUser.create({user_id: 5, representative_id: 2})
 RepresentativesUser.create({user_id: 5, representative_id: 10})
 RepresentativesUser.create({user_id: 5, representative_id: 11})
 RepresentativesUser.create({user_id: 5, representative_id: 18})
+RepresentativesUser.create({user_id: 6, representative_id: 1})
+RepresentativesUser.create({user_id: 6, representative_id: 3})
+RepresentativesUser.create({user_id: 6, representative_id: 4})
+RepresentativesUser.create({user_id: 6, representative_id: 5})
+RepresentativesUser.create({user_id: 6, representative_id: 6})
+RepresentativesUser.create({user_id: 6, representative_id: 7})
+RepresentativesUser.create({user_id: 6, representative_id: 8})
+RepresentativesUser.create({user_id: 6, representative_id: 9})
+RepresentativesUser.create({user_id: 6, representative_id: 12})
+RepresentativesUser.create({user_id: 6, representative_id: 13})
+RepresentativesUser.create({user_id: 6, representative_id: 14})
+RepresentativesUser.create({user_id: 6, representative_id: 15})
+RepresentativesUser.create({user_id: 6, representative_id: 16})
+RepresentativesUser.create({user_id: 6, representative_id: 17})
