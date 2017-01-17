@@ -39,7 +39,7 @@ class ClaimCalculation < ActiveRecord::Base
     self.claim_mira_indemnity_reserve_amount) * @claim_individual_multiplier * ( 1 - self.claim_handicap_percent )))
 
     @claim_subrogation_percent =
-      if self.claim_total_subrogation_collected = 0
+      if self.claim_total_subrogation_collected == 0.0
         0
       elsif self.claim_total_subrogation_collected > self.claim_unlimited_limited_loss
         1
