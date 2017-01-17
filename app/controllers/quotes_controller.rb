@@ -58,7 +58,7 @@ class QuotesController < ApplicationController
   private
 
   def quote_params
-    params.require(:quote).permit(:account_id, :program_type, :fees, :amount, :group_code, :invoice_number, :quote_date, :quote_sent_date, :effective_start_date, :effective_end_date, :status, :ac2_signed_on, :ac26_signed_on, :u153_signed_on, :contract_signed_on, :questionnaire_signed_on)
+    params.require(:quote).permit(:account_id, :program_type, :fees, :amount, :group_code, :invoice_number, :quote_date, :quote_sent_date, :effective_start_date, :effective_end_date, :status, :ac2_signed_on, :ac26_signed_on, :u153_signed_on, :contract_signed_on, :questionnaire_signed_on, :question_1, :question_2, :question_3, :question_4, :question_5)
   end
 
 end
