@@ -8748,7 +8748,8 @@ CREATE TABLE group_rating_rejections (
     representative_id integer,
     reject_reason character varying,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    program_type character varying
 );
 
 
@@ -13108,3 +13109,4 @@ INSERT INTO schema_migrations (version) VALUES ('20170117123224');
 
 INSERT INTO schema_migrations (version) VALUES ('20170117124243');
 
+INSERT INTO schema_migrations (version) VALUES ('20170117135428');
