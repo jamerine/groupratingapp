@@ -10370,7 +10370,17 @@ CREATE TABLE quotes (
     invoice_signed_on date,
     group_code character varying,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    q_1 boolean,
+    q_2 boolean,
+    q_3 boolean,
+    q_4 boolean,
+    q_5 boolean,
+    questionnaire_question_1 boolean,
+    questionnaire_question_2 boolean,
+    questionnaire_question_3 boolean,
+    questionnaire_question_4 boolean,
+    questionnaire_question_5 boolean
 );
 
 
@@ -13093,4 +13103,8 @@ INSERT INTO schema_migrations (version) VALUES ('20161220120712');
 INSERT INTO schema_migrations (version) VALUES ('20161227211225');
 
 INSERT INTO schema_migrations (version) VALUES ('20170104152306');
+
+INSERT INTO schema_migrations (version) VALUES ('20170117123224');
+
+INSERT INTO schema_migrations (version) VALUES ('20170117124243');
 
