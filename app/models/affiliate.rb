@@ -6,7 +6,7 @@ class Affiliate < ActiveRecord::Base
   before_save {self.last_name = last_name.downcase.titleize}
   before_save {self.email_address = email_address.downcase}
 
-  enum role: [:crm, :examiner, :sales, :referral]
+  enum role: [:crm, :examiner, :sales, :referral, :cose_id]
   enum internal_external: [:external, :internal]
 
   private
