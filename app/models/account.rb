@@ -314,6 +314,7 @@ class Account < ActiveRecord::Base
 
   def group_retro_reject
 
+
     unless self.predecessor?
       @group_rating = GroupRating.where(representative_id: self.representative_id).last
         # NEGATIVE PAYROLL ON A MANUAL CLASS
@@ -416,7 +417,7 @@ class Account < ActiveRecord::Base
          end
 
       # update_attributes(group_rating_qualification: qualification)
-      return @group_rating_qualification = qualification
+      return @group_retro_qualification = qualification
 
     end
   end
