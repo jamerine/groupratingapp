@@ -22,20 +22,20 @@
         </div>
       </div>
       <div class="col-md-2">
-        <label>Program type</label>
-        <h4> <%= @quote.try(:program_type).try(:titleize) %> </h4>
+        <%= f.label :program_type %>
+        <%= f.select :program_type, options_for_select(@program_types.collect { |s| [s[0].humanize, s[0]] }, selected: @quote.program_type), {} , class: "form-control"%>
       </div>
       <div class="col-md-3">
           <label>Invoice Number</label>
           <h4><%= @quote.invoice_number %></h4>
       </div>
       <div class="col-md-2">
-        <label>Fees</label>
-        <h4> <%= number_to_currency(@quote.try(:fees)) %> </h4>
+        <%= f.label :fees %>
+        <%= f.number_field :fees, class: "form-control" %>
       </div>
       <div class="col-md-2">
-        <label>Group Code</label>
-        <h4> <%= @quote.group_code %> </h4>
+        <%= f.label :group_code %>
+        <%= f.number_field :group_code, class: "form-control" %>
       </div>
     </div>
     <div class="row">

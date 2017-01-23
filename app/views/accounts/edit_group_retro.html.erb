@@ -3,18 +3,20 @@
   <%= link_to 'Back', :back, class: 'btn btn-primary' %>
   <br>
   <div class="jumbotron text-center">
-    <h1>Override Group Rating</h1>
-      <%= form_for :account , :url => account_group_rating_calc_path(@account) do |f| %>
+    <h1>Override Group Retro</h1>
+      <%= form_for :account , :url => account_group_retro_calc_path(@account) do |f| %>
       <div class="row">
           <div class="col-md-2">
             <%= f.label 'Qualification' %>
-            <%= f.select :group_rating_qualification, options_for_select(@group_rating_qualifications.collect { |s| [s[0].humanize, s[0]] }, selected: @account.group_rating_qualification), {} , class: "form-control" %>
+            <%= f.select :group_retro_qualification, options_for_select(@group_retro_qualifications.collect { |s| [s.humanize] } , selected: @account.group_retro_qualification.humanize), {} , class: "form-control" %>
           </div>
+
           <div class="col-md-2">
             <%= f.label 'Discount Tier' %>
-            <%= f.select :group_rating_tier, options_for_select(@group_rating_tiers, selected: @account.group_rating_tier), {include_blank: true}, class: "form-control" %>
-            <!-- <%= f.text_field :group_rating_tier, class: "form-control" %> -->
+
+            <%= f.select :group_retro_tier, options_for_select(BwcCodesGroupRetroTier.pluck(:discount_tier).uniq, selected: @account.group_rating_tier), {include_blank: true}, class: "form-control" %>
           </div>
+
           <div class="col-md-2">
             <%= f.label 'Industry_group' %>
             <%= f.number_field :industry_group, class: "form-control" %>
