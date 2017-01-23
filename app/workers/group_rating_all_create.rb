@@ -197,6 +197,7 @@ class GroupRatingAllCreate
         @account.policy_calculation.calculate_experience
         @account.policy_calculation.calculate_premium
         @account.group_rating
+        @account.group_retro
   end
 
 end
