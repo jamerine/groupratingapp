@@ -80,7 +80,8 @@ class AccountsController < ApplicationController
     @statuses = Account.statuses
     @representative = Representative.find(@account.representative_id)
     @new_payroll_calculation = PayrollCalculation.new
-
+    @group_rating_rejections = @account.group_rating_rejections.where(program_type: 'group_rating')
+    @group_retro_rejections = @account.group_rating_rejections.where(program_type: 'group_retro')
   end
 
 
@@ -90,6 +91,13 @@ class AccountsController < ApplicationController
     @group_rating_qualifications = Account.group_rating_qualifications
     @group_rating_qualifications[:auto_run] = "3"
     @group_rating_tiers = BwcCodesIndustryGroupSavingsRatioCriterium.where(industry_group: @account.industry_group).pluck(:market_rate).uniq
+  end
+
+  def edit_group_retro
+    @account = Account.find(params[:account_id])
+    @policy_calculation = @account.policy_calculation
+    @group_retro_qualifications = ["accept", "pending_predecessor", "reject", "auto_run"]
+    @group_retro_tier = BwcCodesGroupRetroTier.find_by(industry_group: @account.industry_group).discount_tier
   end
 
   def group_rating_calc
@@ -106,6 +114,8 @@ class AccountsController < ApplicationController
       redirect_to @account
     end
   end
+
+
 
   def assign
     @account = Account.find(params[:account_id])

@@ -7829,7 +7829,8 @@ CREATE TABLE affiliates (
     representative_id integer,
     internal_external integer DEFAULT 0,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    external_id character varying
 );
 
 
@@ -7951,6 +7952,38 @@ CREATE SEQUENCE bwc_codes_credibility_max_losses_id_seq
 --
 
 ALTER SEQUENCE bwc_codes_credibility_max_losses_id_seq OWNED BY bwc_codes_credibility_max_losses.id;
+
+
+--
+-- Name: bwc_codes_group_retro_tiers; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE bwc_codes_group_retro_tiers (
+    id integer NOT NULL,
+    industry_group integer,
+    discount_tier double precision,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: bwc_codes_group_retro_tiers_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE bwc_codes_group_retro_tiers_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: bwc_codes_group_retro_tiers_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE bwc_codes_group_retro_tiers_id_seq OWNED BY bwc_codes_group_retro_tiers.id;
 
 
 --
@@ -10372,11 +10405,6 @@ CREATE TABLE quotes (
     group_code character varying,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    q_1 boolean,
-    q_2 boolean,
-    q_3 boolean,
-    q_4 boolean,
-    q_5 boolean,
     questionnaire_question_1 boolean,
     questionnaire_question_2 boolean,
     questionnaire_question_3 boolean,
@@ -11289,6 +11317,13 @@ ALTER TABLE ONLY bwc_codes_credibility_max_losses ALTER COLUMN id SET DEFAULT ne
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY bwc_codes_group_retro_tiers ALTER COLUMN id SET DEFAULT nextval('bwc_codes_group_retro_tiers_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY bwc_codes_industry_group_savings_ratio_criteria ALTER COLUMN id SET DEFAULT nextval('bwc_codes_industry_group_savings_ratio_criteria_id_seq'::regclass);
 
 
@@ -11816,6 +11851,14 @@ ALTER TABLE ONLY bwc_codes_constant_values
 
 ALTER TABLE ONLY bwc_codes_credibility_max_losses
     ADD CONSTRAINT bwc_codes_credibility_max_losses_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: bwc_codes_group_retro_tiers_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY bwc_codes_group_retro_tiers
+    ADD CONSTRAINT bwc_codes_group_retro_tiers_pkey PRIMARY KEY (id);
 
 
 --
@@ -13105,8 +13148,11 @@ INSERT INTO schema_migrations (version) VALUES ('20161227211225');
 
 INSERT INTO schema_migrations (version) VALUES ('20170104152306');
 
-INSERT INTO schema_migrations (version) VALUES ('20170117123224');
-
 INSERT INTO schema_migrations (version) VALUES ('20170117124243');
 
 INSERT INTO schema_migrations (version) VALUES ('20170117135428');
+
+INSERT INTO schema_migrations (version) VALUES ('20170119161701');
+
+INSERT INTO schema_migrations (version) VALUES ('20170120191100');
+

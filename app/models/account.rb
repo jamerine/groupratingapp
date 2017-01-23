@@ -20,6 +20,7 @@ class Account < ActiveRecord::Base
 
 
 
+
   def self.update_or_create(attributes)
     obj = first || new
     obj.assign_attributes(attributes)
@@ -308,13 +309,40 @@ class Account < ActiveRecord::Base
     end
   end
 
-  def group_retro
+  def group_retro(user_override=nil)
       self.group_retro_reject
+
+      @industry_group = policy_calculation.policy_industry_group
+
+      if @group_retro_qualification == "accept"
+        group_retro_calc = GroupRating.find_by(representative_id: policy_calculation.representative_id)
+
+
+          @group_retro_tier = BwcCodesGroupRetroTier.find_by(industry_group: @industry_group).discount_tier
+          @group_retro_group_number = @industry_group
+
+
+        if @group_retro_tier.nil?
+          @group_retro_qualification = "reject"
+          @group_retro_premium = nil
+          @group_retro_savings = nil
+        else
+          @group_retro_premium = (policy_calculation.policy_total_standard_premium * (1 + @group_retro_tier)).round(0)
+
+          @group_retro_savings = (policy_calculation.policy_total_standard_premium - @group_retro_premium).round(0)
+        end
+
+        if user_override
+          self.update_attributes(user_override: user_override, group_retro_qualification: @group_retro_qualification, industry_group: @industry_group, group_retro_tier: @group_retro_tier, group_retro_premium: @group_retro_premium, group_retro_savings: @group_retro_savings, group_retro_group_number: @group_retro_group_number)
+        else
+          self.update_attributes(group_retro_qualification: @group_retro_qualification, industry_group: @industry_group, group_retro_tier: @group_retro_tier, group_retro_premium: @group_retro_premium, group_retro_savings: @group_retro_savings, group_retro_group_number: @group_retro_group_number)
+        end
+      else
+        self.update_attributes(group_retro_qualification: "reject")
+      end
   end
 
   def group_retro_reject
-
-
     unless self.predecessor?
       @group_rating = GroupRating.where(representative_id: self.representative_id).last
         # NEGATIVE PAYROLL ON A MANUAL CLASS
@@ -341,13 +369,13 @@ class Account < ActiveRecord::Base
         peo_records.each do |peo_record|
           if (peo_record.manual_class_sf_peo_lease_effective_date.nil? && peo_record.manual_class_sf_peo_lease_termination_date.nil?)
             if
-              ((group_rating_range === peo_record.manual_class_si_peo_lease_effective_date) || (group_rating_range === peo_record.manual_class_si_peo_lease_termination_date))
+              ((group_retro_range === peo_record.manual_class_si_peo_lease_effective_date) || (group_retro_range === peo_record.manual_class_si_peo_lease_termination_date))
               GroupRatingRejection.create(program_type: 'group_retro', account_id: self.id, reject_reason: 'reject_si_peo', representative_id: @group_rating.representative_id)
             end
           else
             if
               ((!peo_record.manual_class_sf_peo_lease_effective_date.nil? && peo_record.manual_class_sf_peo_lease_termination_date.nil?) || (peo_record.manual_class_sf_peo_lease_effective_date > peo_record.manual_class_sf_peo_lease_termination_date)) ||
-              ((group_rating_range === peo_record.manual_class_sf_peo_lease_effective_date) || (group_rating_range === peo_record.manual_class_sf_peo_lease_termination_date))
+              ((group_retro_range === peo_record.manual_class_sf_peo_lease_effective_date) || (group_retro_range === peo_record.manual_class_sf_peo_lease_termination_date))
               GroupRatingRejection.create(program_type: 'group_retro', account_id: self.id, reject_reason: 'reject_sf_peo', representative_id: @group_rating.representative_id)
             end
           end

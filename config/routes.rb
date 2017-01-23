@@ -12,7 +12,9 @@ Rails.application.routes.draw do
 
   resources :accounts do
     get :edit_group_rating
+    get :edit_group_retro
     post :group_rating_calc
+    post :group_retro_calc
     post :group_rating
     post :assign
     post :assign_address

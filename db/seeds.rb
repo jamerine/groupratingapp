@@ -14,6 +14,14 @@
   BwcCodesPeoList.import_table('https://s3.amazonaws.com/grouprating/BwcSupportTables/peo_list.csv')
   BwcCodesConstantValue.import_table('https://s3.amazonaws.com/grouprating/BwcSupportTables/bwc_codes_constant_values.csv')
 
+  BwcCodesGroupRetroTier.create([
+    { industry_group: 3, discount_tier: -0.51 },
+    { industry_group: 7, discount_tier: -0.51 },
+    { industry_group: 4, discount_tier: -0.49 },
+    { industry_group: 8, discount_tier: -0.49 },
+    { industry_group: 5, discount_tier: -0.43 },
+    ])
+
   representatives = Representative.create([
     { representative_number: 219406, abbreviated_name: 'ARM', company_name: 'Alternative Risk Management' },
     { representative_number: 218265, abbreviated_name: 'COSE', company_name: 'Council of Smaller Enterprises' },
@@ -41,6 +49,7 @@ User.create({email: 'paul@dittoh.com', password: 'password'})
 User.create({email: 'millercj320@gmail.com', password: 'password'})
 User.create({email: 'dmaag@alternativeriskltd.com', password: 'tigers'})
 User.create({email: 'steve.chmielewski@minutemenhr.com', password: 'indians'})
+User.create({email: 'tbetz@alternativeriskltd.com', password: 'password'})
 
 
 
