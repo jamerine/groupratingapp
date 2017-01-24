@@ -16,11 +16,11 @@
 
     <div class="col-md-3">
       <h5>Policy Updated at:</h5>
-      <h4><%= @policy_calculation.updated_at.in_time_zone("America/New_York").strftime("%m/%d/%y @ %I:%M %p") %></h4>
+      <h4><%= @policy_calculation.updated_at.try(:in_time_zone, "America/New_York").try(:strftime, "%m/%d/%y @ %I:%M %p") %></h4>
       <h5>Status Effective Date:</h5>
-      <h4><%= @policy_calculation.coverage_status_effective_date.strftime("%b %d, %Y") %></h4>
+      <h4><%= @policy_calculation.coverage_status_effective_date.try(:strftime, "%b %d, %Y") %></h4>
       <h5>Policy Creation Date:</h5>
-      <h4><%= @policy_calculation.policy_creation_date.strftime("%b %d, %Y") %></h4>
+      <h4><%= @policy_calculation.policy_creation_date.try(:strftime, "%b %d, %Y") %></h4>
     </div>
   </div>
 </div>
