@@ -7830,7 +7830,8 @@ CREATE TABLE affiliates (
     internal_external integer DEFAULT 0,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    external_id character varying
+    external_id character varying,
+    company_name character varying
 );
 
 
