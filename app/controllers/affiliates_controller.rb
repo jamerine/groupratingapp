@@ -27,11 +27,22 @@ class AffiliatesController < ApplicationController
 
   end
 
+  def import_affiliate_process
+
+    CSV.foreach(params[:file].path, headers: true) do |row|
+      affiliate_hash = row.to_hash # exclude the price field
+      AffiliateImport.perform_async(affiliate_hash)
+    end
+
+    redirect_to root_url, notice: "Affiliates imported."
+  end
+
+
 
 
   private
 
   def affiliate_params
-    params.require(:affiliate).permit(:first_name, :last_name, :role, :email_address)
+    params.require(:affiliate).permit(:first_name, :last_name, :role, :email_address, :company_name, :external_id, :internal_external, :salesforce_id)
   end
 end

@@ -1,4 +1,6 @@
 class ContactsController < ApplicationController
+  require 'csv'
+
   def new
     @account = Account.find(params[:account_id])
     @contact = Contact.new
@@ -22,6 +24,20 @@ class ContactsController < ApplicationController
     else
       redirect_to @account, notice: "Error removing contact"
     end
+  end
+
+  def index
+    @representatives = Representative.all
+  end
+
+  def import_contact_process
+
+    CSV.foreach(params[:file].path, headers: true) do |row|
+      contact_hash = row.to_hash # exclude the price field
+      ContactImport.perform_async(contact_hash)
+    end
+
+    redirect_to root_url, notice: "Contacts imported."
   end
 
 
