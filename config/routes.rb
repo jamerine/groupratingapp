@@ -18,11 +18,18 @@ Rails.application.routes.draw do
     post :group_rating
     post :assign
     post :assign_address
+    collection { post :import_account_process }
   end
 
-  resources :affiliates
+  resources :affiliates do
+    collection { post :import_affiliate_process }
+  end
 
-  resources :contacts
+
+  resources :contacts do
+    collection { post :import_contact_process }
+  end
+
 
   resources :quotes
 

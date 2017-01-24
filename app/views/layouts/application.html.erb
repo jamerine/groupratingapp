@@ -51,6 +51,9 @@
 
           <ul class="nav navbar-nav navbar-right">
             <% if user_signed_in? %>
+              <% if current_user.id = 1 %>
+              <li><%= link_to 'Conversion Inserts', contacts_path %></li>
+              <% end %>
               <li><%= link_to 'Representatives', representatives_path %></li>
               <li><%= link_to 'Calculate', group_ratings_path %></li>
               <li><%= link_to 'Accounts', accounts_path %></li>

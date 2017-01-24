@@ -1,0 +1,29 @@
+<div class="container">
+  <div class="row">
+    <h3>Import a CSV File for Contacts - <%= link_to 'View Template', '#', class: 'btn btn-info btn-sm' %></h3>
+    <%= form_tag import_contact_process_contacts_path, multipart: true do %>
+      <%= file_field_tag :file %>
+      <br>
+      <%= submit_tag "Import Contacts CSV" %>
+    <% end %>
+  </div>
+
+  <div class="row">
+    <h3>Import a CSV File for Affiliates - <%= link_to 'View Template', '#', class: 'btn btn-info btn-sm' %></h3>
+    <%= form_tag import_affiliate_process_affiliates_path, multipart: true do %>
+      <%= file_field_tag :file %>
+      <br>
+      <%= submit_tag "Import Affiliates CSV" %>
+    <% end %>
+  </div>
+
+  <div class="row">
+    <h3>Import a CSV File for Account Update - <%= link_to 'View Template', '#', class: 'btn btn-info btn-sm' %></h3>
+    <%= form_tag import_account_process_accounts_path, multipart: true do %>
+      <%= file_field_tag :file %>
+      <br>
+      <%= submit_tag "Import Accounts CSV" %>
+    <% end %>
+  </div>
+
+</div>
