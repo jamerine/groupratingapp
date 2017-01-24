@@ -51,7 +51,7 @@
 
           <ul class="nav navbar-nav navbar-right">
             <% if user_signed_in? %>
-              <% if current_user.id = 1 || current_user.id = 2 %>
+              <% if current_user.id == 1 || current_user.id == 2 %>
               <li><%= link_to 'Conversion Inserts', contacts_path %></li>
               <% end %>
               <li><%= link_to 'Representatives', representatives_path %></li>
