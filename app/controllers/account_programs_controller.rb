@@ -43,6 +43,17 @@ class AccountProgramsController < ApplicationController
     end
   end
 
+  def import_account_program_process
+
+    CSV.foreach(params[:file].path, headers: true) do |row|
+      hash = row.to_hash # exclude the price field
+      AccountProgramImport.perform_async(hash)
+    end
+
+    redirect_to root_url, notice: "Account Programs imported."
+  end
+
+
 
   private
 

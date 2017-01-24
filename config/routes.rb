@@ -33,7 +33,9 @@ Rails.application.routes.draw do
 
   resources :quotes
 
-  resources :account_programs
+  resources :account_programs do
+    collection { post :import_account_program_process }
+  end
 
   resources :imports do
     collection { delete :destroy }
