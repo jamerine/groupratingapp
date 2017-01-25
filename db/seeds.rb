@@ -44,12 +44,12 @@
 
     ])
 
-User.create({email: 'jason@dittoh.com', password: 'Jamrine08'})
-User.create({email: 'paul@dittoh.com', password: 'password'})
-User.create({email: 'millercj320@gmail.com', password: 'password'})
-User.create({email: 'dmaag@alternativeriskltd.com', password: 'tigers'})
-User.create({email: 'steve.chmielewski@minutemenhr.com', password: 'indians'})
-User.create({email: 'tbetz@alternativeriskltd.com', password: 'password'})
+User.create({first_name: "Jason", last_name: "Amerine", email: 'jason@dittoh.com', password: 'Jamrine08'})
+User.create({first_name: "Paul", last_name: "Collins", email: 'paul@dittoh.com', password: 'password'})
+User.create({first_name: "Cory", last_name: "Miller", email: 'millercj320@gmail.com', password: 'password'})
+User.create({first_name: "Doug", last_name: "Maag", email: 'dmaag@alternativeriskltd.com', password: 'tigers'})
+User.create({first_name: "Steve", last_name: "Chmielewski", email: 'steve.chmielewski@minutemenhr.com', password: 'indians'})
+User.create({first_name: "Tim", last_name: "Betz", email: 'tbetz@alternativeriskltd.com', password: 'password'})
 
 
 

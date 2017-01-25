@@ -45,6 +45,8 @@ Rails.application.routes.draw do
     collection { delete :destroy}
   end
 
+  resources :representatives_users
+  
   resources :group_ratings
 
   resources :payroll_calculations

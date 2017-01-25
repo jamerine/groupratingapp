@@ -11200,7 +11200,9 @@ CREATE TABLE users (
     current_sign_in_ip inet,
     last_sign_in_ip inet,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    first_name character varying,
+    last_name character varying
 );
 
 
@@ -13156,4 +13158,6 @@ INSERT INTO schema_migrations (version) VALUES ('20170117135428');
 INSERT INTO schema_migrations (version) VALUES ('20170119161701');
 
 INSERT INTO schema_migrations (version) VALUES ('20170120191100');
+
+INSERT INTO schema_migrations (version) VALUES ('20170125140530');
 

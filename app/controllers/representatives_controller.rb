@@ -5,11 +5,8 @@ class RepresentativesController < ApplicationController
 
   def show
     @representative = Representative.find(params[:id])
-    @policy_calculations = @representative.policy_calculations
-    @manual_class_calculations = @representative.manual_class_calculations
-    @group_ratings = @representative.group_ratings
-    @newest_group_rating = @group_ratings.last
-
+    @accounts = @representative.accounts
+    @users = @representative.users
     # respond_to do |format|
     #   format.html
     #   format.csv { send_data @policy_calculations.to_csv, filename: "#{@representative.abbreviated_name}_policies_#{Date.today}.csv" }
