@@ -114,13 +114,14 @@
   <div class="container">
     <hr>
     <div class="row text-center">
-      <h3>Users</h3>
+      <h3>Users</h3> <%= link_to "Add User To #{ @representative.abbreviated_name}", '#', class: 'btn btn-success btn-sm' %>
     </div>
     <table class="table table-hover table-striped">
       <thead>
         <tr>
           <th>Name</th>
           <th>Email</th>
+          <th>Role</th>
           <th>Logins</th>
           <th>Last Login</th>
           <th></th>
@@ -131,6 +132,7 @@
         <tr>
           <td><%= user.full_name %> </td>
           <td><%= user.email %> </td>
+          <td><%= user.role %> </td>
           <td><%= user.sign_in_count %></td>
           <td><%= user.try(:last_sign_in_at).try(:strftime, "%-m/%-d/%y") %></td>
           <td><%= link_to 'Remove', representatives_user_path(user_id: user.id, representative_id: @representative.id), method: :delete, class: 'btn btn-danger btn-sm' %></td>
