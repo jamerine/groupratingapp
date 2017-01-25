@@ -7,6 +7,9 @@ class User < ActiveRecord::Base
   has_many :representatives_users
   has_many :representatives, through: :representatives_users
 
+  enum role: [:admin, :client, :general, :read_only ]
+
+
   def full_name
     "#{first_name} #{last_name}"
   end
