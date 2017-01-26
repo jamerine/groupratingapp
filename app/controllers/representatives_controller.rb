@@ -11,8 +11,6 @@ class RepresentativesController < ApplicationController
     #   format.html
     #   format.csv { send_data @policy_calculations.to_csv, filename: "#{@representative.abbreviated_name}_policies_#{Date.today}.csv" }
     # end
-
-
   end
 
   def export_policies
