@@ -65,13 +65,13 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-md-6">
+        <div class=" well well-lg col-md-6">
           <h3>Exports</h3>
           <%= link_to "Account Export", representative_export_accounts_path(params[:id], format: "csv"), class: 'btn btn-default' %>
           <%= link_to "Weekly 159 Export", representative_export_159_request_weekly_path(params[:id], format: "csv"), class: 'btn btn-default' %>
         </div>
 
-        <div class="col-md-6">
+        <div class=" well well-lg col-md-6">
           <h3>Imports</h3>
           <%= link_to "Sample Import Button", '#', class: 'btn btn-default' %>
           <%= link_to "Sample Import Button", '#', class: 'btn btn-default' %>
@@ -135,7 +135,8 @@
           <td><%= user.role %> </td>
           <td><%= user.sign_in_count %></td>
           <td><%= user.try(:last_sign_in_at).try(:strftime, "%-m/%-d/%y") %></td>
-          <td><%= link_to 'Remove', representatives_user_path(user_id: user.id, representative_id: @representative.id), method: :delete, class: 'btn btn-danger btn-sm' %></td>
+          <td>
+            <%= link_to 'Remove', representatives_user_path(user_id: user.id, representative_id: @representative.id), method: :delete, class: 'btn btn-danger btn-sm' %></td>
         </tr>
         <% end %>
       </tbody>
