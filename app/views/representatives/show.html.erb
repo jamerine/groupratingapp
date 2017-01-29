@@ -114,7 +114,7 @@
   <div class="container">
     <hr>
     <div class="row text-center">
-      <h3>Users</h3> <%= link_to "Add User To #{ @representative.abbreviated_name}", '#', class: 'btn btn-success btn-sm' %>
+      <h3>Users</h3> <%= link_to "Add User To #{ @representative.abbreviated_name}", new_user_registration_path, class: 'btn btn-success btn-sm' %>
     </div>
     <table class="table table-hover table-striped">
       <thead>
