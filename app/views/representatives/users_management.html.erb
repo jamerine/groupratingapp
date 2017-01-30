@@ -46,6 +46,7 @@
 
   <div class="row text-center">
     <h3>Users to Add</h3>
+    <%= link_to 'Create New User', new_user_path(representative_id: @representative.id) %>
     <table class="table table-hover table-striped">
       <thead>
         <tr>

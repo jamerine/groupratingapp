@@ -1,13 +1,12 @@
 <div class="container">
   <div class="jumbotron">
-    <h2>Sign up</h2>
+    <h2>Sign Up New User</h2>
 
-    <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
-      <%= devise_error_messages! %>
+    <%= form_for User.new, url: create_user_path(representative_id: @representative.id) do |f| %>
 
       <div class="field">
         <%= f.label :role %>
-        <%= f.select :role, options_for_select(@roles.collect { |s| [s[0].humanize, s[0]] }, selected: params[:program_type]), {} , class: "form-control" %>
+        <%= f.select :role, options_for_select(@roles.collect { |s| [s[0].humanize, s[0]] },), {} , class: "form-control" %>
       </div>
 
       <div class="field">
@@ -44,7 +43,6 @@
       </div>
     <% end %>
     <br>
-    <%= render "devise/shared/links" %>
 
   </div>
 </div>
