@@ -13,6 +13,12 @@ class RepresentativesController < ApplicationController
     # end
   end
 
+  def users_management
+    @representative = Representative.find(params[:representative_id])
+    @representative_users = @representative.users
+    @available_users = User.where.not(id: @representative_users)
+  end
+
   def export_policies
     @representative = Representative.find(params[:representative_id])
 
