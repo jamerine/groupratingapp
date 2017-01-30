@@ -46,7 +46,7 @@ Rails.application.routes.draw do
   end
 
   resources :representatives_users
-  
+
   resources :group_ratings
 
   resources :payroll_calculations
@@ -68,6 +68,7 @@ Rails.application.routes.draw do
   end
 
   resources :representatives do
+    get :users_management
     post :fee_calculations
     get :export_manual_classes
     get :export_policies

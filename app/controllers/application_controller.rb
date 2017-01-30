@@ -6,6 +6,7 @@ class ApplicationController < ActionController::Base
   before_action :authenticate_user!, :set_paper_trail_whodunnit
   before_action :find_representatives
 
+
   private
 
   def find_representatives
@@ -14,6 +15,7 @@ class ApplicationController < ActionController::Base
       @representatives = Representative.where(id: @representatives_users)
     end
   end
+
 
   def configure_permitted_parameters
     devise_parameter_sanitizer.permit(:sign_up, keys: [:first_name, :last_name, :role])
