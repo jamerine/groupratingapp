@@ -5,7 +5,6 @@ class UsersController < ApplicationController
     @representative = Representative.find(params[:representative_id])
     @user = User.new
     @roles = User.roles
-    @roles.delete :admin
   end
 
   def create
