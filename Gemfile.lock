@@ -173,6 +173,8 @@ GEM
       slop (~> 3.4)
     public_suffix (2.0.4)
     puma (3.6.2)
+    pundit (1.1.0)
+      activesupport (>= 3.0.0)
     rack (1.6.5)
     rack-protection (1.5.3)
       rack
@@ -341,6 +343,7 @@ DEPENDENCIES
   paper_trail
   pg (~> 0.15)
   puma
+  pundit
   rails (= 4.2.6)
   rails_12factor
   redis-rails

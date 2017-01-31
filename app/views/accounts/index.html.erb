@@ -1,7 +1,11 @@
 <div class="container">
   <div class="jumbotron text-center">
     <h1>Accounts</h1>
-    <%= link_to 'Create New Account', new_account_path, class: 'btn btn-primary' %>
+    <% if policy(@accounts).new? %>
+      <%= link_to 'Create New Account', new_account_path, class: 'btn btn-primary' %>
+    <% else %>
+      <%= link_to 'Create New Account', new_account_path, class: 'btn btn-default disabled' %>
+    <% end %>
   </div>
 
   <%= form_tag(accounts_path, :method => "get", id: "search-form", remote: true ) do %>

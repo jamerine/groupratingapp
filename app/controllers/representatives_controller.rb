@@ -15,6 +15,7 @@ class RepresentativesController < ApplicationController
 
   def users_management
     @representative = Representative.find(params[:representative_id])
+    authorize @representative
     @representative_users = @representative.users
     @available_users = User.where.not(id: @representative_users)
   end

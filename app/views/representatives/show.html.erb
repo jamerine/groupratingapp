@@ -3,7 +3,7 @@
       <%= link_to 'Return to All Representatives', representatives_path, class: 'btn btn-default' %>
 
   </div>
-  <% if current_user.id == 1 || current_user.id == 2 %>
+  <% if policy(@representative).conversion? %>
   <div class="container text-center">
     <hr>
     <div class="row">
@@ -96,7 +96,10 @@
   <div class="container">
     <hr>
     <div class="row text-center">
-      <h3>Users</h3> <%= link_to "Add Users", representative_users_management_path(representative_id: @representative.id), class: 'btn btn-success btn-sm' %>
+      <h3>Users</h3>
+      <% if policy(@representative).users_management? %>
+        <%= link_to "Add Users", representative_users_management_path(representative_id: @representative.id), class: 'btn btn-success btn-sm' %>
+      <% end %>
     </div>
     <table class="table table-hover table-striped">
       <thead>
@@ -117,7 +120,11 @@
           <td><%= user.role %> </td>
           <td><%= user.sign_in_count %></td>
           <td><%= user.try(:last_sign_in_at).try(:strftime, "%-m/%-d/%y") %></td>
-          <td><%= link_to 'Remove', representatives_user_path(representative_id: @representative.id, user_id: user.id), method: :delete, class: 'btn btn-danger btn-sm' %></td>
+          <td>
+            <% if policy(@representative).users_management? %>
+              <%= link_to 'Remove', representatives_user_path(representative_id: @representative.id, user_id: user.id), method: :delete, class: 'btn btn-danger btn-sm' %>
+            <% end %>
+          </td>
         </tr>
         <% end %>
       </tbody>

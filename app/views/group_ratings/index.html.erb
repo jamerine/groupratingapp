@@ -1,7 +1,11 @@
 <div class="container">
   <div class="jumbotron text-center">
     <h1>Group Rating Calculations</h1>
-    <%= link_to 'Create New Group Rating', new_group_rating_path, class: 'btn btn-primary' %>
+    <% if policy(@group_ratings).new? %>
+      <%= link_to 'Create New Group Rating', new_group_rating_path, class: 'btn btn-primary' %>
+    <% else %>
+      <%= link_to 'Create New Group Rating', new_group_rating_path, class: 'btn btn-default disabled' %>
+    <% end %>
   </div>
   <div>
     <table class="table">
@@ -18,7 +22,7 @@
       <tbody>
         <% @group_ratings.order("id desc").each do |group_rating| %>
         <tr>
-          <td><%= group_rating.representative.abbreviated_name %> </td> 
+          <td><%= group_rating.representative.abbreviated_name %> </td>
           <td><%= group_rating.import.import_status %> </td></td>
           <td><%= group_rating.status %> </td>
           <td><%= group_rating.created_at.in_time_zone("America/New_York").strftime("%m/%d/%y @ %I:%M %p") %> </td>

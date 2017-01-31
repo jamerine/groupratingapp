@@ -16,6 +16,7 @@ class GroupRatingsController < ApplicationController
 
   def new
     @group_rating = GroupRating.new
+    authorize @group_rating
   end
 
   def create

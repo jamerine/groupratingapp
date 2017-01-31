@@ -28,12 +28,14 @@ class AccountsController < ApplicationController
 
   def new
     @account = Account.new
+    authorize @account
     @representatives = Representative.all
     @statuses = Account.statuses
   end
 
   def create
     @account = Account.new(account_params)
+    authorize @account
     @representative = Representative.find(@account.representative_id)
     if @account.save
       @policy_calculation = PolicyCalculation.where(policy_number: @account.policy_number_entered).update_or_create(policy_number: @account.policy_number_entered, representative_id: @representative.id, representative_number: @representative.representative_number, account_id: @account.id)
@@ -48,6 +50,7 @@ class AccountsController < ApplicationController
 
   def edit
     @account = Account.find(params[:id])
+    authorize @account
     @representatives = Representative.all
     @representative = Representative.find(@account.representative_id)
     @policy_calculation = PolicyCalculation.find_by(account_id: @account.id)
@@ -61,6 +64,7 @@ class AccountsController < ApplicationController
 
   def update
     @account = Account.find(params[:id])
+    authorize @account
     @statuses = Account.statuses
     @account.assign_attributes(account_params)
     if @account.save
@@ -87,6 +91,7 @@ class AccountsController < ApplicationController
 
   def edit_group_rating
     @account = Account.find(params[:account_id])
+    authorize @account
     @policy_calculation = @account.policy_calculation
     @group_rating_qualifications = Account.group_rating_qualifications
     @group_rating_qualifications[:auto_run] = "3"
@@ -95,6 +100,7 @@ class AccountsController < ApplicationController
 
   def edit_group_retro
     @account = Account.find(params[:account_id])
+    authorize @account
     @policy_calculation = @account.policy_calculation
     @group_retro_qualifications = ["accept", "pending_predecessor", "reject", "auto_run"]
     @group_retro_tier = BwcCodesGroupRetroTier.find_by(industry_group: @account.industry_group).discount_tier

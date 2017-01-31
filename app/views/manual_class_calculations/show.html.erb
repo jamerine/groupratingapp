@@ -32,7 +32,7 @@
     </div>
 
   </div>
-
-<%= render partial: 'payroll_calculations/form', locals: { payroll_calculation: @new_payroll_calculation, manual_class_calculation: @manual_class_calculation} %>
-
+  <% if policy(@manual_class_calculation).new? %>
+    <%= render partial: 'payroll_calculations/form', locals: { payroll_calculation: @new_payroll_calculation, manual_class_calculation: @manual_class_calculation} %>
+  <% end %>
 <% end %>
