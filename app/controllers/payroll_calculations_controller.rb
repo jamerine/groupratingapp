@@ -1,16 +1,13 @@
 class PayrollCalculationsController < ApplicationController
 
-
-
   def new
     @manual_class_calculation = ManualClassCalculation.find(params[:id])
     @payroll_calculation = PayrollCalculation.new
   end
 
-
   def create
     @payroll_calculation = PayrollCalculation.new(payroll_calculation_params)
-
+    authorize @payroll_calculation
     @process_payroll = ProcessPayrollAllTransactionsBreakdownByManualClass.new(representative_number: @payroll_calculation.representative_number, policy_number: @payroll_calculation.policy_number, manual_number: @payroll_calculation.manual_number, manual_class_type: @payroll_calculation.manual_class_type, reporting_period_start_date: @payroll_calculation.reporting_period_start_date, reporting_period_end_date: @payroll_calculation.reporting_period_end_date,  manual_class_payroll: @payroll_calculation.manual_class_payroll, payroll_origin: @payroll_calculation.payroll_origin, data_source: @payroll_calculation.data_source)
 
     @process_payroll.save!
@@ -33,7 +30,7 @@ class PayrollCalculationsController < ApplicationController
 
   def create_form_2
     @payroll_calculation = PayrollCalculation.new(payroll_calculation_params)
-
+    authorize @policy_calculation
     @process_payroll = ProcessPayrollAllTransactionsBreakdownByManualClass.new(representative_number: @payroll_calculation.representative_number, policy_number: @payroll_calculation.policy_number, manual_number: @payroll_calculation.manual_number, manual_class_type: @payroll_calculation.manual_class_type, reporting_period_start_date: @payroll_calculation.reporting_period_start_date, reporting_period_end_date: @payroll_calculation.reporting_period_end_date,  manual_class_payroll: @payroll_calculation.manual_class_payroll, payroll_origin: @payroll_calculation.payroll_origin, data_source: @payroll_calculation.data_source)
 
     @process_payroll.save!
@@ -57,6 +54,7 @@ class PayrollCalculationsController < ApplicationController
 
   def destroy
     @payroll_calculation = PayrollCalculation.find(params[:id])
+    authorize @payroll_calculation
     @manual_class_calculation = @payroll_calculation.manual_class_calculation
     @policy_calculation = @manual_class_calculation.policy_calculation
     @process_payroll = ProcessPayrollAllTransactionsBreakdownByManualClass.find(@payroll_calculation.process_payroll_all_transactions_breakdown_by_manual_class_id)

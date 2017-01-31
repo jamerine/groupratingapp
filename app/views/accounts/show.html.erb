@@ -23,7 +23,11 @@
           <h4><%= @account.updated_at.in_time_zone("America/New_York").strftime("%m/%d/%y %I:%M %p") %></h4>
         </div>
       </div>
-      <%= link_to "Edit Account Info", edit_account_path(params[:id]), class: 'btn btn-primary' %>
+      <% if policy(@account).edit? %>
+        <%= link_to "Edit Account Info", edit_account_path(params[:id]), class: 'btn btn-primary' %>
+      <% else %>
+        <%= link_to "Edit Account Info", edit_account_path(params[:id]), class: 'btn btn-default disabled' %>
+      <% end %>
     </div>
   </div>
 
@@ -50,8 +54,13 @@
         <li><a href="https://s3.amazonaws.com/grouprating/Images/ReportROCReport.tiff">ROC Report</a></li>
       </ul>
   <% unless @account.predecessor? || @account.invalid_policy_number? %>
-    <%= link_to "Manually Process", account_edit_group_rating_path(params[:id]), class: 'btn btn-primary', method: :get %>
+    <% if policy(@account).edit? %>
+      <%= link_to "Manually Process", account_edit_group_rating_path(params[:id]), class: 'btn btn-primary', method: :get %>
+    <% else %>
+      <%= link_to "Manually Process", account_edit_group_rating_path(params[:id]), class: 'btn btn-default disabled', method: :get %>
+    <% end %>
   <% end %>
+
   <%= link_to "Change History", versions_path(item_id: @account.id, item_type: @account.class.name), class: 'btn btn-info', method: :get %>
 </div>
 
@@ -99,7 +108,13 @@
           <td><%= @account.group_rating_tier %> </td>
           <td><%= number_to_currency(@account.group_premium) %></td>
           <td><%= number_to_currency(@account.group_savings) %></td>
-          <td><%= link_to "Override", account_edit_group_rating_path(params[:id]), class: 'btn btn-primary btn-sm', method: :get %></td>
+          <td>
+            <% if policy(@account).edit? %>
+              <%= link_to "Override", account_edit_group_rating_path(params[:id]), class: 'btn btn-primary btn-sm', method: :get %>
+            <% else %>
+              <%= link_to "Override", account_edit_group_rating_path(params[:id]), class: 'btn btn-default btn-sm disabled', method: :get %>
+            <% end %>
+          </td>
 
         </tr>
         <tr>
@@ -114,7 +129,13 @@
           <td><%= @account.group_retro_tier %></td>
           <td><%= number_to_currency(@account.group_retro_premium) %></td>
           <td><%= number_to_currency(@account.group_retro_savings) %></td>
-          <td><%= link_to "Override", account_edit_group_retro_path(params[:id]), class: 'btn btn-primary btn-sm disabled', method: :get %></td>
+          <td>
+            <% if policy(@account).edit? %>
+              <%= link_to "Override", account_edit_group_retro_path(params[:id]), class: 'btn btn-primary btn-sm disabled', method: :get %>
+            <% else %>
+              <%= link_to "Override", account_edit_group_retro_path(params[:id]), class: 'btn btn-default btn-sm disabled', method: :get %>
+            <% end %>
+          </td>
         </tr>
       </tbody>
     </table>
