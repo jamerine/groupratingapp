@@ -143,15 +143,28 @@ class AccountsController < ApplicationController
   #     redirect_to @account
   # end
 
+  # def import_account_process
+  #
+  #   CSV.foreach(params[:file].path, headers: true) do |row|
+  #     hash = row.to_hash # exclude the price field
+  #     AccountImport.perform_async(hash)
+  #   end
+  #
+  #   redirect_to root_url, notice: "Accounts imported."
+  # end
+
   def import_account_process
-
-    CSV.foreach(params[:file].path, headers: true) do |row|
-      hash = row.to_hash # exclude the price field
-      AccountImport.perform_async(hash)
+    begin
+      CSV.foreach(params[:file].path, headers: true) do |row|
+        hash = row.to_hash # exclude the price field
+        AccountImport.perform_async(hash)
+      end
+      redirect_to root_url, notice: "Accounts imported."
+    rescue
+      redirect_to :back, alert: "There was an error importing file.  Please ensure file columns and file type are correct"
     end
-
-    redirect_to root_url, notice: "Accounts imported."
   end
+
 
   private
 

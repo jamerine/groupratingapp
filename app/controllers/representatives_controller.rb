@@ -64,6 +64,31 @@ class RepresentativesController < ApplicationController
   end
 
 
+  # def import_account_process
+  #   @representative = Representative.find(params[:id])
+  #   begin
+  #     CSV.foreach(params[:file].path, headers: true) do |row|
+  #       hash = row.to_hash # exclude the price field
+  #       AccountImport.perform_async(hash)
+  #     end
+  #     redirect_to root_url, notice: "Accounts imported."
+  #   rescue
+  #     redirect_to @representative, alert: "There was an error importing file.  Please ensure file columns and file type are correct"
+  #   end
+  # end
+
+  def import_contact_process
+    @representative = Representative.find(params[:representative_id])
+    begin
+      CSV.foreach(params[:file].path, headers: true) do |row|
+        contact_hash = row.to_hash # exclude the price field
+        ContactImport.perform_async(contact_hash)
+      end
+      redirect_to @representative, notice: "Contacts imported."
+    rescue
+      redirect_to @representative, alert: "There was an error importing file.  Please ensure file columns and file type are correct"
+    end
+  end
 
 
 
