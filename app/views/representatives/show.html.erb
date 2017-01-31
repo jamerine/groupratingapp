@@ -165,31 +165,33 @@
       <br>
       <div class="row">
         <div class="col-md-4">
-          <label><a href="#">Insert Contacts</a></label>
+          <label><a href="https://s3.amazonaws.com/piarm/IMPORT_TEMPLATES/contacts_template.csv">Insert Contacts</a></label>
           <br>
-          <%= form_tag import_contact_process_contacts_path, multipart: true do %>
+          <%= form_tag representative_import_contact_process_path(@representative.id), multipart: true do %>
           <%= file_field_tag :file, class: 'form-control' %>
           <br>
-          <%= submit_tag "Import Contacts", class: 'form-control btn btn-primary disabled' %>
+          <%= submit_tag "Import Contacts", class: 'form-control btn btn-primary' %>
           <% end %>
         </div>
         <div class="col-md-4">
-          <label><a href="#">Insert Payroll</a></label>
+          <h1>Insert Payroll Process</h1>
+          <!-- <label><a href="#">Insert Payroll</a></label>
           <br>
           <%= form_tag import_contact_process_contacts_path, multipart: true do %>
           <%= file_field_tag :file, class: 'form-control' %>
           <br>
           <%= submit_tag "Import Contacts", class: 'form-control btn btn-primary disabled' %>
-          <% end %>
+          <% end %> -->
         </div>
         <div class="col-md-4">
-          <label><a href="#">Insert Claims</a></label>
+          <h1>Insert Claims Process</h1>
+          <!-- <label><a href="#">Insert Claims</a></label>
           <br>
           <%= form_tag import_contact_process_contacts_path, multipart: true do %>
           <%= file_field_tag :file, class: 'form-control' %>
           <br>
           <%= submit_tag "Import Contacts", class: 'form-control btn btn-primary disabled' %>
-          <% end %>
+          <% end %> -->
         </div>
 
       </div>
