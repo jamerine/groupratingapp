@@ -17,9 +17,9 @@
   </thead>
   <tbody>
     <tr>
-      <td><%= quote.effective_start_date.strftime("%-m/%-d/%y") %> - <%= quote.effective_end_date.strftime("%-m/%-d/%y")  %></td>
+      <td><%= quote.try(:effective_start_date).try(:strftime, "%-m/%-d/%y") %> - <%= quote.try(:effective_end_date).try(:strftime, "%-m/%-d/%y")  %></td>
       <td><%= quote.try(:program_type).try(:humanize)  %></td>
-      <td> <%= quote.invoice_number %> </td>
+      <td> <%= quote.try(:invoice_number) %> </td>
       <td><%= quote.try(:status).try(:humanize)  %></td>
       <td><%= number_to_currency(quote.try(:fees))  %></td>
       <td><%= quote.quote_date.strftime("%-m/%-d/%y")  %></td>
