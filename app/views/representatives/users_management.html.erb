@@ -34,7 +34,7 @@
         <tr>
           <td><%= user.full_name %> </td>
           <td><%= user.email %> </td>
-          <td><%= user.role %> </td>
+          <td><%= user.try(:role).try(:humanize) %> </td>
           <td><%= user.sign_in_count %></td>
           <td><%= user.try(:last_sign_in_at).try(:strftime, "%-m/%-d/%y") %></td>
         </tr>
@@ -63,7 +63,7 @@
         <tr>
           <td><%= user.full_name %> </td>
           <td><%= user.email %> </td>
-          <td><%= user.role %> </td>
+          <td><%= user.role.try(:humanize) %> </td>
           <td><%= user.sign_in_count %></td>
           <td><%= user.try(:last_sign_in_at).try(:strftime, "%-m/%-d/%y") %></td>
           <td><%= link_to 'Add User', representatives_users_path(representative_id: @representative.id, user_id: user.id), method: :post, class: 'btn btn-success btn-sm' %></td>
