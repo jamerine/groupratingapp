@@ -148,7 +148,6 @@
     <% if @account.quote.nil? %>
       <p>No quote generated</p>
     <% else %>
-      <%= render partial: 'quotes/quote', locals: { quote: @account.quote} %>
     <% end %>
   </div>
 </div>
