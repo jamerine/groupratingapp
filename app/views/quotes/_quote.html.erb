@@ -22,7 +22,7 @@
       <td> <%= quote.try(:invoice_number) %> </td>
       <td><%= quote.try(:status).try(:humanize)  %></td>
       <td><%= number_to_currency(quote.try(:fees))  %></td>
-      <td><%= quote.quote_date.strftime("%-m/%-d/%y")  %></td>
+      <td><%= quote.try(:quote_date).try(:strftime, "%-m/%-d/%y")  %></td>
       <td>
         <% if quote.ac2_signed_on.nil? %>
           <span class="glyphicon glyphicon-remove text-danger" aria-hidden="true"></span>
