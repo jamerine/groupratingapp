@@ -12,7 +12,7 @@ class QuotesController < ApplicationController
     @account = Account.find(params[:quote][:account_id])
     @quote = Quote.new(quote_params)
     if !@account.quote.nil?
-      @account.quote.destroy!
+      @account.quote.destroy
     end
     if @quote.save
       @quote.generate_invoice_number
