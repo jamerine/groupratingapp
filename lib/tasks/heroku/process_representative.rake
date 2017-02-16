@@ -1,9 +1,8 @@
   require 'sidekiq/api'
-  
+
 namespace :heroku do
   desc "This task is called by the Heroku scheduler add-on and calls Arm to begin processing"
   task :process_representative => :environment do
-
 
     puts "Group Rating Processing for ARM"
     stats = Sidekiq::Stats.new.fetch_stats!
