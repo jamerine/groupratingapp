@@ -20,14 +20,6 @@ class RepresentativesController < ApplicationController
     @available_users = User.where.not(id: @representative_users)
   end
 
-  def export_policies
-    @representative = Representative.find(params[:representative_id])
-
-    PolicyExport.perform_async(current_user.id, @representative.id)
-    flash[:notice] = "Your policy export is now being generated.  Please checkout your email for your generated file."
-    redirect_to @representative
-  end
-
   def export_accounts
     @representative = Representative.find(params[:representative_id])
     AccountPolicyExport.perform_async(current_user.id, @representative.id)
@@ -39,13 +31,10 @@ class RepresentativesController < ApplicationController
 
   def export_manual_classes
     @representative = Representative.find(params[:representative_id])
-    @manual_class_calculations = @representative.manual_class_calculations
+    ManualClassExport.perform_async(current_user.id, @representative.id)
 
-
-    # respond_to do |format|
-    #   format.html
-    #   format.csv { send_data @manual_class_calculations.to_csv, filename: "#{@representative.abbreviated_name}_manual_classes_#{Date.today}.csv" }
-    # end
+    flash[:notice] = "Your Manual Class export is now being generated.  Please checkout your email for your generated file."
+    redirect_to @representative
 
   end
 
