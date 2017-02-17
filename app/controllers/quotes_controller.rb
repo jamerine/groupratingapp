@@ -11,8 +11,9 @@ class QuotesController < ApplicationController
   def create
     @account = Account.find(params[:quote][:account_id])
     @quote = Quote.new(quote_params)
-    if !@account.quote.nil?
-      @account.quote.destroy
+    @current_quote = @account.quotes.find_by(program_type: @quote.program_type)
+    if @current_quote
+      @current_quote.destroy
     end
     if @quote.save
       @quote.generate_invoice_number

@@ -79,7 +79,7 @@ class AccountsController < ApplicationController
 
 
   def show
-    @account = Account.includes(:group_rating_rejections, :group_rating_exceptions, :policy_calculation, :affiliates, :contacts, :quote, :account_programs).find(params[:id])
+    @account = Account.includes(:group_rating_rejections, :group_rating_exceptions, :policy_calculation, :affiliates, :contacts, :quotes, :account_programs).find(params[:id])
     @account_changes = @account.versions.map{|v| [v.created_at, v.changeset]}
     @statuses = Account.statuses
     @representative = Representative.find(@account.representative_id)
@@ -91,7 +91,6 @@ class AccountsController < ApplicationController
 
   def edit_group_rating
     @account = Account.find(params[:account_id])
-    authorize @account
     @policy_calculation = @account.policy_calculation
     @group_rating_qualifications = Account.group_rating_qualifications
     @group_rating_qualifications[:auto_run] = "3"
