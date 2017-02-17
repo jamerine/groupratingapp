@@ -44,4 +44,8 @@
         <h5>Individual Premium</h5>
         <p><%= number_to_currency(policy_calculation.policy_total_individual_premium, precision: 0) %></p>
       </div>
+      <div class="col-md-2">
+        <h5>Standard Premium</h5>
+        <p><%= number_to_currency(policy_calculation.policy_total_standard_premium, precision: 0) %></p>
+      </div>
 <% end %>

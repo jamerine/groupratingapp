@@ -48,6 +48,9 @@ User.create({first_name: "Cory", last_name: "Miller", role: 0, email: 'millercj3
 User.create({first_name: "Doug", last_name: "Maag", role: 0, email: 'dmaag@alternativeriskltd.com', password: 'tigers'})
 User.create({first_name: "Steve", last_name: "Chmielewski", role: 0, email: 'steve.chmielewski@minutemenhr.com', password: 'indians'})
 User.create({first_name: "Tim", last_name: "Betz", role: 2, email: 'tbetz@alternativeriskltd.com', password: 'password'})
+User.create({first_name: "Richard", last_name: "Kurth", role: 2, email: 'rkurth@alternativeriskltd.com', password: 'password'})
+User.create({first_name: "Deanna", last_name: "Sanders", role: 2, email: 'dsanders@alternativeriskltd.com', password: 'password'})
+User.create({first_name: "Paul", last_name: "Kay", role: 2, email: 'PaulKay@alternativeriskltd.com', password: 'password'})
 
 
 
@@ -97,3 +100,6 @@ RepresentativesUser.create({user_id: 6, representative_id: 12})
 RepresentativesUser.create({user_id: 6, representative_id: 13})
 RepresentativesUser.create({user_id: 6, representative_id: 14})
 RepresentativesUser.create({user_id: 6, representative_id: 15})
+RepresentativesUser.create({user_id: 7, representative_id: 1})
+RepresentativesUser.create({user_id: 8, representative_id: 1})
+RepresentativesUser.create({user_id: 9, representative_id: 1})
