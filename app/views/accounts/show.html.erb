@@ -144,10 +144,78 @@
 
 <div class="container">
   <div class="row">
-    <h3>Account Current Quote</h3>
-    <% if @account.quote.nil? %>
+    <h3>Account Current Quotes</h3>
+    <% if @account.quotes.nil? %>
       <p>No quote generated</p>
     <% else %>
+
+      <table class="table table-hover table-striped">
+        <thead>
+          <tr>
+            <th>Quote Period</th>
+            <th>Program type</th>
+            <th>Invoice</th>
+            <th>Status</th>
+            <th>Fees</th>
+            <th>Quote Date</th>
+            <th>AC2</th>
+            <th>AC26</th>
+            <th>U53</th>
+            <th>Contract</th>
+            <th>Questionnaire</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @account.quotes.find_each do |quote| %>
+            <tr>
+              <td><%= quote.try(:effective_start_date).try(:strftime, "%-m/%-d/%y") %> - <%= quote.try(:effective_end_date).try(:strftime, "%-m/%-d/%y")  %></td>
+              <td><%= quote.try(:program_type).try(:humanize)  %></td>
+              <td> <%= quote.try(:invoice_number) %> </td>
+              <td><%= quote.try(:status).try(:humanize)  %></td>
+              <td><%= number_to_currency(quote.try(:fees))  %></td>
+              <td><%= quote.try(:quote_date).try(:strftime, "%-m/%-d/%y")  %></td>
+              <td>
+                <% if quote.ac2_signed_on.nil? %>
+                  <span class="glyphicon glyphicon-remove text-danger" aria-hidden="true"></span>
+                <% else %>
+                  <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+                <% end %>
+              </td>
+              <td>
+                <% if quote.ac26_signed_on.nil? %>
+                  <span class="glyphicon glyphicon-remove text-danger" aria-hidden="true"></span>
+                <% else %>
+                  <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+                <% end %>
+              </td>
+              <td>
+                <% if quote.u153_signed_on.nil? %>
+                  <span class="glyphicon glyphicon-remove text-danger" aria-hidden="true"></span>
+                <% else %>
+                  <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+                <% end %>
+              </td>
+              <td>
+                <% if quote.contract_signed_on.nil? %>
+                  <span class="glyphicon glyphicon-remove text-danger" aria-hidden="true"></span>
+                <% else %>
+                  <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+                <% end %>
+              </td>
+              <td>
+                <% if quote.questionnaire_signed_on.nil? %>
+                  <span class="glyphicon glyphicon-remove text-danger" aria-hidden="true"></span>
+                <% else %>
+                  <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+                <% end %>
+              </td>
+              <td><%= link_to 'Manage', edit_quote_path(quote.id)  %></td>
+          </tr>
+          <% end %>
+        </tbody>
+      </table>
+
     <% end %>
   </div>
 </div>

@@ -16,7 +16,7 @@
       <% @account.account_programs.order("effective_start_date desc").each do |account_program| %>
       <tr>
         <td><%= account_program.try(:effective_start_date).try(:strftime,"%-m/%-d/%y") %> - <%= account_program.effective_end_date.try(:strftime,"%-m/%-d/%y") %></td>
-        <td><%= account_program.program_type %></td>
+        <td><%= account_program.program_type.try(:humanize).try(:titleize) %></td>
         <td><%= account_program.group_code %></td>
         <td><%= account_program.invoice_number %></td>
         <td><%= number_to_currency(account_program.try(:fees_amount)) %></td>
