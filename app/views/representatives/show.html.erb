@@ -172,24 +172,22 @@
           <% end %>
         </div>
         <div class="col-md-4">
-          <h1>Insert Payroll Process</h1>
-          <!-- <label><a href="#">Insert Payroll</a></label>
+          <label><a href="https://s3.amazonaws.com/piarm/IMPORT_TEMPLATES/payroll_template.csv">Insert Payroll</a></label>
           <br>
-          <%= form_tag import_contact_process_contacts_path, multipart: true do %>
+          <%= form_tag representative_import_payroll_process_path(@representative.id), multipart: true do %>
           <%= file_field_tag :file, class: 'form-control' %>
           <br>
-          <%= submit_tag "Import Contacts", class: 'form-control btn btn-primary disabled' %>
-          <% end %> -->
+          <%= submit_tag "Import Payroll", class: 'form-control btn btn-primary' %>
+          <% end %>
         </div>
         <div class="col-md-4">
-          <h1>Insert Claims Process</h1>
-          <!-- <label><a href="#">Insert Claims</a></label>
+          <label><a href="https://s3.amazonaws.com/piarm/IMPORT_TEMPLATES/claim_template.csv">Insert Claims</a></label>
           <br>
-          <%= form_tag import_contact_process_contacts_path, multipart: true do %>
+          <%= form_tag representative_import_claim_process_path(@representative.id), multipart: true do %>
           <%= file_field_tag :file, class: 'form-control' %>
           <br>
-          <%= submit_tag "Import Contacts", class: 'form-control btn btn-primary disabled' %>
-          <% end %> -->
+          <%= submit_tag "Import Claim", class: 'form-control btn btn-primary' %>
+          <% end %>
         </div>
 
       </div>

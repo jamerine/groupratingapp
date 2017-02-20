@@ -79,6 +79,8 @@ Rails.application.routes.draw do
     get :export_accounts
     get :export_159_request_weekly
     post :import_contact_process
+    post :import_payroll_process
+    post :import_claim_process
   end
 
 
