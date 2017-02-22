@@ -13,6 +13,7 @@
     <%= form_for @quote do |f| %>
     <h3>Quote Information</h3>
     <%= link_to 'View Quote Packet', '#', class: 'btn btn-success'%>
+    <%= link_to 'Quote', quote_group_rating_report_path(@quote, format: :pdf), class: 'btn btn-success'%>
     <br>
     <div class="row">
       <div class="col-md-2">

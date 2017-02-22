@@ -58,6 +58,23 @@ class QuotesController < ApplicationController
     end
   end
 
+  def group_rating_report
+    @quote = Quote.find(params[:quote_id])
+    @account = @quote.account
+    @policy_calculation = @account.policy_calculation
+    respond_to do |format|
+      format.html
+      format.pdf do
+        pdf = GroupRatingQuote.new(@quote, @account, @policy_calculation, view_context)
+        # send_data pdf.render, filename: "quote_#{@quote.id}.pdf",
+        #                       type: "application/pdf",
+        #                       disposition: "inline"
+        pdf.render_file "app/reports/quote_#{@quote.id}.pdf"
+      end
+    end
+    redirect_to edit_quote_path(@quote), notice: "Quote Generated"
+  end
+
   private
 
   def quote_params

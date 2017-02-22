@@ -35,7 +35,9 @@ Rails.application.routes.draw do
   end
 
 
-  resources :quotes
+  resources :quotes do
+    get :group_rating_report
+  end
 
   resources :account_programs do
     collection { post :import_account_program_process }
