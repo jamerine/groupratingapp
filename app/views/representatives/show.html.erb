@@ -64,6 +64,14 @@
           <h3><%= @representative.abbreviated_name %></h3>
         </div>
       </div>
+      <div class="row">
+        <%= link_to "Add Logo", edit_representative_path(@representative), class: 'btn btn-primary' %>
+      </div>
+      <div class="row">
+
+          <%= image_tag @representative.logo.url if @representative.logo? %>
+
+      </div>
     </div>
     <hr>
   </div>

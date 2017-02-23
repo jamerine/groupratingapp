@@ -12,6 +12,8 @@ class Representative < ActiveRecord::Base
   has_many :representatives_users
   has_many :users, through: :representatives_users
 
+  mount_uploader :logo, LogoUploader
+
   def self.options_for_select
     order('LOWER(abbreviated_name)').map { |e| [e.abbreviated_name, e.id] }
   end
