@@ -123,8 +123,20 @@ class RepresentativesController < ApplicationController
   end
 
 
+  def update
+    @representative = Representative.find(params[:id])
+    @representative.assign_attributes(representative_params)
+    if @representative.save
+      redirect_to @representative, notice: 'Logo successfully added to Representative'
+    else
+      redirect_to @representative, alert: 'Error adding logo to Representative'
+    end
+  end
 
+  private
 
-
+  def representative_params
+    params.require(:representative).permit(:logo)
+  end
 
 end
