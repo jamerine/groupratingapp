@@ -10527,7 +10527,8 @@ CREATE TABLE representatives (
     group_fees character varying,
     group_dues character varying,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    logo character varying
 );
 
 
@@ -11203,7 +11204,7 @@ CREATE TABLE users (
     updated_at timestamp without time zone NOT NULL,
     first_name character varying,
     last_name character varying,
-    role integer
+    role integer DEFAULT 2
 );
 
 
@@ -13163,4 +13164,10 @@ INSERT INTO schema_migrations (version) VALUES ('20170120191100');
 INSERT INTO schema_migrations (version) VALUES ('20170125140530');
 
 INSERT INTO schema_migrations (version) VALUES ('20170125160723');
+
+INSERT INTO schema_migrations (version) VALUES ('20170223165938');
+
+INSERT INTO schema_migrations (version) VALUES ('20170223191602');
+
+INSERT INTO schema_migrations (version) VALUES ('20170223191826');
 
