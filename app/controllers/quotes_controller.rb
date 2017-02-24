@@ -66,13 +66,20 @@ class QuotesController < ApplicationController
       format.html
       format.pdf do
         pdf = GroupRatingQuote.new(@quote, @account, @policy_calculation, view_context)
-        send_data pdf.render, filename: "#{ @account.policy_number_entered }_quote_#{ @quote.id }.pdf",
-                              type: "application/pdf",
-                              disposition: "inline"
+        uploader = QuoteUploader.new
+        tmpfile = Tempfile.new("#{ @account.policy_number_entered }_quote_#{ @quote.id }.pdf")
+        tmpfile.binmode
+        tmpfile.write pdf.render
+        uploader.store! tmpfile
+        tmpfile.close
+        tmpfile.unlink
+        # send_data pdf.render, filename: "#{ @account.policy_number_entered }_quote_#{ @quote.id }.pdf",
+        #                       type: "application/pdf",
+        #                       disposition: "inline"
         # pdf.render_file "app/reports/#{ @account.policy_number_entered }_quote_#{ @quote.id }.pdf"
       end
     end
-    # redirect_to edit_quote_path(@quote), notice: "Quote Generated"
+    redirect_to edit_quote_path(@quote), notice: "Quote Generated"
   end
 
   private
