@@ -44,7 +44,7 @@
 
 User.create({first_name: "Jason", last_name: "Amerine", role: 0, email: 'jason@dittoh.com', password: 'Jamrine08'})
 User.create({first_name: "Paul", last_name: "Collins", role: 0, email: 'paul@dittoh.com', password: 'password'})
-User.create({first_name: "Cory", last_name: "Miller", role: 0, email: 'millercj320@gmail.com', password: 'password'})
+# User.create({first_name: "Cory", last_name: "Miller", role: 0, email: 'millercj320@gmail.com', password: 'password'})
 User.create({first_name: "Doug", last_name: "Maag", role: 0, email: 'dmaag@alternativeriskltd.com', password: 'tigers'})
 User.create({first_name: "Steve", last_name: "Chmielewski", role: 0, email: 'steve.chmielewski@minutemenhr.com', password: 'indians'})
 User.create({first_name: "Tim", last_name: "Betz", role: 2, email: 'tbetz@alternativeriskltd.com', password: 'password'})
