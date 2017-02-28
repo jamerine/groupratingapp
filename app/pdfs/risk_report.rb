@@ -14,37 +14,59 @@ class RiskReport < PdfReport
 
       @first_experience_year = @group_rating.experience_period_lower_date.strftime("%Y").to_i
       @first_experience_year_period = @group_rating.experience_period_lower_date..(("#{(@group_rating.experience_period_lower_date.strftime("%Y").to_i)}-12-31").to_date)
+      @first_experience_year_claims = @account.policy_calculation.claim_calculations.where("claim_injury_date BETWEEN ? AND ? ", @first_experience_year_period.first,  @first_experience_year_period.last).order(:claim_injury_date)
 
       @second_experience_year = @first_experience_year + 1
       @second_experience_year_period = @first_experience_year_period.last.advance(days: 1)..@first_experience_year_period.last.advance(years: 1)
+      @second_experience_year_claims = @account.policy_calculation.claim_calculations.where("claim_injury_date BETWEEN ? AND ? ", @second_experience_year_period.first,  @second_experience_year_period.last).order(:claim_injury_date)
 
       @third_experience_year = @second_experience_year + 1
       @third_experience_year_period = @second_experience_year_period.first.advance(years: 1)..@second_experience_year_period.last.advance(years: 1)
+      @third_experience_year_claims = @account.policy_calculation.claim_calculations.where("claim_injury_date BETWEEN ? AND ? ", @third_experience_year_period.first,  @third_experience_year_period.last).order(:claim_injury_date)
 
       @fourth_experience_year = @third_experience_year + 1
       @fourth_experience_year_period = @third_experience_year_period.first.advance(years: 1)..@third_experience_year_period.last.advance(years: 1)
+      @fourth_experience_year_claims = @account.policy_calculation.claim_calculations.where("claim_injury_date BETWEEN ? AND ? ", @fourth_experience_year_period.first,  @fourth_experience_year_period.last).order(:claim_injury_date)
 
       @fifth_experience_year = @fourth_experience_year + 1
       @fifth_experience_year_period = @fourth_experience_year_period.first.advance(years: 1)..@first_experience_year_period.first.advance(days: -1).advance(years: 4)
+      @fifth_experience_year_claims = @account.policy_calculation.claim_calculations.where("claim_injury_date BETWEEN ? AND ? ", @fifth_experience_year_period.first,  @fifth_experience_year_period.last).order(:claim_injury_date)
 
       # Out Of Experience Years Parameters
       @first_out_of_experience_year = @first_experience_year - 5
       @first_out_of_experience_year_period = @first_experience_year_period.first.advance(years: -5)..@first_experience_year_period.last.advance(years: -5)
+      @first_out_of_experience_year_claims = @account.policy_calculation.claim_calculations.where("claim_injury_date BETWEEN ? AND ? ", @first_out_of_experience_year_period.first,  @first_out_of_experience_year_period.last).order(:claim_injury_date)
 
       @second_out_of_experience_year = @second_experience_year - 5
       @second_out_of_experience_year_period = @second_experience_year_period.first.advance(years: -5)..@second_experience_year_period.last.advance(years: -5)
+      @second_out_of_experience_year_claims = @account.policy_calculation.claim_calculations.where("claim_injury_date BETWEEN ? AND ? ", @second_out_of_experience_year_period.first,  @second_out_of_experience_year_period.last).order(:claim_injury_date)
 
       @third_out_of_experience_year = @third_experience_year - 5
       @third_out_of_experience_year_period = @third_experience_year_period.first.advance(years: -5)..@third_experience_year_period.last.advance(years: -5)
+      @third_out_of_experience_year_claims = @account.policy_calculation.claim_calculations.where("claim_injury_date BETWEEN ? AND ? ", @third_out_of_experience_year_period.first,  @third_out_of_experience_year_period.last).order(:claim_injury_date)
 
       @fourth_out_of_experience_year = @fourth_experience_year - 5
       @fourth_out_of_experience_year_period = @fourth_experience_year_period.first.advance(years: -5)..@fourth_experience_year_period.last.advance(years: -5)
+      @fourth_out_of_experience_year_claims = @account.policy_calculation.claim_calculations.where("claim_injury_date BETWEEN ? AND ? ", @fourth_out_of_experience_year_period.first,  @fourth_out_of_experience_year_period.last).order(:claim_injury_date)
 
       @fifth_out_of_experience_year = @fifth_experience_year - 5
       @fifth_out_of_experience_year_period = @fourth_out_of_experience_year_period.first.advance(years: 1)..@fourth_out_of_experience_year_period.last.advance(years: 1)
+      @fifth_out_of_experience_year_claims = @account.policy_calculation.claim_calculations.where("claim_injury_date BETWEEN ? AND ? ", @fifth_out_of_experience_year_period.first,  @fifth_out_of_experience_year_period.last).order(:claim_injury_date)
 
       @sixth_out_of_experience_year = @fifth_out_of_experience_year + 1
       @sixth_out_of_experience_year_period = @fifth_experience_year_period.first.advance(years: -4)..@fifth_experience_year_period.last.advance(years: -4)
+      @sixth_out_of_experience_year_claims = @account.policy_calculation.claim_calculations.where("claim_injury_date BETWEEN ? AND ? ", @sixth_out_of_experience_year_period.first,  @sixth_out_of_experience_year_period.last).order(:claim_injury_date)
+
+      # GREEN YEAR EXPERIENCE
+      @first_green_year = @group_rating.experience_period_upper_date.strftime("%Y").to_i
+      @first_green_year_period = (@group_rating.experience_period_upper_date.advance(days: 1))..(("#{(@group_rating.experience_period_upper_date.strftime("%Y").to_i)}-12-31").to_date)
+      @first_green_year_claims = @account.policy_calculation.claim_calculations.where("claim_injury_date BETWEEN ? AND ? ", @first_green_year_period.first,  @first_green_year_period.last).order(:claim_injury_date)
+
+      @second_green_year = @first_green_year + 1
+      @second_green_year_period = @first_green_year_period.last.advance(days: 1)..@first_green_year_period.last.advance(years: 1)
+      @second_green_year_claims = @account.policy_calculation.claim_calculations.where("claim_injury_date BETWEEN ? AND ? ", @second_green_year_period.first,  @second_green_year_period.last).order(:claim_injury_date)
+
+
 
 
 
@@ -57,6 +79,7 @@ class RiskReport < PdfReport
 
     start_new_page
     claim_loss_run
+
 
   end
 
@@ -132,12 +155,10 @@ class RiskReport < PdfReport
       self.position = :center
       row(0).font_style = :bold
       row(0).borders = [:bottom]
-
       row(1).columns(0..14).borders = []
-
       row(0).align = :center
-
-      self.cell_style = {:min_font_size => 8}
+      row(0..-1).align = :center
+      self.cell_style = {:font_size => 8}
       self.header = true
     end
     move_down 5
@@ -148,24 +169,26 @@ class RiskReport < PdfReport
   end
 
   def experience_table_data
-    @data = [["ITML", "GTML", "TEL", "Ratio", "IG", "TLL", "C%", "EMR", "CAP", "Max Value", "Stand Prem", "F/S", "ILR", "10YLR", "4YLR"]]
-    @data += [[round(@policy_calculation.policy_total_modified_losses_individual_reduced,0), round(@policy_calculation.policy_total_modified_losses_group_reduced,0), round(@policy_calculation.policy_total_expected_losses,0), round(@policy_calculation.policy_group_ratio, 0), @policy_calculation.policy_industry_group, round(@policy_calculation.policy_total_limited_losses,0), percent(@policy_calculation.policy_credibility_percent), round(@policy_calculation.policy_individual_experience_modified_rate,2),round( @policy_calculation.policy_individual_experience_modified_rate,2), round(@policy_calculation.policy_maximum_claim_value,0), round(@policy_calculation.policy_total_standard_premium,0), "fs", "ILR", "10YLR", "4YLR"]]
+    @data = [["ITML", "GTML", "TEL", "Ratio", "IG", "TLL", "C%", "EMR", "CAP", "Max Value", "Stand Prem", "F/S", "ILR" ]]
+    @data += [[round(@policy_calculation.policy_total_modified_losses_individual_reduced,0), round(@policy_calculation.policy_total_modified_losses_group_reduced,0), round(@policy_calculation.policy_total_expected_losses,0), round(@policy_calculation.policy_group_ratio, 0), @policy_calculation.policy_industry_group, round(@policy_calculation.policy_total_limited_losses,0), percent(@policy_calculation.policy_credibility_percent), round(@policy_calculation.policy_individual_experience_modified_rate,2),round( @policy_calculation.policy_individual_experience_modified_rate,2), round(@policy_calculation.policy_maximum_claim_value,0), round(@policy_calculation.policy_total_standard_premium,0), "fs", "ILR" ]]
   end
 
   def expected_loss_development
     move_down 10
     text "Expected Loss Development and Estimated Premium", style: :bold
     move_down 10
-    table expected_loss_table_data, :column_widths => {0 => 35, 1 => 25} do
+    table expected_loss_table_data, :column_widths => {0 => 35, 1 => 25, 2 => 60, 3 => 40, 4 => 60, 5 => 40, 6 => 60, 7 => 45, 8 => 60, 9 => 45, 10 => 60 } do
       self.position = :center
       row(0).font_style = :bold
       row(-1).font_style = :bold
       row(0).overflow = :shring_to_fit
       row(0).align = :center
       row(0).borders = [:bottom]
+      row(1..-2).borders = []
       row(-1).borders = [:top]
       # row(1).columns(0..14).borders = []
-      self.cell_style = {:min_font_size => 8}
+      row(0..-1).align = :center
+      self.cell_style = {:font_size => 8}
       self.header = true
     end
     move_down 10
@@ -173,59 +196,101 @@ class RiskReport < PdfReport
   end
 
   def expected_loss_table_data
-    @data = [["Man#", "IG", "Exp. Payroll", "Exp. Loss Rate", "Total Exp Losses", "Base Rate", "Est. Payroll", "Individual Rate", "Est Ind Premium", "Group Rate", "Group Prem"]]
+    @data = [["Man Num", "IG", "Exp. Payroll", "Exp. Loss Rate", "Total Exp Losses", "Base Rate", "Est. Payroll", "Ind. Rate", "Est Ind Premium", "Group Rate", "Group Prem"]]
     @data +=  @account.policy_calculation.manual_class_calculations.map { |e| [e.manual_number, e.manual_class_industry_group, round(e.manual_class_four_year_period_payroll,0), round(e.manual_class_expected_loss_rate,2),  round(e.manual_class_expected_losses,0), round(e.manual_class_base_rate,2), round(e.manual_class_current_estimated_payroll, 0), round(e.manual_class_individual_total_rate, 4), round(e.manual_class_estimated_individual_premium,0), round(e.manual_class_group_total_rate,4), round(e.manual_class_estimated_group_premium,0)] }
-    @data += [[{:content => "Totals", :colspan => 4},"#{round(@policy_calculation.policy_total_expected_losses, 0)}","","#{round(@policy_calculation.policy_total_current_payroll, 0)}","","#{round(@policy_calculation.policy_total_individual_premium, 0)}","","#{round(@account.group_premium, 0)}"]]
+    @data += [[{:content => " #{ } Totals", :colspan => 4},"#{round(@policy_calculation.policy_total_expected_losses, 0)}","","#{round(@policy_calculation.policy_total_current_payroll, 0)}","","#{round(@policy_calculation.policy_total_individual_premium, 0)}","","#{round(@account.group_premium, 0)}"]]
   end
 
   def claim_loss_run
     text "Claim Loss Run", size: 14, style: :bold, align: :center
-    text "Out Of Experience Claims", style: :bold
+    # OUT OF EXPERIENCE
     stroke_horizontal_rule
-    first_out_of_experience_year_table
+    move_down 5
+    text "Out Of Experience", style: :bold, size: 12
     stroke_horizontal_rule
+    move_down 15
+    text "Injury Year: #{ @first_out_of_experience_year}", style: :bold
+    year_claim_table(claim_data(@first_out_of_experience_year_claims))
+    move_down 30
+    text "Injury Year: #{ @second_out_of_experience_year}", style: :bold
+    year_claim_table(claim_data(@second_out_of_experience_year_claims))
+    move_down 30
+    text "Injury Year: #{ @third_out_of_experience_year}", style: :bold
+    year_claim_table(claim_data(@third_out_of_experience_year_claims))
+    move_down 30
+    text "Injury Year: #{ @fourth_out_of_experience_year}", style: :bold
+    year_claim_table(claim_data(@fourth_out_of_experience_year_claims))
+    move_down 30
+    text "Injury Year: #{ @fifth_out_of_experience_year}", style: :bold
+    year_claim_table(claim_data(@fifth_out_of_experience_year_claims))
+    move_down 30
+    text "Injury Year: #{ @sixth_out_of_experience_year}", style: :bold
+    year_claim_table(claim_data(@sixth_out_of_experience_year_claims))
+    move_down 30
+
+    #IN EXPERIENCE
+    stroke_horizontal_rule
+    move_down 5
+    text "Experience", style: :bold, size: 12
+    stroke_horizontal_rule
+    move_down 15
+    text "Injury Year: #{ @first_experience_year}", style: :bold
+    year_claim_table(claim_data(@first_experience_year_claims))
+    move_down 30
+    text "Injury Year: #{ @second_experience_year}", style: :bold
+    year_claim_table(claim_data(@second_experience_year_claims))
+    move_down 30
+    text "Injury Year: #{ @third_experience_year}", style: :bold
+    year_claim_table(claim_data(@third_experience_year_claims))
+    move_down 30
+    text "Injury Year: #{ @fourth_experience_year}", style: :bold
+    year_claim_table(claim_data(@fourth_experience_year_claims))
+    move_down 30
+    text "Injury Year: #{ @fifth_experience_year}", style: :bold
+    year_claim_table(claim_data(@fifth_experience_year_claims))
+    move_down 30
+
+
+    #Green Year
+    stroke_horizontal_rule
+    move_down 5
+    text "Green Year", style: :bold, size: 12
+    stroke_horizontal_rule
+    move_down 15
+    text "Injury Year: #{ @first_green_year}", style: :bold
+    year_claim_table(claim_data(@first_green_year_claims))
+    move_down 30
+    text "Injury Year: #{ @second_green_year}", style: :bold
+    year_claim_table(claim_data(@second_green_year_claims))
+    move_down 30
 
   end
 
-  def first_out_of_experience_year_table
-    move_down 10
-    text "Injury Year: #{ @first_out_of_experience_year}"
-    text "Injury Year Range: #{ @first_out_of_experience_year_period}"
-    move_down 10
-    text "Injury Year: #{ @second_out_of_experience_year}"
-    text "Injury Year Range: #{ @second_out_of_experience_year_period}"
-    move_down 10
-    text "Injury Year: #{ @third_out_of_experience_year}"
-    text "Injury Year Range: #{ @third_out_of_experience_year_period}"
-    move_down 10
-    text "Injury Year: #{ @fourth_out_of_experience_year}"
-    text "Injury Year Period: #{ @fourth_out_of_experience_year_period}"
-    move_down 10
-    text "Injury Year: #{ @fifth_out_of_experience_year}"
-    text "Injury Year Period: #{ @fifth_out_of_experience_year_period}"
-    move_down 10
-    text "Injury Year: #{ @sixth_out_of_experience_year}"
-    text "Injury Year Period: #{ @sixth_out_of_experience_year_period}"
-    move_down 10
 
 
-    table first_out_of_experience_year_table_data do
+
+  def year_claim_table(claim_year_data)
+    table claim_year_data, :column_widths => {0 => 49, 1 => 55, 2 => 47, 3 => 32, 4 => 50, 5 => 50, 6 => 48, 7 => 48, 8 => 50, 9 => 50, 10 => 26, 11 => 35 } do
       self.position = :center
       row(0).font_style = :bold
       row(0).overflow = :shring_to_fit
       row(0).align = :center
       row(0).borders = [:bottom]
-      # row(1).columns(0..14).borders = []
-      self.cell_style = {:min_font_size => 8}
+      row(1..-2).borders = []
+      row(-1).borders = [:top]
+      row(-1).font_style = :bold
+      row(0..-1).align = :center
+      self.cell_style = { size: 8 }
       self.header = true
     end
-
   end
 
-  def first_out_of_experience_year_table_data
-    @data = [["Claim #", "Claimant", "DOI", "Manual", "Comp Award", "Medical Paid", "MIRA Reserve", "GTML", "ITML", "SI Total", "HC/Sub", "Codes" ]]
-    @data +=  @account.policy_calculation.claim_calculations.where("claim_injury_date BETWEEN ? AND ? ", @first_out_of_experience_year_period.first,  @first_out_of_experience_year_period.last).map { |e| [e.claim_number, e.claimant_name, e.claim_injury_date, e.claim_manual_number, e.claim_unlimited_limited_loss, e.claim_medical_paid, e.claim_mira_medical_reserve_amount, e.claim_modified_losses_group_reduced, e.claim_modified_losses_individual_reduced, e.claim_individual_reduced_amount] }
+  def claim_data(claims_array)
+    @data = [["Claim #", "Claimant", "DOI", "Man Num", "Comp Award", "Med. Paid", "MIRA Res.", "GTML", "ITML", "SI Total", "HC", "Code" ]]
+    @data +=  claims_array.map { |e| [e.claim_number, e.claimant_name.titleize, e.claim_injury_date.in_time_zone("America/New_York").strftime("%m/%d/%y"), e.claim_manual_number, "#{round((e.claim_modified_losses_group_reduced - e.claim_medical_paid - e.claim_mira_medical_reserve_amount),0) }", round(e.claim_medical_paid, 0), round(e.claim_mira_medical_reserve_amount,0), round(e.claim_modified_losses_group_reduced,0), round(e.claim_modified_losses_individual_reduced, 0), round(e.claim_individual_reduced_amount,0), percent(e.claim_handicap_percent), e.claim_type ] }
+    @data += [[{:content => "Totals", :colspan => 4},"#{round((claims_array.sum(:claim_modified_losses_group_reduced) - claims_array.sum(:claim_medical_paid) - claims_array.sum(:claim_mira_medical_reserve_amount)), 0)}", "#{round(claims_array.sum(:claim_medical_paid), 0)}", "#{round(claims_array.sum(:claim_mira_medical_reserve_amount), 0)}" , "#{round(claims_array.sum(:claim_modified_losses_group_reduced), 0)}", "#{round(claims_array.sum(:claim_modified_losses_individual_reduced), 0)}", "#{round(claims_array.sum(:claim_individual_reduced_amount), 0)}", "", "" ]]
   end
+
 
 
 
@@ -234,7 +299,7 @@ class RiskReport < PdfReport
   end
 
   def round(num, prec)
-    @view.number_with_precision(num, precision: prec)
+    @view.number_with_precision(num, precision: prec, :delimiter => ',')
   end
 
 
@@ -242,4 +307,6 @@ class RiskReport < PdfReport
     num = num * 100
     @view.number_to_percentage(num, precision: 0)
   end
+
+
 end
