@@ -10410,7 +10410,8 @@ CREATE TABLE quotes (
     questionnaire_question_2 boolean,
     questionnaire_question_3 boolean,
     questionnaire_question_4 boolean,
-    questionnaire_question_5 boolean
+    questionnaire_question_5 boolean,
+    quote character varying
 );
 
 
@@ -13170,4 +13171,6 @@ INSERT INTO schema_migrations (version) VALUES ('20170223165938');
 INSERT INTO schema_migrations (version) VALUES ('20170223191602');
 
 INSERT INTO schema_migrations (version) VALUES ('20170223191826');
+
+INSERT INTO schema_migrations (version) VALUES ('20170224151532');
 

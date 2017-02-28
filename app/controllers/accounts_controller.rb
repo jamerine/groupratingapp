@@ -83,6 +83,7 @@ class AccountsController < ApplicationController
     @account_changes = @account.versions.map{|v| [v.created_at, v.changeset]}
     @statuses = Account.statuses
     @representative = Representative.find(@account.representative_id)
+    @group_rating = GroupRating.find_by(representative_id: @representative.id)
     @new_payroll_calculation = PayrollCalculation.new
     @group_rating_rejections = @account.group_rating_rejections.where(program_type: 'group_rating')
     @group_retro_rejections = @account.group_rating_rejections.where(program_type: 'group_retro')
@@ -162,6 +163,36 @@ class AccountsController < ApplicationController
     rescue
       redirect_to :back, alert: "There was an error importing file.  Please ensure file columns and file type are correct"
     end
+  end
+
+
+  def risk_report
+    @account = Account.find(params[:account_id])
+    @group_rating = GroupRating.find(params[:group_rating_id])
+    respond_to do |format|
+      format.html
+      format.pdf do
+        pdf = RiskReport.new(@account, @account.policy_calculation, @group_rating, view_context)
+        
+        # uploader = QuoteUploader.new
+        # tmpfile = Tempfile.new("#{ @account.policy_number_entered }_quote_#{ @quote.id }.pdf")
+        # quote = File.basename(tmpfile)
+        # quote_path = "https://console.aws.amazon.com/s3/buckets/grouprating/uploads/#{quote}"
+        # tmpfile.binmode
+        # tmpfile.write (pdf.render)
+        # uploader.store! tmpfile
+        #
+        # @quote.update_attributes(quote_generated: quote_path)
+        # tmpfile.close
+        # tmpfile.unlink
+        send_data pdf.render, filename: "#{ @account.policy_number_entered }_risk_report.pdf",
+                              type: "application/pdf",
+                              disposition: "inline"
+
+        # pdf.render_file "app/reports/risk_report_#{@account.id}.pdf"
+      end
+    end
+    # redirect_to @account, notice: "Quote Generated"
   end
 
 
