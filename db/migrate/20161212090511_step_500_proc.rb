@@ -41,7 +41,22 @@ class Step500Proc < ActiveRecord::Migration
         claim_unlimited_limited_loss,
         data_source,
         created_at,
-        updated_at
+        updated_at,
+        claim_combined,
+        combined_into_claim_number,
+        claim_rating_plan_indicator,
+        claim_status,
+        claim_status_effective_date,
+        claim_type,
+        claim_activity_status,
+        claim_activity_status_effective_date,
+        settled_claim,
+        settlement_type,
+        medical_settlement_date,
+        indemnity_settlement_date,
+        maximum_medical_improvement_date,
+        claim_mira_ncci_injury_type
+
         )
         (SELECT
           a.representative_number,
@@ -71,7 +86,21 @@ class Step500Proc < ActiveRecord::Migration
           ) as "claim_unlimited_limited_loss",
           'bwc' as data_source,
           run_date as created_at,
-          run_date as updated_at
+          run_date as updated_at,
+          a.claim_combined,
+          a.combined_into_claim_number,
+          a.claim_rating_plan_indicator,
+          a.claim_status,
+          a.claim_status_effective_date,
+          a.claim_type,
+          a.claim_activity_status,
+          a.claim_activity_status_effective_date,
+          a.settled_claim,
+          a.settlement_type,
+          a.medical_settlement_date,
+          a.indemnity_settlement_date,
+          a.maximum_medical_improvement_date,
+          a.claim_mira_ncci_injury_type
           FROM public.democ_detail_records a
           WHERE a.representative_number = process_representative
           ORDER BY claim_unlimited_limited_loss desc

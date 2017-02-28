@@ -94,6 +94,20 @@ class GroupRatingAllCreate
               claim_subrogation_percent: claim.claim_subrogation_percent,
               claim_modified_losses_group_reduced: claim.claim_modified_losses_group_reduced,
               claim_modified_losses_individual_reduced: claim.claim_modified_losses_individual_reduced,
+              claim_combined: claim.claim_combined,
+              combined_into_claim_number: claim.combined_into_claim_number,
+              claim_rating_plan_indicator: claim.claim_rating_plan_indicator,
+              claim_status: claim.claim_status,
+              claim_status_effective_date: claim.claim_status_effective_date,
+              claim_type: claim.claim_type,
+              claim_activity_status: claim.claim_activity_status,
+              claim_activity_status_effective_date: claim.claim_activity_status_effective_date,
+              settled_claim: claim.settled_claim,
+              settlement_type: claim.settlement_type,
+              medical_settlement_date: claim.medical_settlement_date,
+              indemnity_settlement_date: claim.indemnity_settlement_date,
+              maximum_medical_improvement_date: claim.maximum_medical_improvement_date,
+              claim_mira_ncci_injury_type: claim.claim_mira_ncci_injury_type,
               data_source: claim.data_source)
           end
           ProcessPolicyCoverageStatusHistory.where(representative_number: @policy_calculation.representative_number, policy_number: @policy_calculation.policy_number).find_each do |policy_coverage|
