@@ -12,8 +12,12 @@ class PdfReport < Prawn::Document
   end
 
   def header(title=nil)
-    image "#{Rails.root}/app/assets/images/logo.png", height: 50
-    text "Alternative Risk Management", size: 18, style: :bold, align: :center
+    if [9,10,16].include? @account.representative.id
+      image "#{Rails.root}/app/assets/images/minute men hr.jpeg", height: 100
+    else
+      image "#{Rails.root}/app/assets/images/logo.png", height: 50
+    end
+    text "#{ @account.representative.company_name}", size: 18, style: :bold, align: :center
     if title
       text title, size: 14, style: :bold_italic, align: :center
     end

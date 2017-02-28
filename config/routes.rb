@@ -23,6 +23,7 @@ Rails.application.routes.draw do
     post :assign
     post :assign_address
     collection { post :import_account_process }
+    get :risk_report
   end
 
   resources :affiliates do

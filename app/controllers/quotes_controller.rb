@@ -66,26 +66,30 @@ class QuotesController < ApplicationController
       format.html
       format.pdf do
         pdf = GroupRatingQuote.new(@quote, @account, @policy_calculation, view_context)
-        uploader = QuoteUploader.new
-        tmpfile = Tempfile.new("#{ @account.policy_number_entered }_quote_#{ @quote.id }.pdf")
-        tmpfile.binmode
-        tmpfile.write pdf.render
-        uploader.store! tmpfile
-        tmpfile.close
-        tmpfile.unlink
-        # send_data pdf.render, filename: "#{ @account.policy_number_entered }_quote_#{ @quote.id }.pdf",
-        #                       type: "application/pdf",
-        #                       disposition: "inline"
+        # uploader = QuoteUploader.new
+        # tmpfile = Tempfile.new("#{ @account.policy_number_entered }_quote_#{ @quote.id }.pdf")
+        # quote = File.basename(tmpfile)
+        # quote_path = "https://console.aws.amazon.com/s3/buckets/grouprating/uploads/#{quote}"
+        # tmpfile.binmode
+        # tmpfile.write (pdf.render)
+        # uploader.store! tmpfile
+        #
+        # @quote.update_attributes(quote_generated: quote_path)
+        # tmpfile.close
+        # tmpfile.unlink
+        send_data pdf.render, filename: "#{ @account.policy_number_entered }_quote_#{ @quote.id }.pdf",
+                              type: "application/pdf",
+                              disposition: "inline"
         # pdf.render_file "app/reports/#{ @account.policy_number_entered }_quote_#{ @quote.id }.pdf"
       end
     end
-    redirect_to edit_quote_path(@quote), notice: "Quote Generated"
+    # redirect_to edit_quote_path(@quote), notice: "Quote Generated"
   end
 
   private
 
   def quote_params
-    params.require(:quote).permit(:account_id, :program_type, :fees, :amount, :group_code, :invoice_number, :quote_date, :quote_sent_date, :effective_start_date, :effective_end_date, :status, :ac2_signed_on, :ac26_signed_on, :u153_signed_on, :contract_signed_on, :questionnaire_signed_on, :questionnaire_question_1, :questionnaire_question_2, :questionnaire_question_3, :questionnaire_question_4, :questionnaire_question_5)
+    params.require(:quote).permit(:account_id, :program_type, :fees, :amount, :group_code, :invoice_number, :quote, :quote_generated, :quote_date, :quote_sent_date, :effective_start_date, :effective_end_date, :status, :ac2_signed_on, :ac26_signed_on, :u153_signed_on, :contract_signed_on, :questionnaire_signed_on, :questionnaire_question_1, :questionnaire_question_2, :questionnaire_question_3, :questionnaire_question_4, :questionnaire_question_5)
   end
 
 end
