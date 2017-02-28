@@ -6926,7 +6926,22 @@ CREATE FUNCTION proc_step_500(process_representative integer, experience_period_
         claim_unlimited_limited_loss,
         data_source,
         created_at,
-        updated_at
+        updated_at,
+        claim_combined,
+        combined_into_claim_number,
+        claim_rating_plan_indicator,
+        claim_status,
+        claim_status_effective_date,
+        claim_type,
+        claim_activity_status,
+        claim_activity_status_effective_date,
+        settled_claim,
+        settlement_type,
+        medical_settlement_date,
+        indemnity_settlement_date,
+        maximum_medical_improvement_date,
+        claim_mira_ncci_injury_type
+
         )
         (SELECT
           a.representative_number,
@@ -6956,15 +6971,25 @@ CREATE FUNCTION proc_step_500(process_representative integer, experience_period_
           ) as "claim_unlimited_limited_loss",
           'bwc' as data_source,
           run_date as created_at,
-          run_date as updated_at
+          run_date as updated_at,
+          a.claim_combined,
+          a.combined_into_claim_number,
+          a.claim_rating_plan_indicator,
+          a.claim_status,
+          a.claim_status_effective_date,
+          a.claim_type,
+          a.claim_activity_status,
+          a.claim_activity_status_effective_date,
+          a.settled_claim,
+          a.settlement_type,
+          a.medical_settlement_date,
+          a.indemnity_settlement_date,
+          a.maximum_medical_improvement_date,
+          a.claim_mira_ncci_injury_type
           FROM public.democ_detail_records a
           WHERE a.representative_number = process_representative
           ORDER BY claim_unlimited_limited_loss desc
           );
-
-
-
-      -- STEP 6B -- CALCULATION OF CLAIMS COSTS
 
       end;
 
@@ -8192,7 +8217,21 @@ CREATE TABLE claim_calculations (
     claim_modified_losses_individual_reduced double precision,
     data_source character varying,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    claim_combined character varying,
+    combined_into_claim_number character varying,
+    claim_rating_plan_indicator character varying,
+    claim_status character varying,
+    claim_status_effective_date date,
+    claim_type character varying,
+    claim_activity_status character varying,
+    claim_activity_status_effective_date date,
+    settled_claim character varying,
+    settlement_type character varying,
+    medical_settlement_date date,
+    indemnity_settlement_date date,
+    maximum_medical_improvement_date date,
+    claim_mira_ncci_injury_type character varying
 );
 
 
@@ -8448,7 +8487,21 @@ CREATE TABLE final_claim_cost_calculation_tables (
     claim_modified_losses_individual_reduced double precision,
     data_source character varying,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    claim_combined character varying,
+    combined_into_claim_number character varying,
+    claim_rating_plan_indicator character varying,
+    claim_status character varying,
+    claim_status_effective_date date,
+    claim_type character varying,
+    claim_activity_status character varying,
+    claim_activity_status_effective_date date,
+    settled_claim character varying,
+    settlement_type character varying,
+    medical_settlement_date date,
+    indemnity_settlement_date date,
+    maximum_medical_improvement_date date,
+    claim_mira_ncci_injury_type character varying
 );
 
 
@@ -13173,4 +13226,8 @@ INSERT INTO schema_migrations (version) VALUES ('20170223191602');
 INSERT INTO schema_migrations (version) VALUES ('20170223191826');
 
 INSERT INTO schema_migrations (version) VALUES ('20170224151532');
+
+INSERT INTO schema_migrations (version) VALUES ('20170228154737');
+
+INSERT INTO schema_migrations (version) VALUES ('20170228164401');
 
