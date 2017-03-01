@@ -32,6 +32,21 @@ class RiskReport < PdfReport
       @fifth_experience_year_period = @fourth_experience_year_period.first.advance(years: 1)..@first_experience_year_period.first.advance(days: -1).advance(years: 4)
       @fifth_experience_year_claims = @account.policy_calculation.claim_calculations.where("claim_injury_date BETWEEN ? AND ? ", @fifth_experience_year_period.first,  @fifth_experience_year_period.last).order(:claim_injury_date)
 
+      # Experience Totals
+
+      @experience_year_claims = @account.policy_calculation.claim_calculations.where("claim_injury_date BETWEEN ? AND ? ", @group_rating.experience_period_lower_date,  @group_rating.experience_period_upper_date).order(:claim_injury_date)
+      @experience_med_only = @experience_year_claims.where("left(claim_type, 1) = '1'").count
+      @experience_lost_time = @experience_year_claims.where("left(claim_type, 1) = '2'").count
+
+      @experience_comp_total = (@experience_year_claims.sum(:claim_modified_losses_group_reduced) - @experience_year_claims.sum(:claim_medical_paid) - @experience_year_claims.sum(:claim_mira_medical_reserve_amount))
+      @experience_medical_total = @experience_year_claims.sum(:claim_medical_paid)
+      @experience_mira_medical_reserve_total = @experience_year_claims.sum(:claim_mira_medical_reserve_amount)
+      @experience_group_modidified_losses_total = @experience_year_claims.sum(:claim_modified_losses_group_reduced)
+      @experience_individual_modidified_losses_total = @experience_year_claims.sum(:claim_modified_losses_individual_reduced)
+      @experience_individual_reduced_total = @experience_year_claims.sum(:claim_individual_reduced_amount)
+
+
+
       # Out Of Experience Years Parameters
       @first_out_of_experience_year = @first_experience_year - 5
       @first_out_of_experience_year_period = @first_experience_year_period.first.advance(years: -5)..@first_experience_year_period.last.advance(years: -5)
@@ -57,6 +72,21 @@ class RiskReport < PdfReport
       @sixth_out_of_experience_year_period = @fifth_experience_year_period.first.advance(years: -4)..@fifth_experience_year_period.last.advance(years: -4)
       @sixth_out_of_experience_year_claims = @account.policy_calculation.claim_calculations.where("claim_injury_date BETWEEN ? AND ? ", @sixth_out_of_experience_year_period.first,  @sixth_out_of_experience_year_period.last).order(:claim_injury_date)
 
+      # Out Of Experience Totals
+
+      @out_of_experience_year_claims = @account.policy_calculation.claim_calculations.where("claim_injury_date BETWEEN ? AND ? ", @first_out_of_experience_year_period.first,  @sixth_out_of_experience_year_period.last).order(:claim_injury_date)
+      @out_of_experience_med_only = @out_of_experience_year_claims.where("left(claim_type, 1) = '1'").count
+      @out_of_experience_lost_time = @out_of_experience_year_claims.where("left(claim_type, 1) = '2'").count
+
+
+      @out_of_experience_comp_total = (@out_of_experience_year_claims.sum(:claim_modified_losses_group_reduced) - @out_of_experience_year_claims.sum(:claim_medical_paid) - @out_of_experience_year_claims.sum(:claim_mira_medical_reserve_amount))
+
+      @out_of_experience_medical_total = @out_of_experience_year_claims.sum(:claim_medical_paid)
+      @out_of_experience_mira_medical_reserve_total = @out_of_experience_year_claims.sum(:claim_mira_medical_reserve_amount)
+      @out_of_experience_group_modidified_losses_total = @out_of_experience_year_claims.sum(:claim_modified_losses_group_reduced)
+      @out_of_experience_individual_modidified_losses_total = @out_of_experience_year_claims.sum(:claim_modified_losses_individual_reduced)
+      @out_of_experience_individual_reduced_total = @out_of_experience_year_claims.sum(:claim_individual_reduced_amount)
+
       # GREEN YEAR EXPERIENCE
       @first_green_year = @group_rating.experience_period_upper_date.strftime("%Y").to_i
       @first_green_year_period = (@group_rating.experience_period_upper_date.advance(days: 1))..(("#{(@group_rating.experience_period_upper_date.strftime("%Y").to_i)}-12-31").to_date)
@@ -66,20 +96,36 @@ class RiskReport < PdfReport
       @second_green_year_period = @first_green_year_period.last.advance(days: 1)..@first_green_year_period.last.advance(years: 1)
       @second_green_year_claims = @account.policy_calculation.claim_calculations.where("claim_injury_date BETWEEN ? AND ? ", @second_green_year_period.first,  @second_green_year_period.last).order(:claim_injury_date)
 
+      # GREEN YEAR EXPERIENCE Totals
 
+      @green_year_claims = @account.policy_calculation.claim_calculations.where("claim_injury_date BETWEEN ? AND ? ", @first_green_year_period.first,  @second_green_year_period.last).order(:claim_injury_date)
 
+      @green_year_med_only = @green_year_claims.where("left(claim_type, 1) = '1'").count
+      @green_year_loss_time = @green_year_claims.where("left(claim_type, 1) = '2'").count
 
+      @green_year_comp_total = (@green_year_claims.sum(:claim_modified_losses_group_reduced) - @green_year_claims.sum(:claim_medical_paid) - @green_year_claims.sum(:claim_mira_medical_reserve_amount))
 
-    header
-    stroke_horizontal_rule
-    at_a_glance
-    experience_statistics
-    stroke_horizontal_rule
-    expected_loss_development
+      @green_year_medical_total = @green_year_claims.sum(:claim_medical_paid)
+      @green_year_mira_medical_reserve_total = @green_year_claims.sum(:claim_mira_medical_reserve_amount)
+      @green_year_group_modidified_losses_total = @green_year_claims.sum(:claim_modified_losses_group_reduced)
+      @green_year_individual_modidified_losses_total = @green_year_claims.sum(:claim_modified_losses_individual_reduced)
+      @green_year_individual_reduced_total = @green_year_claims.sum(:claim_individual_reduced_amount)
 
-    start_new_page
-    claim_loss_run
+      @current_expected_losses = 0
 
+      @account.policy_calculation.manual_class_calculations.each do |man|
+        @current_expected_losses += man.manual_class_expected_loss_rate * man.manual_class_current_estimated_payroll
+      end
+
+      header
+      stroke_horizontal_rule
+      at_a_glance
+      experience_statistics
+      stroke_horizontal_rule
+      expected_loss_development
+
+      start_new_page
+      claim_loss_run
 
   end
 
@@ -192,12 +238,12 @@ class RiskReport < PdfReport
       self.header = true
     end
     move_down 10
-    text "Current Expected Losses: #{}", style: :bold
+    text "Current Expected Losses: #{ round(@current_expected_losses,2) }", style: :bold
   end
 
   def expected_loss_table_data
     @data = [["Man Num", "IG", "Exp. Payroll", "Exp. Loss Rate", "Total Exp Losses", "Base Rate", "Est. Payroll", "Ind. Rate", "Est Ind Premium", "Group Rate", "Group Prem"]]
-    @data +=  @account.policy_calculation.manual_class_calculations.map { |e| [e.manual_number, e.manual_class_industry_group, round(e.manual_class_four_year_period_payroll,0), round(e.manual_class_expected_loss_rate,2),  round(e.manual_class_expected_losses,0), round(e.manual_class_base_rate,2), round(e.manual_class_current_estimated_payroll, 0), round(e.manual_class_individual_total_rate, 4), round(e.manual_class_estimated_individual_premium,0), round(e.manual_class_group_total_rate,4), round(e.manual_class_estimated_group_premium,0)] }
+    @data +=  @account.policy_calculation.manual_class_calculations.map { |e| [e.manual_number, e.manual_class_industry_group, round(e.manual_class_four_year_period_payroll,0), rate(e.manual_class_expected_loss_rate, 2),  round(e.manual_class_expected_losses,0), rate(e.manual_class_base_rate,2), round(e.manual_class_current_estimated_payroll, 0), rate(e.manual_class_individual_total_rate, 4), round(e.manual_class_estimated_individual_premium,0), rate(e.manual_class_group_total_rate,4), round(e.manual_class_estimated_group_premium,0)] }
     @data += [[{:content => " #{ } Totals", :colspan => 4},"#{round(@policy_calculation.policy_total_expected_losses, 0)}","","#{round(@policy_calculation.policy_total_current_payroll, 0)}","","#{round(@policy_calculation.policy_total_individual_premium, 0)}","","#{round(@account.group_premium, 0)}"]]
   end
 
@@ -226,7 +272,18 @@ class RiskReport < PdfReport
     move_down 30
     text "Injury Year: #{ @sixth_out_of_experience_year}", style: :bold
     year_claim_table(claim_data(@sixth_out_of_experience_year_claims))
+
+
+    #############################################################
+    # Out of Experience Totals
+    move_down 15
+    out_of_experience_year_total_table
+    move_down 10
+    text "Med Only Claim Count: #{@out_of_experience_med_only}", style: :bold
+    text "Lost Time Claim Count: #{@out_of_experience_lost_time}", style: :bold
     move_down 30
+
+    #############################################################
 
     #IN EXPERIENCE
     stroke_horizontal_rule
@@ -248,8 +305,18 @@ class RiskReport < PdfReport
     move_down 30
     text "Injury Year: #{ @fifth_experience_year}", style: :bold
     year_claim_table(claim_data(@fifth_experience_year_claims))
+
+
+    #############################################################
+    # IN Experience Totals
+    move_down 15
+    experience_year_total_table
+    move_down 10
+    text "Med Only Claim Count: #{@experience_med_only}", style: :bold
+    text "Lost Time Claim Count: #{@experience_lost_time}", style: :bold
     move_down 30
 
+    #############################################################
 
     #Green Year
     stroke_horizontal_rule
@@ -262,10 +329,82 @@ class RiskReport < PdfReport
     move_down 30
     text "Injury Year: #{ @second_green_year}", style: :bold
     year_claim_table(claim_data(@second_green_year_claims))
+
+    #############################################################
+
+    # Green Year Totals
+
+    move_down 15
+    green_year_total_table
+    move_down 10
+    text "Med Only Claim Count: #{@green_year_med_only}", style: :bold
+    text "Lost Time Claim Count: #{@green_year_loss_time}", style: :bold
     move_down 30
+
+    #############################################################
 
   end
 
+
+
+  def green_year_total_table
+    table totals_green_year_data, :column_widths => {0 => 49, 1 => 55, 2 => 47, 3 => 32, 4 => 50, 5 => 50, 6 => 48, 7 => 48, 8 => 50, 9 => 50, 10 => 26, 11 => 35 }  do
+      self.position = :center
+      row(0).font_style = :bold
+      row(1).font_style = :bold
+      row(0).overflow = :shring_to_fit
+      row(0).align = :center
+      row(0).borders = [:bottom]
+      row(-1).borders = [:top]
+      self.cell_style = { size: 10 }
+      self.header = true
+    end
+  end
+
+
+  def totals_green_year_data
+    @data = [[{:content => "Green Year Totals", :colspan => 4},"#{ round(@green_year_comp_total,0) }","#{round(@green_year_medical_total,0)}","#{round(@green_year_mira_medical_reserve_total,0)}","#{round(@green_year_group_modidified_losses_total,0)}","#{round(@green_year_individual_modidified_losses_total,0)}","#{round(@green_year_individual_reduced_total,0)}","","" ]]
+  end
+
+
+
+  def out_of_experience_year_total_table
+    table totals_out_of_experience_year_data, :column_widths => {0 => 49, 1 => 55, 2 => 47, 3 => 32, 4 => 50, 5 => 50, 6 => 48, 7 => 48, 8 => 50, 9 => 50, 10 => 26, 11 => 35 }  do
+      self.position = :center
+      row(0).font_style = :bold
+      row(1).font_style = :bold
+      row(0).overflow = :shring_to_fit
+      row(0).align = :center
+      row(0).borders = [:bottom]
+      row(-1).borders = [:top]
+      self.cell_style = { size: 10 }
+      self.header = true
+    end
+  end
+
+
+  def totals_out_of_experience_year_data
+    @data = [[{:content => "Out Of Experience Year Totals", :colspan => 4},"#{ round(@out_of_experience_comp_total,0) }","#{round(@out_of_experience_medical_total,0)}","#{round(@out_of_experience_mira_medical_reserve_total,0)}","#{round(@out_of_experience_group_modidified_losses_total,0)}","#{round(@out_of_experience_individual_modidified_losses_total,0)}","#{round(@out_of_experience_individual_reduced_total,0)}","","" ]]
+  end
+
+  def experience_year_total_table
+    table totals_experience_year_data, :column_widths => {0 => 49, 1 => 55, 2 => 47, 3 => 32, 4 => 50, 5 => 50, 6 => 48, 7 => 48, 8 => 50, 9 => 50, 10 => 26, 11 => 35 }  do
+      self.position = :center
+      row(0).font_style = :bold
+      row(1).font_style = :bold
+      row(0).overflow = :shring_to_fit
+      row(0).align = :center
+      row(0).borders = [:bottom]
+      row(-1).borders = [:top]
+      self.cell_style = { size: 10 }
+      self.header = true
+    end
+  end
+
+
+  def totals_experience_year_data
+    @data = [[{:content => "Experience Year Totals", :colspan => 4},"#{ round(@experience_comp_total,0) }","#{round(@experience_medical_total,0)}","#{round(@experience_mira_medical_reserve_total,0)}","#{round(@experience_group_modidified_losses_total,0)}","#{round(@experience_individual_modidified_losses_total,0)}","#{round(@experience_individual_reduced_total,0)}","","" ]]
+  end
 
 
 
@@ -302,6 +441,13 @@ class RiskReport < PdfReport
     @view.number_with_precision(num, precision: prec, :delimiter => ',')
   end
 
+  def rate(num, prec)
+    if num.nil?
+      return nil
+    end
+    num = num * 100
+    @view.number_with_precision(num, precision: prec)
+  end
 
   def percent(num)
     num = num * 100
