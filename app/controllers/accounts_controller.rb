@@ -95,7 +95,7 @@ class AccountsController < ApplicationController
     @policy_calculation = @account.policy_calculation
     @group_rating_qualifications = Account.group_rating_qualifications
     @group_rating_qualifications[:auto_run] = "3"
-    @group_rating_tiers = BwcCodesIndustryGroupSavingsRatioCriterium.where(industry_group: @account.industry_group).pluck(:market_rate).uniq
+    @group_rating_tiers = BwcCodesIndustryGroupSavingsRatioCriterium.where(industry_group: @account.industry_group).pluck(:market_rate)
   end
 
   def edit_group_retro
@@ -173,7 +173,7 @@ class AccountsController < ApplicationController
       format.html
       format.pdf do
         pdf = RiskReport.new(@account, @account.policy_calculation, @group_rating, view_context)
-        
+
         # uploader = QuoteUploader.new
         # tmpfile = Tempfile.new("#{ @account.policy_number_entered }_quote_#{ @quote.id }.pdf")
         # quote = File.basename(tmpfile)
