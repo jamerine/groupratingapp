@@ -66,7 +66,7 @@ class GroupRatingAllCreate
           )
 
           FinalClaimCostCalculationTable.where(representative_number: @policy_calculation.representative_number, policy_number: @policy_calculation.policy_number).each do |claim|
-            ClaimCalculation.where(representative_number: claim.representative_number, policy_number: claim.policy_number, claim_number: claim.claim_number).update_or_create(
+            ClaimCalculation.where(representative_number: claim.representative_number, policy_number: claim.policy_number, claim_number: claim.claim_number, claim_status_effective_date: claim.claim_status_effective_date).update_or_create(
               representative_number: claim.representative_number,
               policy_number: claim.policy_number,
               policy_calculation_id: @policy_calculation.id,
