@@ -9316,7 +9316,8 @@ CREATE TABLE payroll_calculations (
     payroll_origin character varying,
     data_source character varying,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    manual_class_rate double precision
 );
 
 
@@ -13232,4 +13233,6 @@ INSERT INTO schema_migrations (version) VALUES ('20170228154737');
 INSERT INTO schema_migrations (version) VALUES ('20170228164401');
 
 INSERT INTO schema_migrations (version) VALUES ('20170301181011');
+
+INSERT INTO schema_migrations (version) VALUES ('20170302164335');
 

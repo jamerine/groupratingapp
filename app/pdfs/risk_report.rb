@@ -560,9 +560,13 @@ class RiskReport < PdfReport
 
   def payroll_and_premium_history
     text "Payroll And Premium Histroy", style: :bold, size: 14, align: :center
-    @payroll_calculations
+
     @payroll_periods.each do |period|
-      payroll_and_premium_history_table(payroll_and_premium_history_data(PayrollCalculation.where("reporting_period_start_date = ? and policy_number = ?", period, @policy_calculation.policy_number)))
+      @premium_total = 0
+      @policy_calculation.manual_class_calculations.each do |man|
+        @premium_total += (PayrollCalculation.find_by(reporting_period_start_date: period, policy_number: @policy_calculation.policy_number, manual_number: man.manual_number).manual_class_payroll * (PayrollCalculation.find_by(reporting_period_start_date: period, policy_number: @policy_calculation.policy_number, manual_number: man.manual_number).manual_class_rate * 0.01))
+      end
+      payroll_and_premium_history_table(payroll_and_premium_history_data(PayrollCalculation.where("reporting_period_start_date = ? and policy_number = ?", period, @policy_calculation.policy_number), @premium_total))
     end
   end
 
@@ -585,10 +589,10 @@ class RiskReport < PdfReport
     end
   end
 
-  def payroll_and_premium_history_data(payroll_array)
+  def payroll_and_premium_history_data(payroll_array, premium_total)
     @data = [["Period", "Manual", "Payroll", "Adjusted", "Rate", "Premium"]]
-    @data +=  payroll_array.order(manual_number: :asc).map { |e| [e.reporting_period_start_date.strftime("%-m/%-d/%y"), e.manual_number, round(e.manual_class_payroll,0), e.data_source, "rate?", "premium?" ] }
-    @data += [[{:content => "Period Totals", :colspan => 2}, "#{round(payroll_array.sum(:manual_class_payroll), 0)}", "", "", "total" ]]
+    @data +=  payroll_array.order(manual_number: :asc).map { |e| [e.reporting_period_start_date.strftime("%-m/%-d/%y"), e.manual_number, round(e.manual_class_payroll,0), e.data_source, e.manual_class_rate, "#{round((e.manual_class_rate * 0.01) * e.manual_class_payroll, 0)}" ] }
+    @data += [[{:content => "Period Totals", :colspan => 2}, "#{round(payroll_array.sum(:manual_class_payroll), 0)}", "", "", "#{ round(premium_total,0) }" ]]
   end
 
 
