@@ -8,6 +8,71 @@ class RiskReport < PdfReport
     @group_rating = group_rating
     @view = view
 
+    @account = Account.includes(policy_calculation: [:claim_calculations, :policy_coverage_status_histories, :policy_program_histories, { manual_class_calculations: :payroll_calculations }]).find(@account.id)
+
+    #LAPSE PERIOD FOR GROUP RATING
+      @nov_first = (Date.current.year.to_s + '-11-01').to_date
+      @days_to_add = (4 - @nov_first.wday) % 7
+      @fourth_thursday = @nov_first + @days_to_add + 21
+
+      @higher_lapse = @fourth_thursday - 3
+      @lower_lapse = @higher_lapse - 12.months
+      @group_lapse_sum = 0
+
+      @coverage_lapse_periods = @account.policy_calculation.policy_coverage_status_histories.where("coverage_status = :coverage_status and (coverage_end_date BETWEEN :lower_lapse and :higher_lapse or coverage_end_date is null)", coverage_status: "LAPSE", lower_lapse: @lower_lapse, higher_lapse: @higher_lapse)
+
+      @coverage_lapse_periods.each do |period|
+        # period starts before and ends out of range
+        if period.coverage_effective_date < @lower_lapse && period.coverage_end_date.nil?
+          @group_lapse_sum += Date.current - @lower_lapse
+        # period starts after and ends out of range
+      elsif period.coverage_effective_date > @lower_lapse && period.coverage_end_date.nil?
+          @group_lapse_sum += Date.current - period.coverage_effective_date
+        # period starts before and ends in range
+      elsif period.coverage_effective_date < @lower_lapse && period.coverage_end_date < @higher_lapse
+          @group_lapse_sum += period.coverage_end_date - @lower_lapse
+        # period starts after and ends in range
+        elsif period.coverage_effective_date > lower_lapse && period.coverage_end_date < higher_lapse
+          @group_lapse_sum += period.coverage_end_date - @period.coverage_effective_date
+        end
+      end
+
+
+    # GROUP RETRO LAPS CONFIG
+
+    nov_first = (Date.current.year.to_s + '-11-01').to_date
+    days_to_add = (4 - nov_first.wday) % 7
+    fourth_thursday = nov_first + days_to_add + 21
+
+    higher_lapse = fourth_thursday - 3
+    lower_lapse = higher_lapse - 9.months
+    @group_retro_lapse_sum = 0
+
+    coverage_lapse_periods = @account.policy_calculation.policy_coverage_status_histories.where("coverage_status = :coverage_status and (coverage_end_date BETWEEN :lower_lapse and :higher_lapse or coverage_end_date is null)", coverage_status: "LAPSE", lower_lapse: lower_lapse, higher_lapse: higher_lapse)
+
+    coverage_lapse_periods.each do |period|
+      # period starts before and ends out of range
+      if period.coverage_effective_date < lower_lapse && period.coverage_end_date.nil?
+        @group_retro_lapse_sum += Date.current - lower_lapse
+      # period starts after and ends out of range
+      elsif period.coverage_effective_date > lower_lapse && period.coverage_end_date.nil?
+        @group_retro_lapse_sum += Date.current - period.coverage_effective_date
+      # period starts before and ends in range
+      elsif period.coverage_effective_date < lower_lapse && period.coverage_end_date < higher_lapse
+        @group_retro_lapse_sum += period.coverage_end_date - lower_lapse
+      # period starts after and ends in range
+      elsif period.coverage_effective_date > lower_lapse && period.coverage_end_date < higher_lapse
+        @group_retro_lapse_sum += period.coverage_end_date - period.coverage_effective_date
+      end
+    end
+
+    @current_coverage_status = if @policy_calculation.policy_coverage_status_histories.order(coverage_effective_date: :desc).first.coverage_status == "LAPSE"
+      "Y"
+    else
+      "N"
+    end
+
+
     # Section for calculating parameters for Claim Loss Runs
 
       # Experience Years Parameters
@@ -117,6 +182,10 @@ class RiskReport < PdfReport
         @current_expected_losses += man.manual_class_expected_loss_rate * man.manual_class_current_estimated_payroll
       end
 
+      @payroll_calculations = @policy_calculation.manual_class_calculations.map{|u| u.payroll_calculations}.flatten
+
+      @payroll_periods = PayrollCalculation.select('reporting_period_start_date').group('payroll_calculations.reporting_period_start_date').where(:policy_number => @policy_calculation.policy_number).order(reporting_period_start_date: :desc).pluck(:reporting_period_start_date)
+
       header
       stroke_horizontal_rule
       at_a_glance
@@ -127,6 +196,11 @@ class RiskReport < PdfReport
       start_new_page
       claim_loss_run
 
+      start_new_page
+      coverage_status_history
+      experience_modifier_history
+      start_new_page
+      payroll_and_premium_history
   end
 
 
@@ -172,9 +246,9 @@ class RiskReport < PdfReport
       text "Current Status: #{@account.policy_calculation.coverage_status_effective_date}-#{ @account.policy_calculation.current_coverage_status }", size: 10
       text "Immediate Combo Policy: #{@policy_calculation.immediate_successor_policy_number}"
       text "Ultimate Combo Policy: #{@policy_calculation.ultimate_successor_policy_number}"
-      text "Group Days Lapse: "
-      text "Group Retro Days Lapse: "
-      text "Currently Lapsed: "
+      text "Group Days Lapse: #{ @group_lapse_sum }"
+      text "Group Retro Days Lapse: #{ @group_retro_lapse_sum }"
+      text "Currently Lapsed: #{@current_coverage_status}"
      transparent(0) { stroke_bounds }
     end
 
@@ -195,7 +269,7 @@ class RiskReport < PdfReport
 
   def experience_statistics
     move_down 10
-    text "Experience Statistics and EM Calculation", style: :bold
+    text "Experience Statistics and EM Calculation:", style: :bold
     move_down 5
     table experience_table_data do
       self.position = :center
@@ -221,7 +295,7 @@ class RiskReport < PdfReport
 
   def expected_loss_development
     move_down 10
-    text "Expected Loss Development and Estimated Premium", style: :bold
+    text "Expected Loss Development and Estimated Premium:", style: :bold
     move_down 10
     table expected_loss_table_data, :column_widths => {0 => 35, 1 => 25, 2 => 60, 3 => 40, 4 => 60, 5 => 40, 6 => 60, 7 => 45, 8 => 60, 9 => 45, 10 => 60 } do
       self.position = :center
@@ -238,12 +312,12 @@ class RiskReport < PdfReport
       self.header = true
     end
     move_down 10
-    text "Current Expected Losses: #{ round(@current_expected_losses,2) }", style: :bold
+    text "Current Expected Losses: #{ round(@current_expected_losses,0) }", style: :bold
   end
 
   def expected_loss_table_data
-    @data = [["Man Num", "IG", "Exp. Payroll", "Exp. Loss Rate", "Total Exp Losses", "Base Rate", "Est. Payroll", "Ind. Rate", "Est Ind Premium", "Group Rate", "Group Prem"]]
-    @data +=  @account.policy_calculation.manual_class_calculations.map { |e| [e.manual_number, e.manual_class_industry_group, round(e.manual_class_four_year_period_payroll,0), rate(e.manual_class_expected_loss_rate, 2),  round(e.manual_class_expected_losses,0), rate(e.manual_class_base_rate,2), round(e.manual_class_current_estimated_payroll, 0), rate(e.manual_class_individual_total_rate, 4), round(e.manual_class_estimated_individual_premium,0), rate(e.manual_class_group_total_rate,4), round(e.manual_class_estimated_group_premium,0)] }
+    @data = [["Man Num", "IG", "Exp. Payroll", "Exp. Loss Rate", "Total Exp Losses", "Base Rate", "Est. Payroll", "Ind. Rate", "Est Ind Premium", "#{@account.group_rating_tier} Group Rate", "Group Prem"]]
+    @data +=  @account.policy_calculation.manual_class_calculations.order(manual_number: :asc).map { |e| [e.manual_number, e.manual_class_industry_group, round(e.manual_class_four_year_period_payroll,0), rate(e.manual_class_expected_loss_rate, 2),  round(e.manual_class_expected_losses,0), rate(e.manual_class_base_rate,2), round(e.manual_class_current_estimated_payroll, 0), rate(e.manual_class_individual_total_rate, 4), round(e.manual_class_estimated_individual_premium,0), rate(e.manual_class_group_total_rate,4), round(e.manual_class_estimated_group_premium,0)] }
     @data += [[{:content => " #{ } Totals", :colspan => 4},"#{round(@policy_calculation.policy_total_expected_losses, 0)}","","#{round(@policy_calculation.policy_total_current_payroll, 0)}","","#{round(@policy_calculation.policy_total_individual_premium, 0)}","","#{round(@account.group_premium, 0)}"]]
   end
 
@@ -431,6 +505,91 @@ class RiskReport < PdfReport
   end
 
 
+  def coverage_status_history
+    move_down 30
+    text "GROUP DISCOUNT LEVELS", style: :bold, size: 18, align: :center
+    text "box here", align: :center
+
+    move_down 30
+    text "Coverage Dates and Status", style: :bold, size: 14, align: :center
+    move_down 5
+    coverage_status_history_table
+  end
+
+  def coverage_status_history_table
+    table coverage_status_history_data do
+      self.position = :center
+      row(0).font_style = :bold
+      row(0).overflow = :shring_to_fit
+      row(0).align = :center
+      row(0).borders = [:bottom]
+      row(1..-1).borders = []
+      row(0..-1).align = :center
+      self.header = true
+    end
+  end
+
+  def coverage_status_history_data
+    @data = [["Effective Date", "End Date", "Status" ]]
+    @data +=  @account.policy_calculation.policy_coverage_status_histories.order(coverage_effective_date: :desc).map { |e| [ e.coverage_effective_date, e.coverage_end_date, e.coverage_status ] }
+  end
+
+  def experience_modifier_history
+    move_down 30
+    text "Experience Modifier History", style: :bold, size: 14, align: :center
+    experience_modifier_history_table
+  end
+
+  def experience_modifier_history_table
+    table experience_modifier_history_data do
+      self.position = :center
+      row(0).font_style = :bold
+      row(0).overflow = :shring_to_fit
+      row(0).align = :center
+      row(0).borders = [:bottom]
+      row(1..-1).borders = []
+      row(0..-1).align = :center
+      self.header = true
+    end
+  end
+
+  def experience_modifier_history_data
+    @data = [["Period", "EM", "Group Plan", "Retro%", "Ded%", "OCP Year", "GROH", "DF/Level", "EMCap", "TWBNS", "ISSP" ]]
+    @data +=  @account.policy_calculation.policy_program_histories.where("reporting_period_start_date >= ?", @first_out_of_experience_year_period.first).order(reporting_period_start_date: :desc).map { |e| [ e.reporting_period_start_date, e.experience_modifier_rate, e.group_type, e.rrr_minimum_premium_percentage, e.deductible_discount_percentage, e.ocp_first_year_of_participation, e.grow_ohio_participation_indicator, "#{e.drug_free_program_participation_indicator}/#{e.drug_free_program_participation_level}", e.em_cap_participation_indicator, e.twbns_participation_indicator, e.issp_participation_indicator ] }
+  end
+
+  def payroll_and_premium_history
+    text "Payroll And Premium Histroy", style: :bold, size: 14, align: :center
+    @payroll_calculations
+    @payroll_periods.each do |period|
+      payroll_and_premium_history_table(payroll_and_premium_history_data(PayrollCalculation.where("reporting_period_start_date = ? and policy_number = ?", period, @policy_calculation.policy_number)))
+    end
+  end
+
+
+
+
+  def payroll_and_premium_history_table(payroll_and_premium_history_data)
+    table payroll_and_premium_history_data, :column_widths => {0 => 75, 1 => 75, 2 => 75, 3 => 75, 4 => 75, 5 => 75 } do
+      self.position = :center
+      row(0).font_style = :bold
+      row(0).overflow = :shring_to_fit
+      row(0).align = :center
+      row(0).borders = [:bottom]
+      row(1..-1).borders = []
+      row(0..-1).align = :center
+      row(-1).borders = [:top]
+      row(-1).font_style = :bold
+      # self.cell_style = { size: 8 }
+      self.header = true
+    end
+  end
+
+  def payroll_and_premium_history_data(payroll_array)
+    @data = [["Period", "Manual", "Payroll", "Adjusted", "Rate", "Premium"]]
+    @data +=  payroll_array.order(manual_number: :asc).map { |e| [e.reporting_period_start_date.strftime("%-m/%-d/%y"), e.manual_number, round(e.manual_class_payroll,0), e.data_source, "rate?", "premium?" ] }
+    @data += [[{:content => "Period Totals", :colspan => 2}, "#{round(payroll_array.sum(:manual_class_payroll), 0)}", "", "", "total" ]]
+  end
 
 
   def price(num)
