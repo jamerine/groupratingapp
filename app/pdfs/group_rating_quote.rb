@@ -9,6 +9,13 @@ class GroupRatingQuote < PdfReport
     @policy_calculation = policy_calculation
     @view = view
 
+    @group_fees =
+      if @account.group_fees.nil?
+        0
+      else
+        @account.group_fees
+      end
+
 
     header 'Group Rate Quote Analysis'
     move_down 50
@@ -60,9 +67,9 @@ class GroupRatingQuote < PdfReport
 
     text "Projected Savings: #{price(@account.group_savings)}", align: :right, size: 12, style: :bold
     move_down 10
-    text "Enrollment Fee: #{price(@account.group_fees)}", align: :right, size: 12, style: :bold
+    text "Enrollment Fee: #{price(@group_fees)}", align: :right, size: 12, style: :bold
     move_down 10
-    text "Next Savings: #{ price(@account.group_savings - @account.group_fees) }", align: :right, size: 16, style: :bold
+    text "Next Savings: #{ price(@account.group_savings - @group_fees) }", align: :right, size: 16, style: :bold
     # bounding_box([200, cursor], :width => 325, :height => 25) do
     #   stroke_bounds
     # end
