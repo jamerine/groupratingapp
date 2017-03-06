@@ -67,7 +67,7 @@ class ManualClassCalculation < ActiveRecord::Base
         @limited_loss_rate = 0
         @limited_losses = 0
       else
-        @limited_loss_rate = (@limited_loss_rate_row.limited_loss_ratio).round(4)
+        @limited_loss_rate = (@limited_loss_rate_row.limited_loss_ratio).round(8)
         @limited_losses = (self.manual_class_expected_losses * @limited_loss_rate).round(2)
       end
 
@@ -83,8 +83,8 @@ class ManualClassCalculation < ActiveRecord::Base
     self.transaction do
 
         @manual_class_standard_premium = (self.manual_class_base_rate * self.manual_class_current_estimated_payroll * policy_individual_experience_modified_rate).round(2)
-        @manual_class_modification_rate = (self.manual_class_base_rate * policy_individual_experience_modified_rate).round(4)
-        @manual_class_individual_total_rate = (@manual_class_modification_rate * administrative_rate).round(4)
+        @manual_class_modification_rate = (self.manual_class_base_rate * policy_individual_experience_modified_rate).round(6)
+        @manual_class_individual_total_rate = (@manual_class_modification_rate * administrative_rate).round(6)
         @manual_class_estimated_individual_premium = (self.manual_class_current_estimated_payroll * @manual_class_individual_total_rate).round(2)
 
         self.update_attributes(manual_class_individual_total_rate: @manual_class_individual_total_rate,
