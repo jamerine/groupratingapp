@@ -7985,6 +7985,40 @@ ALTER SEQUENCE bwc_codes_credibility_max_losses_id_seq OWNED BY bwc_codes_credib
 
 
 --
+-- Name: bwc_codes_employer_representatives; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE bwc_codes_employer_representatives (
+    id integer NOT NULL,
+    rep_id integer,
+    employer_rep_name character varying,
+    rep_id_text character varying,
+    representative_number integer,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
+);
+
+
+--
+-- Name: bwc_codes_employer_representatives_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE bwc_codes_employer_representatives_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: bwc_codes_employer_representatives_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE bwc_codes_employer_representatives_id_seq OWNED BY bwc_codes_employer_representatives.id;
+
+
+--
 -- Name: bwc_codes_group_retro_tiers; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -11381,6 +11415,13 @@ ALTER TABLE ONLY bwc_codes_credibility_max_losses ALTER COLUMN id SET DEFAULT ne
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY bwc_codes_employer_representatives ALTER COLUMN id SET DEFAULT nextval('bwc_codes_employer_representatives_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY bwc_codes_group_retro_tiers ALTER COLUMN id SET DEFAULT nextval('bwc_codes_group_retro_tiers_id_seq'::regclass);
 
 
@@ -11915,6 +11956,14 @@ ALTER TABLE ONLY bwc_codes_constant_values
 
 ALTER TABLE ONLY bwc_codes_credibility_max_losses
     ADD CONSTRAINT bwc_codes_credibility_max_losses_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: bwc_codes_employer_representatives_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY bwc_codes_employer_representatives
+    ADD CONSTRAINT bwc_codes_employer_representatives_pkey PRIMARY KEY (id);
 
 
 --
@@ -13235,4 +13284,6 @@ INSERT INTO schema_migrations (version) VALUES ('20170228164401');
 INSERT INTO schema_migrations (version) VALUES ('20170301181011');
 
 INSERT INTO schema_migrations (version) VALUES ('20170302164335');
+
+INSERT INTO schema_migrations (version) VALUES ('20170306130853');
 
