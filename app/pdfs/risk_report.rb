@@ -190,9 +190,8 @@ class RiskReport < PdfReport
 
       @ilr = round(((@policy_calculation.policy_total_modified_losses_group_reduced * @policy_calculation.policy_total_current_payroll) / ( @policy_calculation.policy_total_four_year_payroll * @policy_calculation.policy_total_standard_premium)), 2)
 
-      @f_s = ((3660*@experience_med_only) + (12500*@experience_lost_time))
-      @experience_med_only = @experience_year_claims.where("left(claim_type, 1) = '1'").count
-      @experience_lost_time = @experience_year_claims.where("left(claim_type, 1) = '2'").count
+      @f_s = round((((3660 * @experience_med_only) + (12500 * @experience_lost_time))/ @policy_calculation.policy_total_four_year_payroll) *  (@policy_calculation.policy_total_current_payroll / @policy_calculation.policy_total_standard_premium), 2)
+
 
       @erc =
       if @account.policy_calculation.currently_assigned_erc_representative_number == 0
@@ -327,7 +326,7 @@ class RiskReport < PdfReport
 
   def experience_table_data
     @data = [["ITML", "GTML", "TEL", "Ratio", "IG", "TLL", "C%", "EMR", "CAP", "Max Value", "Stand Prem", "F/S", "ILR" ]]
-    @data += [[round(@policy_calculation.policy_total_modified_losses_individual_reduced,0), round(@policy_calculation.policy_total_modified_losses_group_reduced,0), round(@policy_calculation.policy_total_expected_losses,0), round(@policy_calculation.policy_group_ratio, 0), @policy_calculation.policy_industry_group, round(@policy_calculation.policy_total_limited_losses,0), percent(@policy_calculation.policy_credibility_percent), round(@policy_calculation.policy_individual_experience_modified_rate,2),round( @policy_calculation.policy_individual_experience_modified_rate,2), round(@policy_calculation.policy_maximum_claim_value,0), round(@policy_calculation.policy_total_standard_premium,0), "FS", "#{@ilr}" ]]
+    @data += [[round(@policy_calculation.policy_total_modified_losses_individual_reduced,0), round(@policy_calculation.policy_total_modified_losses_group_reduced,0), round(@policy_calculation.policy_total_expected_losses,0), round(@policy_calculation.policy_group_ratio - 1, 4), @policy_calculation.policy_industry_group, round(@policy_calculation.policy_total_limited_losses,0), percent(@policy_calculation.policy_credibility_percent), round(@policy_calculation.policy_individual_experience_modified_rate,2),round( @policy_calculation.policy_individual_experience_modified_rate,2), round(@policy_calculation.policy_maximum_claim_value,0), round(@policy_calculation.policy_total_standard_premium,0), "#{@f_s}", "#{@ilr}" ]]
   end
 
   def expected_loss_development
@@ -602,7 +601,9 @@ class RiskReport < PdfReport
     @payroll_periods.each do |period|
       @premium_total = 0
       @policy_calculation.manual_class_calculations.each do |man|
-        @premium_total += (PayrollCalculation.find_by(reporting_period_start_date: period, policy_number: @policy_calculation.policy_number, manual_number: man.manual_number).manual_class_payroll * (PayrollCalculation.find_by(reporting_period_start_date: period, policy_number: @policy_calculation.policy_number, manual_number: man.manual_number).manual_class_rate * 0.01))
+        unless PayrollCalculation.find_by(reporting_period_start_date: period, policy_number: @policy_calculation.policy_number, manual_number: man.manual_number).nil?
+          @premium_total += ((PayrollCalculation.find_by(reporting_period_start_date: period, policy_number: @policy_calculation.policy_number, manual_number: man.manual_number).manual_class_payroll)  * (PayrollCalculation.find_by(reporting_period_start_date: period, policy_number: @policy_calculation.policy_number, manual_number: man.manual_number).manual_class_rate * 0.01))
+        end
       end
       payroll_and_premium_history_table(payroll_and_premium_history_data(PayrollCalculation.where("reporting_period_start_date = ? and policy_number = ?", period, @policy_calculation.policy_number), @premium_total))
     end
