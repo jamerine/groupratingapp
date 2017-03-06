@@ -32,9 +32,9 @@ class ManualClassCalculation < ActiveRecord::Base
     self.transaction do
       @group_rating = GroupRating.find_by(process_representative: self.representative_number)
 
-      @manual_class_four_year_sum = self.payroll_calculations.where("reporting_period_start_date BETWEEN :experience_period_lower_date and :experience_period_upper_date", experience_period_lower_date: @group_rating.experience_period_lower_date, experience_period_upper_date: @group_rating.experience_period_upper_date).sum(:manual_class_payroll)
+      @manual_class_four_year_sum = self.payroll_calculations.where("reporting_period_start_date BETWEEN :experience_period_lower_date and :experience_period_upper_date", experience_period_lower_date: @group_rating.experience_period_lower_date, experience_period_upper_date: @group_rating.experience_period_upper_date).sum(:manual_class_payroll).round(2)
 
-      @manual_class_current_payroll = self.payroll_calculations.where("reporting_period_start_date >= :current_payroll_period_lower_date and reporting_period_start_date < :current_payroll_period_upper_date", current_payroll_period_lower_date: @group_rating.current_payroll_period_lower_date, current_payroll_period_upper_date: @group_rating.current_payroll_period_upper_date).sum(:manual_class_payroll)
+      @manual_class_current_payroll = self.payroll_calculations.where("reporting_period_start_date >= :current_payroll_period_lower_date and reporting_period_start_date < :current_payroll_period_upper_date", current_payroll_period_lower_date: @group_rating.current_payroll_period_lower_date, current_payroll_period_upper_date: @group_rating.current_payroll_period_upper_date).sum(:manual_class_payroll).round(2)
 
       @bwc_base_rate = BwcCodesBaseRatesExpLossRate.find_by(class_code: self.manual_number)
 
@@ -43,7 +43,7 @@ class ManualClassCalculation < ActiveRecord::Base
         @manual_class_expected_loss_rate = 0
         @manual_class_base_rate = 0
       else
-        @manual_class_expected_losses = @bwc_base_rate.expected_loss_rate * @manual_class_four_year_sum
+        @manual_class_expected_losses = (@bwc_base_rate.expected_loss_rate * @manual_class_four_year_sum).round(2)
         @manual_class_expected_loss_rate = @bwc_base_rate.expected_loss_rate
         @manual_class_base_rate = @bwc_base_rate.base_rate
       end
@@ -67,8 +67,8 @@ class ManualClassCalculation < ActiveRecord::Base
         @limited_loss_rate = 0
         @limited_losses = 0
       else
-        @limited_loss_rate = @limited_loss_rate_row.limited_loss_ratio
-        @limited_losses = self.manual_class_expected_losses * @limited_loss_rate
+        @limited_loss_rate = (@limited_loss_rate_row.limited_loss_ratio).round(4)
+        @limited_losses = (self.manual_class_expected_losses * @limited_loss_rate).round(2)
       end
 
       self.update_attributes(
@@ -82,10 +82,10 @@ class ManualClassCalculation < ActiveRecord::Base
   def calculate_premium(policy_individual_experience_modified_rate, administrative_rate)
     self.transaction do
 
-        @manual_class_standard_premium = (self.manual_class_base_rate * self.manual_class_current_estimated_payroll * policy_individual_experience_modified_rate)
-        @manual_class_modification_rate = (self.manual_class_base_rate * policy_individual_experience_modified_rate)
-        @manual_class_individual_total_rate = @manual_class_modification_rate * administrative_rate
-        @manual_class_estimated_individual_premium = (self.manual_class_current_estimated_payroll * @manual_class_individual_total_rate)
+        @manual_class_standard_premium = (self.manual_class_base_rate * self.manual_class_current_estimated_payroll * policy_individual_experience_modified_rate).round(2)
+        @manual_class_modification_rate = (self.manual_class_base_rate * policy_individual_experience_modified_rate).round(4)
+        @manual_class_individual_total_rate = (@manual_class_modification_rate * administrative_rate).round(4)
+        @manual_class_estimated_individual_premium = (self.manual_class_current_estimated_payroll * @manual_class_individual_total_rate).round(2)
 
         self.update_attributes(manual_class_individual_total_rate: @manual_class_individual_total_rate,
         manual_class_standard_premium: @manual_class_standard_premium, manual_class_modification_rate: @manual_class_modification_rate, manual_class_estimated_individual_premium: @manual_class_estimated_individual_premium)
