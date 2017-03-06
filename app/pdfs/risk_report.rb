@@ -186,6 +186,43 @@ class RiskReport < PdfReport
 
       @payroll_periods = PayrollCalculation.select('reporting_period_start_date').group('payroll_calculations.reporting_period_start_date').where(:policy_number => @policy_calculation.policy_number).order(reporting_period_start_date: :desc).pluck(:reporting_period_start_date)
 
+
+
+      @ilr = round(((@policy_calculation.policy_total_modified_losses_group_reduced * @policy_calculation.policy_total_current_payroll) / ( @policy_calculation.policy_total_four_year_payroll * @policy_calculation.policy_total_standard_premium)), 2)
+
+      @f_s = ((3660*@experience_med_only) + (12500*@experience_lost_time))
+      @experience_med_only = @experience_year_claims.where("left(claim_type, 1) = '1'").count
+      @experience_lost_time = @experience_year_claims.where("left(claim_type, 1) = '2'").count
+
+      @erc =
+      if @account.policy_calculation.currently_assigned_erc_representative_number == 0
+        "N/A"
+      else
+        BwcCodesEmployerRepresentative.find_by(representative_number: @account.policy_calculation.currently_assigned_erc_representative_number).employer_rep_name
+      end
+
+      @grc =
+      if @account.policy_calculation.currently_assigned_grc_representative_number == 0
+        "N/A"
+      else
+        BwcCodesEmployerRepresentative.find_by(representative_number: @account.policy_calculation.currently_assigned_grc_representative_number).employer_rep_name
+      end
+
+      @clm =
+      if @account.policy_calculation.currently_assigned_clm_representative_number == 0
+        "N/A"
+      else
+        BwcCodesEmployerRepresentative.find_by(representative_number: @account.policy_calculation.currently_assigned_clm_representative_number).employer_rep_name
+      end
+
+      @risk =
+      if @account.policy_calculation.currently_assigned_risk_representative_number == 0
+        "N/A"
+      else
+        BwcCodesEmployerRepresentative.find_by(representative_number: @account.policy_calculation.currently_assigned_risk_representative_number).employer_rep_name
+      end
+
+
       header
       stroke_horizontal_rule
       at_a_glance
@@ -226,10 +263,10 @@ class RiskReport < PdfReport
     move_down 10
     text "At A Glance", size: 16, style: :bold, align: :center
     move_down 10
-    text "Current Employer Rep: #{@account.policy_calculation.currently_assigned_erc_representative_number}", size: 12
-    text "Employer Rep Group Risk/Claim: #{@account.policy_calculation.currently_assigned_grc_representative_number}", size: 12
-    text "Employer Rep Claim: #{@account.policy_calculation.currently_assigned_clm_representative_number}", size: 12
-    text "Employer Rep Risk Management: #{@account.policy_calculation.currently_assigned_risk_representative_number}", size: 12
+    text "Current Employer Rep: #{ @erc }", size: 12
+    text "Employer Rep Group Risk/Claim: #{ @grc }", size: 12
+    text "Employer Rep Claim: #{ @clm }", size: 12
+    text "Employer Rep Risk Management: #{ @risk }", size: 12
     move_down 10
     stroke_horizontal_rule
     # stroke_axis
@@ -290,7 +327,7 @@ class RiskReport < PdfReport
 
   def experience_table_data
     @data = [["ITML", "GTML", "TEL", "Ratio", "IG", "TLL", "C%", "EMR", "CAP", "Max Value", "Stand Prem", "F/S", "ILR" ]]
-    @data += [[round(@policy_calculation.policy_total_modified_losses_individual_reduced,0), round(@policy_calculation.policy_total_modified_losses_group_reduced,0), round(@policy_calculation.policy_total_expected_losses,0), round(@policy_calculation.policy_group_ratio, 0), @policy_calculation.policy_industry_group, round(@policy_calculation.policy_total_limited_losses,0), percent(@policy_calculation.policy_credibility_percent), round(@policy_calculation.policy_individual_experience_modified_rate,2),round( @policy_calculation.policy_individual_experience_modified_rate,2), round(@policy_calculation.policy_maximum_claim_value,0), round(@policy_calculation.policy_total_standard_premium,0), "fs", "ILR" ]]
+    @data += [[round(@policy_calculation.policy_total_modified_losses_individual_reduced,0), round(@policy_calculation.policy_total_modified_losses_group_reduced,0), round(@policy_calculation.policy_total_expected_losses,0), round(@policy_calculation.policy_group_ratio, 0), @policy_calculation.policy_industry_group, round(@policy_calculation.policy_total_limited_losses,0), percent(@policy_calculation.policy_credibility_percent), round(@policy_calculation.policy_individual_experience_modified_rate,2),round( @policy_calculation.policy_individual_experience_modified_rate,2), round(@policy_calculation.policy_maximum_claim_value,0), round(@policy_calculation.policy_total_standard_premium,0), "FS", "#{@ilr}" ]]
   end
 
   def expected_loss_development
@@ -483,7 +520,7 @@ class RiskReport < PdfReport
 
 
   def year_claim_table(claim_year_data)
-    table claim_year_data, :column_widths => {0 => 49, 1 => 55, 2 => 47, 3 => 32, 4 => 50, 5 => 50, 6 => 48, 7 => 48, 8 => 50, 9 => 50, 10 => 26, 11 => 35 } do
+    table claim_year_data, :column_widths => { 0 => 49, 1 => 80, 2 => 40, 3 => 28, 4 => 45, 5 => 45, 6 => 45, 7 => 45, 8 => 45, 9 => 45, 10 => 24, 11 => 30 } do
       self.position = :center
       row(0).font_style = :bold
       row(0).overflow = :shring_to_fit
@@ -493,7 +530,8 @@ class RiskReport < PdfReport
       row(-1).borders = [:top]
       row(-1).font_style = :bold
       row(0..-1).align = :center
-      self.cell_style = { size: 8 }
+      row(0..-1).columns(1).align = :left
+      self.cell_style = { size: 7 }
       self.header = true
     end
   end
