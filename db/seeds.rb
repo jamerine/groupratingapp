@@ -13,7 +13,7 @@
   # BwcCodesPolicyEffectiveDate.import_table('https://s3.amazonaws.com/grouprating/BwcSupportTables/BWC+History+with+Pol+and+Eff+Date.csv')
   BwcCodesPeoList.import_table('https://s3.amazonaws.com/grouprating/BwcSupportTables/peo_list.csv')
   BwcCodesConstantValue.import_table('https://s3.amazonaws.com/grouprating/BwcSupportTables/bwc_codes_constant_values.csv')
-  BwcCodesEmployerRepresentative.import_table('https://s3.amazonaws.com/grouprating/BwcSupportTables/Employer+Rep+List.csv')
+  BwcCodesEmployerRepresentative.import_table('https://s3.amazonaws.com/grouprating/BwcSupportTables/Employer%2BRep%2BList.csv')
 
   BwcCodesGroupRetroTier.create([
     { industry_group: 3, discount_tier: -0.51 },
