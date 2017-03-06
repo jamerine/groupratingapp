@@ -221,6 +221,7 @@ class RiskReport < PdfReport
         BwcCodesEmployerRepresentative.find_by(representative_number: @account.policy_calculation.currently_assigned_risk_representative_number).employer_rep_name
       end
 
+      @group_rating_levels = BwcCodesIndustryGroupSavingsRatioCriterium.where(industry_group: @account.industry_group)
 
       header
       stroke_horizontal_rule
@@ -233,10 +234,12 @@ class RiskReport < PdfReport
       claim_loss_run
 
       start_new_page
+      group_discount_level
       coverage_status_history
       experience_modifier_history
       start_new_page
       payroll_and_premium_history
+
   end
 
 
@@ -541,12 +544,42 @@ class RiskReport < PdfReport
     @data += [[{:content => "Totals", :colspan => 4},"#{round((claims_array.sum(:claim_modified_losses_group_reduced) - claims_array.sum(:claim_medical_paid) - claims_array.sum(:claim_mira_medical_reserve_amount)), 0)}", "#{round(claims_array.sum(:claim_medical_paid), 0)}", "#{round(claims_array.sum(:claim_mira_medical_reserve_amount), 0)}" , "#{round(claims_array.sum(:claim_modified_losses_group_reduced), 0)}", "#{round(claims_array.sum(:claim_modified_losses_individual_reduced), 0)}", "#{round(claims_array.sum(:claim_individual_reduced_amount), 0)}", "", "" ]]
   end
 
+  def group_discount_level
+    move_down 30
+    text "Group Discount Levels", style: :bold, size: 18, align: :center
+
+    group_discount_level_table
+
+  end
+
+
+  def group_discount_level_table
+    table group_discount_level_data do
+      self.position = :center
+      row(0).font_style = :bold
+      row(0).overflow = :shring_to_fit
+      row(0).align = :center
+      row(0).borders = [:bottom]
+      row(1..-1).borders = []
+      row(0..-1).align = :center
+      self.header = true
+    end
+  end
+
+  def group_discount_level_data
+    @data = [["Market TM%", "Cut Point", "Cut Losses", "Level" ]]
+    @data +=  @group_rating_levels.map do |e|
+      if e.ac26_group_level == @account.group_rating_group_number
+        [ e.market_rate, round((e.ratio_criteria - 1),4), round((((e.ratio_criteria - 1) * @policy_calculation.policy_total_expected_losses) + @policy_calculation.policy_total_expected_losses), 0), "Qualified" ]
+      else
+        [ e.market_rate, round((e.ratio_criteria - 1),4), round((((e.ratio_criteria - 1) * @policy_calculation.policy_total_expected_losses) + @policy_calculation.policy_total_expected_losses), 0), "" ]
+      end
+    end
+  end
+
+
 
   def coverage_status_history
-    move_down 30
-    text "GROUP DISCOUNT LEVELS", style: :bold, size: 18, align: :center
-    text "box here", align: :center
-
     move_down 30
     text "Coverage Dates and Status", style: :bold, size: 14, align: :center
     move_down 5
