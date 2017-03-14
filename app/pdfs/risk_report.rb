@@ -242,6 +242,37 @@ class RiskReport < PdfReport
 
       @group_rating_levels = BwcCodesIndustryGroupSavingsRatioCriterium.where(industry_group: @account.industry_group)
 
+      @em_cap =
+        if @policy_calculation.policy_program_histories.order(reporting_period_start_date: :desc).first.experience_modifier_rate > (2 * @policy_calculation.policy_individual_experience_modified_rate)
+          (2 * @policy_calculation.policy_individual_experience_modified_rate)
+        else
+          @policy_calculation.policy_individual_experience_modified_rate
+        end
+
+        @sort_code =
+          if @account.group_rating_rejections.where("program_type = 'group_rating'").empty? && @account.group_rating_qualification == 'accept'
+            "accept"
+          elsif @account.group_rating_rejections.where("program_type = 'group_rating'").empty? && @account.group_rating_qualification == 'reject'
+            "manual_override"
+          else
+            @account.group_rating_rejections.where("program_type = 'group_rating'").pluck(:reject_reason).map { |i| "'" + i.to_s + "'" }.join(",").to_s.gsub(/\s|"|'/, '')
+          end
+
+      @group_rating_date =
+          if @account.quotes.where("program_type = 0").first.nil?
+            'N/A'
+          else
+            @account.quotes.where("program_type = 0").first.quote_sent_date
+          end
+
+      @group_retro_date =
+          if @account.quotes.where("program_type = 1").first.nil?
+            'N/A'
+          else
+            @account.quotes.where("program_type = 1").first.quote_sent_date
+          end
+
+
       header
       stroke_horizontal_rule
       at_a_glance
@@ -354,16 +385,41 @@ class RiskReport < PdfReport
       self.cell_style = {:size => 8}
       self.header = true
     end
+
     move_down 10
-    text "Cycle Date: #{ @account.cycle_date }  |  Sort Code: |  Partner:  "
-    text "Group Date: #{ @account.cycle_date }  |  GRTRO Date: "
+    stroke_horizontal_rule
+    move_down 10
+    current_cursor = cursor
+    bounding_box([0, current_cursor], :width => 125, :height => 15) do
+      text "Cycle Date: #{ @account.cycle_date }", style: :bold
+      transparent(0) { stroke_bounds }
+    end
+    bounding_box([125, current_cursor], :width => 275, :height => 15) do
+      text "Sort Code: #{ @sort_code.to_s }", style: :bold
+      transparent(0) { stroke_bounds }
+    end
+    bounding_box([400, current_cursor], :width => 150, :height => 15) do
+      text "Partner:  ", style: :bold
+      transparent(0) { stroke_bounds }
+    end
+    current_cursor = cursor
+    bounding_box([75, current_cursor], :width => 150, :height => 15) do
+      text   text "Group Date: #{ @group_rating_date }", style: :bold
+      transparent(0) { stroke_bounds }
+    end
+
+    bounding_box([325, current_cursor], :width => 150, :height => 15) do
+      text "GRTRO Date: #{@group_retro_date}", style: :bold
+      transparent(0) { stroke_bounds }
+    end
+
     move_down 10
 
   end
 
   def experience_table_data
     @data = [["ITML", "GTML", "TEL", "Ratio", "IG", "TLL", "C%", "EMR", "CAP", "Max Value", "Stand Prem", "F/S", "ILR", "10YLR", "4YLR" ]]
-    @data += [[round(@policy_calculation.policy_total_modified_losses_individual_reduced,0), round(@policy_calculation.policy_total_modified_losses_group_reduced,0), round(@policy_calculation.policy_total_expected_losses,0), round(@policy_calculation.policy_group_ratio - 1, 4), @policy_calculation.policy_industry_group, round(@policy_calculation.policy_total_limited_losses,0), percent(@policy_calculation.policy_credibility_percent), round(@policy_calculation.policy_individual_experience_modified_rate,2),round( @policy_calculation.policy_individual_experience_modified_rate,2), round(@policy_calculation.policy_maximum_claim_value,0), round(@policy_calculation.policy_total_standard_premium,0), "#{@f_s}", "#{@ilr}" ]]
+    @data += [[round(@policy_calculation.policy_total_modified_losses_individual_reduced,0), round(@policy_calculation.policy_total_modified_losses_group_reduced,0), round(@policy_calculation.policy_total_expected_losses,0), round(@policy_calculation.policy_group_ratio - 1, 4), @policy_calculation.policy_industry_group, round(@policy_calculation.policy_total_limited_losses,0), percent(@policy_calculation.policy_credibility_percent), round(@policy_calculation.policy_individual_experience_modified_rate,2), round(@em_cap,2), round(@policy_calculation.policy_maximum_claim_value,0), round(@policy_calculation.policy_total_standard_premium,0), "#{@f_s}", "#{@ilr}" ]]
   end
 
   def expected_loss_development
@@ -591,7 +647,7 @@ class RiskReport < PdfReport
 
 
   def year_claim_table(claim_year_data)
-    table claim_year_data, :column_widths => { 0 => 49, 1 => 80, 2 => 40, 3 => 28, 4 => 45, 5 => 45, 6 => 45, 7 => 45, 8 => 45, 9 => 45, 10 => 24, 11 => 30 } do
+    table claim_year_data, :column_widths => { 0 => 45, 1 => 80, 2 => 40, 3 => 25, 4 => 45, 5 => 45, 6 => 45, 7 => 45, 8 => 45, 9 => 45, 10 => 25, 11 => 55 } do
       self.position = :center
       row(0).font_style = :bold
       row(0).overflow = :shring_to_fit
@@ -609,7 +665,7 @@ class RiskReport < PdfReport
 
   def claim_data(claims_array)
     @data = [["Claim #", "Claimant", "DOI", "Man Num", "Comp Award", "Med. Paid", "MIRA Res.", "GTML", "ITML", "SI Total", "HC", "Code" ]]
-    @data +=  claims_array.map { |e| [e.claim_number, e.claimant_name.titleize, e.claim_injury_date.in_time_zone("America/New_York").strftime("%m/%d/%y"), e.claim_manual_number, "#{round((e.claim_modified_losses_group_reduced - e.claim_medical_paid - e.claim_mira_medical_reserve_amount),0) }", round(e.claim_medical_paid, 0), round(e.claim_mira_medical_reserve_amount,0), round(e.claim_modified_losses_group_reduced,0), round(e.claim_modified_losses_individual_reduced, 0), round(e.claim_individual_reduced_amount,0), percent(e.claim_handicap_percent), e.claim_type ] }
+    @data +=  claims_array.map { |e| [e.claim_number, e.claimant_name.titleize, e.claim_injury_date.in_time_zone("America/New_York").strftime("%m/%d/%y"), e.claim_manual_number, "#{round((e.claim_modified_losses_group_reduced - e.claim_medical_paid - e.claim_mira_medical_reserve_amount),0) }", round(e.claim_medical_paid, 0), round(e.claim_mira_medical_reserve_amount,0), round(e.claim_modified_losses_group_reduced,0), round(e.claim_modified_losses_individual_reduced, 0), round(e.claim_individual_reduced_amount,0), percent(e.claim_handicap_percent), "#{claim_code_calc(e)}" ] }
     @data += [[{:content => "Totals", :colspan => 4},"#{round((claims_array.sum(:claim_modified_losses_group_reduced) - claims_array.sum(:claim_medical_paid) - claims_array.sum(:claim_mira_medical_reserve_amount)), 0)}", "#{round(claims_array.sum(:claim_medical_paid), 0)}", "#{round(claims_array.sum(:claim_mira_medical_reserve_amount), 0)}" , "#{round(claims_array.sum(:claim_modified_losses_group_reduced), 0)}", "#{round(claims_array.sum(:claim_modified_losses_individual_reduced), 0)}", "#{round(claims_array.sum(:claim_individual_reduced_amount), 0)}", "", "" ]]
   end
 
@@ -735,6 +791,21 @@ class RiskReport < PdfReport
     @data += [[{:content => "Period Totals", :colspan => 2}, "#{round(payroll_array.sum(:manual_class_payroll), 0)}", "", "", "#{ round(premium_total,0) }" ]]
   end
 
+  def claim_code_calc(claim)
+    claim_code = ''
+    if claim.claim_type[0] == 1
+      claim_code  << "MO/"
+    else
+      claim_code  << "LT/"
+    end
+    claim_code << claim.claim_status
+    claim_code << "/"
+    claim_code << claim.claim_mira_ncci_injury_type
+    if claim.claim_type[-1] == 1
+      claim_code  << "/NO COV"
+    end
+    return claim_code
+  end
 
   def price(num)
     @view.number_to_currency(num)
