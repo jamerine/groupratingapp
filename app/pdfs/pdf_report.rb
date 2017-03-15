@@ -28,6 +28,26 @@ class PdfReport < Prawn::Document
 
   end
 
+  def price(num)
+    @view.number_to_currency(num)
+  end
+
+  def round(num, prec)
+    @view.number_with_precision(num, precision: prec, :delimiter => ',')
+  end
+
+  def rate(num, prec)
+    if num.nil?
+      return nil
+    end
+    num = num * 100
+    @view.number_with_precision(num, precision: prec)
+  end
+
+  def percent(num)
+    num = num * 100
+    @view.number_to_percentage(num, precision: 0)
+  end
   # ... More helpers
 
 end
