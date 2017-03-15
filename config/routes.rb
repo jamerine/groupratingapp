@@ -24,6 +24,7 @@ Rails.application.routes.draw do
     post :assign_address
     collection { post :import_account_process }
     get :risk_report
+    get :roc_report
   end
 
   resources :affiliates do

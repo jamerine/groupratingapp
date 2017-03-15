@@ -107,8 +107,9 @@ class RiskReport < PdfReport
       @experience_group_modidified_losses_total = @experience_year_claims.sum(:claim_modified_losses_group_reduced)
       @experience_individual_modidified_losses_total = @experience_year_claims.sum(:claim_modified_losses_individual_reduced)
       @experience_individual_reduced_total = @experience_year_claims.sum(:claim_individual_reduced_amount)
-      @experience_si_avg = (@experience_individual_reduced_total/4)
-      @experience_si_ratio_avg = 0
+      @experience_si_total = @experience_year_claims.sum(:claim_unlimited_limited_loss) - @experience_year_claims.sum(:claim_total_subrogation_collected)
+      @experience_si_avg = (@experience_si_total/4)
+      @experience_si_ratio_avg = (@experience_si_total / @policy_calculation.policy_total_four_year_payroll) * @policy_calculation.policy_total_current_payroll
 
 
       # Out Of Experience Years Parameters
@@ -147,7 +148,7 @@ class RiskReport < PdfReport
       @out_of_experience_group_modidified_losses_total = @out_of_experience_year_claims.sum(:claim_modified_losses_group_reduced)
       @out_of_experience_individual_modidified_losses_total = @out_of_experience_year_claims.sum(:claim_modified_losses_individual_reduced)
       @out_of_experience_individual_reduced_total = @out_of_experience_year_claims.sum(:claim_individual_reduced_amount)
-
+      @out_of_experience_si_total = @out_of_experience_year_claims.sum(:claim_unlimited_limited_loss) - @out_of_experience_year_claims.sum(:claim_total_subrogation_collected)
 
       # TEN YEAR EXPERIENCE TOTALS
 
@@ -165,9 +166,12 @@ class RiskReport < PdfReport
       @ten_year_group_modidified_losses_total = @ten_year_claims.sum(:claim_modified_losses_group_reduced)
       @ten_year_individual_modidified_losses_total = @ten_year_claims.sum(:claim_modified_losses_individual_reduced)
       @ten_year_individual_reduced_total = @ten_year_claims.sum(:claim_individual_reduced_amount)
+      @ten_year_si_total = @experience_si_total + @out_of_experience_si_total
+      @ten_year_si_avg = (@ten_year_si_total/10)
+      @ten_year_si_ratio_avg = 'N/A'
 
-      @ten_year_si_average = (@ten_year_claims.sum(:claim_individual_reduced_amount)/10)
-      @ten_year_si_ratio_avg = 0
+      @ten_year_si_average = (@ten_year_si_total/10)
+      @ten_year_si_ratio_avg = 'N/A'
 
 
 
@@ -243,20 +247,20 @@ class RiskReport < PdfReport
       @group_rating_levels = BwcCodesIndustryGroupSavingsRatioCriterium.where(industry_group: @account.industry_group)
 
       @em_cap =
-        if @policy_calculation.policy_program_histories.order(reporting_period_start_date: :desc).first.experience_modifier_rate > (2 * @policy_calculation.policy_individual_experience_modified_rate)
-          (2 * @policy_calculation.policy_individual_experience_modified_rate)
+        if  @policy_calculation.policy_individual_experience_modified_rate > (2 * @policy_calculation.policy_program_histories.order(reporting_period_start_date: :desc).first.experience_modifier_rate)
+          (2 * @policy_calculation.policy_program_histories.order(reporting_period_start_date: :desc).first.experience_modifier_rate )
         else
           @policy_calculation.policy_individual_experience_modified_rate
         end
 
-        @sort_code =
-          if @account.group_rating_rejections.where("program_type = 'group_rating'").empty? && @account.group_rating_qualification == 'accept'
-            "accept"
-          elsif @account.group_rating_rejections.where("program_type = 'group_rating'").empty? && @account.group_rating_qualification == 'reject'
-            "manual_override"
-          else
-            @account.group_rating_rejections.where("program_type = 'group_rating'").pluck(:reject_reason).map { |i| "'" + i.to_s + "'" }.join(",").to_s.gsub(/\s|"|'/, '')
-          end
+      @sort_code =
+        if @account.group_rating_rejections.where("program_type = 'group_rating'").empty? && @account.group_rating_qualification == 'accept'
+          "accept"
+        elsif @account.group_rating_rejections.where("program_type = 'group_rating'").empty? && @account.group_rating_qualification == 'reject'
+          "manual_override"
+        else
+          @account.group_rating_rejections.where("program_type = 'group_rating'").pluck(:reject_reason).map { |i| "'" + i.to_s + "'" }.join(",").to_s.gsub(/\s|"|'/, '')
+        end
 
       @group_rating_date =
           if @account.quotes.where("program_type = 0").first.nil?
@@ -297,18 +301,26 @@ class RiskReport < PdfReport
   private
 
   def header
-    # if [9,10,16].include? @account.representative.id
-    #   image "#{Rails.root}/app/assets/images/minute men hr.jpeg", height: 75
-    # else
-    #   image "#{Rails.root}/app/assets/images/logo.png", height: 50
-    # end
-    text "#{ @account.name}", size: 16, style: :bold, align: :center
-    text "DBA: #{ @account.policy_calculation.try(:trading_as_name) }", size: 12, align: :center
-    text "Policy#: #{ @account.policy_number_entered }   |   Sale Contact: #{ @account.affiliates.find_by(role: 6).try(:first_name)} #{@account.affiliates.find_by(role: 6).try(:last_name)}   |   Co Code: #{ @account.affiliates.find_by(role: 2).try(:company_name)}", size: 12, align: :center
-    text "Risk Report", size: 12, align: :center
-    text "As of #{@group_rating.updated_at.in_time_zone("America/New_York").strftime("%m/%d/%y")} with #{ @group_rating.current_payroll_period_upper_date.in_time_zone("America/New_York").strftime("%Y").to_i + 1 } Rates", size: 12, align: :center
-    text "Projected 2017 Experience", size: 12, align: :center, style: :bold_italic
-
+    current_cursor = cursor
+    bounding_box([0, current_cursor], :width => 100, :height => 100) do
+      if [9,10,16].include? @account.representative.id
+        image "#{Rails.root}/app/assets/images/minute men hr.jpeg", height: 100
+      else
+        image "#{Rails.root}/app/assets/images/logo.png", height: 90
+      end
+      transparent(0) { stroke_bounds }
+      # stroke_bounds
+    end
+    bounding_box([100, current_cursor], :width => 350, :height => 100) do
+      text "#{ @account.name}", size: 14, style: :bold, align: :center
+      text "DBA: #{ @account.policy_calculation.try(:trading_as_name) }", size: 12, align: :center
+      text "Policy#: #{ @account.policy_number_entered }   |   Sale Contact: #{ @account.affiliates.find_by(role: 6).try(:first_name)} #{@account.affiliates.find_by(role: 6).try(:last_name)}   |   Co Code: #{ @account.affiliates.find_by(role: 2).try(:company_name)}", size: 12, align: :center
+      text "Risk Report", size: 12, align: :center
+      text "As of #{@group_rating.updated_at.in_time_zone("America/New_York").strftime("%m/%d/%y")} with #{ @group_rating.current_payroll_period_upper_date.in_time_zone("America/New_York").strftime("%Y").to_i + 1 } Rates", size: 12, align: :center
+      text "Projected 2017 Experience", size: 12, align: :center, style: :bold_italic
+      transparent(0) { stroke_bounds }
+      # stroke_bounds
+    end
   end
 
   def at_a_glance
@@ -323,16 +335,13 @@ class RiskReport < PdfReport
     move_down 2
     text "Employer Rep Risk Management: #{ @risk }", size: 12
     move_down 10
-    stroke do
-     # just lower the current y position
-     horizontal_line 0, 545, :at => 525
-     vertical_line 385, 525, :at => 275
-     horizontal_line 0, 545, :at => 385
-    end
-
+    stroke_horizontal_rule
+    pre_current_cursor = cursor
 
     move_down 10
-    bounding_box([0, 515], :width => 275, :height => 125) do
+
+    current_cursor = cursor
+    bounding_box([0, current_cursor], :width => 275, :height => 125) do
       text "FEIN: #{ @account.policy_calculation.federal_identification_number }"
       move_down 15
       text "Current Status: #{@account.policy_calculation.coverage_status_effective_date}-#{ @account.policy_calculation.current_coverage_status }", size: 10
@@ -349,7 +358,7 @@ class RiskReport < PdfReport
      transparent(0) { stroke_bounds }
     end
 
-    bounding_box([285, 515], :width => 275, :height => 125) do
+    bounding_box([285, current_cursor], :width => 275, :height => 125) do
       text "Current Rating Plan:", style: :bold
       move_down 5
       text "Current EM: #{@policy_program_history.experience_modifier_rate}"
@@ -369,6 +378,14 @@ class RiskReport < PdfReport
       text "Grow Ohio: #{@policy_program_history.drug_free_program_participation_indicator  }"
      transparent(0) { stroke_bounds }
     end
+    post_current_cursor = cursor
+    stroke do
+     # just lower the current y position
+    #  horizontal_line 0, 545, :at => current_cursor
+     vertical_line (pre_current_cursor), post_current_cursor, :at => 275
+    #  horizontal_line 0, 545, :at => 385
+    end
+    stroke_horizontal_rule
   end
 
   def experience_statistics
@@ -577,14 +594,14 @@ class RiskReport < PdfReport
       row(0).align = :center
       row(0).borders = [:bottom]
       row(-1).borders = [:top]
-      self.cell_style = { size: 10 }
+      self.cell_style = { size: 9 }
       self.header = true
     end
   end
 
 
   def totals_out_of_experience_year_data
-    @data = [[{:content => "Out Of Experience Year Totals", :colspan => 4},"#{ round(@out_of_experience_comp_total,0) }","#{round(@out_of_experience_medical_total,0)}","#{round(@out_of_experience_mira_medical_reserve_total,0)}","#{round(@out_of_experience_group_modidified_losses_total,0)}","#{round(@out_of_experience_individual_modidified_losses_total,0)}","#{round(@out_of_experience_individual_reduced_total,0)}","","" ]]
+    @data = [[{:content => "Out Of Experience Year Totals", :colspan => 4},"#{ round(@out_of_experience_comp_total,0) }","#{round(@out_of_experience_medical_total,0)}","#{round(@out_of_experience_mira_medical_reserve_total,0)}","#{round(@out_of_experience_group_modidified_losses_total,0)}","#{round(@out_of_experience_individual_modidified_losses_total,0)}","#{round(@out_of_experience_si_total,0)}","","" ]]
   end
 
   def experience_year_total_table
@@ -596,7 +613,7 @@ class RiskReport < PdfReport
       row(0).align = :center
       row(0).borders = [:bottom]
       row(-1).borders = [:top]
-      self.cell_style = { size: 10 }
+      self.cell_style = { size: 9 }
       self.header = true
     end
     first_cursor = cursor
@@ -606,13 +623,13 @@ class RiskReport < PdfReport
     end
     bounding_box([380, first_cursor], :width => 100, :height => 25) do
       text "SI Average: #{round(@experience_si_avg, 0)}", style: :bold
-      text "SI Ratio Avg: #{@experience_si_ratio_avg}", style: :bold
+      text "SI Ratio Avg: #{round(@experience_si_ratio_avg, 0)}", style: :bold
     end
   end
 
 
   def totals_experience_year_data
-    @data = [[{:content => "Experience Year Totals", :colspan => 4},"#{ round(@experience_comp_total,0) }","#{round(@experience_medical_total,0)}","#{round(@experience_mira_medical_reserve_total,0)}","#{round(@experience_group_modidified_losses_total,0)}","#{round(@experience_individual_modidified_losses_total,0)}","#{round(@experience_individual_reduced_total,0)}","","" ]]
+    @data = [[{:content => "Experience Year Totals", :colspan => 4},"#{ round(@experience_comp_total,0) }","#{round(@experience_medical_total,0)}","#{round(@experience_mira_medical_reserve_total,0)}","#{round(@experience_group_modidified_losses_total,0)}","#{round(@experience_individual_modidified_losses_total,0)}","#{round(@experience_si_total,0)}","","" ]]
   end
 
   def ten_year_total_table
@@ -624,7 +641,7 @@ class RiskReport < PdfReport
       row(0).align = :center
       row(0).borders = [:bottom]
       row(-1).borders = [:top]
-      self.cell_style = { size: 10 }
+      self.cell_style = { size: 9 }
       self.header = true
     end
     first_cursor = cursor
@@ -641,7 +658,7 @@ class RiskReport < PdfReport
 
 
   def ten_year_total_data
-    @data = [[{:content => "10 Year Totals", :colspan => 4},"#{ round(@ten_year_comp_total,0) }","#{round(@ten_year_medical_total,0)}","#{round(@ten_year_mira_medical_reserve_total,0)}","#{round(@ten_year_group_modidified_losses_total,0)}","#{round(@ten_year_individual_modidified_losses_total,0)}","#{round(@ten_year_individual_reduced_total,0)}","","" ]]
+    @data = [[{:content => "10 Year Totals", :colspan => 4},"#{ round(@ten_year_comp_total,0) }","#{round(@ten_year_medical_total,0)}","#{round(@ten_year_mira_medical_reserve_total,0)}","#{round(@ten_year_group_modidified_losses_total,0)}","#{round(@ten_year_individual_modidified_losses_total,0)}","#{round(@ten_year_si_total,0)}","","" ]]
   end
 
 
@@ -665,8 +682,8 @@ class RiskReport < PdfReport
 
   def claim_data(claims_array)
     @data = [["Claim #", "Claimant", "DOI", "Man Num", "Comp Award", "Med. Paid", "MIRA Res.", "GTML", "ITML", "SI Total", "HC", "Code" ]]
-    @data +=  claims_array.map { |e| [e.claim_number, e.claimant_name.titleize, e.claim_injury_date.in_time_zone("America/New_York").strftime("%m/%d/%y"), e.claim_manual_number, "#{round((e.claim_modified_losses_group_reduced - e.claim_medical_paid - e.claim_mira_medical_reserve_amount),0) }", round(e.claim_medical_paid, 0), round(e.claim_mira_medical_reserve_amount,0), round(e.claim_modified_losses_group_reduced,0), round(e.claim_modified_losses_individual_reduced, 0), round(e.claim_individual_reduced_amount,0), percent(e.claim_handicap_percent), "#{claim_code_calc(e)}" ] }
-    @data += [[{:content => "Totals", :colspan => 4},"#{round((claims_array.sum(:claim_modified_losses_group_reduced) - claims_array.sum(:claim_medical_paid) - claims_array.sum(:claim_mira_medical_reserve_amount)), 0)}", "#{round(claims_array.sum(:claim_medical_paid), 0)}", "#{round(claims_array.sum(:claim_mira_medical_reserve_amount), 0)}" , "#{round(claims_array.sum(:claim_modified_losses_group_reduced), 0)}", "#{round(claims_array.sum(:claim_modified_losses_individual_reduced), 0)}", "#{round(claims_array.sum(:claim_individual_reduced_amount), 0)}", "", "" ]]
+    @data +=  claims_array.map { |e| [e.claim_number, e.claimant_name.titleize, e.claim_injury_date.in_time_zone("America/New_York").strftime("%m/%d/%y"), e.claim_manual_number, "#{round((e.claim_modified_losses_group_reduced - e.claim_medical_paid - e.claim_mira_medical_reserve_amount),0) }", round(e.claim_medical_paid, 0), round(e.claim_mira_medical_reserve_amount,0), round(e.claim_modified_losses_group_reduced,0), round(e.claim_modified_losses_individual_reduced, 0), round((e.claim_unlimited_limited_loss - e.claim_total_subrogation_collected),0), percent(e.claim_handicap_percent), "#{claim_code_calc(e)}" ] }
+    @data += [[{:content => "Totals", :colspan => 4},"#{round((claims_array.sum(:claim_modified_losses_group_reduced) - claims_array.sum(:claim_medical_paid) - claims_array.sum(:claim_mira_medical_reserve_amount)), 0)}", "#{round(claims_array.sum(:claim_medical_paid), 0)}", "#{round(claims_array.sum(:claim_mira_medical_reserve_amount), 0)}" , "#{round(claims_array.sum(:claim_modified_losses_group_reduced), 0)}", "#{round(claims_array.sum(:claim_modified_losses_individual_reduced), 0)}", "#{round(claims_array.sum(:claim_unlimited_limited_loss) - claims_array.sum(:claim_total_subrogation_collected), 0)}", "", "" ]]
   end
 
   def group_discount_level
