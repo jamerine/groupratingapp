@@ -150,7 +150,7 @@ class RocReport < PdfReport
 
 
     @data = [[" ","Experience Rated", "EM Cap", "One Claim Program", " #{ @account.group_rating_tier } Group", "Group Retro", "Individual Retro", "Minute Men Select" ]]
-    @data += [[ "Eligibility","#{@experience_eligibility}"," "," ","#{@group_rating_eligibility}"," "," "," "]]
+    @data += [[ "Eligibility","#{@experience_eligibility}"," "," ","#{@group_rating_eligibility}","#{@group_retro_eligibility}"," "," "]]
     @data += [[ "Projected Premium","#{ round(@experience_projected_premium, 0) }",""," ","#{round(@group_rating_projected_premium, 0)}"," "," "," "]]
     @data += [[ "Est Cost/-Credits","#{ round(@experience_costs,0) }"," "," ","#{ round(@group_rating_costs,0) }"," "," "," "]]
     @data += [[ "Maximum Risk","#{ round(@experience_maximum_risk,0) }"," "," ","#{ round(@group_rating_maximum_risk,0) }"," "," "," "]]
