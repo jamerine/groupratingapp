@@ -10,6 +10,10 @@ class ClaimCalculation < ActiveRecord::Base
 
 
   def recalculate_experience(group_maximum_value)
+
+    #WHEN I COME IN TO FIX CLAIMS FOR STEVE, ADD SI TOTAL ON CLAIM CALCUALTIONS MODEL THEN FIX IN REPORT
+    #### 3/14/2017 ####
+
     @policy_calculation = self.policy_calculation
 
     @claim_group_multiplier =
