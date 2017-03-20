@@ -496,8 +496,8 @@ class RiskReport < PdfReport
     move_down 15
     out_of_experience_year_total_table
     move_down 10
-    text "Med Only Claim Count: #{@out_of_experience_med_only}", style: :bold, style: :bold, :indent_paragraphs => 30
-    text "Lost Time Claim Count: #{@out_of_experience_lost_time}", style: :bold, style: :bold, :indent_paragraphs => 30
+    text "Med Only Claim Count: #{@out_of_experience_med_only}", style: :bold, :indent_paragraphs => 30
+    text "Lost Time Claim Count: #{@out_of_experience_lost_time}", style: :bold, :indent_paragraphs => 30
     move_down 30
 
     #############################################################
