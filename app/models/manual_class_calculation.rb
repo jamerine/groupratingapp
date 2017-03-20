@@ -67,7 +67,7 @@ class ManualClassCalculation < ActiveRecord::Base
         @limited_loss_rate = 0
         @limited_losses = 0
       else
-        @limited_loss_rate = (@limited_loss_rate_row.limited_loss_ratio).round(8)
+        @limited_loss_rate = (@limited_loss_rate_row.limited_loss_ratio).round(4)
         @limited_losses = (self.manual_class_expected_losses * @limited_loss_rate).round(2)
       end
 
