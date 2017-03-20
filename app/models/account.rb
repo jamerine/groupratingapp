@@ -226,7 +226,7 @@ class Account < ActiveRecord::Base
       end
 
       # Check for waiting on predecessor payroll
-      if PolicyCalculation.find_by(business_name: "Predecessor Policy for #{self.policy_calculation.policy_number}")
+      if PolicyCalculation.find_by(business_name: "Predecessor Policy for #{self.policy_calculation.policy_number}", representative_id: @group_rating.representative_id)
         GroupRatingRejection.create(program_type: 'group_rating', account_id: self.id, reject_reason: 'reject_pending_predecessor', representative_id: @group_rating.representative_id)
       end
 
@@ -241,16 +241,16 @@ class Account < ActiveRecord::Base
           else
             if
               ((!peo_record.manual_class_sf_peo_lease_effective_date.nil? && peo_record.manual_class_sf_peo_lease_termination_date.nil?) || (peo_record.manual_class_sf_peo_lease_effective_date > peo_record.manual_class_sf_peo_lease_termination_date)) ||
-              ((group_rating_range === peo_record.manual_class_sf_peo_lease_effective_date) || (group_rating_range === peo_record.manual_class_sf_peo_lease_termination_date))
+              ((group_rating_range === peo_record.manual_class_sf_peo_lease_effective_date) && (peo_record.manual_class_sf_peo_lease_termination_date.nil?))
               GroupRatingRejection.create(program_type: 'group_rating', account_id: self.id, reject_reason: 'reject_sf_peo', representative_id: @group_rating.representative_id)
             end
           end
         end
       end
 
-      if  self.group_rating_rejections.pluck(:reject_reason).include? 'reject_pending_predecessor'
+      if  self.group_rating_rejections.where("program_type = ?", :group_rating).pluck(:reject_reason).include? 'reject_pending_predecessor'
          qualification = "pending_predecessor"
-      elsif self.group_rating_rejections.count > 0
+      elsif self.group_rating_rejections.where("program_type = ?", :group_rating).count > 0
          qualification = "reject"
        else
          qualification = "accept"
@@ -297,7 +297,7 @@ class Account < ActiveRecord::Base
              end
            end
 
-            if self.group_rating_rejections.count > 0
+            if self.group_rating_rejections.where("program_type = ?", :group_rating).count > 0
               qualification = "reject"
             else
               qualification = "accept"
@@ -398,7 +398,7 @@ class Account < ActiveRecord::Base
 
       if  self.group_rating_rejections.where("program_type = ?", :group_retro).pluck(:reject_reason).include? 'reject_pending_predecessor'
          qualification = "pending_predecessor"
-      elsif self.group_rating_rejections.count > 0
+      elsif self.group_rating_rejections.where("program_type = ?", :group_retro).count > 0
          qualification = "reject"
        else
          qualification = "accept"
@@ -437,7 +437,7 @@ class Account < ActiveRecord::Base
              GroupRatingRejection.create(program_type: 'group_retro', account_id: self.id, reject_reason: 'reject_40+_lapse', representative_id: self.representative_id)
            end
 
-            if self.group_rating_rejections.count > 0
+            if self.group_rating_rejections.where("program_type = ?", :group_retro).count > 0
               qualification = "reject"
             else
               qualification = "accept"
