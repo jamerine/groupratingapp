@@ -23,9 +23,16 @@ class PdfReport < Prawn::Document
     end
   end
 
-  def footer
-    # ...
-
+  def footer(account)
+    bounding_box([0, 0], :width => bounds.width/3, :height => 10) do
+     number_pages "#{account.name.titleize}", { :start_count_at => 0, :page_filter => :all, align: :left, :size => 8 }
+    end
+    bounding_box([(bounds.width/3), 0], :width => bounds.width/3, :height => 10) do
+     number_pages "Page <page> of <total>", { :start_count_at => 0, :page_filter => :all, align: :center, :size => 8 }
+    end
+    bounding_box([((bounds.width/3)*2), 0], :width => bounds.width/3, :height => 10) do
+     number_pages "#{@current_date.strftime("%A, %B %e, %Y")}", { :start_count_at => 0, :page_filter => :all, align: :right, :size => 8 }
+    end
   end
 
   def price(num)
