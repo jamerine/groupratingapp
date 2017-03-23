@@ -173,7 +173,7 @@ class AccountsController < ApplicationController
       format.html
       format.pdf do
         pdf = RiskReport.new(@account, @account.policy_calculation, @group_rating, view_context)
-
+      
         # uploader = QuoteUploader.new
         # tmpfile = Tempfile.new("#{ @account.policy_number_entered }_quote_#{ @quote.id }.pdf")
         # quote = File.basename(tmpfile)
@@ -188,7 +188,6 @@ class AccountsController < ApplicationController
         send_data pdf.render, filename: "#{ @account.policy_number_entered }_risk_report.pdf",
                               type: "application/pdf",
                               disposition: "inline"
-
         # pdf.render_file "app/reports/risk_report_#{@account.id}.pdf"
       end
     end
