@@ -95,7 +95,7 @@ class PolicyCalculation < ActiveRecord::Base
         if @policy_total_expected_losses == 0.0
           0
         else
-          (@policy_total_modified_losses_group_reduced / @policy_total_expected_losses).round(6)
+          (@policy_total_modified_losses_group_reduced / @policy_total_expected_losses).round(4)
         end
       end
 
@@ -103,10 +103,10 @@ class PolicyCalculation < ActiveRecord::Base
           if @policy_total_limited_losses == 0
             0
           else
-            (((@policy_total_modified_losses_individual_reduced - @policy_total_limited_losses ) / @policy_total_limited_losses) * @credibility_row.credibility_percent).round(6)
+            (((@policy_total_modified_losses_individual_reduced - @policy_total_limited_losses ) / @policy_total_limited_losses) * @credibility_row.credibility_percent).round(4)
           end
 
-     @policy_individual_experience_modified_rate = (@policy_individual_total_modifier + 1).round(6)
+     @policy_individual_experience_modified_rate = (@policy_individual_total_modifier + 1).round(4)
 
      self.update_attributes(
        policy_total_modified_losses_group_reduced: @policy_total_modified_losses_group_reduced, policy_total_modified_losses_individual_reduced: @policy_total_modified_losses_individual_reduced, policy_total_claims_count: @policy_total_claims_count,
