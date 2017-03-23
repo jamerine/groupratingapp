@@ -708,7 +708,7 @@ class RiskReport < PdfReport
       @safety_council_experience = (@policy_calculation.policy_total_standard_premium * 0.04)
       @safety_council_em_cap = (@em_cap_eligibility == 'Yes' ? (@em_projected_premium * 0.04) : nil)
       # @safety_council_ocp = (@policy_calculation.policy_total_standard_premium * 0.04)
-      @safety_council_group_rating = (@group_retro_eligibility == 'Yes' ? (@account.group_premium * 0.02) : nil)
+      @safety_council_group_rating = (@group_rating_eligibility == 'Yes' ? (@account.group_premium * 0.02) : nil)
       @safety_council_group_retro = (@group_retro_eligibility == 'Yes' ? (@policy_calculation.policy_total_standard_premium * 0.02) : '')
       # @safety_council_individual_retro = (@account.group_retro_premium * 0.04)
       # @safety_council_mm_select = (@policy_calculation.policy_total_standard_premium * 0.04)
