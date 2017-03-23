@@ -641,9 +641,9 @@ class RiskReport < PdfReport
       @group_retro_eligibility = (@account.group_retro_qualification == 'accept' ? 'Yes' : 'No')
       if @group_retro_eligibility == 'Yes'
         @group_retro_projected_premium = @policy_calculation.policy_total_individual_premium
-        @group_retro_costs = @account.group_retro_savings
+        @group_retro_costs = -@account.group_retro_savings
         @group_retro_maximum_risk = (@policy_calculation.policy_total_standard_premium * 0.15)
-        @group_retro_total_cost = @group_retro_projected_premium - @group_retro_costs
+        @group_retro_total_cost = @group_retro_projected_premium + @group_retro_costs
         @group_retro_savings = @policy_calculation.policy_total_individual_premium - @group_retro_total_cost
       else
         @group_retro_projected_premium = nil
@@ -657,7 +657,7 @@ class RiskReport < PdfReport
     @data = [[" ","Experience Rated", "EM Cap", "One Claim Program", " #{ @account.group_rating_tier } Group", "Group Retro", "Individual Retro", "Minute Men Select" ]]
     @data += [[ "Eligibility","#{@experience_eligibility}","#{@em_cap_eligibility}"," ","#{@group_rating_eligibility}","#{@group_retro_eligibility}"," "," "]]
     @data += [[ "Projected Premium","#{ round(@experience_projected_premium, 0) }","#{ round(@em_cap_projected_premium,0)}"," ","#{round(@group_rating_projected_premium, 0)}","#{round(@group_retro_projected_premium, 0)}"," "," "]]
-    @data += [[ "Est Cost/-Credits","#{ round(@experience_costs,0) }","#{ round(@em_cap_costs,0)}"," ","#{ round(@group_rating_costs,0) }","#{ round(-@group_retro_costs, 0)}"," "," "]]
+    @data += [[ "Est Cost/-Credits","#{ round(@experience_costs,0) }","#{ round(@em_cap_costs,0)}"," ","#{ round(@group_rating_costs,0) }","#{ round(@group_retro_costs, 0)}"," "," "]]
     @data += [[ "Maximum Risk","#{ round(@experience_maximum_risk,0) }","#{ round(@em_cap_maximum_risk,0) }"," ","#{ round(@group_rating_maximum_risk,0) }","#{ round(@group_retro_maximum_risk, 0)}"," "," "]]
     @data += [[ "Total Est Cost","#{ round(@experience_total_cost,0) }","#{ round(@em_cap_total_cost,0)}"," ","#{ round(@group_rating_total_cost,0) }","#{ round(@group_retro_total_cost, 0)}"," "," "]]
     @data += [[ "Est Savings/-Loss","#{ round(@experience_savings,0) }","#{round( @em_cap_savings,0 )}"," ","#{ round(@group_rating_savings,0) }","#{ round(@group_retro_savings, 0)}"," "," "]]
