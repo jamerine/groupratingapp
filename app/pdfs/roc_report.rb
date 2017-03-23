@@ -13,13 +13,22 @@ class RocReport < PdfReport
 
     @current_policy_program = @account.policy_calculation.policy_program_histories.order(reporting_period_start_date: :desc).first
 
+    @current_date = DateTime.now.to_date
+
+    @total_est_payroll = 0
+    @account.policy_calculation.manual_class_calculations.each do |man|
+      rate = man.payroll_calculations.where("reporting_period_start_date < :current_date and reporting_period_end_date > :current_date", current_date: @current_date).first.manual_class_rate
+      est_premium = rate * man.manual_class_current_estimated_payroll * 0.01
+      @total_est_payroll += est_premium
+    end
+
     header
     stroke_horizontal_rule
-    stroke_axis
     estimated_current_period_premium
 
     workers_comp_program_options
     workers_comp_program_additional_options
+    descriptions
 
   end
 
@@ -55,18 +64,19 @@ class RocReport < PdfReport
 
     bounding_box([100, cursor], :width => 350) do
       move_down 3
-      text "Estimated Current Period Premium", size: 12, style: :bold, align: :center
+      text "Estimated Current Period Premium", size: 10, style: :bold, align: :center
       horizontal_line 0, 350, :at => cursor
       bounding_box([0, cursor], :width => 350) do
         table ([[ "Rating Plan: #{@current_policy_program.group_type }" , "Current EM: #{ @current_policy_program.experience_modifier_rate }", "OCP: #{ @current_policy_program.ocp_participation_indicator }", "EM CAP: #{ @current_policy_program.em_cap_participation_indicator }" ], [ "DFSP: #{@current_policy_program.drug_free_program_participation_indicator }" , "Ded Pct: #{ @current_policy_program.deductible_discount_percentage }", "ISSP: #{ @current_policy_program.issp_participation_indicator }", "TWBNS: #{ @current_policy_program.twbns_participation_indicator }" ]]), :column_widths => {0 => 87, 1 => 87, 2 => 87, 3 => 87 } do
           self.position = :center
           row(0..-1).borders = []
           self.cell_style = { size: 9 }
+          cells.padding = 3
         end
         stroke_bounds
       end
       bounding_box([0, cursor], :width => 350) do
-        table current_policy_data, :column_widths => {0 => 87, 1 => 87, 2 => 87, 3 => 87 } do
+        table current_policy_data, :column_widths => {0 => 87, 1 => 87, 2 => 87, 3 => 87 }, :row_colors => ["FFFFFF", "F0F0F0"] do
           self.position = :center
           row(0).font_style = :bold
           row(0).overflow = :shring_to_fit
@@ -75,6 +85,7 @@ class RocReport < PdfReport
           row(1..-1).borders = []
           row(0..-1).align = :center
           self.cell_style = { size: 9 }
+          cells.padding = 3
         end
         table current_policy_data_total, :column_widths => {0 => 87, 1 => 87, 2 => 87, 3 => 87 } do
           self.position = :center
@@ -94,11 +105,11 @@ class RocReport < PdfReport
 
   def current_policy_data
     @data = [["Manual", "Est Payroll", "Rate", "Est Premium" ]]
-    @data += @policy_calculation.manual_class_calculations.order(manual_number: :asc).map { |e| [e.manual_number, round(e.manual_class_current_estimated_payroll,0), 'rate?', 'P/R * rate?'   ] }
+    @data += @policy_calculation.manual_class_calculations.order(manual_number: :asc).map { |e| [e.manual_number, round(e.manual_class_current_estimated_payroll,0), e.payroll_calculations.where("reporting_period_start_date < :current_date and reporting_period_end_date > :current_date", current_date: @current_date).first.manual_class_rate, "#{ round(e.payroll_calculations.where("reporting_period_start_date < :current_date and reporting_period_end_date > :current_date", current_date: @current_date).first.manual_class_rate * e.manual_class_current_estimated_payroll * 0.01,0)}"   ] }
   end
 
   def current_policy_data_total
-    @data = [["Totals", "#{ round(@policy_calculation.policy_total_current_payroll,0) }", "Rate", "Est Premium" ]]
+    @data = [["Totals", "#{ round(@policy_calculation.policy_total_current_payroll,0) }", "", "#{round(@total_est_payroll, 0)}" ]]
   end
 
   def workers_comp_program_options
@@ -110,7 +121,7 @@ class RocReport < PdfReport
       row(0).font_style = :bold
       row(0).align = :center
       row(0).borders = [:bottom]
-      row(0..-1).align = :center
+      row(0..-1).align = :right
       row(-2..-1).font_style = :bold
       self.cell_style = { size: 10 }
       self.before_rendering_page do |t|
@@ -184,7 +195,7 @@ class RocReport < PdfReport
     @data = [[" ","Experience Rated", "EM Cap", "One Claim Program", " #{ @account.group_rating_tier } Group", "Group Retro", "Individual Retro", "Minute Men Select" ]]
     @data += [[ "Eligibility","#{@experience_eligibility}","#{@em_cap_eligibility}"," ","#{@group_rating_eligibility}","#{@group_retro_eligibility}"," "," "]]
     @data += [[ "Projected Premium","#{ round(@experience_projected_premium, 0) }","#{ round(@em_cap_projected_premium,0)}"," ","#{round(@group_rating_projected_premium, 0)}","#{round(@group_retro_projected_premium, 0)}"," "," "]]
-    @data += [[ "Est Cost/-Credits","#{ round(@experience_costs,0) }","#{ round(@em_cap_costs,0)}"," ","#{ round(@group_rating_costs,0) }","-#{ round(@group_retro_costs, 0)}"," "," "]]
+    @data += [[ "Est Cost/-Credits","#{ round(@experience_costs,0) }","#{ round(@em_cap_costs,0)}"," ","#{ round(@group_rating_costs,0) }","#{ round(-@group_retro_costs, 0)}"," "," "]]
     @data += [[ "Maximum Risk","#{ round(@experience_maximum_risk,0) }","#{ round(@em_cap_maximum_risk,0) }"," ","#{ round(@group_rating_maximum_risk,0) }","#{ round(@group_retro_maximum_risk, 0)}"," "," "]]
     @data += [[ "Total Est Cost","#{ round(@experience_total_cost,0) }","#{ round(@em_cap_total_cost,0)}"," ","#{ round(@group_rating_total_cost,0) }","#{ round(@group_retro_total_cost, 0)}"," "," "]]
     @data += [[ "Est Savings/-Loss","#{ round(@experience_savings,0) }","#{round( @em_cap_savings,0 )}"," ","#{ round(@group_rating_savings,0) }","#{ round(@group_retro_savings, 0)}"," "," "]]
@@ -229,22 +240,22 @@ class RocReport < PdfReport
 
     ###### Drug-Free Safety
       @drug_free_experience = @policy_calculation.policy_total_standard_premium * 0.07
-      @drug_free_group_rating = (@account.group_premium * 0.07)
+      @drug_free_group_rating = (@group_rating_eligibility == 'Yes' ? (@account.group_premium * 0.07) : nil)
 
     ###### Safety Council
       @safety_council_experience = (@policy_calculation.policy_total_standard_premium * 0.04)
       @safety_council_em_cap = (@em_cap_eligibility == 'Yes' ? (@em_projected_premium * 0.04) : nil)
       # @safety_council_ocp = (@policy_calculation.policy_total_standard_premium * 0.04)
-      @safety_council_group_rating = (@account.group_premium * 0.02)
+      @safety_council_group_rating = (@group_retro_eligibility == 'Yes' ? (@account.group_premium * 0.02) : nil)
       @safety_council_group_retro = (@group_retro_eligibility == 'Yes' ? (@policy_calculation.policy_total_standard_premium * 0.02) : '')
-      @safety_council_individual_retro = (@account.group_retro_premium * 0.04)
+      # @safety_council_individual_retro = (@account.group_retro_premium * 0.04)
       # @safety_council_mm_select = (@policy_calculation.policy_total_standard_premium * 0.04)
 
     ###### Industry Specific
       @industry_specific_experience = (@policy_calculation.policy_total_standard_premium * 0.03)
       @industry_specific_em_cap = (@em_cap_eligibility == 'Yes' ? (@em_projected_premium * 0.03) : nil)
       # @industry_specific_ocp = (@policy_calculation.policy_total_standard_premium * 0.03)
-      @industry_specific_group_rating = (@account.group_premium * 0.03)
+      @industry_specific_group_rating = (@group_rating_eligibility == 'Yes' ? (@account.group_premium * 0.03) : nil)
       # @industry_specific_individual_retro = (@account.group_premium * 0.03)
       # @industry_specific_mm_select
 
@@ -260,7 +271,7 @@ class RocReport < PdfReport
       @go_green_experience = (@policy_calculation.policy_total_individual_premium * 0.01 > 2000 ? 2000 : @policy_calculation.policy_total_individual_premium * 0.01 )
       @go_green_em_cap = (@em_cap_eligibility == 'Yes' ? (@em_projected_premium * 0.01 > 2000 ? 2000 : @em_projected_premium * 0.01 ) : nil)
       # @go_green_ocp = (@policy_calculation.policy_total_standard_premium * 0.03)
-      @go_green_group_rating = (@account.group_premium * 0.01 > 2000 ? 2000 : @account.group_premium * 0.01 )
+      @go_green_group_rating = (@group_rating_eligibility == 'Yes' ? (@account.group_premium * 0.01 > 2000 ? 2000 : @account.group_premium * 0.01 ) : nil)
       @go_green_group_retro = ((@group_retro_eligibility == 'Yes') ? (@policy_calculation.policy_total_individual_premium * 0.1 > 2000) ? 2000 : (@policy_calculation.policy_total_individual_premium * 0.1) : nil)
       # @go_green_individual_retro = (@account.group_premium * 0.1)
       # @go_green_mm_select = (@account.group_premium * 0.1)
@@ -277,8 +288,8 @@ class RocReport < PdfReport
       @max_savings_experience = ( @drug_free_experience + @safety_council_experience + @industry_specific_experience + @transitional_work_experience + @go_green_experience + @lapse_free_experience)
       @max_savings_em_cap = @em_cap_eligibility == 'Yes' ? (@safety_council_em_cap + @industry_specific_em_cap + @transitional_work_em_cap + @go_green_em_cap + @lapse_free_em_cap) : nil
       # @max_savings_ocp = (@safety_council_ocp + @industry_specific_ocp + @transitional_work_ocp + @go_green_ocp + @lapse_free_ocp)
-      @max_savings_group_rating = @group_rating_eligibility == 'Yes' ? ( @drug_free_group_rating + @safety_council_group_rating + @industry_specific_group_rating + @transitional_work_group_rating + @go_green_group_rating + @lapse_free_group_rating ) : nil
-      @max_savings_group_retro = ( @safety_council_group_retro + @go_green_group_retro )
+      @max_savings_group_rating = (@group_rating_eligibility == 'Yes' ? ( @drug_free_group_rating + @safety_council_group_rating + @industry_specific_group_rating + @transitional_work_group_rating + @go_green_group_rating + @lapse_free_group_rating ) : nil)
+      @max_savings_group_retro = (@group_retro_eligibility == 'Yes' ? ( @safety_council_group_retro + @go_green_group_retro ) : nil)
       # @max_savings_individual_retro = (  @safety_council_individual_retro + @go_green_individual_retro)
       # @max_savings_mm_select =
 
@@ -313,6 +324,13 @@ class RocReport < PdfReport
     @data += [[ "Max Save vs Exp","#{ round(@max_save_experience, 0)}","#{round(@max_save_em_cap,0)}","","#{round(@max_save_group_rating, 0)}","#{round(@max_save_group_retro, 0)}","",""]]
 
 
+  end
+
+  def descriptions
+    move_down 5
+    text "[1] Program Options and costs estimates are based on current eligibility and current and historical data and is not guaranteed. See detail sheets for program parameters. Retro and Deductible Programs savings can vary based on parameters selected.", size: 7
+    move_down 3
+    text "[2] Additional BWC Discounts often include costs of setting up the program and full savings on certain programs will be difficult to acheive.", size: 7
   end
 
 end
