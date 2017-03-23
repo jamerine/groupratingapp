@@ -46,7 +46,13 @@
   <div class="container">
       <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Reports
       <span class="caret"></span></button>
-      
+      <ul class="dropdown-menu">
+        <li><%= link_to 'Risk Report', account_risk_report_path(account_id: @account.id, group_rating_id: @group_rating.id, format: :pdf), class: 'btn btn-success' %></li>
+        <li><a href="https://s3.amazonaws.com/grouprating/Images/ReportSavingsSummary.tiff">Savings Summary</a></li>
+        <li><a href="https://s3.amazonaws.com/grouprating/Images/ReportGroupPacket.tiff">Group Packet</a></li>
+        <li><a href="https://s3.amazonaws.com/grouprating/Images/RepoortGroupRetro.tiff">Group Retro Packet</a></li>
+        <li><%= link_to 'Roc Report', account_roc_report_path(account_id: @account.id, group_rating_id: @group_rating.id, format: :pdf), class: 'btn btn-success' %></li>
+      </ul>
   <% unless @account.predecessor? || @account.invalid_policy_number? %>
     <% if policy(@account).edit? %>
       <%= link_to "Retainer Quote", new_quote_path(account_id: @account.id, program_type: 'retainer', fees: @account.group_fees, group_code: ''), class: 'btn btn-primary'%>
