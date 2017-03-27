@@ -2,7 +2,7 @@ class ImportProcess
   include Sidekiq::Worker
       sidekiq_options queue: :import_process
 
-    def perform(process_representative_id, import_id, representative_abbreviated_name, group_rating_id)
+    def perform(process_representative_id, import_id, representative_abbreviated_name, group_rating_id, all_process=nil)
       Democ.delete_all
       Mrcl.delete_all
       Mremp.delete_all
@@ -49,17 +49,17 @@ class ImportProcess
       ProcessPolicyCombinePartialToFullLease.where(data_source: 'bwc').delete_all
       ProcessPolicyCombinePartialTransferNoLease.where(data_source: 'bwc').delete_all
       ProcessPolicyCoverageStatusHistory.where(data_source: 'bwc').delete_all
-      ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/DEMOCFILE", "democs", import_id, group_rating_id)
-      ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/MRCLSFILE", "mrcls", import_id, group_rating_id)
-      ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/MREMPFILE", "mremps", import_id, group_rating_id)
-      ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/PCOMBFILE", "pcombs", import_id, group_rating_id)
-      ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/PHMGNFILE", "phmgns", import_id, group_rating_id)
+      ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/DEMOCFILE", "democs", import_id, group_rating_id, all_process)
+      ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/MRCLSFILE", "mrcls", import_id, group_rating_id, all_process)
+      ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/MREMPFILE", "mremps", import_id, group_rating_id, all_process)
+      ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/PCOMBFILE", "pcombs", import_id, group_rating_id, all_process)
+      ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/PHMGNFILE", "phmgns", import_id, group_rating_id, all_process)
       # ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/SC220FILE", "sc220s", import_id, group_rating_id)
-      ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/SC230FILE", "sc230s", import_id, group_rating_id)
-      ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/RATEFILE", "rates", import_id, group_rating_id)
-      ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/PDEMOFILE", "pdemos", import_id, group_rating_id)
-      ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/PEMHSFILE", "pemhs", import_id, group_rating_id)
-      ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/PCOVGFILE", "pcovgs", import_id, group_rating_id)
+      ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/SC230FILE", "sc230s", import_id, group_rating_id, all_process)
+      ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/RATEFILE", "rates", import_id, group_rating_id, all_process)
+      ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/PDEMOFILE", "pdemos", import_id, group_rating_id, all_process)
+      ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/PEMHSFILE", "pemhs", import_id, group_rating_id, all_process)
+      ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/PCOVGFILE", "pcovgs", import_id, group_rating_id, all_process)
 
     end
 end
