@@ -94,7 +94,6 @@ class ImportsController < ApplicationController
         # ImportFile.perform_async("https://s3.amazonaws.com/grouprating/ARM/PHMGNFILE", "phmgns", @import.id)
         # ImportFile.perform_async("https://s3.amazonaws.com/grouprating/ARM/SC220FILE", "sc220s", @import.id)
         # ImportFile.perform_async("https://s3.amazonaws.com/grouprating/ARM/SC230FILE", "sc230s", @import.id)
-
         ImportProcess.perform_async(@import.process_representative, @import.id, @representative.abbreviated_name)
         # Resque.enqueue(ParseProcess, @import.process_representative, @import.id)
 

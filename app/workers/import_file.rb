@@ -2,7 +2,7 @@ class ImportFile
   include Sidekiq::Worker
   sidekiq_options queue: :import_file
 
-  def perform(url, table_name, import_id, group_rating_id)
+  def perform(url, table_name, import_id, group_rating_id, all_process=nil)
     time1 = Time.new
     puts "Start Time: " + time1.inspect
       conn = ActiveRecord::Base.connection
@@ -101,7 +101,7 @@ class ImportFile
           @import.import_status = "Completed"
           @import.save
           @group_rating = GroupRating.find(group_rating_id)
-          GroupRatingStepOne.perform_async("1", @group_rating.process_representative, @group_rating.experience_period_lower_date, @group_rating.experience_period_upper_date, @group_rating.current_payroll_period_lower_date, @group_rating.current_payroll_period_upper_date, @group_rating.id)
+          GroupRatingStepOne.perform_async("1", @group_rating.process_representative, @group_rating.experience_period_lower_date, @group_rating.experience_period_upper_date, @group_rating.current_payroll_period_lower_date, @group_rating.current_payroll_period_upper_date, @group_rating.id, all_process)
       end
 
 
