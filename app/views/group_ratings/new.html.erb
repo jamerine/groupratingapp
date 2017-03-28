@@ -6,7 +6,7 @@
 
           <div class="form-group" >
             <%= f.label :process_representative %>
-            <%= f.select(:representative_id, options_from_collection_for_select(@representatives, :id, :abbreviated_name)) %>
+            <%= f.select(:representative_id, options_from_collection_for_select(@representatives, :id, :abbreviated_name, selected = params[:representative_id])) %>
           </div>
           <div class="form-group" >
             <%= f.label :experience_period_lower_date %>

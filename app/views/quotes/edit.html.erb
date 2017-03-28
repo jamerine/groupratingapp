@@ -12,8 +12,8 @@
   </div>
     <%= form_for @quote do |f| %>
     <h3>Quote Information</h3>
-    <%= link_to 'View Quote Packet', '#', class: 'btn btn-success'%>
-    <%= link_to 'Quote', quote_group_rating_report_path(@quote, format: :pdf), class: 'btn btn-success'%>
+    <br>
+      <%= link_to 'View PDF', @quote.quote_generated.url, class: 'btn btn-primary' %>
     <br>
     <div class="row">
       <div class="col-md-2">
@@ -52,12 +52,6 @@
         <div class="form-group" >
             <%= f.label 'Quote sent:' %>
             <%= f.date_field :quote_sent_date, class: "form-control" %>
-        </div>
-      </div>
-      <div class="col-md-2">
-        <div class="form-group" >
-            Quote Path
-            <%= @quote.quote_generated %>
         </div>
       </div>
     </div>
