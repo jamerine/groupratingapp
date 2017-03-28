@@ -1,0 +1,14 @@
+<div class="container">
+  <div class="jumbotron text-center">
+    <h2><%= @representative.abbreviated_name %>'s Quoting Process</h2>
+      <%= link_to "Quote All #{@representative.abbreviated_name} Accounts", '#', class: 'btn btn-danger' %>
+  </div>
+</div>
+
+<div class="container">
+
+</div>
+
+<div class="container">
+  <%= render partial: 'quotes/representative_accounts', locals: {accounts: @accounts, representative: @representative} %>
+</div>

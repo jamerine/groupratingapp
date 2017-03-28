@@ -40,3 +40,5 @@ production:
   - manual_class_export
   - weekly_request
   - group_rating_mark_complete
+  - generate_quote_process
+  - generate_quote
