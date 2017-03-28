@@ -5,7 +5,7 @@ class Quote < ActiveRecord::Base
 
   enum status: [:accepted, :quoted, :sent, :void, :withdraw]
 
-  mount_uploader :quote, QuoteUploader
+  mount_uploader :quote_generated, QuoteUploader
 
   def generate_invoice_number
     policy_year = self.effective_end_date.strftime("%Y")

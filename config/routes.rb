@@ -28,7 +28,7 @@ Rails.application.routes.draw do
   end
 
   resources :affiliates do
-    collection { post :import_affiliate_process }
+    collection { get :import_affiliate_process }
   end
 
 
