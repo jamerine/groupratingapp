@@ -85,6 +85,7 @@ Rails.application.routes.draw do
     post :import_contact_process
     post :import_payroll_process
     post :import_claim_process
+    get :all_quote_process
   end
 
 

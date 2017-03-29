@@ -1,0 +1,4 @@
+<% js = escape_javascript(
+  render(partial: 'quotes/representative_accounts', locals: { accounts: @accounts })
+) %>
+$("#filter_representative_accounts").html("<%= js %>");
