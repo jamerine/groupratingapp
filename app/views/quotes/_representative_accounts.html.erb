@@ -1,4 +1,5 @@
 <div id="filter_representative_accounts">
+
   <div>
     <%= page_entries_info accounts %>
   </div>
@@ -9,8 +10,8 @@
         <th></th>
         <th>Policy</th>
         <th>Account</th>
-        <th>Account Status</th>
-        <th>Group Rating Qual.</th>
+        <th>Status</th>
+        <th>Group Rate Qual.</th>
         <th>Quoted Tier</th>
         <th>Group Retro Qual.</th>
         <th>Quoted Tier</th>
@@ -22,12 +23,12 @@
       <tr>
         <td><%= check_box_tag "", ""  %></td>
         <td><%= link_to "#{account.policy_calculation.policy_number}",account_path(account.id) %> </td>
-        <td><%= account.try(:name).slice(0..25).try(:titleize) %> </td>
+        <td><%= account.try(:name).slice(0..20).try(:titleize) %> </td>
         <td><%= account.status.humanize %> </td>
         <td><%= account.group_rating_qualification == 'accept' ? account.group_rating_tier : account.group_rating_qualification %> </td>
-        <td><%= account.quotes.find_by(program_type: 0).nil? ? "N/A" : "#{account.quotes.find_by(program_type: 0).quote_tier}" %></td>
+        <td><%= account.quotes.find_by(program_type: 0).nil? ? "N/A" : "#{account.quotes.where(program_type: 0).last.quote_tier}" %></td>
         <td><%= account.group_retro_qualification == 'accept' ? account.group_retro_tier : account.group_retro_qualification %> </td>
-        <td><%= account.quotes.find_by(program_type: 1).nil? ? "N/A" : "#{account.quotes.find_by(program_type: 1).quote_tier}" %></td>
+        <td><%= account.quotes.find_by(program_type: 1).nil? ? "N/A" : "#{account.quotes.where(program_type: 1).last.quote_tier}" %></td>
         <td> <%= number_to_currency(account.group_fees, :precision => 0) %> </td>
       </tr>
       <% end %>

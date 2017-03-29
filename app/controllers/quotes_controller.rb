@@ -35,6 +35,9 @@ class QuotesController < ApplicationController
 
   def index
     @representative = Representative.find(params[:representative_id])
+    @statuses = Account.statuses
+    @group_rating_tiers = BwcCodesIndustryGroupSavingsRatioCriterium.all.order(market_rate: :asc).pluck(:market_rate).uniq
+    @group_retro_tiers = BwcCodesGroupRetroTier.all.order(discount_tier: :asc).pluck(:discount_tier).uniq
     @accounts = Account.where(representative_id: params[:representative_id]).paginate(page: params[:page], per_page: 50)
   end
 
@@ -103,7 +106,7 @@ class QuotesController < ApplicationController
     end
     # redirect_to edit_quote_path(@quote), notice: "Quote Generated"
   end
-  # 
+  #
   # def run_quote_process
   #   @representative = Representative.find(params[:representative_id])
   #   # GenerateQuoteProcess.perform_async(@representative.accountes.ids, current_user.id)

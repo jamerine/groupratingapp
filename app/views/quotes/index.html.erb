@@ -1,12 +1,26 @@
 <div class="container">
   <div class="jumbotron text-center">
     <h2><%= @representative.abbreviated_name %>'s Quoting Process</h2>
-      <%= link_to "Quote All #{@representative.abbreviated_name} Accounts", '#', class: 'btn btn-danger' %>
+      <%= link_to "Quote All #{@representative.abbreviated_name} Accounts", representative_all_quote_process_path(representative_id: @representative), class: 'btn btn-danger' %>
   </div>
 </div>
 
 <div class="container">
-
+  <%= form_tag(quotes_path, :method => "get", id: "search-form", remote: true ) do %>
+    <div class="form-inline">
+      <div class="form-group">
+        <%= select_tag(:status, options_from_collection_for_select(@statuses, :last, :first), include_blank: 'Account Status', class: 'form-control' ) %>
+      </div>
+      <div class="form-group">
+        <%= select_tag(:group_rating_tier, options_for_select(@group_rating_tiers), include_blank: 'Group Rating Tier', class: 'form-control' ) %>
+      </div>
+      <div class="form-group">
+        <%= select_tag(:group_retro_tier, options_for_select(@group_retro_tiers), include_blank: 'Group Retro Tier', class: 'form-control' ) %>
+      </div>
+      <%= submit_tag "Filter", name: nil, class: 'btn btn-primary' %>
+    </div>
+  <% end %>
+  <br>
 </div>
 
 <div class="container">
