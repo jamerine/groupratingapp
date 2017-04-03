@@ -4,12 +4,12 @@
     <%= page_entries_info accounts %>
   </div>
   <%= form_tag quote_accounts_quotes_path do %>
-      <%= submit_tag "Quote Selected", class: 'btn btn-danger' %>
+      <%= submit_tag "Quote Selected", class: 'btn btn-success' %>
       <%= hidden_field_tag(:representative_id, @representative.id) %>
     <table class="table table-hover table-condensed table-responsive" id="representativeAccountsTable">
       <thead>
         <tr class="header">
-          <th></th>
+          <th><a onclick="selectAll()">Select All</a></th>
           <th>Policy</th>
           <th>Account</th>
           <th>Status</th>
@@ -23,7 +23,7 @@
       <tbody>
         <% accounts.order("representative_id asc, status desc, name asc").each do |account| %>
         <tr>
-          <td><%= check_box_tag "account_ids[]", account.id  %></td>
+          <td><%= check_box_tag "account_ids[]", account.id %></td>
           <td><%= link_to "#{account.policy_calculation.policy_number}",account_path(account.id) %> </td>
           <td><%= account.try(:name).slice(0..20).try(:titleize) %> </td>
           <td><%= account.status.humanize %> </td>
@@ -37,7 +37,7 @@
 
       </tbody>
     </table>
-    <%= submit_tag "Quote Selected", class: 'btn btn-danger' %>
+    <%= submit_tag "Quote Selected", class: 'btn btn-success' %>
   <% end %>
 
 <%= will_paginate accounts %>
