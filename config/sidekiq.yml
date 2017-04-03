@@ -42,3 +42,5 @@ production:
   - group_rating_mark_complete
   - generate_quote_process
   - generate_quote
+  - delete_quote_process
+  - delete_quote

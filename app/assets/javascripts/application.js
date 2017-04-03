@@ -16,3 +16,12 @@
 //= require bootstrap
 //= require_tree .
 //= require filterrific/filterrific-jquery
+
+// Javascript to check_all boxes
+function selectAll(){
+  $("input:checkbox").each(function(){
+    $(this).attr('checked', true);
+  });
+
+  return false;
+}

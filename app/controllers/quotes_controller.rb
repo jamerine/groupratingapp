@@ -125,7 +125,7 @@ class QuotesController < ApplicationController
   def quote_accounts
     if !params[:account_ids].nil?
       GenerateQuoteProcess.perform_async(params[:representative_id], current_user, params[:account_ids])
-      redirect_to quotes_path(representative_id: params[:representative_id]), notice: "Quotes are being generated"
+      redirect_to quotes_path(representative_id: params[:representative_id]), notice: "Quotes are being generated, please refresh page to show reflected quotes."
     else
       redirect_to quotes_path(representative_id: params[:representative_id]), alert: "Please select accounts to generate quotes!"
     end
@@ -133,14 +133,15 @@ class QuotesController < ApplicationController
 
 
   def delete_all_quotes
-    @representative = Representative.find(params[:representative_id])
-    @representative.accounts.find_each do |account|
-      account.quotes.each do |quote|
-        quote.remove_quote_generated!
-        quote.destroy
-      end
-    end
-    redirect_to quotes_path(representative_id: @representative.id), notice: 'The Quotes are all destroyed'
+    DeleteQuoteProcess.perform_async(params[:representative_id])
+    # @representative = Representative.find(params[:representative_id])
+    # @representative.accounts.find_each do |account|
+    #   account.quotes.each do |quote|
+    #     quote.remove_quote_generated!
+    #     quote.destroy
+    #   end
+    # end
+    redirect_to quotes_path(representative_id: params[:representative_id]), notice: 'The Quotes are being deleted. Please refresh the page to reflect the deleted quotes.'
   end
 
   private
