@@ -18,7 +18,11 @@ class Account < ActiveRecord::Base
 
   enum group_rating_qualification: [:accept, :pending_predecessor, :reject]
 
-
+  # Scopes
+  scope :status, -> (status) { where status: status }
+  scope :group_rating_tier, -> (group_rating_tier) { where group_rating_tier: group_rating_tier }
+  scope :group_retro_tier, -> (group_retro_tier) { where group_retro_tier: group_retro_tier }
+  # scope :policy_search, -> (policy_search) { self.search(policy_search)}
 
 
   def self.update_or_create(attributes)
