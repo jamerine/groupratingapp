@@ -39,6 +39,8 @@ Rails.application.routes.draw do
 
   resources :quotes do
     get :group_rating_report
+    collection { post :quote_accounts }
+    collection { delete :delete_all_quotes }
   end
 
   resources :account_programs do

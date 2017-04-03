@@ -122,6 +122,27 @@ class QuotesController < ApplicationController
   #   redirect_to quotes_path, notice: "Quoting process has initiated. You will receive an email when the process is completed."
   # end
 
+  def quote_accounts
+    if !params[:account_ids].nil?
+      GenerateQuoteProcess.perform_async(params[:representative_id], current_user, params[:account_ids])
+      redirect_to quotes_path(representative_id: params[:representative_id]), notice: "Quotes are being generated"
+    else
+      redirect_to quotes_path(representative_id: params[:representative_id]), alert: "Please select accounts to generate quotes!"
+    end
+  end
+
+
+  def delete_all_quotes
+    @representative = Representative.find(params[:representative_id])
+    @representative.accounts.find_each do |account|
+      account.quotes.each do |quote|
+        quote.remove_quote_generated!
+        quote.destroy
+      end
+    end
+    redirect_to quotes_path(representative_id: @representative.id), notice: 'The Quotes are all destroyed'
+  end
+
   private
 
   def quote_params
