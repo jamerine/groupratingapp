@@ -1,8 +1,8 @@
 <div class="container">
   <div class="jumbotron text-center">
     <h2><%= @representative.abbreviated_name %>'s Quoting Process</h2>
-      <%= link_to "Quote All #{@representative.abbreviated_name} Accounts", representative_all_quote_process_path(representative_id: @representative), class: 'btn btn-danger' %>
-      <%= link_to "Delete All #{@representative.abbreviated_name} Quotes", delete_all_quotes_quotes_path(representative_id: @representative), method: :delete, class: 'btn btn-default', data: { confirm: 'Are you sure you want to delete all quotes?' }  %>
+      <%= link_to "Quote All #{@representative.abbreviated_name} Accounts", representative_all_quote_process_path(representative_id: @representative), class: 'btn btn-default' %>
+      <%= link_to "Delete All #{@representative.abbreviated_name} Quotes", delete_all_quotes_quotes_path(representative_id: @representative), method: :delete, class: 'btn btn-danger', data: { confirm: 'Are you sure you want to delete all quotes?' }  %>
   </div>
 </div>
 
