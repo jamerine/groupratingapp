@@ -44,10 +44,10 @@ class QuotesController < ApplicationController
     @accounts = @accounts.group_retro_tier(params[:group_retro_tier]).paginate(page: params[:page], per_page: 50) if params[:group_retro_tier].present?
 
 
-    # respond_to do |format|
-    #   format.html
-    #   format.js
-    # end
+    respond_to do |format|
+      format.html
+      format.js
+    end
   end
 
   def show
