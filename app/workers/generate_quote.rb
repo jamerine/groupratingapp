@@ -28,6 +28,7 @@ class GenerateQuote
       tmpfile.unlink
       @quote.save!
     end
+    
     if @account.group_retro_qualification == 'accept'
       @quote = Quote.new(account_id: @account.id, program_type: 'group_retro', fees: @account.group_fees, group_code: @account.group_retro_group_number, quote_tier: @account.group_retro_tier, quote_date: Date.current, effective_start_date: '2016-07-01', effective_end_date: '2017-06-30', status: 'quoted')
       @quote.save

@@ -194,8 +194,8 @@ class Account < ActiveRecord::Base
     self.group_rating_rejections.destroy_all
     self.group_rating_exceptions.where(resolved: nil).destroy_all
 
+    @group_rating = GroupRating.where(representative_id: self.representative_id).last
     unless self.predecessor?
-      @group_rating = GroupRating.where(representative_id: self.representative_id).last
 
 
         # NEGATIVE PAYROLL ON A MANUAL CLASS
@@ -311,6 +311,9 @@ class Account < ActiveRecord::Base
       # update_attributes(group_rating_qualification: qualification)
       return @group_rating_qualification = qualification
     end
+
+    GroupRatingRejection.create(program_type: 'group_rating', account_id: self.id, reject_reason: 'reject_pending_predecessor', representative_id: @group_rating.representative_id)
+    return @group_rating_qualification = "reject"
   end
 
   def group_retro(user_override=nil)
@@ -347,8 +350,8 @@ class Account < ActiveRecord::Base
   end
 
   def group_retro_reject
+    @group_rating = GroupRating.where(representative_id: self.representative_id).last
     unless self.predecessor?
-      @group_rating = GroupRating.where(representative_id: self.representative_id).last
         # NEGATIVE PAYROLL ON A MANUAL CLASS
         if !self.policy_calculation.manual_class_calculations.where("manual_class_current_estimated_payroll < 0 or manual_class_four_year_period_payroll < 0").empty?
           GroupRatingRejection.create(program_type: 'group_retro', account_id: self.id, reject_reason: 'manual_class_negative_payroll', representative_id: @group_rating.representative_id)
@@ -452,6 +455,8 @@ class Account < ActiveRecord::Base
       return @group_retro_qualification = qualification
 
     end
+    GroupRatingRejection.create(program_type: 'group_retro', account_id: self.id, reject_reason: 'reject_pending_predecessor', representative_id: @group_rating.representative_id)
+    return @group_retro_qualification = "reject"
   end
 
   def fee_calculation(group_rating_qualification, group_rating_tier, group_savings)
