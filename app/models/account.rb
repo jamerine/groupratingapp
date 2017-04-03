@@ -220,6 +220,9 @@ class Account < ActiveRecord::Base
       if ["CANFI","CANPN","BKPCA","BKPCO","COMB","CANUN"].include? policy_calculation.current_coverage_status
         GroupRatingRejection.create(program_type: 'group_rating', account_id: self.id, reject_reason: 'reject_inactive_policy', representative_id: @group_rating.representative_id)
       end
+      if ["CANFI","CANPN","BKPCA","BKPCO","COMB","CANUN"].include? @account.policy_calculation.current_coverage_status
+        GroupRatingRejection.create(program_type: 'group_rating', account_id: @account.id, reject_reason: 'reject_inactive_policy', representative_id: @group_rating.representative_id)
+      end
 
       if policy_calculation.policy_group_ratio.nil? || policy_calculation.policy_group_ratio >= 0.85
         GroupRatingRejection.create(program_type: 'group_rating', account_id: self.id, reject_reason: 'reject_high_group_ratio', representative_id: @group_rating.representative_id)
@@ -230,7 +233,7 @@ class Account < ActiveRecord::Base
       end
 
       # Check for waiting on predecessor payroll
-      if PolicyCalculation.find_by(business_name: "Predecessor Policy for #{self.policy_calculation.policy_number}", representative_id: @group_rating.representative_id)
+      if self.status == 'predecessor'
         GroupRatingRejection.create(program_type: 'group_rating', account_id: self.id, reject_reason: 'reject_pending_predecessor', representative_id: @group_rating.representative_id)
       end
 
