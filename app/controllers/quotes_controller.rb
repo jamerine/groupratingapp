@@ -144,6 +144,61 @@ class QuotesController < ApplicationController
     redirect_to quotes_path(representative_id: params[:representative_id]), notice: 'The Quotes are being deleted. Please refresh the page to reflect the deleted quotes.'
   end
 
+  def view_group_rating_quote
+    @quote = Quote.find(params[:quote_id])
+    @account = @quote.account
+    @policy_calculation = @account.policy_calculation
+    respond_to do |format|
+      format.html
+      format.pdf do
+        pdf = GroupRatingQuote.new(@quote, @account, @policy_calculation, view_context)
+
+        send_data pdf.render, filename: "#{ @account.policy_number_entered }_quote_#{ @quote.id }.pdf",
+                              type: "application/pdf",
+                              disposition: "inline"
+        # pdf.render_file "app/reports/#{ @account.policy_number_entered }_quote_#{ @quote.id }.pdf"
+      end
+    end
+    # redirect_to edit_quote_path(@quote), notice: "Quote Generated"
+  end
+
+  def view_ac_26
+    @quote = Quote.find(params[:quote_id])
+    @account = @quote.account
+    @policy_calculation = @account.policy_calculation
+    respond_to do |format|
+      format.html
+      format.pdf do
+        pdf = Ac26.new(@quote, @account, @policy_calculation, view_context)
+
+        send_data pdf.render, filename: "#{ @account.policy_number_entered }_quote_#{ @quote.id }.pdf",
+                              type: "application/pdf",
+                              disposition: "inline"
+        # pdf.render_file "app/reports/#{ @account.policy_number_entered }_quote_#{ @quote.id }.pdf"
+      end
+    end
+    # redirect_to edit_quote_path(@quote), notice: "Quote Generated"
+  end
+
+  def view_ac_2
+    @quote = Quote.find(params[:quote_id])
+    @account = @quote.account
+    @policy_calculation = @account.policy_calculation
+    respond_to do |format|
+      format.html
+      format.pdf do
+        pdf = Ac2.new(@quote, @account, @policy_calculation, view_context)
+
+        send_data pdf.render, filename: "#{ @account.policy_number_entered }_quote_#{ @quote.id }.pdf",
+                              type: "application/pdf",
+                              disposition: "inline"
+        # pdf.render_file "app/reports/#{ @account.policy_number_entered }_quote_#{ @quote.id }.pdf"
+      end
+    end
+    # redirect_to edit_quote_path(@quote), notice: "Quote Generated"
+  end
+
+
   private
 
   def quote_params
