@@ -1,8 +1,6 @@
 <%= render partial: "shared/account_navbar", locals: { object: @account } %>
 <div class="container">
   <div class="row">
-
-
     <div class="col-md-1">
       <%= link_to 'Back', @account, class: 'btn btn-primary' %>
     </div>
@@ -14,6 +12,9 @@
     <h3>Quote Information</h3>
     <br>
       <%= link_to 'View PDF', @quote.quote_generated.url, class: 'btn btn-primary' %>
+      <%= link_to 'Generate PDF Quote', quote_view_group_rating_quote_path(@quote, format: :pdf), class: 'btn btn-primary' %>
+      <%= link_to 'Generate AC26', quote_view_ac_26_path(@quote, format: :pdf), class: 'btn btn-primary' %>
+      <%= link_to 'Generate AC2', quote_view_ac_2_path(@quote, format: :pdf), class: 'btn btn-primary' %>
     <br>
     <div class="row">
       <div class="col-md-2">

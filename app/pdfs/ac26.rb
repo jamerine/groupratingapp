@@ -1,7 +1,4 @@
-class GroupRatingQuote < PdfReport
-
-  TABLE_HEADERS =
-
+class Ac26 < PdfReport
   def initialize(quote=[],account=[],policy_calculation=[],view)
     super()
     @quote = quote
@@ -17,153 +14,14 @@ class GroupRatingQuote < PdfReport
       end
    @current_date = DateTime.now.to_date
 
-    intro_page
-    start_new_page
-    quote_analysis
-    start_new_page
-    ac_26
+
+   ac_26
 
   end
 
   private
 
-  def intro_page
-    header
-    move_down 20
-    current_cursor = cursor
-    bounding_box([50, (current_cursor - 10) ], :width => 100, :height => 65) do
-      text "#{@current_date.strftime("%B %e, %Y")}", style: :bold
-     transparent(0) { stroke_bounds }
-    end
-
-    bounding_box([250, current_cursor], :width => 170, :height => 75) do
-      text "2017 Projected Discount:", style: :bold
-      move_down 5
-      text "Total Premium Savings Estimate: ", style: :bold
-     transparent(0) { stroke_bounds }
-    end
-    bounding_box([425, current_cursor], :width => 75, :height => 75) do
-      text "#{percent(@account.group_rating_tier)}", style: :bold
-      move_down 5
-      text "#{price(@account.group_savings - @group_fees)}", style: :bold
-     transparent(0) { stroke_bounds }
-    end
-
-    text "#{@account.name.titleize}"
-    text "#{@account.street_address.titleize} #{@account.street_address_2}"
-    text "#{@account.city.titleize}, #{@account.state.upcase} #{@account.zip_code}"
-    move_down 25
-
-    current_cursor = cursor
-    bounding_box([0, current_cursor], :width => 25, :height => 25) do
-      text "RE:", style: :bold, size: 10
-     transparent(0) { stroke_bounds }
-    end
-    bounding_box([25, current_cursor], :width => 250, :height => 25) do
-      text "OHIO WORKERS’ COMPENSATION GROUP RATING", size: 10
-      text "IMMEDIATE RESPONSE REQUIRED", style: :bold, size: 10
-     transparent(0) { stroke_bounds }
-    end
-
-    move_down 15
-    text "Congratulations!  <b>#{@account.name}</b> is invited to participate in ARM’s 2017 <b><u>Group Rating Program</u></b>.  We have designed a program that includes the best representation, claims administration, and group premium discounts for Ohio employers through the Northeast Ohio Safety Council.", size: 11, inline_format: true
-    move_down 15
-    text "Please find the enclosed 2017 group quote and premium projection.  We stand behind our estimations for their accuracy.", size: 11
-    move_down 15
-    text "Enrollment is simple - please complete and return the enclosed forms (listed below) with a copy of the invoice and your check for the management fee by November 1, 2016:", size: 11
-    move_down 15
-
-    text "1.    FROM AC-26, EMPLOYER STATEMENT FOR GROUP RATING", size: 9
-    text "2.    FORM AC-2, PERMANENT AUTHORIZATION (please include your email to receive important reminders and updates)", size: 9
-    text "3.    GROUP RATING QUESTIONAIRE", size: 9
-    text "4.    Fees* of #{ price(@quote.fees) } –payable to #{@account.representative.abbreviated_name}  *fees are all- inclusive ", size: 9
-
-    move_down 15
-    text "Our goal is to provide you with the best service at the most cost effective rates possible. If you receive a better offer, we will <b>match your best verifiable Group Rating Proposal.</b>", inline_format: true
-    move_down 15
-    if [2, 9,10,16].include? @account.representative.id
-      text "Thank you for allowing us to prepare the following quote. If you have any questions, please contact us at (MMHR PHONE NUMBER)."
-    else
-      text "Thank you for allowing us to prepare the following quote. If you have any questions, please contact us at (614) 219-1290."
-    end
-    move_down 15
-    text "Sincerely,"
-    move_down 15
-    text "Signature"
-    if [2,9,10,16].include? @account.representative.id
-      text "MMHR President"
-      text "President"
-    else
-      text "Doug Maag"
-      text "President"
-    end
-
-    bounding_box([0, 50], :width => 550, :height => 50) do
-      if [2,9,10,16].include? @account.representative.id
-        text "MMHR FOOTER", align: :center, color: "333333"
-        text "MMHR FOOTER", align: :center, color: "333333"
-        text "MMHR FOOTER", align: :center, color: "333333"
-        text "MMHR FOOTER", align: :center, color: "333333"
-      else
-        text "Cleveland/Columbus Offices", align: :center, color: "333333"
-        text "Telephone (888) 235-8051  |  Fax (614) 219-1292", align: :center, color: "333333"
-        text "Workers' Compensation & Unemployment Compensation Specialists", align: :center, color: "333333"
-        text "<u>www.alternativeriskmgmt.com</u>", align: :center, color: "333333", inline_format: true
-      end
-     transparent(0) { stroke_bounds }
-    end
-  end
-
-  def quote_analysis
-    #Header comes from pdf_report template
-    header 'Group Rate Quote Analysis'
-    move_down 50
-    stroke_horizontal_rule
-    move_down 25
-    text "#{@account.name}", size: 20, style: :bold, align: :center
-    text "Policy Number: #{@account.policy_number_entered}", size: 12,  align: :center
-    move_down 25
-    stroke_horizontal_rule
-    move_down 25
-    display_data_table
-    move_down 50
-    text "Projected Savings: #{price(@account.group_savings)}", align: :right, size: 12, style: :bold
-    move_down 10
-    text "Enrollment Fee: #{price(@group_fees)}", align: :right, size: 12, style: :bold
-    move_down 10
-    text "Next Savings: #{ price(@account.group_savings - @group_fees) }", align: :right, size: 16, style: :bold
-    # bounding_box([200, cursor], :width => 325, :height => 25) do
-    #   stroke_bounds
-    # end
-  end
-
-
-  def display_data_table
-    if table_data.empty?
-      text "No Information Found"
-    else
-      text "Individual TM%: #{percent(@policy_calculation.policy_individual_total_modifier)}     Group TM%: #{percent(@account.group_rating_tier)}", size: 12, align: :center
-      move_down 10
-      table table_data do
-        self.position = :center
-        row(0).font_style = :bold
-        row(0).align = :center
-        self.row_colors = TABLE_ROW_COLORS
-        self.cell_style = {:min_font_size => 9}
-        self.header = true
-        row(-1).font_style = :bold
-      end
-    end
-  end
-
-  def table_data
-    @data = [["Manual Class", "Base Rate", "Estimated Payroll", "Ind. Rate", "Ind. Premium", "Group Rate", "Group Premium"]]
-    @data +=  @account.policy_calculation.manual_class_calculations.map { |e| [e.manual_number, e.manual_class_base_rate, price(e.manual_class_current_estimated_payroll), round(e.manual_class_individual_total_rate),  price(e.manual_class_estimated_individual_premium), round(e.manual_class_group_total_rate), price(e.manual_class_estimated_group_premium)] }
-    @data += [["Totals","","#{price(@policy_calculation.policy_total_current_payroll)}","","#{price(@policy_calculation.policy_total_individual_premium)}","","#{price(@account.group_premium)}"]]
-  end
-
   def ac_26
-    stroke_axis
     text "Employer Statement for", style: :bold, align: :right, size: 15
     text "Group-Experience-Rating Program", style: :bold, align: :right, size: 15
     move_down 5
@@ -297,19 +155,6 @@ class GroupRatingQuote < PdfReport
 
 
 
-  end
-
-  def price(num)
-    @view.number_to_currency(num)
-  end
-
-  def round(num)
-    @view.number_with_precision(num, precision: 4)
-  end
-
-  def percent(num)
-    num = num * 100
-    @view.number_to_percentage(num, precision: 0)
   end
 
 end

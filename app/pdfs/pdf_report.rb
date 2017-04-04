@@ -12,7 +12,7 @@ class PdfReport < Prawn::Document
   end
 
   def header(title=nil)
-    if [9,10,16].include? @account.representative.id
+    if [2, 9,10,16].include? @account.representative.id
       image "#{Rails.root}/app/assets/images/minute men hr.jpeg", height: 100
     else
       image "#{Rails.root}/app/assets/images/logo.png", height: 50

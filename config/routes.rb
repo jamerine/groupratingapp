@@ -41,6 +41,9 @@ Rails.application.routes.draw do
     get :group_rating_report
     collection { post :quote_accounts }
     collection { delete :delete_all_quotes }
+    get :view_group_rating_quote
+    get :view_ac_26
+    get :view_ac_2
   end
 
   resources :account_programs do

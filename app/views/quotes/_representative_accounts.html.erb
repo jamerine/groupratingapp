@@ -4,7 +4,7 @@
     <%= page_entries_info accounts %>
   </div>
   <%= form_tag quote_accounts_quotes_path do %>
-      <%= submit_tag "Quote Selected", class: 'btn btn-success' %>
+      <%= submit_tag "Generate Quotes for Selected", class: 'btn btn-success' %>
       <%= hidden_field_tag(:representative_id, @representative.id) %>
     <table class="table table-hover table-condensed table-responsive" id="representativeAccountsTable">
       <thead>
@@ -37,7 +37,7 @@
 
       </tbody>
     </table>
-    <%= submit_tag "Quote Selected", class: 'btn btn-success' %>
+    <%= submit_tag "Generate Quotes for Selected", class: 'btn btn-success' %>
   <% end %>
 
 <%= will_paginate accounts %>
