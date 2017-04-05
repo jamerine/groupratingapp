@@ -42,6 +42,10 @@ class QuotesController < ApplicationController
     @accounts = @accounts.status(params[:status]).paginate(page: params[:page], per_page: 50) if params[:status].present?
     @accounts = @accounts.group_rating_tier(params[:group_rating_tier]).paginate(page: params[:page], per_page: 50) if params[:group_rating_tier].present?
     @accounts = @accounts.group_retro_tier(params[:group_retro_tier]).paginate(page: params[:page], per_page: 50) if params[:group_retro_tier].present?
+    @accounts_all = Account.where(representative_id: params[:representative_id])
+    @accounts_all = @accounts.status(params[:status]) if params[:status].present?
+    @accounts_all = @accounts.group_rating_tier(params[:group_rating_tier]) if params[:group_rating_tier].present?
+    @accounts_all = @accounts.group_retro_tier(params[:group_retro_tier]) if params[:group_retro_tier].present?
 
 
     respond_to do |format|
@@ -176,6 +180,14 @@ class QuotesController < ApplicationController
         contract_pdf_render = contract_pdf.render
         combine_pdf << CombinePDF.parse(contract_pdf_render)
 
+        questionnaire_pdf = ArmQuestionnaire.new(@quote, @account, @policy_calculation, view_context)
+        questionnaire_pdf_render = questionnaire_pdf.render
+        combine_pdf << CombinePDF.parse(questionnaire_pdf_render)
+
+        invoice_pdf = ArmInvoice.new(@quote, @account, @policy_calculation, view_context)
+        invoice_pdf_render = invoice_pdf.render
+        combine_pdf << CombinePDF.parse(invoice_pdf_render)
+
 
         send_data combine_pdf.to_pdf, filename: "#{ @account.policy_number_entered }_quote_#{ @quote.id }.pdf",
                               type: "application/pdf",
@@ -185,7 +197,7 @@ class QuotesController < ApplicationController
     end
     # redirect_to edit_quote_path(@quote), notice: "Quote Generated"
   end
-
+  
   private
 
   def quote_params
