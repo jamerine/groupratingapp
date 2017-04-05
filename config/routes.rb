@@ -42,10 +42,7 @@ Rails.application.routes.draw do
     collection { post :quote_accounts }
     collection { delete :delete_all_quotes }
     get :view_group_rating_quote
-    get :view_ac_26
-    get :view_intro
-    get :view_ac_2
-    get :view_contract
+
   end
 
   resources :account_programs do
