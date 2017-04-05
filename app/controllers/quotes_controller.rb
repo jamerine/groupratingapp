@@ -151,9 +151,33 @@ class QuotesController < ApplicationController
     respond_to do |format|
       format.html
       format.pdf do
-        pdf = GroupRatingQuote.new(@quote, @account, @policy_calculation, view_context)
+        combine_pdf = CombinePDF.new
 
-        send_data pdf.render, filename: "#{ @account.policy_number_entered }_quote_#{ @quote.id }.pdf",
+        intro_pdf = ArmIntro.new(@quote, @account, @policy_calculation, view_context)
+        intro_pdf_render = intro_pdf.render
+        combine_pdf = CombinePDF.parse(intro_pdf_render)
+
+
+        quote_pdf = GroupRatingQuote.new(@quote, @account, @policy_calculation, view_context)
+        quote_pdf_render = quote_pdf.render
+        combine_pdf << CombinePDF.parse(quote_pdf_render)
+
+
+        ac_26_pdf = Ac26.new(@quote, @account, @policy_calculation, view_context)
+        ac_26_pdf_render = ac_26_pdf.render
+        combine_pdf << CombinePDF.parse(ac_26_pdf_render)
+
+        ac_2_pdf = Ac2.new(@quote, @account, @policy_calculation, view_context)
+        ac_2_pdf_render = ac_2_pdf.render
+        combine_pdf << CombinePDF.parse(ac_2_pdf_render)
+
+
+        contract_pdf = ArmContract.new(@quote, @account, @policy_calculation, view_context)
+        contract_pdf_render = contract_pdf.render
+        combine_pdf << CombinePDF.parse(contract_pdf_render)
+
+
+        send_data combine_pdf.to_pdf, filename: "#{ @account.policy_number_entered }_quote_#{ @quote.id }.pdf",
                               type: "application/pdf",
                               disposition: "inline"
         # pdf.render_file "app/reports/#{ @account.policy_number_entered }_quote_#{ @quote.id }.pdf"
@@ -161,78 +185,6 @@ class QuotesController < ApplicationController
     end
     # redirect_to edit_quote_path(@quote), notice: "Quote Generated"
   end
-
-  def view_intro
-    @quote = Quote.find(params[:quote_id])
-    @account = @quote.account
-    @policy_calculation = @account.policy_calculation
-    respond_to do |format|
-      format.html
-      format.pdf do
-        pdf = ArmIntro.new(@quote, @account, @policy_calculation, view_context)
-
-        send_data pdf.render, filename: "#{ @account.policy_number_entered }_quote_#{ @quote.id }.pdf",
-                              type: "application/pdf",
-                              disposition: "inline"
-        # pdf.render_file "app/reports/#{ @account.policy_number_entered }_quote_#{ @quote.id }.pdf"
-      end
-    end
-    # redirect_to edit_quote_path(@quote), notice: "Quote Generated"
-  end
-  def view_ac_26
-    @quote = Quote.find(params[:quote_id])
-    @account = @quote.account
-    @policy_calculation = @account.policy_calculation
-    respond_to do |format|
-      format.html
-      format.pdf do
-        pdf = Ac26.new(@quote, @account, @policy_calculation, view_context)
-
-        send_data pdf.render, filename: "#{ @account.policy_number_entered }_quote_#{ @quote.id }.pdf",
-                              type: "application/pdf",
-                              disposition: "inline"
-        # pdf.render_file "app/reports/#{ @account.policy_number_entered }_quote_#{ @quote.id }.pdf"
-      end
-    end
-    # redirect_to edit_quote_path(@quote), notice: "Quote Generated"
-  end
-
-  def view_ac_2
-    @quote = Quote.find(params[:quote_id])
-    @account = @quote.account
-    @policy_calculation = @account.policy_calculation
-    respond_to do |format|
-      format.html
-      format.pdf do
-        pdf = Ac2.new(@quote, @account, @policy_calculation, view_context)
-
-        send_data pdf.render, filename: "#{ @account.policy_number_entered }_quote_#{ @quote.id }.pdf",
-                              type: "application/pdf",
-                              disposition: "inline"
-        # pdf.render_file "app/reports/#{ @account.policy_number_entered }_quote_#{ @quote.id }.pdf"
-      end
-    end
-    # redirect_to edit_quote_path(@quote), notice: "Quote Generated"
-  end
-
-  def view_contract
-    @quote = Quote.find(params[:quote_id])
-    @account = @quote.account
-    @policy_calculation = @account.policy_calculation
-    respond_to do |format|
-      format.html
-      format.pdf do
-        pdf = ArmContract.new(@quote, @account, @policy_calculation, view_context)
-
-        send_data pdf.render, filename: "#{ @account.policy_number_entered }_quote_#{ @quote.id }.pdf",
-                              type: "application/pdf",
-                              disposition: "inline"
-        # pdf.render_file "app/reports/#{ @account.policy_number_entered }_quote_#{ @quote.id }.pdf"
-      end
-    end
-    # redirect_to edit_quote_path(@quote), notice: "Quote Generated"
-  end
-
 
   private
 
