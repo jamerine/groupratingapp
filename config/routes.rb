@@ -42,6 +42,7 @@ Rails.application.routes.draw do
     collection { post :quote_accounts }
     collection { delete :delete_all_quotes }
     get :view_group_rating_quote
+    get :view_invoice
 
   end
 
