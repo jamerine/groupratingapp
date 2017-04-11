@@ -26,7 +26,7 @@ class GenerateAllQuotePacket
           file_obj = Net::HTTP.get(uri) # => String
 
           # Give a name to the file and start a new entry
-          zip.put_next_entry("quote_#{@account.policy_number_entered}")
+          zip.put_next_entry("quote_#{@account.policy_number_entered}.pdf")
 
           # Write the file data to zip
           # zip.print file_obj.get.body.read

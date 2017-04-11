@@ -97,10 +97,10 @@
         <h5>Group Rating Quotes</h5>
         <%= link_to "View Quoting", quotes_path(representative_id: @representative.id), class: 'btn btn-default'  %>
       </div>
-      <div class="col-md-4">
+      <!-- <div class="col-md-4">
         <h5>Create Group Rating Zip</h5>
         <%= link_to "Create Zip", representative_zip_file_path(representative_id: @representative.id), method: :post, class: 'btn btn-default'  %>
-      </div>
+      </div> -->
       <div class="col-md-4">
         <h5>View Group Rating Zip</h5>
         <%= link_to "View Zip", @representative.zip_file.url, class: 'btn btn-default'  %>
