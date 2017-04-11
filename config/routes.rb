@@ -40,6 +40,8 @@ Rails.application.routes.draw do
   resources :quotes do
     get :group_rating_report
     collection { post :quote_accounts }
+    collection { get :edit_quote_accounts }
+    collection { post :generate_account_quotes }
     collection { delete :delete_all_quotes }
     get :view_group_rating_quote
     get :view_invoice
@@ -91,6 +93,7 @@ Rails.application.routes.draw do
     post :import_payroll_process
     post :import_claim_process
     get :all_quote_process
+    post :zip_file
   end
 
 

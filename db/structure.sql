@@ -10622,7 +10622,8 @@ CREATE TABLE representatives (
     group_dues character varying,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    logo character varying
+    logo character varying,
+    zip_file character varying
 );
 
 
@@ -13289,4 +13290,6 @@ INSERT INTO schema_migrations (version) VALUES ('20170302164335');
 INSERT INTO schema_migrations (version) VALUES ('20170306130853');
 
 INSERT INTO schema_migrations (version) VALUES ('20170327172810');
+
+INSERT INTO schema_migrations (version) VALUES ('20170411144444');
 

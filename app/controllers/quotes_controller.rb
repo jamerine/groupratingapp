@@ -38,6 +38,7 @@ class QuotesController < ApplicationController
     @statuses = Account.statuses
     @group_rating_tiers = BwcCodesIndustryGroupSavingsRatioCriterium.all.order(market_rate: :asc).pluck(:market_rate).uniq
     @group_retro_tiers = BwcCodesGroupRetroTier.all.order(discount_tier: :asc).pluck(:discount_tier).uniq
+
     @accounts = Account.where(representative_id: params[:representative_id]).paginate(page: params[:page], per_page: 50)
     @accounts = @accounts.status(params[:status]).paginate(page: params[:page], per_page: 50) if params[:status].present?
     @accounts = @accounts.group_rating_tier(params[:group_rating_tier]).paginate(page: params[:page], per_page: 50) if params[:group_rating_tier].present?
@@ -46,7 +47,11 @@ class QuotesController < ApplicationController
     @accounts_all = @accounts.status(params[:status]) if params[:status].present?
     @accounts_all = @accounts.group_rating_tier(params[:group_rating_tier]) if params[:group_rating_tier].present?
     @accounts_all = @accounts.group_retro_tier(params[:group_retro_tier]) if params[:group_retro_tier].present?
-
+    @parameters = {}
+    @parameters[:representative_id] = params[:representative_id] if params[:representative_id].present?
+    @parameters[:status] = params[:status] if params[:status].present?
+    @parameters[:group_rating_tier] = params[:group_rating_tier] if params[:group_rating_tier].present?
+    @parameters[:group_retro_tier] = params[:group_retro_tier] if params[:group_retro_tier].present?
 
     respond_to do |format|
       format.html
@@ -128,11 +133,53 @@ class QuotesController < ApplicationController
 
   def quote_accounts
     if !params[:account_ids].nil?
-      GenerateQuoteProcess.perform_async(params[:representative_id], current_user, params[:account_ids])
-      redirect_to quotes_path(representative_id: params[:representative_id]), notice: "Quotes are being generated, please refresh page to show reflected quotes."
+      redirect_to edit_quote_accounts_quotes_path(account_ids: params[:account_ids], representative_id: params[:representative_id])
     else
       redirect_to quotes_path(representative_id: params[:representative_id]), alert: "Please select accounts to generate quotes!"
     end
+  end
+
+  def edit_quote_accounts
+    if params[:account_ids].present?
+      @parameters = {}
+      @accounts = Account.where("id in (?)", params[:account_ids])
+      @account_ids = @accounts.pluck(:id)
+      @representative = Representative.find(params[:representative_id])
+      @status = nil
+      @group_rating_tier = nil
+      @group_retro_tier = nil
+    elsif params[:parameters].present?
+      @parameters = params[:parameters]
+      @representative = Representative.find(@parameters["representative_id"])
+      @status = Account.statuses.key(@parameters["status"].to_i)
+      @group_rating_tier = @parameters["group_rating_tier"]
+      @group_retro_tier = @parameters["group_retro_tier"]
+      @accounts = Account.where(representative_id: @parameters["representative_id"])
+      @accounts = @accounts.status(@parameters["status"]) if @parameters["status"].present?
+      @accounts = @accounts.group_rating_tier(@parameters["group_rating_tier"]) if @parameters["group_rating_tier"].present?
+      @accounts = @accounts.group_retro_tier(@parameters["group_retro_tier"]) if @parameters["group_retro_tier"].present?
+    end
+  end
+
+
+
+  def generate_account_quotes
+    @parameters = params[:parameters]
+    @representative = Representative.find(params[:quote_checkboxes][:representative_id].to_i)
+    @status = Account.statuses[params[:quote_checkboxes]["status"]] if params[:quote_checkboxes]["status"].present?
+    @group_rating_tier = params[:quote_checkboxes]["group_rating_tier"] if params[:quote_checkboxes]["group_rating_tier"].present?
+    @group_retro_tier = params[:quote_checkboxes]["group_retro_tier"] if params[:quote_checkboxes]["group_retro_tier"].present?
+    if params["account_ids"].present?
+      @account_ids = params["account_ids"]
+    else
+      @accounts = Account.where(representative_id: @representative.id)
+      @accounts = @accounts.status(@status) if @status.present?
+      @accounts = @accounts.group_rating_tier(@group_rating_tier) if @group_rating_tier.present?
+      @accounts = @accounts.group_retro_tier(@group_retro_tier) if @group_retro_tier.present?
+      @account_ids = @accounts.pluck(:id)
+    end
+    GenerateQuoteProcess.perform_async(@representative.id, current_user, @account_ids, params[:quote_checkboxes]["ac_2"], params[:quote_checkboxes]["ac_26"], params[:quote_checkboxes]["contract"], params[:quote_checkboxes]["intro"], params[:quote_checkboxes]["invoice"], params[:quote_checkboxes]["questionnaire"], params[:quote_checkboxes]["quote"])
+    redirect_to quotes_path(representative_id: @representative.id), notice: "Process has started."
   end
 
 
@@ -197,7 +244,7 @@ class QuotesController < ApplicationController
     end
     # redirect_to edit_quote_path(@quote), notice: "Quote Generated"
   end
-  
+
   private
 
   def quote_params
