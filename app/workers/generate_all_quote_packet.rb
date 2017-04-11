@@ -20,7 +20,7 @@ class GenerateAllQuotePacket
         @account = Account.find(account_id)
 
         if @account.quotes.where(program_type: 0).last
-          @quote = @account.quotes.last.where(program_type: 0).last
+          @quote = @account.quotes.where(program_type: 0).last
           # Get the file object
           uri = URI(@quote.quote_generated.url)
           file_obj = Net::HTTP.get(uri) # => String
