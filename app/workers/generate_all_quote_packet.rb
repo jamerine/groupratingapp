@@ -52,7 +52,7 @@ class GenerateAllQuotePacket
     tempZip.close
     tempZip.unlink
 
-
+    QuotePdfExportMailer.quote_pdf_export(representative_id, user, account_ids).deliver
 
   end
 end

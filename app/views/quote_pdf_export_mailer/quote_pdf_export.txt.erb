@@ -1,0 +1,9 @@
+Hello <%= @user.email %>,
+
+Below is a link to a zip file of all of the quotes created in the last processing for <%= @representative.abbreviated_name %>.  There are <%= @num_accounts %> pdfs in the zip file.
+
+Zip File Link: <%= link_to "#{@representative.abbreviated_name} Zip File", @zip_file_url %>
+
+Thank you!
+
+Your favorite TPA
