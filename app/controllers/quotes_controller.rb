@@ -178,7 +178,7 @@ class QuotesController < ApplicationController
       @accounts = @accounts.group_retro_tier(@group_retro_tier) if @group_retro_tier.present?
       @account_ids = @accounts.pluck(:id)
     end
-    GenerateQuoteProcess.perform_async(@representative.id, current_user, @account_ids, params[:quote_checkboxes]["ac_2"], params[:quote_checkboxes]["ac_26"], params[:quote_checkboxes]["contract"], params[:quote_checkboxes]["intro"], params[:quote_checkboxes]["invoice"], params[:quote_checkboxes]["questionnaire"], params[:quote_checkboxes]["quote"])
+    GenerateQuoteProcess.perform_async(@representative.id, current_user.id, @account_ids, params[:quote_checkboxes]["ac_2"], params[:quote_checkboxes]["ac_26"], params[:quote_checkboxes]["contract"], params[:quote_checkboxes]["intro"], params[:quote_checkboxes]["invoice"], params[:quote_checkboxes]["questionnaire"], params[:quote_checkboxes]["quote"])
     redirect_to quotes_path(representative_id: @representative.id), notice: "Process has started."
   end
 
