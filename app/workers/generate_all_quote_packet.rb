@@ -19,7 +19,7 @@ class GenerateAllQuotePacket
       account_ids.each do |account_id|
         @account = Account.find(account_id)
 
-        if @account.quotes.last.where(program_type: 0).last
+        if @account.quotes.where(program_type: 0).last
           @quote = @account.quotes.last.where(program_type: 0).last
           # Get the file object
           uri = URI(@quote.quote_generated.url)
