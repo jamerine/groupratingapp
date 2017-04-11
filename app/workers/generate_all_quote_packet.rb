@@ -29,8 +29,8 @@ class GenerateAllQuotePacket
           zip.put_next_entry("quote_#{@account.policy_number_entered}")
 
           # Write the file data to zip
-          zip.print file_obj.get.body.read
-          # zip.print file_obj
+          # zip.print file_obj.get.body.read
+          zip.print file_obj
         end
       end
     end
