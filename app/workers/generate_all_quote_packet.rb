@@ -7,9 +7,9 @@ class GenerateAllQuotePacket
 
   sidekiq_options queue: :generate_all_quote_packet
 
-  def perform(representative_id, user, account_ids)
+  def perform(representative_id, user_id, account_ids)
     @representative = Representative.find(representative_id)
-    current_user = user
+    @user = User.find(user_id)
 
     # temp_file = Tempfile.new(['pdf_stream','.zip'])
 
@@ -52,7 +52,7 @@ class GenerateAllQuotePacket
     tempZip.close
     tempZip.unlink
 
-    QuotePdfExportMailer.quote_pdf_export(representative_id, user, account_ids).deliver
+    QuotePdfExportMailer.quote_pdf_export(representative_id, user_id, account_ids).deliver
 
   end
 end

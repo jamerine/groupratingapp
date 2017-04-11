@@ -138,7 +138,7 @@ class RepresentativesController < ApplicationController
   def all_quote_process
      @representative = Representative.find(params[:representative_id])
      @account_ids = @representative.accounts.pluck(:id)
-     GenerateQuoteProcess.perform_async(@representative.id, current_user, @account_ids)
+     GenerateQuoteProcess.perform_async(@representative.id, current_user.id, @account_ids)
      redirect_to quotes_path(representative_id: @representative.id), notice: 'The Group Rating Quoting Process has successfully started.  Please allow a few for this process to complete.'
   end
 
