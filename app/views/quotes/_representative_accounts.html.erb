@@ -5,6 +5,7 @@
   </div>
   <%= form_tag quote_accounts_quotes_path do %>
       <%= submit_tag "Generate for Selected", class: 'btn btn-success' %>
+      <%= link_to "Generate for #{accounts.count} Filtered Accounts", edit_quote_accounts_quotes_path(parameters: @parameters), class: 'btn btn-info' %>
       <%= hidden_field_tag(:representative_id, @representative.id) %>
     <table class="table table-hover table-condensed table-responsive" id="representativeAccountsTable">
       <thead>

@@ -1,4 +1,6 @@
 class RepresentativesController < ApplicationController
+  require 'zip'
+  require 'net/http'
 
   def index
   end
@@ -139,6 +141,75 @@ class RepresentativesController < ApplicationController
      GenerateQuoteProcess.perform_async(@representative.id, current_user, @account_ids)
      redirect_to quotes_path(representative_id: @representative.id), notice: 'The Group Rating Quoting Process has successfully started.  Please allow a few for this process to complete.'
   end
+
+  def zip_file
+    @representative = Representative.find(params[:representative_id])
+    temp_file = Tempfile.new("zipfile.zip")
+
+
+
+    # begin
+    #This is the tricky part
+    #Initialize the temp file as a zip file
+    # Zip::OutputStream.open(temp_file) { |zos| }
+
+
+    files = ["1041902_quote_759420170405-4-ysyis4.pdf", "1042217_quote_760520170405-4-xeeehp.pdf"]
+
+    folder = "uploads/images"
+
+    zip_stream = Zip::OutputStream.write_buffer do |zip|
+      # Loop through the files we want to zip
+
+      files.each do |file_name|
+
+        # Get the file object
+        uri = URI("https://s3.amazonaws.com/grouprating/uploads/quote/#{file_name}")
+        file_obj = Net::HTTP.get(uri) # => String
+
+        # Give a name to the file and start a new entry
+        zip.put_next_entry(file_name)
+
+        # Write the file data to zip
+        # zip.print file_obj.get.body.read
+        zip.print file_obj
+      end
+    end
+
+
+    # Rewind the IO stream so we can read it
+    zip_stream.rewind
+
+    # Create a temp file for the zip
+    tempZip = Tempfile.new(['pdf_stream','.zip'])
+
+    # Write the stringIO data
+    tempZip.binmode
+    tempZip.write zip_stream.read
+
+    @representative.zip_file = tempZip
+    @representative.save!
+    # Clean up the tmp file
+    zip_data = File.read("#{Rails.root}/public#{@representative.zip_file.url}")
+    send_data(zip_data, :type => 'application/zip', :filename => "filename.zip")
+    tempZip.close
+    tempZip.unlink
+    # pdf.render_file "app/reports/#{ @account.policy_number_entered }_quote_#{ @quote.id }.pdf"
+    #Add files to the zip file as usual
+    # Zip::File.open(temp_file.path, Zip::File::CREATE) do |zip|
+    #     @account = Account.find(3776)
+    #     @quote = @account.quotes.where(program_type: 0).last
+    #     zip.add(URI.parse(@quote.quote_generated.url))
+    #     @representative.zip_file = zip
+    #     @representative.save!
+    # end
+
+    #Close and delete the temp file
+    # temp_file.close
+    # temp_file.unlink
+    # redirect_to @representative
+  end
+
 
 
 

@@ -3,13 +3,17 @@ class GenerateQuoteProcess
 
   sidekiq_options queue: :generate_quote_process
 
-  def perform(representative_id, user, account_ids)
+  def perform(representative_id, user, account_ids, ac_2, ac_26, contract, intro, invoice, questionnaire, quote)
     @representative = Representative.find(representative_id)
     current_user = user
     @current_date = Date.current
 
     account_ids.each do |account_id|
-      GenerateQuote.perform_async(account_id)
+      GenerateQuote.perform_async(account_id, ac_2, ac_26, contract, intro, invoice, questionnaire, quote)
     end
+
+
+    GenerateAllQuotePacket.perform_in(4.minutes, representative_id, user, account_ids)
+
   end
 end
