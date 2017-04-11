@@ -1,0 +1,98 @@
+<div class="container">
+  <%= link_to 'Back', quotes_path(representative_id: @representative.id), class: 'btn btn-primary' %>
+</div>
+<br>
+<div class="container">
+  <div class="jumbotron">
+    <div class="row text-center">
+      <h3>Generate Quotes for <%= @accounts.count %> Accounts</h3>
+    </div>
+    <div class="row">
+      <div class="col col-md-3">
+        <label>Representative:</label>
+        <p><%= @representative.abbreviated_name ||= 'All'%></p>
+      </div>
+      <div class="col col-md-3">
+        <label>Status:</label>
+        <p><%= @status %></p>
+      </div>
+      <div class="col col-md-3">
+        <label>Group Rating Tier:</label>
+        <p><%= @group_rating_tier  %></p>
+      </div>
+      <div class="col col-md-3">
+        <label>Group Retro Tier:</label>
+        <p><%= @group_retro_tier %></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row">
+    <%= form_for :quote_checkboxes, url: generate_account_quotes_quotes_path do |f| %>
+    <%= f.hidden_field :representative_id, value: "#{@representative.id}" %>
+    <% unless @status.nil? %>
+      <%= f.hidden_field :status, value: "#{@status}" %>
+    <% end %>
+    <% unless @group_rating_tier.nil? %>
+      <%= f.hidden_field :group_rating_tier, value: "#{@group_rating_tier}" %>
+    <% end %>
+    <% unless @group_retro_tier.nil? %>
+      <%= f.hidden_field :group_retro_tier, value: "#{@group_retro_tier}" %>
+    <% end %>
+    <% unless @account_ids.nil? %>
+      <% @account_ids.each do |id| %>
+        <%= hidden_field_tag "account_ids[]", id %>
+      <% end %>
+    <% end %>
+
+        <div class="form_group">
+          <%= f.check_box :ac_2, checked: true %>
+          <%= f.label :ac_2%>
+        </div>
+
+        <div class="form_group">
+          <%= f.check_box :ac_26, checked: true %>
+          <%= f.label :ac_26%>
+        </div>
+
+        <div class="form_group">
+          <%= f.check_box :contract, checked: true %>
+          <%= f.label :contract %>
+        </div>
+
+        <div class="form_group">
+          <%= f.check_box :intro, checked: true %>
+          <%= f.label :intro %>
+        </div>
+
+        <div class="form_group">
+          <%= f.check_box :invoice, checked: true %>
+          <%= f.label :invoice %>
+        </div>
+
+        <div class="form_group">
+          <%= f.check_box :questionnaire, checked: true %>
+          <%= f.label :questionnaire %>
+        </div>
+
+        <div class="form_group">
+          <%= f.check_box :quote, checked: true %>
+          <%= f.label :quote %>
+        </div>
+
+        <div class="form_group">
+          <p>Representative: <%= @representative %></p>
+          <p>Status: <%= @status %></p>
+          <p>Group Rating Tier: <%= @group_rating_tier %></p>
+          <p>Group Retro Tier: <%= @group_retro_tier %></p>
+        </div>
+
+      <%= submit_tag "Generate for Selected", class: 'btn btn-success' %>
+    <% end %>
+  </div>
+</div>
+
+
+</div>
