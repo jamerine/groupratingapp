@@ -38,7 +38,6 @@ class QuotesController < ApplicationController
     @statuses = Account.statuses
     @group_rating_tiers = BwcCodesIndustryGroupSavingsRatioCriterium.all.order(market_rate: :asc).pluck(:market_rate).uniq
     @group_retro_tiers = BwcCodesGroupRetroTier.all.order(discount_tier: :asc).pluck(:discount_tier).uniq
-
     @accounts = Account.where(representative_id: params[:representative_id]).paginate(page: params[:page], per_page: 50)
     @accounts = @accounts.status(params[:status]).paginate(page: params[:page], per_page: 50) if params[:status].present?
     @accounts = @accounts.group_rating_tier(params[:group_rating_tier]).paginate(page: params[:page], per_page: 50) if params[:group_rating_tier].present?
@@ -181,7 +180,7 @@ class QuotesController < ApplicationController
       @account_ids = @accounts.pluck(:id)
     end
     GenerateQuoteProcess.perform_async(@representative.id, current_user.id, @account_ids, params[:quote_checkboxes]["ac_2"], params[:quote_checkboxes]["ac_26"], params[:quote_checkboxes]["contract"], params[:quote_checkboxes]["intro"], params[:quote_checkboxes]["invoice"], params[:quote_checkboxes]["questionnaire"], params[:quote_checkboxes]["quote"])
-    redirect_to quotes_path(representative_id: @representative.id), notice: "Process has started! Please check your email in 15 minutes for link to zip file for the collection of the pdfs."
+    redirect_to quotes_path(representative_id: @representative.id), notice: "Quoting packet process has started. Please check your email for a link to a zip file for the collection of the quote pdf packets."
   end
 
 

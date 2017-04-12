@@ -51,6 +51,17 @@
         <div class="row">
 
         <div class="col col-md-3 col-md-offset-4">
+
+          <div class="form_group">
+            <%= f.check_box :intro, checked: true %>
+            <%= f.label :intro %>
+          </div>
+
+          <div class="form_group">
+            <%= f.check_box :quote, checked: true %>
+            <%= f.label :quote %>
+          </div>
+
           <div class="form_group">
             <%= f.check_box :ac_2, checked: true %>
             <%= f.label :ac_2%>
@@ -67,8 +78,8 @@
             </div>
 
             <div class="form_group">
-              <%= f.check_box :intro, checked: true %>
-              <%= f.label :intro %>
+              <%= f.check_box :questionnaire, checked: true %>
+              <%= f.label :questionnaire %>
             </div>
 
             <div class="form_group">
@@ -76,15 +87,6 @@
               <%= f.label :invoice %>
             </div>
 
-            <div class="form_group">
-              <%= f.check_box :questionnaire, checked: true %>
-              <%= f.label :questionnaire %>
-            </div>
-
-            <div class="form_group">
-              <%= f.check_box :quote, checked: true %>
-              <%= f.label :quote %>
-            </div>
           </div>
 
         </div>
