@@ -151,7 +151,7 @@ class QuotesController < ApplicationController
     elsif params[:parameters].present?
       @parameters = params[:parameters]
       @representative = Representative.find(@parameters["representative_id"])
-      @status = Account.statuses.key(@parameters["status"].to_i)
+      @status = Account.statuses.key(@parameters["status"].to_i) if @parameters["status"].present?
       @group_rating_tier = @parameters["group_rating_tier"]
       @group_retro_tier = @parameters["group_retro_tier"]
       @accounts = Account.where(representative_id: @parameters["representative_id"])
@@ -159,6 +159,7 @@ class QuotesController < ApplicationController
       @accounts = @accounts.group_rating_tier(@parameters["group_rating_tier"]) if @parameters["group_rating_tier"].present?
       @accounts = @accounts.group_retro_tier(@parameters["group_retro_tier"]) if @parameters["group_retro_tier"].present?
     end
+
   end
 
 
@@ -176,10 +177,11 @@ class QuotesController < ApplicationController
       @accounts = @accounts.status(@status) if @status.present?
       @accounts = @accounts.group_rating_tier(@group_rating_tier) if @group_rating_tier.present?
       @accounts = @accounts.group_retro_tier(@group_retro_tier) if @group_retro_tier.present?
+
       @account_ids = @accounts.pluck(:id)
     end
     GenerateQuoteProcess.perform_async(@representative.id, current_user.id, @account_ids, params[:quote_checkboxes]["ac_2"], params[:quote_checkboxes]["ac_26"], params[:quote_checkboxes]["contract"], params[:quote_checkboxes]["intro"], params[:quote_checkboxes]["invoice"], params[:quote_checkboxes]["questionnaire"], params[:quote_checkboxes]["quote"])
-    redirect_to quotes_path(representative_id: @representative.id), notice: "Process has started."
+    redirect_to quotes_path(representative_id: @representative.id), notice: "Process has started! Please check your email in 15 minutes for link to zip file for the collection of the pdfs."
   end
 
 
