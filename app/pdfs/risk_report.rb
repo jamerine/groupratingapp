@@ -480,9 +480,11 @@ class RiskReport < PdfReport
 
     @total_est_payroll = 0
     @account.policy_calculation.manual_class_calculations.each do |man|
-      rate = man.payroll_calculations.where("reporting_period_start_date < :current_date and reporting_period_end_date > :current_date", current_date: @current_date).first.manual_class_rate
-      est_premium = rate * man.manual_class_current_estimated_payroll * 0.01
-      @total_est_payroll += est_premium
+      unless man.payroll_calculations.where("reporting_period_start_date < :current_date and reporting_period_end_date > :current_date", current_date: @current_date).first.nil?
+        rate = man.payroll_calculations.where("reporting_period_start_date < :current_date and reporting_period_end_date > :current_date", current_date: @current_date).first.manual_class_rate
+        est_premium = rate * man.manual_class_current_estimated_payroll * 0.01
+        @total_est_payroll += est_premium
+      end
     end
 
     header_two
@@ -567,7 +569,7 @@ class RiskReport < PdfReport
 
   def current_policy_data
     @data = [["Manual", "Est Payroll", "Rate", "Est Premium" ]]
-    @data += @policy_calculation.manual_class_calculations.order(manual_number: :asc).map { |e| [e.manual_number, round(e.manual_class_current_estimated_payroll,0), e.payroll_calculations.where("reporting_period_start_date < :current_date and reporting_period_end_date > :current_date", current_date: @current_date).first.manual_class_rate, "#{ round(e.payroll_calculations.where("reporting_period_start_date < :current_date and reporting_period_end_date > :current_date", current_date: @current_date).first.manual_class_rate * e.manual_class_current_estimated_payroll * 0.01,0)}"   ] }
+    @data += @policy_calculation.manual_class_calculations.order(manual_number: :asc).map { |e| [e.manual_number, round(e.manual_class_current_estimated_payroll,0), e.payroll_calculations.where("reporting_period_start_date < :current_date and reporting_period_end_date > :current_date", current_date: @current_date).first.nil? ? '0.00' : e.payroll_calculations.where("reporting_period_start_date < :current_date and reporting_period_end_date > :current_date", current_date: @current_date).first.manual_class_rate, "#{ e.payroll_calculations.where("reporting_period_start_date < :current_date and reporting_period_end_date > :current_date", current_date: @current_date).first.nil? ? "0.00" : round(e.payroll_calculations.where("reporting_period_start_date < :current_date and reporting_period_end_date > :current_date", current_date: @current_date).first.manual_class_rate * e.manual_class_current_estimated_payroll * 0.01,0)}"   ] }
   end
 
   def current_policy_data_total
