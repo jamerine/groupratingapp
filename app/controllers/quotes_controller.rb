@@ -2,6 +2,7 @@ class QuotesController < ApplicationController
 
   def new
     @account = Account.find(params[:account_id])
+    @representative = @account.representative
     @quote = Quote.new
     @program_types = Quote.program_types
     @statuses = Quote.statuses
@@ -14,6 +15,7 @@ class QuotesController < ApplicationController
     @quote = Quote.new(quote_params)
     @type = @program_types[params[:quote][:program_type]]
     if @quote.save
+      @quote.update_attributes(quote_sent_date: @quote.created_at)
       @quote.generate_invoice_number
       ##### ADDED THIS PART
       pdf = GroupRatingQuote.new(@quote, @account, @account.policy_calculation, view_context)
@@ -209,11 +211,9 @@ class QuotesController < ApplicationController
         intro_pdf_render = intro_pdf.render
         combine_pdf = CombinePDF.parse(intro_pdf_render)
 
-
         quote_pdf = GroupRatingQuote.new(@quote, @account, @policy_calculation, view_context)
         quote_pdf_render = quote_pdf.render
         combine_pdf << CombinePDF.parse(quote_pdf_render)
-
 
         ac_26_pdf = Ac26.new(@quote, @account, @policy_calculation, view_context)
         ac_26_pdf_render = ac_26_pdf.render
@@ -222,7 +222,6 @@ class QuotesController < ApplicationController
         ac_2_pdf = Ac2.new(@quote, @account, @policy_calculation, view_context)
         ac_2_pdf_render = ac_2_pdf.render
         combine_pdf << CombinePDF.parse(ac_2_pdf_render)
-
 
         contract_pdf = ArmContract.new(@quote, @account, @policy_calculation, view_context)
         contract_pdf_render = contract_pdf.render
@@ -249,7 +248,7 @@ class QuotesController < ApplicationController
   private
 
   def quote_params
-    params.require(:quote).permit(:account_id, :program_type, :fees, :amount, :group_code, :quote_tier, :invoice_number, :quote, :quote_generated, :quote_date, :quote_sent_date, :effective_start_date, :effective_end_date, :status, :ac2_signed_on, :ac26_signed_on, :u153_signed_on, :contract_signed_on, :questionnaire_signed_on, :questionnaire_question_1, :questionnaire_question_2, :questionnaire_question_3, :questionnaire_question_4, :questionnaire_question_5)
+    params.require(:quote).permit(:account_id, :program_type, :fees, :amount, :group_code, :quote_tier, :invoice_number, :quote, :quote_generated, :quote_date, :quote_sent_date, :effective_start_date, :effective_end_date, :status, :ac2_signed_on, :ac26_signed_on, :u153_signed_on, :contract_signed_on, :questionnaire_signed_on, :questionnaire_question_1, :questionnaire_question_2, :questionnaire_question_3, :questionnaire_question_4, :questionnaire_question_5, :experience_period_lower_date, :experience_period_upper_date, :current_payroll_period_lower_date, :current_payroll_period_upper_date, :current_payroll_year, :program_year_lower_date, :program_year_upper_date, :program_year, :quote_year_lower_date, :quote_year_upper_date, :quote_year)
   end
 
 end

@@ -30,7 +30,7 @@ class ArmIntro < PdfReport
     end
 
     bounding_box([250, current_cursor], :width => 170, :height => 75) do
-      text "2017 Projected Discount:", style: :bold
+      text "#{@account.representative.quote_year} Projected Discount:", style: :bold
       move_down 5
       text "Total Premium Savings Estimate: ", style: :bold
      transparent(0) { stroke_bounds }
@@ -59,11 +59,11 @@ class ArmIntro < PdfReport
     end
 
     move_down 15
-    text "Congratulations!  <b>#{@account.name}</b> is invited to participate in ARM’s 2017 <b><u>Group Rating Program</u></b>.  We have designed a program that includes the best representation, claims administration, and group premium discounts for Ohio employers through the Northeast Ohio Safety Council.", size: 11, inline_format: true
+    text "Congratulations!  <b>#{@account.name}</b> is invited to participate in ARM’s #{@account.representative.quote_year} <b><u>Group Rating Program</u></b>.  We have designed a program that includes the best representation, claims administration, and group premium discounts for Ohio employers through the Northeast Ohio Safety Council.", size: 11, inline_format: true
     move_down 15
-    text "Please find the enclosed 2017 group quote and premium projection.  We stand behind our estimations for their accuracy.", size: 11
+    text "Please find the enclosed #{@account.representative.quote_year} group quote and premium projection.  We stand behind our estimations for their accuracy.", size: 11
     move_down 15
-    text "Enrollment is simple - please complete and return the enclosed forms (listed below) with a copy of the invoice and your check for the management fee by November 1, 2016:", size: 11
+    text "Enrollment is simple - please complete and return the enclosed forms (listed below) with a copy of the invoice and your check for the management fee by November 1, #{@account.representative.program_year}:", size: 11
     move_down 15
 
     text "1.    FROM AC-26, EMPLOYER STATEMENT FOR GROUP RATING", size: 9
