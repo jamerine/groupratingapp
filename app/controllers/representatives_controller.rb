@@ -113,6 +113,10 @@ class RepresentativesController < ApplicationController
     @representative = Representative.find(params[:id])
   end
 
+  def edit_global_dates
+    @representative = Representative.find(params[:representative_id])
+  end
+
   def fee_calculations
     @representative = Representative.find(params[:representative_id])
     @policy_calculations = PolicyCalculation.where(representative_id: @representative.id )
@@ -146,13 +150,10 @@ class RepresentativesController < ApplicationController
     @representative = Representative.find(params[:representative_id])
     temp_file = Tempfile.new("zipfile.zip")
 
-
-
     # begin
     #This is the tricky part
     #Initialize the temp file as a zip file
     # Zip::OutputStream.open(temp_file) { |zos| }
-
 
     files = ["1041902_quote_759420170405-4-ysyis4.pdf", "1042217_quote_760520170405-4-xeeehp.pdf"]
 
@@ -216,7 +217,7 @@ class RepresentativesController < ApplicationController
   private
 
   def representative_params
-    params.require(:representative).permit(:logo)
+    params.require(:representative).permit(:logo, :experience_period_lower_date, :experience_period_upper_date, :current_payroll_period_lower_date, :current_payroll_period_upper_date, :current_payroll_year, :program_year_lower_date, :program_year_upper_date, :program_year, :quote_year_lower_date, :quote_year_upper_date, :quote_year)
   end
 
 end

@@ -321,7 +321,7 @@ class RiskReport < PdfReport
       text "Policy#: #{ @account.policy_number_entered }   |   Sale Contact: #{ @account.affiliates.find_by(role: 6).try(:first_name)} #{@account.affiliates.find_by(role: 6).try(:last_name)}   |   Co Code: #{ @account.affiliates.find_by(role: 2).try(:company_name)}", size: 10, align: :center
       text "Risk Report", size: 10, align: :center
       text "As of #{@group_rating.updated_at.in_time_zone("America/New_York").strftime("%m/%d/%y")} with #{ @group_rating.current_payroll_period_upper_date.in_time_zone("America/New_York").strftime("%Y").to_i + 1 } Rates", size: 10, align: :center
-      text "Projected 2017 Experience", size: 12, align: :center, style: :bold_italic
+      text "Projected #{@account.representative.quote_year} Experience", size: 12, align: :center, style: :bold_italic
       transparent(0) { stroke_bounds }
       # stroke_bounds
     end
@@ -578,7 +578,7 @@ class RiskReport < PdfReport
 
   def workers_comp_program_options
     move_down 10
-    text "2017 Workers' Compensation Program Options [1]", size: 12, style: :bold, align: :center
+    text "#{@account.representative.quote_year} Workers' Compensation Program Options [1]", size: 12, style: :bold, align: :center
 
     table workers_comp_program_options_data, :column_widths => {0 => 100, 1 => 63, 2 => 62, 3 => 62, 4 => 62, 5 => 62, 6 => 62, 7 => 62 }, :row_colors => ["FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "F0F0F0", "F0F0F0" ]  do
       self.position = :center

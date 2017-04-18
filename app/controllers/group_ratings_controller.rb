@@ -15,6 +15,7 @@ class GroupRatingsController < ApplicationController
   end
 
   def new
+    @representative = Representative.find(params[:representative_id])
     @group_rating = GroupRating.new
     authorize @group_rating
   end
@@ -69,6 +70,6 @@ class GroupRatingsController < ApplicationController
   private
 
   def group_rating_params
-    params.require(:group_rating).permit(:process_representative, :experience_period_lower_date, :experience_period_upper_date, :current_payroll_period_lower_date, :current_payroll_period_upper_date, :representative_id)
+    params.require(:group_rating).permit(:process_representative, :experience_period_lower_date, :experience_period_upper_date, :current_payroll_period_lower_date, :current_payroll_period_upper_date, :current_payroll_year, :program_year_lower_date, :program_year_upper_date, :program_year, :quote_year_lower_date, :quote_year_upper_date, :quote_year, :representative_id)
   end
 end

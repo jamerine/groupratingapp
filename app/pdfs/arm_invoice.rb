@@ -51,9 +51,9 @@ class ArmInvoice < PdfReport
 
     current_cursor = cursor
     bounding_box([0, current_cursor], :width => 250, :height => 100) do
-      text "COMMENTS: 2017 Group Rating", align: :center
+      text "COMMENTS: #{@account.representative.quote_year} Group Rating", align: :center
       move_down 25
-      text "** Enrollment Deadline: 11/1/2016 **", align: :center
+      text "** Enrollment Deadline: 11/1/#{@account.representative.program_year} **", align: :center
       move_down 25
       text "Customer ID: #{ @account.policy_number_entered}-0", align: :center
     end
@@ -95,7 +95,7 @@ class ArmInvoice < PdfReport
     end
 
     bounding_box([200, 250], :width => 350, :height => 30) do
-      text "Our Group Rating Deadline is now 11/1/2016 for the 2017 Rate year. If you would like to be invoiced at a later date, please call the office to make payment arrangements. Please complete the enclosed questionnaire and return to our office as soon as possible.", size: 7
+      text "Our Group Rating Deadline is now 11/1/#{@account.representative.program_year} for the #{@account.representative.quote_year} Rate year. If you would like to be invoiced at a later date, please call the office to make payment arrangements. Please complete the enclosed questionnaire and return to our office as soon as possible.", size: 7
     end
     move_down 15
     text "Make all checks payable to Alternative Risk Management", align: :center, size: 9

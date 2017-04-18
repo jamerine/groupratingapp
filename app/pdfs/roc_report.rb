@@ -114,7 +114,7 @@ class RocReport < PdfReport
 
   def workers_comp_program_options
     move_down 10
-    text "2017 Workers' Compensation Program Options [1]", size: 12, style: :bold, align: :center
+    text "#{@account.representative.quote_year} Workers' Compensation Program Options [1]", size: 12, style: :bold, align: :center
 
     table workers_comp_program_options_data, :column_widths => {0 => 100, 1 => 63, 2 => 62, 3 => 62, 4 => 62, 5 => 62, 6 => 62, 7 => 62 }, :row_colors => ["FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "F0F0F0", "F0F0F0" ]  do
       self.position = :center

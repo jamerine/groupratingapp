@@ -42,7 +42,7 @@
     <div class="row">
       <div class="col-md-2">
         <label>Quote Period</label>
-        <h4><%= @quote.effective_start_date.strftime("%m/%d/%y") %> - <%= @quote.effective_end_date.strftime("%m/%d/%y")  %> </h4>
+        <h4><%= @quote.quote_year_lower_date.strftime("%m/%d/%y") %> - <%= @quote.quote_year_upper_date.strftime("%m/%d/%y")  %> </h4>
       </div>
       <div class="col-md-2">
         <label>Quote creation date</label>

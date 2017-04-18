@@ -12,9 +12,9 @@ class GroupRatingMarkComplete
 
     if all_process == 1
       if @group_rating.representative_id < @representatives_count
-        GroupRating.where(representative_id: (@group_rating.representative_id + 1)).destroy_all
-        @new_group_rating = GroupRating.new(experience_period_lower_date: @group_rating.experience_period_lower_date, experience_period_upper_date: @group_rating.experience_period_upper_date, current_payroll_period_lower_date: @group_rating.current_payroll_period_lower_date, current_payroll_period_upper_date: @group_rating.current_payroll_period_upper_date, representative_id: (@group_rating.representative_id + 1) )
-        @representative = Representative.find(@new_group_rating.representative_id)
+        @representative = Representative.find((@group_rating.representative_id + 1))
+        GroupRating.where(representative_id: (@representative.id)).destroy_all
+        @new_group_rating = GroupRating.new( experience_period_lower_date: @representative.experience_period_lower_date, experience_period_upper_date: @representative.experience_period_upper_date, current_payroll_period_lower_date: @representative.current_payroll_period_lower_date, current_payroll_period_upper_date: @representative.current_payroll_period_upper_date, current_payroll_year: @representative.current_payroll_year, program_year_lower_date: @representative.program_year_lower_date, program_year_upper_date: @representative.program_year_upper_date, program_year: @representative.program_year, quote_year_lower_date: @representative.quote_year_lower_date, quote_year_upper_date: @representative.quote_year_upper_date, quote_year: @representative.quote_year, representative_id: @representative.id )
         @new_group_rating.process_representative = @representative.representative_number
         @new_group_rating.status = 'Queuing'
         if @new_group_rating.save

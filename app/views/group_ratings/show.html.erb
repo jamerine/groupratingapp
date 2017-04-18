@@ -14,24 +14,58 @@
         <h4>Group Rating Status</h4>
           <p><%= @group_rating.status %></p>
       </div>
-      <div class="col-md-4">
+      <div class="col-md-6">
         <h4>Experience Period Lower Date</h4>
           <p><%= @group_rating.experience_period_lower_date %></p>
       </div>
-      <div class="col-md-4">
-        <h4>Group Rating Experience Period Upper Date</h4>
+      <div class="col-md-6">
+        <h4>Experience Period Upper Date</h4>
           <p><%= @group_rating.experience_period_upper_date %></p>
       </div>
+    </div>
+    <div class="row">
       <div class="col-md-4">
         <h4>Current Payroll Period Lower Date</h4>
-          <p><%= @group_rating.current_payroll_period_lower_date %></p>
+        <p><%= @group_rating.current_payroll_period_lower_date %></p>
       </div>
-    </div>
       <div class="col-md-4">
         <h4>Current Payroll Period Upper Date</h4>
           <p><%= @group_rating.current_payroll_period_upper_date %></p>
       </div>
+      <div class="col-md-4">
+        <h4>Current Payroll Year</h4>
+          <p><%= @group_rating.current_payroll_year %></p>
+      </div>
     </div>
+    <div class="row">
+      <div class="col-md-4">
+        <h4>Program Lower Date</h4>
+        <p><%= @group_rating.program_year_lower_date %></p>
+      </div>
+      <div class="col-md-4">
+        <h4>Program Upper Date</h4>
+          <p><%= @group_rating.program_year_upper_date %></p>
+      </div>
+      <div class="col-md-4">
+        <h4>Program Year</h4>
+          <p><%= @group_rating.program_year %></p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-4">
+        <h4>Quote Lower Date</h4>
+        <p><%= @group_rating.quote_year_lower_date %></p>
+      </div>
+      <div class="col-md-4">
+        <h4>Quote Upper Date</h4>
+          <p><%= @group_rating.quote_year_upper_date %></p>
+      </div>
+      <div class="col-md-4">
+        <h4>Quote Year</h4>
+          <p><%= @group_rating.quote_year %></p>
+      </div>
+    </div>
+
 
   </div>
 
