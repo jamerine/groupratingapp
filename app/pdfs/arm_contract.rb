@@ -23,7 +23,7 @@ class ArmContract < PdfReport
     move_down 10
     text "OHIO WORKERS' COMPENSATION GROUP RATING AGREEMENT", style: :bold, size: 12, align: :center
     move_down 10
-    text "THIS AGREEMENT, effective, December 1, 2016 by and between #{ @account.representative.company_name} (“TPA”) and #{ @account.name.titleize} (“Client”) with BWC policy number #{ @account.policy_number_entered }, is to set forth the terms and conditions relating to certain administrative and actuarial service functions to be performed by TPA on behalf of Client.", size: 9
+    text "THIS AGREEMENT, effective, December 1, #{@account.representative.program_year} by and between #{ @account.representative.company_name} (“TPA”) and #{ @account.name.titleize} (“Client”) with BWC policy number #{ @account.policy_number_entered }, is to set forth the terms and conditions relating to certain administrative and actuarial service functions to be performed by TPA on behalf of Client.", size: 9
     move_down 10
     text "Section 4123.29 of the Ohio Revised Code provides for employer group plans which pool and group the experience of individual employers for rating purposes. Client intends to enroll in a workers’ compensation group rating plan and TPA is desirous of performing such services. TPA is a consulting firm of workers’ compensation programs performing related administrative, actuarial, and claim services for its customers. Therefore, Client and TPA, in consideration of the mutual promises contained herein and other good and valuable consideration, do hereby contract and agree as follows.", size: 9
     move_down 10
@@ -135,7 +135,7 @@ class ArmContract < PdfReport
       text "4.", indent_paragraphs: 15, size: 9
     end
     bounding_box([30, current_cursor], :width => 520, :height => 45) do
-      text "Client shall promptly notify of any material changes in the operation of the Employer, including, but not limited to, mergers, acquisitions or significant adjustments to Client’s payroll (such as an adjustment that results in changing the BWC manual classification under which Client was accepted into the Program). Client will notify of any pending court cases particular to any workers’ compensation claim that have not been finally adjudicated or settled as of the 9/30/2016 survey date.", size: 9
+      text "Client shall promptly notify of any material changes in the operation of the Employer, including, but not limited to, mergers, acquisitions or significant adjustments to Client’s payroll (such as an adjustment that results in changing the BWC manual classification under which Client was accepted into the Program). Client will notify of any pending court cases particular to any workers’ compensation claim that have not been finally adjudicated or settled as of the 9/30/#{@account.representative.program_year} survey date.", size: 9
     end
     current_cursor = cursor
     bounding_box([0, current_cursor], :width => 30, :height => 15) do
@@ -161,7 +161,7 @@ class ArmContract < PdfReport
       text "2.", indent_paragraphs: 15, size: 9
     end
     bounding_box([30, current_cursor], :width => 520, :height => 35) do
-      text "The initial term of this agreement will be from Decmber 1, 2016 through June 30, 2018. This agreement will automatically renew for additional one (1) year terms unless either party gives the other notice at least 21 days prior to the termination date.  Either party may terminate this agreement without penalty upon providing a 21 day notice to the other party.", size: 9
+      text "The initial term of this agreement will be from Decmber 1, #{@account.representative.program_year} through #{@account.representative.quote_year_upper_date.strftime("%B %e, %Y")}. This agreement will automatically renew for additional one (1) year terms unless either party gives the other notice at least 21 days prior to the termination date.  Either party may terminate this agreement without penalty upon providing a 21 day notice to the other party.", size: 9
     end
     current_cursor = cursor
     bounding_box([0, current_cursor], :width => 30, :height => 15) do
@@ -204,7 +204,7 @@ class ArmContract < PdfReport
       text "Representations", size: 9
       text "Client hereby represents and warrants that:", size: 9
       text "It acknowledges that by being a member of NEOSC, that NEOSC will sponsor and administer the Program through which Client will obtain workers’ compensation coverage;", size: 9
-      text "It is a member or associate member in good standing of NEOSC and has applied for enrollment in the Program for the 2017 Rating Year;", size: 9
+      text "It is a member or associate member in good standing of NEOSC and has applied for enrollment in the Program for the #{@account.representative.quote_year} Rating Year;", size: 9
       text "It is described within an industry group for which a group is in existence or is being formed under the Program in accordance with the criteria applied by the BWC;", size: 9
       text "It satisfies all criteria for participation in the Program required by Ohio law, including, without limitation, the requirements that: (i) it is not a member of any other group for the purpose of obtaining workers’ compensation coverage; (ii) it is current on any and all undisputed amounts owed to the Bureau and due by the group rating application deadline, including premiums, partial payments, administrative costs, assessments, fines and any other monies otherwise due to any fund administered by the Bureau, including amounts due for retrospective rating; (iii) it does not have any unpaid audit findings or any other unpaid billings relating to workers’ compensation;(iv) it does not have cumulative lapses in workers’ compensation coverage in excess of forty (40) days within the last eighteen (18) months prior to a group rating application deadline; and (v) it is in an active status for workers’ compensation premium purposes; It has advised the administrator of any combination with another business through the purchase of assets, a merger, a consolidation or in any other manner that has occurred within the past five years;", size: 9
       text "It has advised NEOSC of any existing or pre-existing relationships with any employee leasing or professional employer organization (“PEO”) (as that term is defined under BWC rules or other laws or regulations that govern workers’ compensation activities in Ohio), as determined by the Program under applicable BWC rules or other relevant law or regulations within the past five years;", size: 9
@@ -219,7 +219,7 @@ class ArmContract < PdfReport
     end
     bounding_box([30, current_cursor], :width => 520, :height => 75) do
       text "Client Data", size: 9
-      text "Client shall promptly notify of any material changes in the operation of the Employer, including, but not limited to, mergers, acquisitions or significant adjustments to the Client’s payroll (such as an adjustment that results in changing the National Council on Compensation Insurance (“NCCI”) classification under which Client was accepted into the Program). Client will notify of any pending court cases particular to any workers’ compensation claim that has not been finally adjudicated or settled as of the 09/30/2016 survey date. In addition, Client shall promptly provide such other information in such form as is reasonably requested and otherwise reasonably cooperate with NEOSC in the operation, administration and furtherance of the purposes of the Program.", size: 9
+      text "Client shall promptly notify of any material changes in the operation of the Employer, including, but not limited to, mergers, acquisitions or significant adjustments to the Client’s payroll (such as an adjustment that results in changing the National Council on Compensation Insurance (“NCCI”) classification under which Client was accepted into the Program). Client will notify of any pending court cases particular to any workers’ compensation claim that has not been finally adjudicated or settled as of the 09/30/#{@account.representative.program_year} survey date. In addition, Client shall promptly provide such other information in such form as is reasonably requested and otherwise reasonably cooperate with NEOSC in the operation, administration and furtherance of the purposes of the Program.", size: 9
     end
     current_cursor = cursor
     bounding_box([0, current_cursor], :width => 30, :height => 15) do

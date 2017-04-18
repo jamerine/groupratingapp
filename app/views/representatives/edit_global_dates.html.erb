@@ -1,0 +1,75 @@
+<div class="container">
+  <%= link_to "Return To Representative", @representative, class: 'btn btn-default' %>
+
+  <%= form_for @representative do |f| %>
+    <h3><%= @representative.company_name %> Global Dates</h3>
+
+    <div class="row">
+      <div class="form-group col-md-3">
+        <%= f.label :experience_period_lower_date %>
+        <%= f.date_field :experience_period_lower_date, class:'form-control' %>
+      </div>
+
+      <div class="form-group col-md-3">
+        <%= f.label :experience_period_upper_date %>
+        <%= f.date_field :experience_period_upper_date, class:'form-control' %>
+      </div>
+
+    </div>
+
+    <div class="row">
+      <div class="form-group col-md-3">
+        <%= f.label :current_payroll_period_lower_date %>
+        <%= f.date_field :current_payroll_period_lower_date, class:'form-control' %>
+      </div>
+
+      <div class="form-group col-md-3">
+        <%= f.label :current_payroll_period_upper_date %>
+        <%= f.date_field :current_payroll_period_upper_date, class:'form-control' %>
+      </div>
+
+      <div class="form-group col-md-3">
+        <%= f.label :current_payroll_year %>
+        <%= f.number_field :current_payroll_year, class:'form-control', min: '0' %>
+      </div>
+
+    </div>
+    <div class="row">
+      <div class="form-group col-md-3">
+        <%= f.label :program_year_lower_date %>
+        <%= f.date_field :program_year_lower_date, class:'form-control' %>
+      </div>
+
+      <div class="form-group col-md-3">
+        <%= f.label :program_year_upper_date %>
+        <%= f.date_field :program_year_upper_date, class:'form-control' %>
+      </div>
+
+      <div class="form-group col-md-3">
+        <%= f.label :program_year %>
+        <%= f.number_field :program_year, class:'form-control', min: '0' %>
+      </div>
+
+    </div>
+    <div class="row">
+      <div class="form-group col-md-3">
+        <%= f.label :quote_year_lower_date %>
+        <%= f.date_field :quote_year_lower_date, class:'form-control' %>
+      </div>
+
+      <div class="form-group col-md-3">
+        <%= f.label :quote_year_upper_date %>
+        <%= f.date_field :quote_year_upper_date, class:'form-control' %>
+      </div>
+
+      <div class="form-group col-md-3">
+        <%= f.label :quote_year %>
+        <%= f.number_field :quote_year, class:'form-control', min: '0' %>
+      </div>
+
+    </div>
+
+
+    <%= f.submit "Update", class: "btn btn-primary" %>
+  <% end %>
+</div>

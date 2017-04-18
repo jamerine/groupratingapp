@@ -148,7 +148,6 @@
     <% if @account.quotes.nil? %>
       <p>No quote generated</p>
     <% else %>
-
       <table class="table table-hover table-striped">
         <thead>
           <tr>
@@ -170,8 +169,8 @@
         <tbody>
           <% @account.quotes.find_each do |quote| %>
             <tr>
-              <td><%= quote.try(:quote_date).try(:strftime, "%-m/%-d/%y")  %></td>
-              <td><%= quote.try(:effective_start_date).try(:strftime, "%-m/%-d/%y") %> - <%= quote.try(:effective_end_date).try(:strftime, "%-m/%-d/%y")  %></td>
+              <td><%= quote.try(:created_at).try(:strftime, "%-m/%-d/%y") %>
+              <td><%= quote.try(:quote_year_lower_date).try(:strftime, "%-m/%-d/%y") %> - <%= quote.try(:quote_year_upper_date).try(:strftime, "%-m/%-d/%y")  %></td>
               <td><%= quote.try(:program_type).try(:humanize)  %></td>
               <td> <%= quote.try(:invoice_number) %> </td>
               <td><%= quote.try(:status).try(:humanize)  %></td>

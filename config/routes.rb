@@ -94,6 +94,7 @@ Rails.application.routes.draw do
     post :import_claim_process
     get :all_quote_process
     post :zip_file
+    get :edit_global_dates
   end
 
 

@@ -8916,7 +8916,14 @@ CREATE TABLE group_ratings (
     total_claims_updated integer,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    representative_id integer
+    representative_id integer,
+    current_payroll_year integer,
+    program_year_lower_date date,
+    program_year_upper_date date,
+    program_year integer,
+    quote_year_lower_date date,
+    quote_year_upper_date date,
+    quote_year integer
 );
 
 
@@ -10504,7 +10511,18 @@ CREATE TABLE quotes (
     questionnaire_question_4 boolean,
     questionnaire_question_5 boolean,
     quote character varying,
-    quote_tier double precision
+    quote_tier double precision,
+    experience_period_lower_date date,
+    experience_period_upper_date date,
+    current_payroll_period_lower_date date,
+    current_payroll_period_upper_date date,
+    current_payroll_year integer,
+    program_year_lower_date date,
+    program_year_upper_date date,
+    program_year integer,
+    quote_year_lower_date date,
+    quote_year_upper_date date,
+    quote_year integer
 );
 
 
@@ -10623,7 +10641,18 @@ CREATE TABLE representatives (
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
     logo character varying,
-    zip_file character varying
+    zip_file character varying,
+    experience_period_lower_date date,
+    experience_period_upper_date date,
+    current_payroll_period_lower_date date,
+    current_payroll_period_upper_date date,
+    current_payroll_year integer,
+    program_year_lower_date date,
+    program_year_upper_date date,
+    program_year integer,
+    quote_year_lower_date date,
+    quote_year_upper_date date,
+    quote_year integer
 );
 
 
@@ -13292,4 +13321,10 @@ INSERT INTO schema_migrations (version) VALUES ('20170306130853');
 INSERT INTO schema_migrations (version) VALUES ('20170327172810');
 
 INSERT INTO schema_migrations (version) VALUES ('20170411144444');
+
+INSERT INTO schema_migrations (version) VALUES ('20170417160824');
+
+INSERT INTO schema_migrations (version) VALUES ('20170417172954');
+
+INSERT INTO schema_migrations (version) VALUES ('20170418111625');
 

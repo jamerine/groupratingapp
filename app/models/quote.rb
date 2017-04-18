@@ -8,7 +8,7 @@ class Quote < ActiveRecord::Base
   mount_uploader :quote_generated, QuoteUploader
 
   def generate_invoice_number
-    policy_year = self.effective_end_date.strftime("%Y")
+    policy_year = self.quote_year
     s = "#{self.account.policy_number_entered}-#{policy_year}-#{self.id}"
     update_attributes(invoice_number: s)
   end

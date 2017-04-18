@@ -65,14 +65,84 @@
         </div>
       </div>
       <div class="row">
-        <%= link_to "Add Logo", edit_representative_path(@representative), class: 'btn btn-primary' %>
+        <%= link_to "Add Logo", edit_representative_path(@representative.id), class: 'btn btn-primary' %>
       </div>
       <div class="row">
-
           <%= image_tag @representative.logo.url if @representative.logo? %>
-
       </div>
     </div>
+    <hr>
+  </div>
+  <div class="container text-center">
+    <div class="row">
+      <h3>Representative Global Date Values</h3>
+      <%= link_to "Edit Dates", representative_edit_global_dates_path(@representative), class: 'btn btn-primary' %>
+    </div>
+    <div class="row">
+      <div class="col-sm-3">
+        <h5>Experience Period Dates</h5>
+      </div>
+      <div class="col-sm-3">
+        <h5>Lower</h5>
+        <p><%= @representative.experience_period_lower_date %></p>
+      </div>
+      <div class="col-sm-3">
+        <h5>Upper</h5>
+        <p><%= @representative.experience_period_upper_date %></p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-3">
+        <h5>Current Payroll Period Dates</h5>
+      </div>
+      <div class="col-sm-3">
+        <h5>Lower</h5>
+        <p><%= @representative.current_payroll_period_lower_date %></p>
+      </div>
+      <div class="col-sm-3">
+        <h5>Upper</h5>
+        <p><%= @representative.current_payroll_period_upper_date %></p>
+      </div>
+      <div class="col-sm-3">
+        <h5>Year</h5>
+        <p><%= @representative.current_payroll_year %></p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-3">
+        <h5>Program Year Period Dates</h5>
+      </div>
+      <div class="col-sm-3">
+        <h5>Lower</h5>
+        <p><%= @representative.program_year_lower_date %></p>
+      </div>
+      <div class="col-sm-3">
+        <h5>Upper</h5>
+        <p><%= @representative.program_year_upper_date %></p>
+      </div>
+      <div class="col-sm-3">
+        <h5>Year</h5>
+        <p><%= @representative.program_year %></p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-3">
+        <h5>Quote Year Period Dates</h5>
+      </div>
+      <div class="col-sm-3">
+        <h5>Lower</h5>
+        <p><%= @representative.quote_year_lower_date %></p>
+      </div>
+      <div class="col-sm-3">
+        <h5>Upper</h5>
+        <p><%= @representative.quote_year_upper_date %></p>
+      </div>
+      <div class="col-sm-3">
+        <h5>Year</h5>
+        <p><%= @representative.quote_year %></p>
+      </div>
+    </div>
+    <br>
     <hr>
   </div>
   <div class="container text-center">

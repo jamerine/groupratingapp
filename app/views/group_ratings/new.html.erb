@@ -1,28 +1,77 @@
 <div class="container">
   <div class="jumbotron text-center">
     <h1>Begin Group Rating Calculations</h1>
+    <h3><%= @representative.company_name %></h3>
     <div>
       <%= form_for @group_rating do |f| %>
 
-          <div class="form-group" >
+          <div class="form-group">
             <%= f.label :process_representative %>
-            <%= f.select(:representative_id, options_from_collection_for_select(@representatives, :id, :abbreviated_name, selected = params[:representative_id])) %>
+            <%= f.select(:representative_id, options_from_collection_for_select(@representatives, :id, :abbreviated_name, selected = @representative.id)) %>
           </div>
-          <div class="form-group" >
-            <%= f.label :experience_period_lower_date %>
-            <%= f.date_field :experience_period_lower_date, value: '2011-07-01' %>
+          <div class="row">
+            <div class="form-group col-md-4">
+              <%= f.label :experience_period_lower_date %>
+              <%= f.date_field :experience_period_lower_date, class:'form-control', value: @representative.experience_period_lower_date  %>
+            </div>
+
+            <div class="form-group col-md-4">
+              <%= f.label :experience_period_upper_date %>
+              <%= f.date_field :experience_period_upper_date, class:'form-control', value: @representative.experience_period_upper_date %>
+            </div>
+
           </div>
-          <div class="form-group" >
-            <%= f.label :experience_period_upper_date %>
-            <%= f.date_field :experience_period_upper_date, value: '2015-06-30' %>
+
+          <div class="row">
+            <div class="form-group col-md-4">
+              <%= f.label :current_payroll_period_lower_date %>
+              <%= f.date_field :current_payroll_period_lower_date, class:'form-control', value: @representative.current_payroll_period_lower_date %>
+            </div>
+
+            <div class="form-group col-md-4">
+              <%= f.label :current_payroll_period_upper_date %>
+              <%= f.date_field :current_payroll_period_upper_date, class:'form-control', value: @representative.current_payroll_period_upper_date %>
+            </div>
+
+            <div class="form-group col-md-4">
+              <%= f.label :current_payroll_year %>
+              <%= f.number_field :current_payroll_year, class:'form-control', min: '0', value: @representative.current_payroll_year %>
+            </div>
+
           </div>
-          <div class="form-group">
-            <%= f.label :current_payroll_period_lower_date %>
-            <%= f.date_field :current_payroll_period_lower_date, value: '2014-07-01'  %>
+          <div class="row">
+            <div class="form-group col-md-4">
+              <%= f.label :program_year_lower_date %>
+              <%= f.date_field :program_year_lower_date, class:'form-control', value: @representative.program_year_lower_date %>
+            </div>
+
+            <div class="form-group col-md-4">
+              <%= f.label :program_year_upper_date %>
+              <%= f.date_field :program_year_upper_date, class:'form-control', value: @representative.program_year_upper_date %>
+            </div>
+
+            <div class="form-group col-md-4">
+              <%= f.label :program_year %>
+              <%= f.number_field :program_year, class:'form-control', min: '0', value: @representative.program_year %>
+            </div>
+
           </div>
-          <div class="form-group">
-            <%= f.label :current_payroll_period_upper_date %>
-            <%= f.date_field :current_payroll_period_upper_date, value: '2015-06-30'  %>
+          <div class="row">
+            <div class="form-group col-md-4">
+              <%= f.label :quote_year_lower_date %>
+              <%= f.date_field :quote_year_lower_date, class:'form-control', value: @representative.quote_year_lower_date %>
+            </div>
+
+            <div class="form-group col-md-4">
+              <%= f.label :quote_year_upper_date %>
+              <%= f.date_field :quote_year_upper_date, class:'form-control', value: @representative.quote_year_upper_date %>
+            </div>
+
+            <div class="form-group col-md-4">
+              <%= f.label :quote_year %>
+              <%= f.number_field :quote_year, class:'form-control', min: '0', value: @representative.quote_year %>
+            </div>
+
           </div>
 
           <%= f.submit 'Group Rating Process', class: 'btn btn-info' %>

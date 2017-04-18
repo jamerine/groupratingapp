@@ -115,7 +115,7 @@ class AccountsController < ApplicationController
       redirect_to @account
     else
       args[:user_override] = true
-    @account.group_rating_calc(args)
+      @account.group_rating_calc(args)
       flash[:notice] = "Account's group rating calculation was successful."
       redirect_to @account
     end
