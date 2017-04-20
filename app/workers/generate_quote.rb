@@ -5,6 +5,8 @@ class GenerateQuote
 
   def perform(account_id, ac_2, ac_26, contract, intro, invoice, questionnaire, quote)
     @account = Account.find(account_id)
+    @representative = @account.representative
+    @group_rating = @representative.group_ratings.last
 
     view_context = ActionView::Base.new()
     view_context.view_paths = ActionController::Base.view_paths
@@ -14,9 +16,9 @@ class GenerateQuote
     end
 
     if @account.group_rating_qualification == 'accept'
-      @quote = Quote.new(account_id: @account.id, program_type: 'group_rating', fees: @account.group_fees, group_code: @account.group_rating_group_number, quote_tier: @account.group_rating_tier, quote_date: Date.current, effective_start_date: '2016-07-01', effective_end_date: '2017-06-30', status: 'quoted')
+      @quote = Quote.new(account_id: @account.id, program_type: 'group_rating', fees: @account.group_fees, group_code: @account.group_rating_group_number, quote_tier: @account.group_rating_tier, quote_date: Date.current, quote_sent_date: Date.current, experience_period_lower_date: @group_rating.experience_period_lower_date, experience_period_upper_date: @group_rating.experience_period_upper_date, current_payroll_period_lower_date: @group_rating.current_payroll_period_lower_date, current_payroll_period_upper_date: @group_rating.current_payroll_period_upper_date, current_payroll_year: @group_rating.current_payroll_year, program_year_lower_date: @group_rating.program_year_lower_date, program_year_upper_date: @group_rating.program_year_upper_date, program_year: @group_rating.program_year, quote_year_lower_date: @group_rating.quote_year_lower_date, quote_year_upper_date: @group_rating.quote_year_upper_date, quote_year: @group_rating.quote_year, status: 'quoted')
       @quote.save
-      policy_year = @quote.effective_end_date.strftime("%Y")
+      policy_year = @quote.quote_year
       s = "#{@account.policy_number_entered}-#{policy_year}-#{@quote.id}"
       @quote.assign_attributes(invoice_number: s)
       @policy_calculation = @account.policy_calculation

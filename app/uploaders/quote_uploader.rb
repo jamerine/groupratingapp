@@ -52,4 +52,6 @@ class QuoteUploader < CarrierWave::Uploader::Base
   #   "#{model.invoice_number}.pdf" if original_filename
   # end
 
+
+
 end
