@@ -95,9 +95,49 @@
           <%= f.label :quote_year %>
           <%= f.number_field :quote_year, class:'form-control', min: '0', value: @representative.quote_year %>
         </div>
-
       </div>
 
+      <div class="row">
+        <div class="col col-md-3 col-md-offset-4">
+
+          <div class="form-group">
+            <%= f.check_box :intro, checked: true %>
+            <%= f.label :intro %>
+          </div>
+
+          <div class="form-group">
+            <%= f.check_box :quote, checked: true %>
+            <%= f.label :quote %>
+          </div>
+
+          <div class="form-group">
+            <%= f.check_box :ac_2, checked: true %>
+            <%= f.label :ac_2%>
+          </div>
+
+            <div class="form-group">
+              <%= f.check_box :ac_26, checked: true %>
+              <%= f.label :ac_26%>
+            </div>
+
+            <div class="form-group">
+              <%= f.check_box :contract, checked: true %>
+              <%= f.label :contract %>
+            </div>
+
+            <div class="form-group">
+              <%= f.check_box :questionnaire, checked: true %>
+              <%= f.label :questionnaire %>
+            </div>
+
+            <div class="form-group">
+              <%= f.check_box :invoice, checked: true, class: 'form_control' %>
+              <%= f.label :invoice %>
+            </div>
+
+          </div>
+
+        </div>
 
       <div class="form-group col-md-4  col-md-offset-4" >
         <%= f.submit 'Generate Quote', class: 'btn btn-info' %>
