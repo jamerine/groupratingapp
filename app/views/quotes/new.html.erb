@@ -11,8 +11,22 @@
     <h3>New Quote for <%= @account.name %> </h3>
     <br>
       <%= form_for [@quote] do |f| %>
+      <!-- Hidden Values -->
       <%= f.hidden_field :account_id, value: @account.id %>
+      <%= f.hidden_field :experience_period_lower_date, value: @representative.experience_period_lower_date %>
+      <%= f.hidden_field :experience_period_upper_date, value: @representative.experience_period_upper_date %>
+      <%= f.hidden_field :current_payroll_period_lower_date, value: @representative.current_payroll_period_lower_date %>
+      <%= f.hidden_field :current_payroll_period_upper_date, value: @representative.current_payroll_period_upper_date %>
+      <%= f.hidden_field :current_payroll_year, value: @representative.current_payroll_year %>
+      <%= f.hidden_field :program_year_lower_date, value: @representative.program_year_lower_date %>
+      <%= f.hidden_field :program_year_upper_date, value: @representative.program_year_upper_date %>
+      <%= f.hidden_field :program_year, value: @representative.program_year %>
+      <%= f.hidden_field :quote_year_lower_date, value: @representative.quote_year_lower_date %>
+      <%= f.hidden_field :quote_year_upper_date, value: @representative.quote_year_upper_date %>
+      <%= f.hidden_field :quote_year, value: @representative.quote_year %>
+
       <div class="row">
+        <h3>Quote Details</h3>
         <div class="form-group col-md-2" >
           <%= f.label :status %>
           <%= f.select :status, options_for_select(@statuses.collect { |s| [s[0].humanize, s[0]] }, selected: 'quoted'), {} , class: "form-control" %>
@@ -35,71 +49,70 @@
         </div>
       </div>
       <div class="row">
-        <div class="form-group col-md-3">
-          <%= f.label :experience_period_lower_date %>
-          <%= f.date_field :experience_period_lower_date, class:'form-control', value: @representative.experience_period_lower_date  %>
+        <h3>Date Periods for Quote from Group Rating Process</h3>
+        <br>
+        <div class="col-md-3 col-md-offset-3">
+          <label>Experience Period Lower Date</label>
+          <p><%= @representative.experience_period_lower_date %></p>
         </div>
-
-        <div class="form-group col-md-3">
-          <%= f.label :experience_period_upper_date %>
-          <%= f.date_field :experience_period_upper_date, class:'form-control', value: @representative.experience_period_upper_date %>
-        </div>
-
-      </div>
-      <div class="row">
-        <div class="form-group col-md-3">
-          <%= f.label :current_payroll_period_lower_date %>
-          <%= f.date_field :current_payroll_period_lower_date, class:'form-control', value: @representative.current_payroll_period_lower_date %>
-        </div>
-
-        <div class="form-group col-md-3">
-          <%= f.label :current_payroll_period_upper_date %>
-          <%= f.date_field :current_payroll_period_upper_date, class:'form-control', value: @representative.current_payroll_period_upper_date %>
-        </div>
-
-      <div class="form-group col-md-3">
-          <%= f.label :current_payroll_year %>
-          <%= f.number_field :current_payroll_year, class:'form-control', min: '0', value: @representative.current_payroll_year %>
+        <div class="col-md-3">
+          <label>Experience Period Upper Date</label>
+          <p><%= @representative.experience_period_upper_date %></p>
         </div>
 
       </div>
       <div class="row">
-        <div class="form-group col-md-3">
-          <%= f.label :program_year_lower_date %>
-          <%= f.date_field :program_year_lower_date, class:'form-control', value: @representative.program_year_lower_date %>
-        </div>
 
-        <div class="form-group col-md-3">
-          <%= f.label :program_year_upper_date %>
-          <%= f.date_field :program_year_upper_date, class:'form-control', value: @representative.program_year_upper_date %>
+        <div class="col-md-4">
+          <label>Current Payroll Period Lower Date</label>
+          <p><%= @representative.current_payroll_period_lower_date %></p>
         </div>
-
-        <div class="form-group col-md-3">
-          <%= f.label :program_year %>
-          <%= f.number_field :program_year, class:'form-control', min: '0', value: @representative.program_year %>
+        <div class="col-md-4">
+          <label>Current Payroll Period Upper Date</label>
+          <p><%= @representative.current_payroll_period_upper_date %></p>
+        </div>
+        <div class="col-md-4">
+          <label>Current Payroll Year</label>
+          <p><%= @representative.current_payroll_year %></p>
         </div>
 
       </div>
       <div class="row">
-        <div class="form-group col-md-3">
-          <%= f.label :quote_year_lower_date %>
-          <%= f.date_field :quote_year_lower_date, class:'form-control', value: @representative.quote_year_lower_date %>
+        <div class="col-md-4">
+          <label>Program Year Lower Date</label>
+          <p><%= @representative.program_year_lower_date %></p>
+        </div>
+        <div class="col-md-4">
+          <label>Program Year Upper Date</label>
+          <p><%= @representative.program_year_upper_date %></p>
+        </div>
+        <div class="col-md-4">
+          <label>Program Year</label>
+          <p><%= @representative.program_year %></p>
         </div>
 
-        <div class="form-group col-md-3">
-          <%= f.label :quote_year_upper_date %>
-          <%= f.date_field :quote_year_upper_date, class:'form-control', value: @representative.quote_year_upper_date %>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <label>Quote Year Lower Date</label>
+          <p><%= @representative.quote_year_lower_date %></p>
+        </div>
+        <div class="col-md-4">
+          <label>Quote Year Upper Date</label>
+          <p><%= @representative.quote_year_upper_date %></p>
+        </div>
+        <div class="col-md-4">
+          <label>Quote Year</label>
+          <p><%= @representative.quote_year %></p>
         </div>
 
-        <div class="form-group col-md-3">
-          <%= f.label :quote_year %>
-          <%= f.number_field :quote_year, class:'form-control', min: '0', value: @representative.quote_year %>
-        </div>
       </div>
 
       <div class="row">
-        <div class="col col-md-3 col-md-offset-4">
-
+        <div class="col col-md-12">
+          <h3>Choose Documents To Generate In Quote Packet</h3>
+        </div>
+        <div class="col col-md-2 col-md-offset-3">
           <div class="form-group">
             <%= f.check_box :intro, checked: true %>
             <%= f.label :intro %>
@@ -115,30 +128,31 @@
             <%= f.label :ac_2%>
           </div>
 
-            <div class="form-group">
-              <%= f.check_box :ac_26, checked: true %>
-              <%= f.label :ac_26%>
-            </div>
+          <div class="form-group">
+            <%= f.check_box :ac_26, checked: true %>
+            <%= f.label :ac_26%>
+          </div>
+        </div>
+        <div class="col col-md-2 col-md-offset-1">
 
-            <div class="form-group">
-              <%= f.check_box :contract, checked: true %>
-              <%= f.label :contract %>
-            </div>
+          <div class="form-group">
+            <%= f.check_box :contract, checked: true %>
+            <%= f.label :contract %>
+          </div>
 
-            <div class="form-group">
-              <%= f.check_box :questionnaire, checked: true %>
-              <%= f.label :questionnaire %>
-            </div>
+          <div class="form-group">
+            <%= f.check_box :questionnaire, checked: true %>
+            <%= f.label :questionnaire %>
+          </div>
 
-            <div class="form-group">
-              <%= f.check_box :invoice, checked: true, class: 'form_control' %>
-              <%= f.label :invoice %>
-            </div>
-
+          <div class="form-group">
+            <%= f.check_box :invoice, checked: true, class: 'form_control' %>
+            <%= f.label :invoice %>
           </div>
 
         </div>
-
+      </div>
+      <div class="row">
       <div class="form-group col-md-4  col-md-offset-4" >
         <%= f.submit 'Generate Quote', class: 'btn btn-info' %>
       </div>
