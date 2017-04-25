@@ -98,7 +98,7 @@ class Account < ActiveRecord::Base
           policy_calculation.manual_class_calculations.each do |manual_class|
             unless manual_class.manual_class_base_rate.nil?
               manual_class_group_total_rate = ((1 + @group_rating_tier) * manual_class.manual_class_base_rate * (1 +  administrative_rate)).round(6)
-
+              
               manual_class_estimated_group_premium = (manual_class.payroll_calculations.where("reporting_period_start_date >= :current_payroll_period_lower_date and reporting_period_start_date <= :current_payroll_period_upper_date", current_payroll_period_lower_date: group_rating_calc.current_payroll_period_lower_date, current_payroll_period_upper_date: group_rating_calc.current_payroll_period_upper_date).sum(:manual_class_payroll) * manual_class_group_total_rate).round(0)
 
               manual_class.update_attributes(manual_class_group_total_rate: manual_class_group_total_rate, manual_class_estimated_group_premium: manual_class_estimated_group_premium)

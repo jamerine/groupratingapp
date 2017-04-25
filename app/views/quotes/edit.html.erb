@@ -1,132 +1,152 @@
 <%= render partial: "shared/account_navbar", locals: { object: @account } %>
 <div class="container">
   <div class="row">
-    <div class="col-md-1">
+    <div class="col col-md-1">
       <%= link_to 'Back', @account, class: 'btn btn-primary' %>
     </div>
-    <div class="col-md-1 col-md-offset-8">
+    <div class="col col-md-1 col-md-offset-8">
       <%= link_to 'Delete Quote', quote_path(params[:id]), method: :delete, class: 'btn btn-danger', data: {confirm: 'Are you sure you want to delete this quote?'} %>
     </div>
   </div>
-    <%= form_for @quote do |f| %>
-    <h3>Quote Information</h3>
-    <br>
-      <%= link_to 'View PDF', @quote.quote_generated.url, class: 'btn btn-primary' %>
-      <%= link_to 'Generate PDF Quote', quote_view_group_rating_quote_path(@quote, format: :pdf), class: 'btn btn-primary' %>
 
-    <br>
-    <div class="row">
-      <div class="col-md-2">
-        <div class="form-group">
-          <%= f.label :status %>
-          <%= f.select :status, options_for_select(@statuses.collect { |s| [s[0].humanize, s[0]] }, selected: @quote.status), {} , class: "form-control" %>
-        </div>
-      </div>
-      <div class="col-md-2">
-        <%= f.label :program_type %>
-        <%= f.select :program_type, options_for_select(@program_types.collect { |s| [s[0].humanize, s[0]] }, selected: @quote.program_type), {} , class: "form-control"%>
-      </div>
-      <div class="col-md-3">
-          <label>Invoice Number</label>
-          <h4><%= @quote.invoice_number %></h4>
-      </div>
-      <div class="col-md-2">
-        <%= f.label :fees %>
-        <%= f.number_field :fees, class: "form-control" %>
-      </div>
-      <div class="col-md-2">
-        <%= f.label :group_code %>
-        <%= f.text_field :group_code, class: "form-control" %>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-2">
-        <label>Quote Period</label>
-        <h4><%= @quote.quote_year_lower_date.strftime("%m/%d/%y") %> - <%= @quote.quote_year_upper_date.strftime("%m/%d/%y")  %> </h4>
-      </div>
-      <div class="col-md-2">
-        <label>Quote creation date</label>
-        <h4><%= @quote.created_at.strftime("%m/%d/%y") %></h4>
-      </div>
-      <div class="col-md-2">
-        <div class="form-group" >
-            <%= f.label 'Quote sent:' %>
-            <%= f.date_field :quote_sent_date, class: "form-control" %>
-        </div>
-      </div>
-    </div>
-    <br>
-    <div class="row">
-      <div class="col-md-2">
-        <div class="form-group" >
-          <%= f.label 'ac2 Signed' %>
-          <%= f.date_field :ac2_signed_on, class: "form-control" %>
-        </div>
-      </div>
-      <div class="col-md-2">
-        <div class="form-group" >
-          <%= f.label 'AC26 Signed:' %>
-          <%= f.date_field :ac26_signed_on, class: "form-control" %>
-        </div>
-      </div>
-      <div class="col-md-2">
-        <div class="form-group" >
-          <%= f.label 'U153 Signed:' %>
-          <%= f.date_field :u153_signed_on, class: "form-control" %>
-        </div>
-      </div>
-      <div class="col-md-2">
-        <div class="form-group" >
-          <%= f.label "Contract Signed:" %>
-          <%= f.date_field :contract_signed_on, class: "form-control" %>
-        </div>
-      </div>
-      <div class="col-md-2">
-        <div class="form-group" >
-          <%= f.label "Questionnaire Signed:" %>
-          <%= f.date_field :questionnaire_signed_on, class: "form-control" %>
-        </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-2">
-        <div class="form-group">
-          <%= f.label "Questionnaire 1" %>
-          <%= f.check_box :questionnaire_question_1 %>
-        </div>
-      </div>
-      <div class="col-md-2">
-        <div class="form-group">
-          <%= f.label "Questionnaire 2" %>
-          <%= f.check_box :questionnaire_question_2 %>
-        </div>
-      </div>
-      <div class="col-md-2">
-        <div class="form-group">
-          <%= f.label "Questionnaire 3"  %>
-          <%= f.check_box :questionnaire_question_3 %>
-        </div>
-      </div>
-      <div class="col-md-2">
-        <div class="form-group">
-          <%= f.label "Questionnaire 4" %>
-          <%= f.check_box :questionnaire_question_4 %>
-        </div>
-      </div>
-      <div class="col-md-2">
-        <div class="form-group">
-          <%= f.label "Questionnaire 5" %>
-          <%= f.check_box :questionnaire_question_5 %>
-        </div>
-      </div>
-    </div>
-
-    <div class="form-group col-md-4  col-md-offset-4" >
-      <%= f.submit 'Save', class: 'btn btn-info' %>
-    </div>
-    <%
-   end %>
+<br>
 </div>
+<div class="container">
+    <div class="jumbotron">
+      <div class="row">
+        <div class="col col-md-1">
+          <%= link_to 'View Generated Quote PDF', @quote.quote_generated.url, class: 'btn btn-primary' %>
+        </div>
+        <div class="col col-md-1 col-md-offset-8">
+          <%= link_to 'Generate New Full Quote Packet PDF', quote_view_group_rating_quote_path(@quote, format: :pdf), class: 'btn btn-success' %>
+        </div>
+      </div>
+      <div class="row">
+        <br>
+        <h2 class="text-center"> <%= @quote.quote_year %> Quote Information For <%= @account.name.titleize %></h2>
+        <br>
+      </div>
+      <br>
+      <div class="row text-center">
+        <div class="col col-sm-6 col-md-3">
+            <p>Invoice Number</p>
+            <h4><%= @quote.invoice_number %></h4>
+        </div>
+        <div class="col col-sm-6 col-md-3">
+          <p>Quote Period</p>
+          <h4><%= @quote.quote_year_lower_date.strftime("%m/%d/%y") %> - <%= @quote.quote_year_upper_date.strftime("%m/%d/%y")  %> </h4>
+        </div>
+        <div class="col col-sm-6 col-md-3">
+          <p>Quote Year</p>
+          <h4><%= @quote.quote_year %> </h4>
+        </div>
+        <div class="col col-sm-6 col-md-3">
+          <p>Quote creation date</p>
+          <h4><%= @quote.created_at.strftime("%m/%d/%y") %></h4>
+        </div>
+      </div>
+    </div>
+    <div class="jumbotron jumbotron-white">
+
+      <%= form_for @quote do |f| %>
+      <div class="row">
+        <div class="col-md-2">
+          <div class="form-group">
+            <%= f.label :status %>
+            <%= f.select :status, options_for_select(@statuses.collect { |s| [s[0].humanize, s[0]] }, selected: @quote.status), {} , class: "form-control" %>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <%= f.label :program_type %>
+          <%= f.select :program_type, options_for_select(@program_types.collect { |s| [s[0].humanize, s[0]] }, selected: @quote.program_type), {} , class: "form-control"%>
+        </div>
+        <div class="col-md-2">
+          <%= f.label 'Quote sent:' %>
+          <%= f.date_field :quote_sent_date, class: "form-control" %>
+        </div>
+        <div class="col-md-2">
+          <%= f.label :fees %>
+          <%= f.number_field :fees, class: "form-control" %>
+        </div>
+        <div class="col-md-2">
+          <%= f.label :group_code %>
+          <%= f.text_field :group_code, class: "form-control" %>
+        </div>
+        <div class="col-md-2">
+          <%= f.label :quote_tier %>
+          <%= f.text_field :quote_tier, class: "form-control" %>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-md-2">
+          <div class="form-group" >
+            <%= f.label 'ac2 Signed' %>
+            <%= f.date_field :ac2_signed_on, class: "form-control" %>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="form-group" >
+            <%= f.label 'AC26 Signed' %>
+            <%= f.date_field :ac26_signed_on, class: "form-control" %>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="form-group" >
+            <%= f.label 'U153 Signed' %>
+            <%= f.date_field :u153_signed_on, class: "form-control" %>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="form-group" >
+            <%= f.label "Contract Signed" %>
+            <%= f.date_field :contract_signed_on, class: "form-control" %>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="form-group" >
+            <%= f.label "Questionnaire Signed" %>
+            <%= f.date_field :questionnaire_signed_on, class: "form-control" %>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-2">
+          <div class="form-group">
+            <%= f.label "Questionnaire 1" %>
+            <%= f.check_box :questionnaire_question_1 %>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="form-group">
+            <%= f.label "Questionnaire 2" %>
+            <%= f.check_box :questionnaire_question_2 %>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="form-group">
+            <%= f.label "Questionnaire 3"  %>
+            <%= f.check_box :questionnaire_question_3 %>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="form-group">
+            <%= f.label "Questionnaire 4" %>
+            <%= f.check_box :questionnaire_question_4 %>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="form-group">
+            <%= f.label "Questionnaire 5" %>
+            <%= f.check_box :questionnaire_question_5 %>
+          </div>
+        </div>
+      </div>
+      <div class="row text-center">
+        <%= f.submit 'Save', class: 'btn btn-info' %>
+      </div>
+    <% end %>
+  </div>
 <div class="container">
     <div class="row">
       <h3>Quote Process</h3>

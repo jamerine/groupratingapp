@@ -8,17 +8,19 @@
 
 <div class="container">
   <%= form_tag(quotes_path, :method => "get", id: "search-form", remote: true) do %>
+    <%= hidden_field_tag(:representative_id, @representative.id) %>
     <div class="form-inline">
-      <div class="form-group">
-        <%= hidden_field_tag(:representative_id, @representative.id) %>
+
         <%= select_tag(:status, options_from_collection_for_select(@statuses, :last, :first), include_blank: 'Account Status', class: 'form-control' ) %>
-      </div>
-      <div class="form-group">
+
         <%= select_tag(:group_rating_tier, options_for_select(@group_rating_tiers), include_blank: 'Qual. Rating Qual', class: 'form-control' ) %>
-      </div>
+
+        <%= select_tag(:qualify_equality_quote, options_for_select(["Qualify Better Than Quote", "Qualify Less Than Quote","Now Qualify", "Now Do Not Qualify"]), include_blank: 'Difference In Quote Discounts', class: 'form-control' ) %>
+
       <!-- <div class="form-group">
         <%= select_tag(:group_retro_tier, options_for_select(@group_retro_tiers), include_blank: 'Qual. Retro Qual', class: 'form-control' ) %>
       </div> -->
+
       <%= submit_tag "Filter", class: 'btn btn-primary' %>
     </div>
   <% end %>

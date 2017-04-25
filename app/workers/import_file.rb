@@ -98,9 +98,9 @@ class ImportFile
         (!@import.pdemos_count.nil? || !@import.pdemo_detail_records_count.nil?) &&
         (!@import.pemhs_count.nil? || !@import.pemh_detail_records_count.nil?) &&
         (!@import.pcovgs_count.nil? || !@import.pcovg_detail_records_count.nil?)
-        if @import.representative_id = 11
-          sleep(10)
-        end
+          random_sec = rand(1..5)
+          sleep(random_sec)
+          puts random_sec
           @import.import_status = "Completed"
           @import.save
           @group_rating = GroupRating.find(group_rating_id)

@@ -91,15 +91,23 @@ class QuotesController < ApplicationController
     @accounts = @accounts.status(params[:status]).paginate(page: params[:page], per_page: 50) if params[:status].present?
     @accounts = @accounts.group_rating_tier(params[:group_rating_tier]).paginate(page: params[:page], per_page: 50) if params[:group_rating_tier].present?
     @accounts = @accounts.group_retro_tier(params[:group_retro_tier]).paginate(page: params[:page], per_page: 50) if params[:group_retro_tier].present?
+    @accounts = @accounts.joins(:quotes).where('group_rating_tier > quotes.quote_tier').paginate(page: params[:page], per_page: 50) if params[:qualify_equality_quote] == "Qualify Less Than Quote"
+    @accounts = @accounts.joins(:quotes).where('group_rating_tier < quotes.quote_tier or (group_rating_tier is not null and quotes.quote_tier is null)').paginate(page: params[:page], per_page: 50) if params[:qualify_equality_quote] == "Qualify Better Than Quote"
+    @accounts = @accounts.joins(:quotes).where('group_rating_tier is not null and quotes.quote_tier is null').paginate(page: params[:page], per_page: 50) if params[:qualify_equality_quote] == "Now Qualify"
+    @accounts = @accounts.joins(:quotes).where('group_rating_tier is null and quotes.quote_tier is not null').paginate(page: params[:page], per_page: 50) if params[:qualify_equality_quote] == "Now Do Not Qualify"
+
     @accounts_all = Account.where(representative_id: params[:representative_id])
-    @accounts_all = @accounts.status(params[:status]) if params[:status].present?
-    @accounts_all = @accounts.group_rating_tier(params[:group_rating_tier]) if params[:group_rating_tier].present?
-    @accounts_all = @accounts.group_retro_tier(params[:group_retro_tier]) if params[:group_retro_tier].present?
+    @accounts_all = @accounts_all.status(params[:status]) if params[:status].present?
+    @accounts_all = @accounts_all.group_rating_tier(params[:group_rating_tier]) if params[:group_rating_tier].present?
+    @accounts_all = @accounts_all.group_retro_tier(params[:group_retro_tier]) if params[:group_retro_tier].present?
+    @accounts_all = @accounts_all.joins(:quotes).where('group_rating_tier > quotes.quote_tier or (group_rating_tier is not null and quotes.quote_tier is null)') if params[:qual_greater_quote] == "Qualify > Quote"
+    @accounts_all = @accounts_all.joins(:quotes).where('group_rating_tier < quotes.quote_tier') if params[:qual_greater_quote] == "Qualify < Quote"
     @parameters = {}
     @parameters[:representative_id] = params[:representative_id] if params[:representative_id].present?
     @parameters[:status] = params[:status] if params[:status].present?
     @parameters[:group_rating_tier] = params[:group_rating_tier] if params[:group_rating_tier].present?
     @parameters[:group_retro_tier] = params[:group_retro_tier] if params[:group_retro_tier].present?
+    @parameters[:qualify_equality_quote] = params[:qualify_equality_quote] if params[:group_retro_tier].present?
 
     respond_to do |format|
       format.html
