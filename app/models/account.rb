@@ -176,8 +176,9 @@ class Account < ActiveRecord::Base
 
           # update_attributes(group_rating_tier: group_rating_tier, group_premium: group_premium, group_savings: group_savings, industry_group: industry_group)
         end
-      end
 
+      elsif @group_rating_qualification == "reject"
+      end
       self.fee_calculation(@group_rating_qualification, @group_rating_tier, @group_savings)
 
       if user_override
