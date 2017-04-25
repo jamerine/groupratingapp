@@ -51,9 +51,9 @@ class PolicyCalculation < ActiveRecord::Base
         manual_class.calculate_payroll
       end
 
-      @policy_total_four_year_payroll = self.manual_class_calculations.sum(:manual_class_four_year_period_payroll).round(2)
-      @policy_total_expected_losses = self.manual_class_calculations.sum(:manual_class_expected_losses).round(2)
-      @policy_total_current_payroll = self.manual_class_calculations.sum(:manual_class_current_estimated_payroll).round(2)
+      @policy_total_four_year_payroll = self.manual_class_calculations.sum(:manual_class_four_year_period_payroll).round(0)
+      @policy_total_expected_losses = self.manual_class_calculations.sum(:manual_class_expected_losses).round(0)
+      @policy_total_current_payroll = self.manual_class_calculations.sum(:manual_class_current_estimated_payroll).round(0)
 
       if @policy_total_expected_losses <= 2000
         @credibility_row = BwcCodesCredibilityMaxLoss.where("expected_losses >= :expected_losses", expected_losses: @policy_total_expected_losses).min
@@ -74,7 +74,7 @@ class PolicyCalculation < ActiveRecord::Base
         manual_class.calculate_limited_losses(@credibility_row.credibility_group)
       end
 
-      @policy_total_limited_losses = self.manual_class_calculations.sum(:manual_class_limited_losses).round(2)
+      @policy_total_limited_losses = self.manual_class_calculations.sum(:manual_class_limited_losses).round(0)
 
       self.claim_calculations.find_each do |claim|
         claim.recalculate_experience(@credibility_row.group_maximum_value)
@@ -103,10 +103,10 @@ class PolicyCalculation < ActiveRecord::Base
           if @policy_total_limited_losses == 0
             0
           else
-            (((@policy_total_modified_losses_individual_reduced - @policy_total_limited_losses ) / @policy_total_limited_losses) * @credibility_row.credibility_percent).round(4)
+            (((@policy_total_modified_losses_individual_reduced - @policy_total_limited_losses ) / @policy_total_limited_losses) * @credibility_row.credibility_percent).round(2)
           end
 
-     @policy_individual_experience_modified_rate = (@policy_individual_total_modifier + 1).round(4)
+     @policy_individual_experience_modified_rate = (@policy_individual_total_modifier + 1).round(2)
 
      self.update_attributes(
        policy_total_modified_losses_group_reduced: @policy_total_modified_losses_group_reduced, policy_total_modified_losses_individual_reduced: @policy_total_modified_losses_individual_reduced, policy_total_claims_count: @policy_total_claims_count,
@@ -133,7 +133,7 @@ class PolicyCalculation < ActiveRecord::Base
         manual_class_calculation.calculate_premium(self.policy_individual_experience_modified_rate, @administrative_rate )
       end
 
-      @policy_total_standard_premium = self.manual_class_calculations.sum(:manual_class_standard_premium).round(2)
+      @policy_total_standard_premium = self.manual_class_calculations.sum(:manual_class_standard_premium).round(0)
 
       @collection = self.manual_class_calculations.pluck(:manual_class_industry_group).uniq
 
