@@ -177,7 +177,11 @@ class Account < ActiveRecord::Base
           # update_attributes(group_rating_tier: group_rating_tier, group_premium: group_premium, group_savings: group_savings, industry_group: industry_group)
         end
 
-      elsif @group_rating_qualification == "reject"
+      else
+        @group_rating_group_number = nil
+        @group_premium = nil
+        @group_savings = nil
+        @group_rating_tier = nil
       end
       self.fee_calculation(@group_rating_qualification, @group_rating_tier, @group_savings)
 

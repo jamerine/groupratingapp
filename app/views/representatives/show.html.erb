@@ -160,12 +160,16 @@
   </div>
   <div class="container text-center">
     <div class="row">
-      <h3>Quoting</h3>
+      <h3>Quoting & Fees</h3>
     </div>
     <div class="row">
       <div class="col-md-4">
+        <h5>Fee Changes</h5>
+        <%= link_to "Fee Process", quotes_path(representative_id: @representative.id), class: 'btn btn-default'  %>
+      </div>
+      <div class="col-md-4">
         <h5>Group Rating Quotes</h5>
-        <%= link_to "View Quoting", quotes_path(representative_id: @representative.id), class: 'btn btn-default'  %>
+        <%= link_to "Quote Process", quotes_path(representative_id: @representative.id), class: 'btn btn-default'  %>
       </div>
       <!-- <div class="col-md-4">
         <h5>Create Group Rating Zip</h5>
