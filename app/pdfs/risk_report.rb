@@ -100,10 +100,16 @@ class RiskReport < PdfReport
       @experience_lost_time = @experience_year_claims.where("left(claim_type, 1) = '2'").count
 
 
+      @experience_comp_total = 0
+      @experience_medical_total = 0
+      @experience_mira_medical_reserve_total = 0
 
-      @experience_comp_total = (@experience_year_claims.sum(:claim_modified_losses_group_reduced) - @experience_year_claims.sum(:claim_medical_paid) - @experience_year_claims.sum(:claim_mira_medical_reserve_amount))
-      @experience_medical_total = @experience_year_claims.sum(:claim_medical_paid)
-      @experience_mira_medical_reserve_total = @experience_year_claims.sum(:claim_mira_medical_reserve_amount)
+      @experience_year_claims.each do |e|
+        @experience_comp_total += (((e.claim_mira_reducible_indemnity_paid+e.claim_mira_non_reducible_indemnity_paid)*(1 - e.claim_subrogation_percent)-(e.claim_mira_non_reducible_indemnity_paid))*(1 - e.claim_handicap_percent)+(e.claim_mira_non_reducible_indemnity_paid))*e.claim_group_multiplier
+        @experience_medical_total += (((e.claim_medical_paid + e.claim_mira_non_reducible_indemnity_paid_2)*(1 - e.claim_subrogation_percent) - e.claim_mira_non_reducible_indemnity_paid_2)*(1 - e.claim_handicap_percent)+ e.claim_mira_non_reducible_indemnity_paid_2)*e.claim_group_multiplier
+        @experience_mira_medical_reserve_total += (1 - e.claim_handicap_percent)*(e.claim_mira_medical_reserve_amount+(e.claim_mira_indemnity_reserve_amount))* e.claim_group_multiplier* (1 - e.claim_subrogation_percent)
+      end
+
       @experience_group_modidified_losses_total = @experience_year_claims.sum(:claim_modified_losses_group_reduced)
       @experience_individual_modidified_losses_total = @experience_year_claims.sum(:claim_modified_losses_individual_reduced)
       @experience_individual_reduced_total = @experience_year_claims.sum(:claim_individual_reduced_amount)
@@ -140,11 +146,15 @@ class RiskReport < PdfReport
       @out_of_experience_med_only = @out_of_experience_year_claims.where("left(claim_type, 1) = '1'").count
       @out_of_experience_lost_time = @out_of_experience_year_claims.where("left(claim_type, 1) = '2'").count
 
+      @out_of_experience_comp_total = 0
+      @out_of_experience_medical_total = 0
+      @out_of_experience_mira_medical_reserve_total = 0
 
-      @out_of_experience_comp_total = (@out_of_experience_year_claims.sum(:claim_modified_losses_group_reduced) - @out_of_experience_year_claims.sum(:claim_medical_paid) - @out_of_experience_year_claims.sum(:claim_mira_medical_reserve_amount))
-
-      @out_of_experience_medical_total = @out_of_experience_year_claims.sum(:claim_medical_paid)
-      @out_of_experience_mira_medical_reserve_total = @out_of_experience_year_claims.sum(:claim_mira_medical_reserve_amount)
+      @out_of_experience_year_claims.each do |e|
+        @out_of_experience_comp_total += (((e.claim_mira_reducible_indemnity_paid+e.claim_mira_non_reducible_indemnity_paid)*(1 - e.claim_subrogation_percent)-(e.claim_mira_non_reducible_indemnity_paid))*(1 - e.claim_handicap_percent)+(e.claim_mira_non_reducible_indemnity_paid))*e.claim_group_multiplier
+        @out_of_experience_medical_total += (((e.claim_medical_paid + e.claim_mira_non_reducible_indemnity_paid_2)*(1 - e.claim_subrogation_percent) - e.claim_mira_non_reducible_indemnity_paid_2)*(1 - e.claim_handicap_percent)+ e.claim_mira_non_reducible_indemnity_paid_2)*e.claim_group_multiplier
+        @out_of_experience_mira_medical_reserve_total += (1 - e.claim_handicap_percent)*(e.claim_mira_medical_reserve_amount+(e.claim_mira_indemnity_reserve_amount))* e.claim_group_multiplier* (1 - e.claim_subrogation_percent)
+      end
       @out_of_experience_group_modidified_losses_total = @out_of_experience_year_claims.sum(:claim_modified_losses_group_reduced)
       @out_of_experience_individual_modidified_losses_total = @out_of_experience_year_claims.sum(:claim_modified_losses_individual_reduced)
       @out_of_experience_individual_reduced_total = @out_of_experience_year_claims.sum(:claim_individual_reduced_amount)
@@ -193,8 +203,16 @@ class RiskReport < PdfReport
 
       @green_year_comp_total = (@green_year_claims.sum(:claim_modified_losses_group_reduced) - @green_year_claims.sum(:claim_medical_paid) - @green_year_claims.sum(:claim_mira_medical_reserve_amount))
 
-      @green_year_medical_total = @green_year_claims.sum(:claim_medical_paid)
-      @green_year_mira_medical_reserve_total = @green_year_claims.sum(:claim_mira_medical_reserve_amount)
+      @green_year_comp_total = 0
+      @green_year_medical_total = 0
+      @green_year_mira_medical_reserve_total = 0
+
+      @green_year_claims.each do |e|
+        @green_year_comp_total += (((e.claim_mira_reducible_indemnity_paid+e.claim_mira_non_reducible_indemnity_paid)*(1 - e.claim_subrogation_percent)-(e.claim_mira_non_reducible_indemnity_paid))*(1 - e.claim_handicap_percent)+(e.claim_mira_non_reducible_indemnity_paid))*e.claim_group_multiplier
+        @green_year_medical_total += (((e.claim_medical_paid + e.claim_mira_non_reducible_indemnity_paid_2)*(1 - e.claim_subrogation_percent) - e.claim_mira_non_reducible_indemnity_paid_2)*(1 - e.claim_handicap_percent)+ e.claim_mira_non_reducible_indemnity_paid_2)*e.claim_group_multiplier
+        @green_year_mira_medical_reserve_total += (1 - e.claim_handicap_percent)*(e.claim_mira_medical_reserve_amount+(e.claim_mira_indemnity_reserve_amount))* e.claim_group_multiplier* (1 - e.claim_subrogation_percent)
+      end
+
       @green_year_group_modidified_losses_total = @green_year_claims.sum(:claim_modified_losses_group_reduced)
       @green_year_individual_modidified_losses_total = @green_year_claims.sum(:claim_modified_losses_individual_reduced)
       @green_year_individual_reduced_total = @green_year_claims.sum(:claim_individual_reduced_amount)
@@ -1012,9 +1030,22 @@ class RiskReport < PdfReport
   end
 
   def claim_data(claims_array)
+    comp_total = 0
+    med_paid_total = 0
+    mira_res_total = 0
+
+
+    claims_array.each do |e|
+      comp_total += (((e.claim_mira_reducible_indemnity_paid+e.claim_mira_non_reducible_indemnity_paid)*(1 - e.claim_subrogation_percent)-(e.claim_mira_non_reducible_indemnity_paid))*(1 - e.claim_handicap_percent)+(e.claim_mira_non_reducible_indemnity_paid))*e.claim_group_multiplier
+      med_paid_total += (((e.claim_medical_paid + e.claim_mira_non_reducible_indemnity_paid_2)*(1 - e.claim_subrogation_percent) - e.claim_mira_non_reducible_indemnity_paid_2)*(1 - e.claim_handicap_percent)+ e.claim_mira_non_reducible_indemnity_paid_2)*e.claim_group_multiplier
+      mira_res_total += (1 - e.claim_handicap_percent)*(e.claim_mira_medical_reserve_amount+(e.claim_mira_indemnity_reserve_amount))* e.claim_group_multiplier* (1 - e.claim_subrogation_percent)
+    end
+
+
+
     @data = [["Claim #", "Claimant", "DOI", "Man Num", "Comp Award", "Med. Paid", "MIRA Res.", "GTML", "ITML", "SI Total", "HC", "Code" ]]
     @data +=  claims_array.map { |e| [e.claim_number, e.claimant_name.titleize, e.claim_injury_date.in_time_zone("America/New_York").strftime("%m/%d/%y"), e.claim_manual_number, "#{round((((e.claim_mira_reducible_indemnity_paid+e.claim_mira_non_reducible_indemnity_paid)*(1 - e.claim_subrogation_percent)-(e.claim_mira_non_reducible_indemnity_paid))*(1 - e.claim_handicap_percent)+(e.claim_mira_non_reducible_indemnity_paid))*e.claim_group_multiplier,0)}", "#{round((((e.claim_medical_paid + e.claim_mira_non_reducible_indemnity_paid_2)*(1 - e.claim_subrogation_percent) - e.claim_mira_non_reducible_indemnity_paid_2)*(1 - e.claim_handicap_percent)+ e.claim_mira_non_reducible_indemnity_paid_2)*e.claim_group_multiplier,0)}", "#{round((1 - e.claim_handicap_percent)*(e.claim_mira_medical_reserve_amount+(e.claim_mira_indemnity_reserve_amount))* e.claim_group_multiplier* (1 - e.claim_subrogation_percent) ,0)}", round(e.claim_modified_losses_group_reduced,0), round(e.claim_modified_losses_individual_reduced, 0), "#{round(e.claim_unlimited_limited_loss - e.claim_total_subrogation_collected,0)}", percent(e.claim_handicap_percent), "#{claim_code_calc(e)}" ] }
-    @data += [[{:content => "Totals", :colspan => 4},"#{round((claims_array.sum(:claim_modified_losses_group_reduced) - claims_array.sum(:claim_medical_paid) - claims_array.sum(:claim_mira_medical_reserve_amount)), 0)}", "#{round(claims_array.sum(:claim_medical_paid), 0)}", "#{round(claims_array.sum(:claim_mira_medical_reserve_amount), 0)}" , "#{round(claims_array.sum(:claim_modified_losses_group_reduced), 0)}", "#{round(claims_array.sum(:claim_modified_losses_individual_reduced), 0)}", "#{round(claims_array.sum(:claim_unlimited_limited_loss) - claims_array.sum(:claim_total_subrogation_collected), 0)}", "", "" ]]
+    @data += [[{:content => "Totals", :colspan => 4},"#{round(comp_total, 0)}", "#{round(med_paid_total, 0)}" , "#{round(mira_res_total, 0)}", "#{round(claims_array.sum(:claim_modified_losses_group_reduced), 0)}", "#{round(claims_array.sum(:claim_modified_losses_individual_reduced), 0)}", "#{round(claims_array.sum(:claim_unlimited_limited_loss) - claims_array.sum(:claim_total_subrogation_collected), 0)}", "", "" ]]
   end
 
   def group_discount_level
