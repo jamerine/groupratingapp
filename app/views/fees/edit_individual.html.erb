@@ -1,0 +1,48 @@
+<div class="container">
+  <%= link_to 'Back', fees_path(representative_id: @representative.id), class: 'btn btn-primary' %>
+</div>
+<br>
+<div class="container">
+  <div class="jumbotron">
+    <div class="row text-center">
+      <h3>Update Fees for <%= @accounts.count %> Accounts</h3>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <%= form_tag update_individual_fees_path, :method => :put do %>
+  <%= hidden_field_tag(:representative_id, @representative.id) %>
+  <table class="table table-hover table-condensed table-responsive" id="representativeAccountsFeesTable">
+    <thead>
+      <tr class="header">
+        <th>Policy</th>
+        <th>Account</th>
+        <th>Status</th>
+        <th>Group Rate Qual.</th>
+        <th>Group Fee</th>
+        <th>Previous Fee</th>
+        <th>Fee Change %</th>
+        <th>Fee Override</th>
+      </tr>
+    </thead>
+    <tbody>
+        <% @accounts.each do |account| %>
+          <%= fields_for "accounts[]", account do |f| %>
+            <tr>
+              <td><%= account.policy_calculation.policy_number %> </td>
+              <td><%= account.try(:name).slice(0..20).try(:titleize) %> </td>
+              <td><%= account.status.humanize %> </td>
+              <td><%= account.group_rating_qualification == 'accept' ? account.group_rating_tier : account.group_rating_qualification %> </td>
+              <td><%= number_to_currency(account.group_fees) %> </td>
+              <td><%= account.account_programs.empty? ? 'N/A' : number_to_currency(account.account_programs.last.fees_amount) %> </td>
+              <td><%= account.fee_change.nil? ? 'N/A' : number_to_percentage(account.fee_change * 100, precision: 0) %> </td>
+              <td><%= f.number_field :fee_override, value: account.fee_override, min: 0, step: 0.01 %> </td>
+            </tr>
+          <% end %>
+        <% end %>
+    </tbody>
+    <% end %>
+  </table>
+  <%= submit_tag "Submit", class: 'btn btn-success' %>
+</div>

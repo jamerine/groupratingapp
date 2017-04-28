@@ -13,8 +13,8 @@
       <%= form_for [@account_program] do |f| %>
       <%= f.hidden_field :account_id, value: @account.id %>
       <%= f.hidden_field :quote_id, value: @quote.id %>
-      <%= f.hidden_field :effective_start_date, value: @quote.effective_start_date %>
-      <%= f.hidden_field :effective_end_date, value: @quote.effective_end_date %>
+      <%= f.hidden_field :effective_start_date, value: @quote.quote_year_lower_date %>
+      <%= f.hidden_field :effective_end_date, value: @quote.quote_year_upper_date %>
       <%= f.hidden_field :quote_date, value: @quote.quote_date %>
       <%= f.hidden_field :quote_sent_date, value: @quote.quote_sent_date %>
       <%= f.hidden_field :program_type, value: @quote.program_type %>
@@ -23,6 +23,7 @@
       <%= f.hidden_field :invoice_number, value: @quote.invoice_number %>
       <%= f.hidden_field :group_code, value: @quote.group_code %>
 
+
       <div class="row">
         <div class="form-group col-md-2" >
           <p>Program Type</p>
@@ -30,7 +31,7 @@
         </div>
         <div class="form-group col-md-4" >
           <p>Program Period</p>
-          <h4> <%= @quote.effective_start_date.try(:strftime,"%B %d, %Y") %> - <%= @quote.effective_end_date.try(:strftime,"%B %d, %Y") %> </h4>
+          <h4> <%= @quote.quote_year_lower_date.try(:strftime,"%B %d, %Y") %> - <%= @quote.quote_year_upper_date.try(:strftime,"%B %d, %Y") %> </h4>
         </div>
         <div class="form-group col-md-2" >
           <p>Quoted Date</p>

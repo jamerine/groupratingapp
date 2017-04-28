@@ -98,9 +98,9 @@
       <tbody>
         <tr>
           <% if  @account.group_rating_qualification == 'accept'  %>
-            <td><%= link_to 'Quote',new_quote_path(account_id: params[:id], program_type: 'group_rating', fees: @account.group_fees, group_code: @account.group_rating_group_number, quote_tier: @account.group_rating_tier), class:'btn btn-sm btn-info' %></td>
+            <td><%= link_to 'Quote',new_quote_path(account_id: params[:id], program_type: 'group_rating', fees: (@account.fee_override.nil? ? @account.group_fees : @account.fee_override), group_code: @account.group_rating_group_number, quote_tier: @account.group_rating_tier), class:'btn btn-sm btn-info' %></td>
           <% else %>
-            <td><%= link_to 'Quote',new_quote_path(account_id: params[:id], program_type: 'group_rating', fees: @account.group_fees, group_code: @account.group_rating_group_number, quote_tier: @account.group_rating_tier), class:'btn btn-sm btn-info disabled' %> </td>
+            <td><%= link_to 'Quote',new_quote_path(account_id: params[:id], program_type: 'group_rating', fees: (@account.fee_override.nil? ? @account.group_fees : @account.fee_override), group_code: @account.group_rating_group_number, quote_tier: @account.group_rating_tier), class:'btn btn-sm btn-info disabled' %> </td>
           <% end %>
           <td>Group Rating</td>
           <td><%= link_to @account.group_rating_qualification, '#', "data-toggle" => "modal", "data-target" => "#groupRatingRejectModal", "data-rejections" => @account.group_rating_rejections %> </td>
