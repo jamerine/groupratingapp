@@ -1,0 +1,47 @@
+<div id="filter_representative_accounts_fees">
+
+  <div>
+    <%= page_entries_info accounts %>
+  </div>
+  <%= form_tag fee_accounts_fees_path do %>
+      <%= submit_tag "Edit Fees for Selected", class: 'btn btn-success' %>
+      <%= hidden_field_tag(:representative_id, @representative.id) %>
+      <%= link_to "Edit Fees for #{accounts.count} Filtered Accounts", edit_individual_fees_path(parameters: @parameters, representative_id: @representative.id), class: 'btn btn-info' %>
+    <table class="table table-hover table-condensed table-responsive" id="representativeAccountsFeesTable">
+      <thead>
+        <tr class="header">
+          <th></th>
+          <th>Policy</th>
+          <th>Account</th>
+          <th>Status</th>
+          <th>Current Plan</th>
+          <th>Group Rate Qual.</th>
+          <th>Group Fee</th>
+          <th>Previous Fee</th>
+          <th>Fee Change %</th>
+          <th>Fee Override</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% accounts.order("representative_id asc, status desc, name asc").each do |account| %>
+        <tr>
+          <td><%= check_box_tag "account_ids[]", account.id %></td>
+          <td><%= link_to "#{account.policy_calculation.policy_number}",account_path(account.id) %></td>
+          <td><%= account.try(:name).slice(0..20).try(:titleize) %></td>
+          <td><%= account.status.humanize %></td>
+          <td><%= account.account_programs.empty? ? 'N/A' : account.account_programs.last.program_type.humanize %></td>
+          <td><%= account.group_rating_qualification == 'accept' ? account.group_rating_tier : account.group_rating_qualification %></td>
+          <td><%= number_to_currency(account.group_fees) %></td>
+          <td><%= account.account_programs.empty? ? 'N/A' : number_to_currency(account.account_programs.last.fees_amount) %></td>
+          <td><%= account.fee_change.nil? ? 'N/A' : number_to_percentage(account.fee_change * 100, precision: 0) %></td>
+          <td><%= account.fee_override.nil? ? 'N/A' : number_to_currency(account.fee_override) %></td>
+        </tr>
+        <% end %>
+
+      </tbody>
+    </table>
+    <%= submit_tag "Edit Fees for Selected", class: 'btn btn-success' %>
+  <% end %>
+
+<%= will_paginate accounts %>
+</div>

@@ -22,7 +22,12 @@
 
           <div class="col-md-2">
             <%= f.label 'Group Fees' %>
-            <%= f.text_field :group_fees, class: "form-control", value: nil  %>
+            <p><%= number_to_currency(@account.try(:group_fees)) %></p>
+          </div>
+
+          <div class="col-md-2">
+            <%= f.label 'Fees Override' %>
+            <%= f.number_field :fee_override, class: "form-control", value: @account.fee_override  %>
           </div>
 
       </div>

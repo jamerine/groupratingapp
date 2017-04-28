@@ -110,6 +110,7 @@ class AccountsController < ApplicationController
     args = params[:account]
     @account = Account.find(params[:account_id])
     if args[:group_rating_qualification] == "auto_run"
+      @account.update_attributes(fee_override: args[:fee_override])
       @account.group_rating(user_override: true)
       flash[:notice] = "Account's automatic group rating calculation was successful."
       redirect_to @account
@@ -227,7 +228,7 @@ class AccountsController < ApplicationController
   private
 
   def account_params
-    params.require(:account).permit(:representative_id, :name, :policy_number_entered, :street_address, :street_address_2, :city, :state, :zip_code, :business_phone_number, :business_email_address, :website_url, :group_rating_qualification, :group_rating_tier, :group_fees, :user_override, :industry_group, :group_dues, :total_costs, :status, :federal_identification_number, :cycle_date, :request_date, :quarterly_request, :weekly_request, :ac3_approval)
+    params.require(:account).permit(:representative_id, :name, :policy_number_entered, :street_address, :street_address_2, :city, :state, :zip_code, :business_phone_number, :business_email_address, :website_url, :group_rating_qualification, :group_rating_tier, :group_fees, :user_override, :industry_group, :group_dues, :total_costs, :status, :federal_identification_number, :cycle_date, :request_date, :quarterly_request, :weekly_request, :ac3_approval, :fee_override)
   end
 
 end

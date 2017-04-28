@@ -22,7 +22,7 @@ class QuotesController < ApplicationController
       policy_year = @quote.quote_year
       s = "#{@account.policy_number_entered}-#{policy_year}-#{@quote.id}"
       @quote.assign_attributes(invoice_number: s)
-      ##### ADDED THIS PART
+      ##### ADDED THIS PART #####
       combine_pdf = CombinePDF.new
 
       if params[:quote][:intro] == "1"
@@ -87,14 +87,14 @@ class QuotesController < ApplicationController
     @statuses = Account.statuses
     @group_rating_tiers = BwcCodesIndustryGroupSavingsRatioCriterium.all.order(market_rate: :asc).pluck(:market_rate).uniq
     @group_retro_tiers = BwcCodesGroupRetroTier.all.order(discount_tier: :asc).pluck(:discount_tier).uniq
-    @accounts = Account.where(representative_id: params[:representative_id]).paginate(page: params[:page], per_page: 50)
-    @accounts = @accounts.status(params[:status]).paginate(page: params[:page], per_page: 50) if params[:status].present?
-    @accounts = @accounts.group_rating_tier(params[:group_rating_tier]).paginate(page: params[:page], per_page: 50) if params[:group_rating_tier].present?
-    @accounts = @accounts.group_retro_tier(params[:group_retro_tier]).paginate(page: params[:page], per_page: 50) if params[:group_retro_tier].present?
-    @accounts = @accounts.joins(:quotes).where('group_rating_tier > quotes.quote_tier').paginate(page: params[:page], per_page: 50) if params[:qualify_equality_quote] == "Qualify Less Than Quote"
+    @accounts = Account.where(representative_id: params[:representative_id]).paginate(page: params[:page], per_page: 100)
+    @accounts = @accounts.status(params[:status]).paginate(page: params[:page], per_page: 100) if params[:status].present?
+    @accounts = @accounts.group_rating_tier(params[:group_rating_tier]).paginate(page: params[:page], per_page: 100) if params[:group_rating_tier].present?
+    @accounts = @accounts.group_retro_tier(params[:group_retro_tier]).paginate(page: params[:page], per_page: 100) if params[:group_retro_tier].present?
+    @accounts = @accounts.joins(:quotes).where('group_rating_tier > quotes.quote_tier').paginate(page: params[:page], per_page: 100) if params[:qualify_equality_quote] == "Qualify Less Than Quote"
     @accounts = @accounts.joins(:quotes).where('group_rating_tier < quotes.quote_tier or (group_rating_tier is not null and quotes.quote_tier is null)').paginate(page: params[:page], per_page: 50) if params[:qualify_equality_quote] == "Qualify Better Than Quote"
-    @accounts = @accounts.joins(:quotes).where('group_rating_tier is not null and quotes.quote_tier is null').paginate(page: params[:page], per_page: 50) if params[:qualify_equality_quote] == "Now Qualify"
-    @accounts = @accounts.joins(:quotes).where('group_rating_tier is null and quotes.quote_tier is not null').paginate(page: params[:page], per_page: 50) if params[:qualify_equality_quote] == "Now Do Not Qualify"
+    @accounts = @accounts.joins(:quotes).where('group_rating_tier is not null and quotes.quote_tier is null').paginate(page: params[:page], per_page: 100) if params[:qualify_equality_quote] == "Now Qualify"
+    @accounts = @accounts.joins(:quotes).where('group_rating_tier is null and quotes.quote_tier is not null').paginate(page: params[:page], per_page: 100) if params[:qualify_equality_quote] == "Now Do Not Qualify"
 
     @accounts_all = Account.where(representative_id: params[:representative_id])
     @accounts_all = @accounts_all.status(params[:status]) if params[:status].present?

@@ -10,12 +10,12 @@ class AccountProgramsController < ApplicationController
     @account = Account.find(params[:account_program][:account_id])
     @quote = Quote.find(params[:account_program][:quote_id])
     @account_program = AccountProgram.new(account_program_params)
+    @account_program.assign_attributes(effective_start_date: @quote.quote_year_lower_date, effective_end_date: @quote.quote_year_upper_date)
     @current_account_program = @account.account_programs.find_by(effective_start_date: @account_program.effective_start_date, effective_end_date: @account_program.effective_end_date)
     if @current_account_program
       @current_account_program.destroy
     end
     if @account_program.save
-      @quote.destroy
       redirect_to @account, notice: "#{ @account.name } is now enrolled in #{ @account_program.program_type.humanize } "
     else
       redirect_to edit_quote_path(@account.quote), alert: "#{@account_program} was not enrolled in an Account Program.  Please try again."

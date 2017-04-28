@@ -23,7 +23,7 @@ class Account < ActiveRecord::Base
   scope :group_rating_tier, -> (group_rating_tier) { where group_rating_tier: group_rating_tier }
   scope :group_retro_tier, -> (group_retro_tier) { where group_retro_tier: group_retro_tier }
   # scope :policy_search, -> (policy_search) { self.search(policy_search)}
-
+  scope :fee_change_percent, -> (fee_change_percent) { where("fee_change >= ?", (fee_change_percent)) }
 
   def self.update_or_create(attributes)
     obj = first || new
@@ -61,7 +61,7 @@ class Account < ActiveRecord::Base
   def group_rating_calc(args = {})
     # MANUAL EDIT OF GROUP RATING METHOD
       @user_override = args['user_override']
-
+      @fee_override = args['fee_override']
       if args.empty?
         self.group_rating_reject
       else
@@ -125,14 +125,9 @@ class Account < ActiveRecord::Base
 
       # update_attributes(group_rating_tier: group_rating_tier, group_premium: group_premium, group_savings: group_savings, industry_group: industry_group)
 
+      self.fee_calculation(@group_rating_qualification, @group_rating_tier, @group_savings)
 
-      if args["group_fees"].nil? || args["group_fees"].empty?
-        self.fee_calculation(@group_rating_qualification, @group_rating_tier, @group_savings)
-
-        self.update_attributes(user_override: @user_override, group_rating_qualification: @group_rating_qualification, industry_group: @industry_group, group_rating_tier: @group_rating_tier, group_premium: @group_premium, group_savings: @group_savings, group_fees: @group_fees, group_rating_group_number: @group_rating_group_number)
-      else
-        self.update_attributes(user_override: @user_override, group_rating_qualification: @group_rating_qualification, industry_group: @industry_group, group_rating_tier: @group_rating_tier, group_premium: @group_premium, group_savings: @group_savings, group_fees: args["group_fees"], group_rating_group_number: @group_rating_group_number)
-      end
+      self.update_attributes(user_override: @user_override, group_rating_qualification: @group_rating_qualification, industry_group: @industry_group, group_rating_tier: @group_rating_tier, group_premium: @group_premium, group_savings: @group_savings, group_fees: @group_fees, fee_change: @fee_change, fee_override: @fee_override, group_rating_group_number: @group_rating_group_number)
   end
 
   def group_rating(user_override=nil)
@@ -186,9 +181,9 @@ class Account < ActiveRecord::Base
       self.fee_calculation(@group_rating_qualification, @group_rating_tier, @group_savings)
 
       if user_override
-        self.update_attributes(user_override: user_override, group_rating_qualification: @group_rating_qualification, industry_group: @industry_group, group_rating_tier: @group_rating_tier, group_premium: @group_premium, group_savings: @group_savings, group_fees: @group_fees, group_rating_group_number: @group_rating_group_number)
+        self.update_attributes(user_override: user_override, group_rating_qualification: @group_rating_qualification, industry_group: @industry_group, group_rating_tier: @group_rating_tier, group_premium: @group_premium, group_savings: @group_savings, group_fees: @group_fees, fee_change: @fee_change, group_rating_group_number: @group_rating_group_number)
       else
-        self.update_attributes(group_rating_qualification: @group_rating_qualification, industry_group: @industry_group, group_rating_tier: @group_rating_tier, group_premium: @group_premium, group_savings: @group_savings, group_fees: @group_fees, group_rating_group_number: @group_rating_group_number)
+        self.update_attributes(group_rating_qualification: @group_rating_qualification, industry_group: @industry_group, group_rating_tier: @group_rating_tier, group_premium: @group_premium, group_savings: @group_savings, group_fees: @group_fees, fee_change: @fee_change, group_rating_group_number: @group_rating_group_number)
       end
 
     end
@@ -468,6 +463,7 @@ class Account < ActiveRecord::Base
       if policy_calculation.policy_total_individual_premium.nil? || representative.representative_number != 219406
         return
       end
+        @previus_fee = self.account_programs.empty? ? '0.00'.to_f : self.account_programs.last.fees_amount
 
       if group_rating_qualification != "accept"
         # fee = (policy_calculation.policy_total_individual_premium * 0.035).round(0)
@@ -482,7 +478,13 @@ class Account < ActiveRecord::Base
         # update_attribute(:group_fees, fee)
         @group_fees = (policy_calculation.policy_total_individual_premium * 0.0275).round(0)
       end
-      return @group_fees
+      if @previus_fee == '0.00'.to_f
+        @fee_change == '0.00'.to_f
+      else
+        @fee_change = (@group_fees - @previus_fee) / @previus_fee
+      end
+
+      return @group_fees, @fee_change
   end
 
 
