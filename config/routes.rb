@@ -48,8 +48,16 @@ Rails.application.routes.draw do
 
   end
 
+  resources :fees do
+    collection { get :edit_individual }
+    collection { put :update_individual }
+    collection { post :fee_accounts }
+  end
+
+
   resources :account_programs do
     collection { post :import_account_program_process }
+    collection { put :update_individual }
   end
 
   resources :imports do

@@ -1,0 +1,37 @@
+<div class="container">
+  <%= link_to 'Back', @representative, class: 'btn btn-primary' %>
+</div>
+<br>
+<div class="container">
+  <div class="jumbotron text-center">
+    <h2><%= @representative.abbreviated_name %>'s Fee Processing</h2>
+  </div>
+</div>
+<div class="container">
+  <%= form_tag(fees_path, :method => "get", id: "search-form", remote: true) do %>
+    <div class="row">
+
+      <%= hidden_field_tag(:representative_id, @representative.id) %>
+
+      <div class="col col-sm-2">
+        <%= label_tag(:status) %>
+        <%= select_tag(:status, options_from_collection_for_select(@statuses, :last, :first), include_blank: 'All', class: 'form-control' ) %>
+      </div>
+
+      <div class="col col-sm-2">
+        <%= label_tag(:group_rating_tier) %>
+        <%= select_tag(:group_rating_tier, options_for_select(@group_rating_tiers), include_blank: 'All', class: 'form-control' ) %>
+      </div>
+
+      <div class="col col-sm-2">
+        <%= label_tag('Fee Change Increase') %>
+        <%= number_field_tag :fee_change_percent, params[:fee_change_percent], class: 'form-control'  %>
+      </div>
+      <%= submit_tag "Filter", class: 'btn btn-primary' %>
+    </div>
+  <% end %>
+  <br>
+</div>
+<div class="container">
+  <%= render partial: 'fees/representative_accounts_fees', locals: {accounts: @accounts, representative: @representative} %>
+</div>

@@ -16,19 +16,19 @@
           <th>Status</th>
           <th>Group Rate Qual.</th>
           <th>Quoted Tier</th>
-          <th>Group Fee</th>
+          <th>Quote Fee</th>
         </tr>
       </thead>
       <tbody>
         <% accounts.order("representative_id asc, status desc, name asc").each do |account| %>
         <tr>
           <td><%= check_box_tag "account_ids[]", account.id %></td>
-          <td><%= link_to "#{account.policy_calculation.policy_number}",account_path(account.id) %> </td>
-          <td><%= account.try(:name).slice(0..20).try(:titleize) %> </td>
+          <td><%= link_to "#{account.policy_calculation.policy_number}",account_path(account.id) %></td>
+          <td><%= account.try(:name).slice(0..20).try(:titleize) %></td>
           <td><%= account.status.humanize %> </td>
-          <td><%= account.group_rating_qualification == 'accept' ? account.group_rating_tier : account.group_rating_qualification %> </td>
+          <td><%= account.group_rating_qualification == 'accept' ? account.group_rating_tier : account.group_rating_qualification %></td>
           <td><%= account.quotes.find_by(program_type: 0).nil? ? "N/A" : "#{account.quotes.where(program_type: 0).last.quote_tier}" %></td>
-          <td> <%= number_to_currency(account.group_fees, :precision => 0) %> </td>
+          <td><%= account.fee_override.nil? ? number_to_currency(account.group_fees, :precision => 0) : number_to_currency(account.fee_override, :precision => 0)%></td>
         </tr>
         <% end %>
 

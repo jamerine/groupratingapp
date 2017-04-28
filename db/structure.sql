@@ -7758,7 +7758,8 @@ CREATE TABLE accounts (
     group_retro_savings double precision,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    fee_override double precision
+    fee_override double precision,
+    fee_change double precision
 );
 
 
@@ -13330,4 +13331,6 @@ INSERT INTO schema_migrations (version) VALUES ('20170417172954');
 INSERT INTO schema_migrations (version) VALUES ('20170418111625');
 
 INSERT INTO schema_migrations (version) VALUES ('20170426005317');
+
+INSERT INTO schema_migrations (version) VALUES ('20170427104751');
 
