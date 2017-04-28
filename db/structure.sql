@@ -7694,7 +7694,8 @@ CREATE TABLE account_programs (
     group_code character varying,
     check_number character varying,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    quote_tier double precision
 );
 
 
@@ -10524,7 +10525,9 @@ CREATE TABLE quotes (
     program_year integer,
     quote_year_lower_date date,
     quote_year_upper_date date,
-    quote_year integer
+    quote_year integer,
+    paid_amount double precision,
+    check_number character varying
 );
 
 
@@ -13333,4 +13336,6 @@ INSERT INTO schema_migrations (version) VALUES ('20170418111625');
 INSERT INTO schema_migrations (version) VALUES ('20170426005317');
 
 INSERT INTO schema_migrations (version) VALUES ('20170427104751');
+
+INSERT INTO schema_migrations (version) VALUES ('20170428111101');
 
