@@ -20,6 +20,10 @@
   BwcGroupAcceptRejectList.import_table('https://s3.amazonaws.com/grouprating/BwcSupportTables/2017+GROUP+ACCEPT_REJECT+LISTS+04-28-17.csv')
 
 
+# AccountProgramImportProcess.perform_async('https://s3.amazonaws.com/grouprating/BwcSupportTables/all_mmhr_account_prgram_05_02.csv')
+# AccountProgramImportProcess.perform_async('https://s3.amazonaws.com/grouprating/BwcSupportTables/ARM_2017_Account_Programs_05_02.csv')
+
+
 
 
 
@@ -29,7 +33,7 @@
     { industry_group: 7, discount_tier: -0.51 },
     { industry_group: 4, discount_tier: -0.49 },
     { industry_group: 8, discount_tier: -0.49 },
-    { industry_group: 5, discount_tier: -0.43 },
+    { industry_group: 5, discount_tier: -0.43 }
     ])
 
   representatives = Representative.create([

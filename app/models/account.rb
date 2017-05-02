@@ -501,8 +501,12 @@ class Account < ActiveRecord::Base
         # update_attribute(:group_fees, fee)
         @group_fees = (policy_calculation.policy_total_individual_premium * 0.0275).round(0)
       end
+
+      if @group_fees < 55
+        @group_fees = 55
+      end
       if @previus_fee == '0.00'.to_f
-        @fee_change == '0.00'.to_f
+        @fee_change = '0.00'.to_f
       else
         @fee_change = (@group_fees - @previus_fee) / @previus_fee
       end
