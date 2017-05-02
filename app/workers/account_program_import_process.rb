@@ -6,6 +6,7 @@ class AccountProgramImportProcess
   def perform(file)
 
     begin
+      
       CSV.foreach(file, headers: true) do |row|
         hash = row.to_hash # exclude the price field
         AccountProgramImport.perform_async(hash)
