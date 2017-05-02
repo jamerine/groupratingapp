@@ -21,13 +21,13 @@
           <p>Group Code</p>
           <h4><%= @account_program.group_code %></h4>
         </div>
+        <div class="col-md-2">
+          <p>Quote Tier</p>
+          <h4><%= @account_program.quote_tier %></h4>
+        </div>
         <div class="col-md-4">
           <p>Program Period</p>
           <h4><%= @account_program.try(:effective_start_date).try(:strftime, "%B %d, %Y") %> - <%= @account_program.try(:effective_end_date).try(:strftime, "%B %d, %Y") %></h4>
-        </div>
-        <div class="col-md-2">
-          <p>Quote Generated Date</p>
-          <h4><%= @account_program.try(:quote_date).try(:strftime, "%B %d, %Y") %></h4>
         </div>
         <div class="col-md-2">
           <p>Quote Packet</p>

@@ -43,15 +43,28 @@ class RepresentativesController < ApplicationController
 
   def export_159_request_weekly
     @representative = Representative.find(params[:representative_id])
-    WeeklyRequest.perform_async(current_user.id, @representative.id)
+    @weekly_request = params[:weekly_request]
+    @statuses = params[:statuses]
+    @account_statuses = Account.statuses
+    @status_integers = []
+    @statuses.each do |status|
+      @status_integers << @account_statuses[status]
+    end
+    WeeklyRequest.perform_async(current_user.id, @representative.id, @status_integers, @weekly_request)
 
-    flash[:notice] = "Your Weekly 159 request export is now being generated.  Please checkout your email for your generated file."
+    flash[:notice] = "Your Weekly 159 request export is now being generated for accounts with statuses of #{@statuses}.  Please checkout your email for your generated file."
     redirect_to @representative
 
     # respond_to do |format|
     #   format.html
     #   format.csv { send_data @accounts.to_request(@representative.representative_number), filename: "#{@representative.abbreviated_name}_159_request_#{Date.today}.csv" }
     # end
+  end
+
+  def filter_export_159_request_weekly
+    @representative = Representative.find(params[:representative_id])
+    @statuses = Account.statuses
+
   end
 
 

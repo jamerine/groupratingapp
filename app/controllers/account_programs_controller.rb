@@ -10,7 +10,7 @@ class AccountProgramsController < ApplicationController
     @account = Account.find(params[:account_program][:account_id])
     @quote = Quote.find(params[:account_program][:quote_id])
     @account_program = AccountProgram.new(account_program_params)
-    @account_program.assign_attributes(effective_start_date: @quote.quote_year_lower_date, effective_end_date: @quote.quote_year_upper_date)
+    @account_program.assign_attributes(effective_start_date: @quote.quote_year_lower_date, effective_end_date: @quote.quote_year_upper_date, quote_tier: @quote.quote_tier)
     @current_account_program = @account.account_programs.find_by(effective_start_date: @account_program.effective_start_date, effective_end_date: @account_program.effective_end_date)
     if @current_account_program
       @current_account_program.destroy
@@ -49,13 +49,14 @@ class AccountProgramsController < ApplicationController
 
   def import_account_program_process
 
-    CSV.foreach(params[:file].path, headers: true) do |row|
-      hash = row.to_hash # exclude the price field
-      AccountProgramImport.perform_async(hash)
+    begin
+      AccountProgramImportProcess.perform_async(params[:file].path)
+      redirect_to :back, notice: "Account Programs imported."
+    rescue
+      redirect_to :back, alert: "There was an error importing file.  Please ensure file columns and file type are correct"
     end
-
-    redirect_to root_url, notice: "Account Programs imported."
   end
+
 
 
 

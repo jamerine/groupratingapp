@@ -13,6 +13,7 @@
 <div class="container">
   <%= form_tag update_individual_fees_path, :method => :put do %>
   <%= hidden_field_tag(:representative_id, @representative.id) %>
+  <%= submit_tag "Submit", class: 'btn btn-success' %>
   <table class="table table-hover table-condensed table-responsive" id="representativeAccountsFeesTable">
     <thead>
       <tr class="header">

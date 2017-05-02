@@ -186,31 +186,7 @@
     <br>
     <hr>
   </div>
-  <div class="container text-center">
-    <div class="row">
-      <h3>Statistics</h3>
-    </div>
-    <div class="row">
-      <div class="col-md-3">
-        <h4>Total Accounts</h4>
-        <%= @accounts.count %>
-      </div>
-      <div class="col-md-3">
-        <h4>Active</h4>
-        <%= @accounts.active.count %>
-      </div>
-      <div class="col-md-3">
-        <h4>Prospects</h4>
-        <%= @accounts.prospect.count %>
-      </div>
-      <div class="col-md-3">
-        <h4>Invalid</h4>
-        <%= @accounts.invalid_policy_number.count %>
-      </div>
-    </div>
-    <br>
-    <hr>
-  </div>
+
   <div class="container">
     <div class="jumbotron text-center jumbotron-white">
       <div class="row">
@@ -228,12 +204,37 @@
         </div>
         <div class="col-md-4">
           <h5>Weekly 159 Requests</h5>
-          <%= link_to "159 Export", representative_export_159_request_weekly_path(params[:id], format: "csv"), class: 'btn btn-default' %>
+          <%= link_to "159 Export", representative_filter_export_159_request_weekly_path(params[:id]), class: 'btn btn-default' %>
         </div>
-
         </div>
       </div>
+      <hr>
     </div>
+    <div class="container text-center">
+      <div class="row">
+        <h3>Statistics</h3>
+      </div>
+      <div class="row">
+        <div class="col-md-3">
+          <h4>Total Accounts</h4>
+          <%= @accounts.count %>
+        </div>
+        <div class="col-md-3">
+          <h4>Active</h4>
+          <%= @accounts.active.count %>
+        </div>
+        <div class="col-md-3">
+          <h4>Prospects</h4>
+          <%= @accounts.prospect.count %>
+        </div>
+        <div class="col-md-3">
+          <h4>Invalid</h4>
+          <%= @accounts.invalid_policy_number.count %>
+        </div>
+      </div>
+      <br>
+    </div>
+
     <div class="container">
       <hr>
       <div class="row text-center">

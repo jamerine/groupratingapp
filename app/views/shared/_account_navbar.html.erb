@@ -19,7 +19,7 @@
               <p class="navbar-text">Account: <%= @account.status.humanize %></p>
             </div>
             <div class="col-md-2 col-xs-4">
-              <p class="navbar-text">Policy: <%= @account.policy_calculation.current_coverage_status.humanize %></p>
+              <p class="navbar-text">Policy: <%= @account.policy_calculation.current_coverage_status.try(:humanize) %></p>
             </div>
           </div>
         <!-- </ul> -->
