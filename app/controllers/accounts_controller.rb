@@ -1,6 +1,7 @@
 class AccountsController < ApplicationController
 
   def index
+    @statuses = Account.statuses
     @accounts = Account.where(representative_id: @representatives)
     if params[:search].present? && params[:representative_number].present?
       @representative = @representatives.find_by(representative_number: params[:representative_number])
@@ -18,6 +19,7 @@ class AccountsController < ApplicationController
     else
       @accounts = @accounts.all.paginate(page: params[:page], per_page: 50)
     end
+    @accounts = @accounts.status(params[:status]) if params["status"].present?
 
     respond_to do |format|
       format.html
@@ -156,14 +158,12 @@ class AccountsController < ApplicationController
 
   def import_account_process
     begin
-      CSV.foreach(params[:file].path, headers: true) do |row|
-        hash = row.to_hash # exclude the price field
-        AccountImport.perform_async(hash)
-      end
-      redirect_to root_url, notice: "Accounts imported."
+        AccountImportProcess.perform_async(params[:file].path)
+      redirect_to :back, notice: "Accounts imported."
     rescue
       redirect_to :back, alert: "There was an error importing file.  Please ensure file columns and file type are correct"
     end
+
   end
 
 

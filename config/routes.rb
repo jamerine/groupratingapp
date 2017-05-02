@@ -96,7 +96,8 @@ Rails.application.routes.draw do
     get :export_manual_classes
     get :export_policies
     get :export_accounts
-    get :export_159_request_weekly
+    post :export_159_request_weekly
+    get :filter_export_159_request_weekly
     post :import_contact_process
     post :import_payroll_process
     post :import_claim_process

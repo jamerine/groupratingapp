@@ -39,9 +39,9 @@ class FeesController < ApplicationController
       @representative = Representative.find(@parameters["representative_id"])
       @status = Account.statuses.key(@parameters["status"].to_i) if @parameters["status"].present?
       @group_rating_tier = @parameters["group_rating_tier"]
-      @accounts = Account.where(representative_id: @parameters["representative_id"]).paginate(page: params[:page], per_page: 100)
-      @accounts = @accounts.status(@parameters["status"]).paginate(page: params[:page], per_page: 100) if @parameters["status"].present?
-      @accounts = @accounts.group_rating_tier(@parameters["group_rating_tier"]).paginate(page: params[:page], per_page: 100) if @parameters["group_rating_tier"].present?
+      @accounts = Account.where(representative_id: @parameters["representative_id"])
+      @accounts = @accounts.status(@parameters["status"]) if @parameters["status"].present?
+      @accounts = @accounts.group_rating_tier(@parameters["group_rating_tier"]) if @parameters["group_rating_tier"].present?
     end
 
   end
