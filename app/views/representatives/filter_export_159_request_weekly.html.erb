@@ -1,0 +1,31 @@
+<div class="container">
+  <div class="jumbotron text-center">
+    <h2>Filter Weekly Request for <%= @representative.abbreviated_name %></h2>
+  </div>
+</div>
+<div class="container">
+
+      <%= form_tag("/representatives/#{@representative.id}/export_159_request_weekly", method: :post ) do %>
+        <div class="row">
+          <div class="col col-sm-4 col-sm-offset-3">
+            <%= label_tag "weekly_request" %>
+            <%= select_tag "weekly_request", options_for_select([true, false])  %>
+          </div>
+        </div>
+          <div class="row">
+          <% @statuses.each_with_index do |status| %>
+            <div class="col col-sm-4 col-sm-offset-3">
+                <%= label_tag "#{status[0]}" %>
+                <%= check_box_tag 'statuses[]', "#{status[0]}"  %>
+            </div>
+          <% end %>
+          </div>
+          <br>
+          <div class="row text-center">
+            <%= submit_tag 'Submit', class: 'btn btn-primary' %>
+          </div>
+
+      <% end %>
+
+
+</div>

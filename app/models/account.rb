@@ -191,7 +191,7 @@ class Account < ActiveRecord::Base
 
 
   def group_rating_reject
-    self.group_rating_rejections.destroy_all
+    self.group_rating_rejections.where(program_type: 'group_rating').destroy_all
     self.group_rating_exceptions.where(resolved: nil).destroy_all
 
     @group_rating = GroupRating.where(representative_id: self.representative_id).last
@@ -231,6 +231,13 @@ class Account < ActiveRecord::Base
       # Check for waiting on predecessor payroll
       if self.status == 'predecessor'
         GroupRatingRejection.create(program_type: 'group_rating', account_id: self.id, reject_reason: 'reject_pending_predecessor', representative_id: @group_rating.representative_id)
+      end
+
+      #Check if Policy_number is on the Accept Reject List for Group Rating
+      @accept_reject_list = BwcGroupAcceptRejectList.find_by(policy_number: self.policy_number_entered)
+      @representative_number_adjust = "#{self.representative.representative_number.to_s.rjust(6, "0")}-80"
+      if @accept_reject_list && (@accept_reject_list.bwc_rep_id != @representative_number_adjust)
+        GroupRatingRejection.create(program_type: 'group_rating', account_id: self.id, reject_reason: 'reject_partner_conflict', representative_id: @group_rating.representative_id)
       end
 
       # CONDITIONS FOR State Fund and Self Insured PEO
@@ -346,11 +353,13 @@ class Account < ActiveRecord::Base
           self.update_attributes(group_retro_qualification: @group_retro_qualification, industry_group: @industry_group, group_retro_tier: @group_retro_tier, group_retro_premium: @group_retro_premium, group_retro_savings: @group_retro_savings, group_retro_group_number: @group_retro_group_number)
         end
       else
-        self.update_attributes(group_retro_qualification: "reject")
+        self.update_attributes(group_retro_qualification: "reject", group_retro_premium: nil, group_retro_savings: nil, group_retro_tier: nil, group_retro_group_number: nil )
+
       end
   end
 
   def group_retro_reject
+    self.group_rating_rejections.where(program_type: 'group_retro').destroy_all
     @group_rating = GroupRating.where(representative_id: self.representative_id).last
     if !self.predecessor?
         # NEGATIVE PAYROLL ON A MANUAL CLASS
@@ -401,6 +410,12 @@ class Account < ActiveRecord::Base
       # Check for waiting on predecessor payroll
       if PolicyCalculation.find_by(business_name: "Predecessor Policy for #{self.policy_calculation.policy_number}")
         GroupRatingRejection.create(program_type: 'group_retro', account_id: self.id, reject_reason: 'reject_pending_predecessor', representative_id: @group_rating.representative_id)
+      end
+
+      @accept_reject_list = BwcGroupAcceptRejectList.find_by(policy_number: self.policy_number_entered)
+      @representative_number_adjust = "#{self.representative.representative_number.to_s.rjust(6, "0")}-80"
+      if @accept_reject_list && (@accept_reject_list.bwc_rep_id != @representative_number_adjust)
+        GroupRatingRejection.create(program_type: 'group_retro', account_id: self.id, reject_reason: 'reject_partner_conflict', representative_id: @group_rating.representative_id)
       end
 
 
@@ -456,7 +471,7 @@ class Account < ActiveRecord::Base
 
 
     else
-    GroupRatingRejection.create(program_type: 'group_retro', account_id: self.id, reject_reason: 'reject_pending_predecessor', representative_id: @group_rating.representative_id)
+      GroupRatingRejection.create(program_type: 'group_retro', account_id: self.id, reject_reason: 'reject_pending_predecessor', representative_id: @group_rating.representative_id)
     end
 
     if self.group_rating_rejections.where("program_type = ?", :group_retro).count > 0

@@ -8094,6 +8094,26 @@ ALTER SEQUENCE bwc_codes_industry_group_savings_ratio_criteria_id_seq OWNED BY b
 
 
 --
+-- Name: bwc_codes_limited_loss_rate_2017; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE bwc_codes_limited_loss_rate_2017 (
+    industry_group integer,
+    credibility_group integer,
+    limited_loss_rate numeric
+);
+
+
+--
+-- Name: bwc_codes_limited_loss_rate_2017_flat; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE bwc_codes_limited_loss_rate_2017_flat (
+    single_rec character(100)
+);
+
+
+--
 -- Name: bwc_codes_limited_loss_ratios; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -8220,6 +8240,40 @@ CREATE SEQUENCE bwc_codes_policy_effective_dates_id_seq
 --
 
 ALTER SEQUENCE bwc_codes_policy_effective_dates_id_seq OWNED BY bwc_codes_policy_effective_dates.id;
+
+
+--
+-- Name: bwc_group_accept_reject_lists; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE bwc_group_accept_reject_lists (
+    id integer NOT NULL,
+    policy_number integer,
+    name character varying,
+    tpa character varying,
+    bwc_rep_id character varying,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
+);
+
+
+--
+-- Name: bwc_group_accept_reject_lists_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE bwc_group_accept_reject_lists_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: bwc_group_accept_reject_lists_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE bwc_group_accept_reject_lists_id_seq OWNED BY bwc_group_accept_reject_lists.id;
 
 
 --
@@ -11500,6 +11554,13 @@ ALTER TABLE ONLY bwc_codes_policy_effective_dates ALTER COLUMN id SET DEFAULT ne
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY bwc_group_accept_reject_lists ALTER COLUMN id SET DEFAULT nextval('bwc_group_accept_reject_lists_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY claim_calculations ALTER COLUMN id SET DEFAULT nextval('claim_calculations_id_seq'::regclass);
 
 
@@ -12048,6 +12109,14 @@ ALTER TABLE ONLY bwc_codes_peo_lists
 
 ALTER TABLE ONLY bwc_codes_policy_effective_dates
     ADD CONSTRAINT bwc_codes_policy_effective_dates_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: bwc_group_accept_reject_lists_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY bwc_group_accept_reject_lists
+    ADD CONSTRAINT bwc_group_accept_reject_lists_pkey PRIMARY KEY (id);
 
 
 --
@@ -13338,4 +13407,6 @@ INSERT INTO schema_migrations (version) VALUES ('20170426005317');
 INSERT INTO schema_migrations (version) VALUES ('20170427104751');
 
 INSERT INTO schema_migrations (version) VALUES ('20170428111101');
+
+INSERT INTO schema_migrations (version) VALUES ('20170501110357');
 
