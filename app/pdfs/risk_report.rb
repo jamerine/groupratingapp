@@ -628,8 +628,8 @@ class RiskReport < PdfReport
         @em_cap_projected_premium = (2 * @policy_calculation.policy_program_histories.order(reporting_period_start_date: :desc).first.experience_modifier_rate )
         @em_cap_costs = 0
         @em_cap_maximum_risk = 0
-        @em_cap_total_cost = @em_projected_premium - @em_costs
-        @em_cap_savings = @policy_calculation.policy_total_individual_premium - @em_total_cost
+        @em_cap_total_cost = @em_cap_projected_premium - @em_cap_costs
+        @em_cap_savings = @policy_calculation.policy_total_individual_premium - @em_cap_total_cost
       else
         @em_cap_projected_premium = nil
         @em_cap_costs = nil
