@@ -726,7 +726,7 @@ class RiskReport < PdfReport
 
     ###### Safety Council
       @safety_council_experience = (@policy_calculation.policy_total_standard_premium * 0.04)
-      @safety_council_em_cap = (@em_cap_eligibility == 'Yes' ? (@em_projected_premium * 0.04) : nil)
+      @safety_council_em_cap = (@em_cap_eligibility == 'Yes' ? (@em_cap_projected_premium * 0.04) : nil)
       # @safety_council_ocp = (@policy_calculation.policy_total_standard_premium * 0.04)
       @safety_council_group_rating = (@group_rating_eligibility == 'Yes' ? (@account.group_premium * 0.02) : nil)
       @safety_council_group_retro = (@group_retro_eligibility == 'Yes' ? (@policy_calculation.policy_total_standard_premium * 0.02) : '')
@@ -735,7 +735,7 @@ class RiskReport < PdfReport
 
     ###### Industry Specific
       @industry_specific_experience = (@policy_calculation.policy_total_standard_premium * 0.03)
-      @industry_specific_em_cap = (@em_cap_eligibility == 'Yes' ? (@em_projected_premium * 0.03) : nil)
+      @industry_specific_em_cap = (@em_cap_eligibility == 'Yes' ? (@em_cap_projected_premium * 0.03) : nil)
       # @industry_specific_ocp = (@policy_calculation.policy_total_standard_premium * 0.03)
       @industry_specific_group_rating = (@group_rating_eligibility == 'Yes' ? (@account.group_premium * 0.03) : nil)
       # @industry_specific_individual_retro = (@account.group_premium * 0.03)
@@ -743,7 +743,7 @@ class RiskReport < PdfReport
 
     ###### Transitional Work
       @transitional_work_experience = (@policy_calculation.policy_total_standard_premium * 0.1)
-      @transitional_work_em_cap = (@em_cap_eligibility == 'Yes' ? (@em_projected_premium * 0.01) : nil)
+      @transitional_work_em_cap = (@em_cap_eligibility == 'Yes' ? (@em_cap_projected_premium * 0.01) : nil)
       # @transitional_work_ocp = (@policy_calculation.policy_total_standard_premium * 0.03)
       @transitional_work_group_rating = ( @group_rating_eligibility == 'Yes' ? (@account.group_premium * 0.12) : nil)
       # @transitional_individual_retro_rating = (@account.group_premium * 0.1)
@@ -751,7 +751,7 @@ class RiskReport < PdfReport
 
     ###### Go Green
       @go_green_experience = (@policy_calculation.policy_total_individual_premium * 0.01 > 2000 ? 2000 : @policy_calculation.policy_total_individual_premium * 0.01 )
-      @go_green_em_cap = (@em_cap_eligibility == 'Yes' ? (@em_projected_premium * 0.01 > 2000 ? 2000 : @em_projected_premium * 0.01 ) : nil)
+      @go_green_em_cap = (@em_cap_eligibility == 'Yes' ? (@em_cap_projected_premium * 0.01 > 2000 ? 2000 : @em_cap_projected_premium * 0.01 ) : nil)
       # @go_green_ocp = (@policy_calculation.policy_total_standard_premium * 0.03)
       @go_green_group_rating = (@group_rating_eligibility == 'Yes' ? (@account.group_premium * 0.01 > 2000 ? 2000 : @account.group_premium * 0.01 ) : nil)
       @go_green_group_retro = ((@group_retro_eligibility == 'Yes') ? (@policy_calculation.policy_total_individual_premium * 0.1 > 2000) ? 2000 : (@policy_calculation.policy_total_individual_premium * 0.1) : nil)
@@ -760,7 +760,7 @@ class RiskReport < PdfReport
 
     ###### Lapse Free
       @lapse_free_experience = (@policy_calculation.policy_total_individual_premium * 0.01 > 2000 ? 2000 : @policy_calculation.policy_total_individual_premium * 0.01 )
-      @lapse_free_em_cap = (@em_cap_eligibility == 'Yes' ? (@em_projected_premium * 0.01 > 2000 ? 2000 : @em_projected_premium * 0.01 ) : nil)
+      @lapse_free_em_cap = (@em_cap_eligibility == 'Yes' ? (@em_cap_projected_premium * 0.01 > 2000 ? 2000 : @em_cap_projected_premium * 0.01 ) : nil)
       # @lapse_free_ocp = (@policy_calculation.policy_total_standard_premium * 0.03)
       @lapse_free_group_rating = ( @group_rating_eligibility == 'Yes' ? (@account.group_premium * 0.01 > 2000 ? 2000 : @account.group_premium * 0.01 ) : nil)
       # @lapse_free_individual_retro = (@account.group_premium * 0.01 > 2000 ? 2000 : @account.group_premium * 0.01)
