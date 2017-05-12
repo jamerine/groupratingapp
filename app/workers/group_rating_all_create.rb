@@ -190,6 +190,7 @@ class GroupRatingAllCreate
                   reporting_period_start_date: payroll_transaction.reporting_period_start_date,
                   reporting_period_end_date: payroll_transaction.reporting_period_end_date,
                   policy_transferred: payroll_transaction.policy_transferred,
+                  manual_class_transferred: payroll_transaction.manual_class_transferred,
                   transfer_creation_date: payroll_transaction.transfer_creation_date,
                   payroll_origin: payroll_transaction.payroll_origin,
                   data_source: payroll_transaction.data_source).update_or_create(
@@ -202,6 +203,7 @@ class GroupRatingAllCreate
                     reporting_period_start_date: payroll_transaction.reporting_period_start_date,
                     reporting_period_end_date: payroll_transaction.reporting_period_end_date,
                     policy_transferred: payroll_transaction.policy_transferred,
+                    manual_class_transferred: payroll_transaction.manual_class_transferred,
                     transfer_creation_date: payroll_transaction.transfer_creation_date,
                     manual_class_payroll: payroll_transaction.manual_class_payroll,
                     reporting_type: payroll_transaction.reporting_type,
