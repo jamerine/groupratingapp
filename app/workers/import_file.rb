@@ -85,6 +85,8 @@ class ImportFile
 
       @import.save
 
+
+      @import = Import.find_by(id: import_id)
       if
         (!@import.sc230s_count.nil? || !@import.sc230_employer_demographics_count.nil? || !@import.sc230_claim_medical_payments_count.nil? || !@import.sc230_claim_indemnity_awards_count.nil?) &&
         # (!@import.sc220s_count.nil? || !@import.sc220_rec1_employer_demographics_count.nil? || !@import.sc220_rec2_employer_manual_level_payrolls_count.nil? ||    !@import.sc220_rec3_employer_ar_transactions_count.nil?) &&
@@ -98,9 +100,7 @@ class ImportFile
         (!@import.pdemos_count.nil? || !@import.pdemo_detail_records_count.nil?) &&
         (!@import.pemhs_count.nil? || !@import.pemh_detail_records_count.nil?) &&
         (!@import.pcovgs_count.nil? || !@import.pcovg_detail_records_count.nil?)
-          random_sec = rand(1..5)
-          sleep(random_sec)
-          puts random_sec
+
           @import.import_status = "Completed"
           @import.save
           @group_rating = GroupRating.find(group_rating_id)
