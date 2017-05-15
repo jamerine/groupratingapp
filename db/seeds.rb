@@ -116,3 +116,41 @@ RepresentativesUser.create({user_id: 5, representative_id: 15})
 RepresentativesUser.create({user_id: 6, representative_id: 1})
 RepresentativesUser.create({user_id: 7, representative_id: 1})
 RepresentativesUser.create({user_id: 8, representative_id: 1})
+
+BwcAnnualManualClassChange.create([
+  { manual_class_from: 8061, manual_class_to: 8006, policy_year: 1999 },
+  { manual_class_from: 9549, manual_class_to: 9554, policy_year: 2000 },
+  { manual_class_from: 9552, manual_class_to: 9554, policy_year: 2000 },
+  { manual_class_from: 9545, manual_class_to: 9554, policy_year: 2001 },
+  { manual_class_from: 2150, manual_class_to: 8203, policy_year: 2005 },
+  { manual_class_from: 2576, manual_class_to: 2501, policy_year: 2005 },
+  { manual_class_from: 5536, manual_class_to: 5537, policy_year: 2005 },
+  { manual_class_from: 7423, manual_class_to: 7403, policy_year: 2005 },
+  { manual_class_from: 3066, manual_class_to: 3076, policy_year: 2006 },
+  { manual_class_from: 2156, manual_class_to: 2157, policy_year: 2007 },
+  { manual_class_from: 8861, manual_class_to: 8864, policy_year: 2007 },
+  { manual_class_from: 9110, manual_class_to: 8864, policy_year: 2007 },
+  { manual_class_from: 2812, manual_class_to: 2883, policy_year: 2010 },
+  { manual_class_from: 5651, manual_class_to: 5645, policy_year: 2010 },
+  { manual_class_from: 7611, manual_class_to: 7600, policy_year: 2010 },
+  { manual_class_from: 7612, manual_class_to: 7600, policy_year: 2010 },
+  { manual_class_from: 9059, manual_class_to: 8869, policy_year: 2010 },
+  { manual_class_from: 5538, manual_class_to: 5537, policy_year: 2011 },
+  { manual_class_from: 3069, manual_class_to: 3076, policy_year: 2014 },
+  { manual_class_from: 1655, manual_class_to: 1642, policy_year: 2016 },
+  { manual_class_from: 1741, manual_class_to: 1701, policy_year: 2016 },
+  { manual_class_from: 1853, manual_class_to: 1701, policy_year: 2016 },
+  { manual_class_from: 1860, manual_class_to: 4279, policy_year: 2016 },
+  { manual_class_from: 2534, manual_class_to: 2501, policy_year: 2016 },
+  { manual_class_from: 3175, manual_class_to: 3169, policy_year: 2016 },
+  { manual_class_from: 3223, manual_class_to: 3180, policy_year: 2016 },
+  { manual_class_from: 4053, manual_class_to: 4062, policy_year: 2016 },
+  { manual_class_from: 4061, manual_class_to: 4062, policy_year: 2016 },
+  { manual_class_from: 4113, manual_class_to: 4111, policy_year: 2016 },
+  { manual_class_from: 4282, manual_class_to: 4279, policy_year: 2016 },
+  { manual_class_from: 4439, manual_class_to: 4558, policy_year: 2016 },
+  { manual_class_from: 5069, manual_class_to: 5059, policy_year: 2016 },
+  { manual_class_from: 6017, manual_class_to: 5213, policy_year: 2016 },
+  { manual_class_from: 7228, manual_class_to: 7219, policy_year: 2016 },
+  { manual_class_from: 7229, manual_class_to: 7219, policy_year: 2016 }
+])

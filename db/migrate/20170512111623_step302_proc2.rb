@@ -188,6 +188,59 @@ class Step302Proc2 < ActiveRecord::Migration
             and representative_number = process_representative
         );
 
+        INSERT INTO process_manual_reclass_tables (
+            representative_number,
+            policy_type,
+            policy_number,
+            re_classed_from_manual_number,
+            re_classed_to_manual_number,
+            reclass_manual_coverage_type,
+            reclass_creation_date,
+            payroll_reporting_period_from_date,
+            payroll_reporting_period_to_date,
+            re_classed_to_manual_payroll_total,
+            payroll_origin,
+            data_source,
+            created_at,
+            updated_at
+        )
+        (Select
+            a.representative_number,
+            a.policy_type,
+            a.policy_number,
+            c.manual_class_from as "re_classed_from_manual_number",
+            c.manual_class_to as "re_classed_to_manual_number",
+            a.manual_class_type,
+            to_date((c.policy_year || '-01-01'), 'YYYY-MM-DD') as "reclass_creation_date",
+            a.reporting_period_start_date as payroll_reporting_period_from_date,
+            a.reporting_period_end_date as payroll_reporting_period_to_date,
+            a.manual_class_payroll as "re_classed_to_manual_payroll_total",
+            'manual_reclass_auto' as payroll_origin,
+            'bwc' as data_source,
+            run_date as created_at,
+            run_date as updated_at
+        FROM public.process_payroll_breakdown_by_manual_classes a
+        INNER JOIN public.bwc_annual_manual_class_changes c
+        ON a.manual_number = c.manual_class_from
+            and a.representative_number = process_representative
+        );
+
+
+        DELETE FROM process_manual_reclass_tables
+            WHERE id IN (SELECT id
+               FROM (SELECT id, ROW_NUMBER() OVER (partition BY representative_number,
+                           policy_number,
+                           re_classed_from_manual_number,
+                           re_classed_to_manual_number,
+                           reclass_manual_coverage_type,
+                           payroll_reporting_period_from_date,
+                           payroll_reporting_period_to_date,
+                           re_classed_to_manual_payroll_total,
+                           data_source
+                           ORDER BY policy_type ASC) AS rnum
+                              FROM process_manual_reclass_tables) t
+             WHERE t.rnum > 1);
+
 
       end;
           $BODY$
@@ -199,7 +252,7 @@ class Step302Proc2 < ActiveRecord::Migration
 
     def down
       connection.execute(%q{
-      DROP FUNCTION public.proc_step_302(integer, date, date, date);
+      DROP FUNCTION public.proc_step_302(integer, date, date, date, date);
       })
     end
 
