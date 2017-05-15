@@ -103,6 +103,8 @@ class Step303Proc2 < ActiveRecord::Migration
       where representative_number = process_representative
       );
 
+
+
       DELETE FROM process_payroll_all_transactions_breakdown_by_manual_classes
           WHERE id IN (SELECT id
              FROM (SELECT id, ROW_NUMBER() OVER (partition BY representative_number,
@@ -112,8 +114,11 @@ class Step303Proc2 < ActiveRecord::Migration
                             manual_number,
                             reporting_period_start_date,
                             reporting_period_end_date,
+                            manual_class_rate,
                             manual_class_payroll,
                             reporting_type,
+                            policy_transferred,
+                            manual_class_transferred,
                             data_source ORDER BY transfer_creation_date DESC) AS rnum
                             FROM process_payroll_all_transactions_breakdown_by_manual_classes) t
            WHERE t.rnum > 1);
@@ -128,7 +133,7 @@ class Step303Proc2 < ActiveRecord::Migration
 
     def down
       connection.execute(%q{
-      DROP FUNCTION public.proc_step_303(integer, date, date, date);
+      DROP FUNCTION public.proc_step_303(integer, date, date, date, date);
       })
     end
 

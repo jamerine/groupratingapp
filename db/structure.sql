@@ -5176,6 +5176,59 @@ CREATE FUNCTION proc_step_302(process_representative integer, experience_period_
             and representative_number = process_representative
         );
 
+        INSERT INTO process_manual_reclass_tables (
+            representative_number,
+            policy_type,
+            policy_number,
+            re_classed_from_manual_number,
+            re_classed_to_manual_number,
+            reclass_manual_coverage_type,
+            reclass_creation_date,
+            payroll_reporting_period_from_date,
+            payroll_reporting_period_to_date,
+            re_classed_to_manual_payroll_total,
+            payroll_origin,
+            data_source,
+            created_at,
+            updated_at
+        )
+        (Select
+            a.representative_number,
+            a.policy_type,
+            a.policy_number,
+            c.manual_class_from as "re_classed_from_manual_number",
+            c.manual_class_to as "re_classed_to_manual_number",
+            a.manual_class_type,
+            to_date((c.policy_year || '-01-01'), 'YYYY-MM-DD') as "reclass_creation_date",
+            a.reporting_period_start_date as payroll_reporting_period_from_date,
+            a.reporting_period_end_date as payroll_reporting_period_to_date,
+            a.manual_class_payroll as "re_classed_to_manual_payroll_total",
+            'manual_reclass_auto' as payroll_origin,
+            'bwc' as data_source,
+            run_date as created_at,
+            run_date as updated_at
+        FROM public.process_payroll_breakdown_by_manual_classes a
+        INNER JOIN public.bwc_annual_manual_class_changes c
+        ON a.manual_number = c.manual_class_from
+            and a.representative_number = process_representative
+        );
+
+
+        DELETE FROM process_manual_reclass_tables
+            WHERE id IN (SELECT id
+               FROM (SELECT id, ROW_NUMBER() OVER (partition BY representative_number,
+                           policy_number,
+                           re_classed_from_manual_number,
+                           re_classed_to_manual_number,
+                           reclass_manual_coverage_type,
+                           payroll_reporting_period_from_date,
+                           payroll_reporting_period_to_date,
+                           re_classed_to_manual_payroll_total,
+                           data_source
+                           ORDER BY policy_type ASC) AS rnum
+                              FROM process_manual_reclass_tables) t
+             WHERE t.rnum > 1);
+
 
       end;
           $$;
@@ -5278,6 +5331,8 @@ CREATE FUNCTION proc_step_303(process_representative integer, experience_period_
       where representative_number = process_representative
       );
 
+
+
       DELETE FROM process_payroll_all_transactions_breakdown_by_manual_classes
           WHERE id IN (SELECT id
              FROM (SELECT id, ROW_NUMBER() OVER (partition BY representative_number,
@@ -5287,8 +5342,11 @@ CREATE FUNCTION proc_step_303(process_representative integer, experience_period_
                             manual_number,
                             reporting_period_start_date,
                             reporting_period_end_date,
+                            manual_class_rate,
                             manual_class_payroll,
                             reporting_type,
+                            policy_transferred,
+                            manual_class_transferred,
                             data_source ORDER BY transfer_creation_date DESC) AS rnum
                             FROM process_payroll_all_transactions_breakdown_by_manual_classes) t
            WHERE t.rnum > 1);
@@ -7904,6 +7962,39 @@ CREATE SEQUENCE affiliates_id_seq
 --
 
 ALTER SEQUENCE affiliates_id_seq OWNED BY affiliates.id;
+
+
+--
+-- Name: bwc_annual_manual_class_changes; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE bwc_annual_manual_class_changes (
+    id integer NOT NULL,
+    manual_class_from integer,
+    manual_class_to integer,
+    policy_year integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: bwc_annual_manual_class_changes_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE bwc_annual_manual_class_changes_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: bwc_annual_manual_class_changes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE bwc_annual_manual_class_changes_id_seq OWNED BY bwc_annual_manual_class_changes.id;
 
 
 --
@@ -11507,6 +11598,13 @@ ALTER TABLE ONLY affiliates ALTER COLUMN id SET DEFAULT nextval('affiliates_id_s
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY bwc_annual_manual_class_changes ALTER COLUMN id SET DEFAULT nextval('bwc_annual_manual_class_changes_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY bwc_codes_base_rates_exp_loss_rates ALTER COLUMN id SET DEFAULT nextval('bwc_codes_base_rates_exp_loss_rates_id_seq'::regclass);
 
 
@@ -12052,6 +12150,14 @@ ALTER TABLE ONLY accounts
 
 ALTER TABLE ONLY affiliates
     ADD CONSTRAINT affiliates_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: bwc_annual_manual_class_changes_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY bwc_annual_manual_class_changes
+    ADD CONSTRAINT bwc_annual_manual_class_changes_pkey PRIMARY KEY (id);
 
 
 --
@@ -13440,4 +13546,6 @@ INSERT INTO schema_migrations (version) VALUES ('20170512111224');
 INSERT INTO schema_migrations (version) VALUES ('20170512111623');
 
 INSERT INTO schema_migrations (version) VALUES ('20170512112035');
+
+INSERT INTO schema_migrations (version) VALUES ('20170512152432');
 
