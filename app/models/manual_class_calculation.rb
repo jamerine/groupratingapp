@@ -35,16 +35,16 @@ class ManualClassCalculation < ActiveRecord::Base
       @policy_creation = self.policy_calculation.policy_coverage_status_histories.find_by(coverage_status: 'ACTIV')
 
       if @policy_creation.nil?
-        @policy_creation_date = self.policy_calculation.policy_coverage_status_histories.first.coverage_effective_date
+        @policy_creation_date = self.policy_calculation.policy_coverage_status_histories.order(:coverage_effective_date).first.coverage_effective_date
       else
         @policy_creation_date = @policy_creation.coverage_effective_date
       end
 
       @self_four_year_payroll_lower_date = @policy_creation_date > @group_rating.experience_period_lower_date ? @policy_creation_date : @group_rating.experience_period_lower_date
 
-      @manual_class_self_four_year_sum = self.payroll_calculations.where("reporting_period_start_date BETWEEN :experience_period_lower_date and :experience_period_upper_date and payroll_origin = :payroll_origin", experience_period_lower_date: @self_four_year_payroll_lower_date, experience_period_upper_date: @group_rating.experience_period_upper_date, payroll_origin: 'payroll').sum(:manual_class_payroll).round(2)
+      @manual_class_self_four_year_sum = self.payroll_calculations.where("reporting_period_start_date BETWEEN :experience_period_lower_date and :experience_period_upper_date and payroll_origin != :payroll_origin", experience_period_lower_date: @self_four_year_payroll_lower_date, experience_period_upper_date: @group_rating.experience_period_upper_date, payroll_origin: 'full_transfer').sum(:manual_class_payroll).round(2)
 
-      @manual_class_comb_four_year_sum = self.payroll_calculations.where("(reporting_period_start_date BETWEEN :experience_period_lower_date and :experience_period_upper_date) and payroll_origin != :payroll_origin", experience_period_lower_date: @group_rating.experience_period_lower_date, experience_period_upper_date: @group_rating.experience_period_upper_date, payroll_origin: 'payroll').sum(:manual_class_payroll).round(2)
+      @manual_class_comb_four_year_sum = self.payroll_calculations.where("(reporting_period_start_date BETWEEN :experience_period_lower_date and :experience_period_upper_date) and payroll_origin = :payroll_origin", experience_period_lower_date: @group_rating.experience_period_lower_date, experience_period_upper_date: @group_rating.experience_period_upper_date, payroll_origin: 'full_transfer').sum(:manual_class_payroll).round(2)
 
       @manual_class_four_year_sum = @manual_class_self_four_year_sum + @manual_class_comb_four_year_sum
 
