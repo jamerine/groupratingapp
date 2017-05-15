@@ -229,7 +229,7 @@ class Account < ActiveRecord::Base
       end
 
       # Check for waiting on predecessor payroll
-      if self.status == 'predecessor'
+      if !Account.where("name LIKE ? and representative_id = ? ", "%#{self.policy_number_entered}%", self.representative_id).empty?
         GroupRatingRejection.create(program_type: 'group_rating', account_id: self.id, reject_reason: 'reject_pending_predecessor', representative_id: @group_rating.representative_id)
       end
 
