@@ -105,7 +105,7 @@ class ArmInvoice < PdfReport
   end
   def table_data
     @data = [["DATE", "DESCRIPTION", "BALANCE", "AMOUNT" ]]
-    @data += [[ "#{@current_date.strftime("%-m/%-d/%Y")}", "Ohio Workers’ Comp Third Party Representation and Group Rating enrollment", "#{price(@group_fees)}", "#{price(@group_fees)}"]]
+    @data += [[ "#{@current_date.strftime("%-m/%-d/%Y")}", "Ohio Workers’ Comp Third Party Representation and #{ @account.representative.quote_year} Group Rating enrollment", "#{price(@group_fees)}", "#{price(@group_fees)}"]]
   end
   def table_data_2
     @data = [["CURRENT", "1-30 DAYS PAST DUE", "31-60 DAYS PAST DUE", "61-90 DAYS PAST DUE", "OVER 90 DAYS PAST DUE", "AMOUNT DUE" ]]
