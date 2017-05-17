@@ -148,6 +148,9 @@ class PolicyCalculation < ActiveRecord::Base
 
     @policy_total_individual_premium =   self.manual_class_calculations.sum(:manual_class_estimated_individual_premium).round(2)
 
+    if @policy_total_individual_premium < 120
+      @policy_total_individual_premium = 120.00
+    end
 
     self.update_attributes(policy_total_individual_premium: @policy_total_individual_premium, policy_industry_group: @highest_industry_group[:industry_group], policy_total_standard_premium: @policy_total_standard_premium)
 

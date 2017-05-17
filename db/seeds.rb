@@ -21,7 +21,11 @@
 
 
 # AccountProgramImportProcess.perform_async('https://s3.amazonaws.com/grouprating/BwcSupportTables/all_mmhr_account_prgram_05_02.csv')
+# AccountProgramImportProcess.perform_async('https://s3.amazonaws.com/grouprating/BwcSupportTables/ARM_2017_Account_Programs_05_02_retainer.csv')
 # AccountProgramImportProcess.perform_async('https://s3.amazonaws.com/grouprating/BwcSupportTables/ARM_2017_Account_Programs_05_02.csv')
+# AccountImportProcess.perform_async('https://s3.amazonaws.com/grouprating/BwcSupportTables/ARM+Account+Update+Impot.csv')
+# AccountImportProcess.perform_async('https://s3.amazonaws.com/grouprating/BwcSupportTables/WC_CUSTOMER_convert.csv')
+# AccountImportProcess.perform_async('https://s3.amazonaws.com/grouprating/BwcSupportTables/cpm_account_convert.csv')
 
 
 
