@@ -42,7 +42,7 @@ class GroupRatingQuote < PdfReport
     move_down 10
     text "Enrollment Fee: #{price(@group_fees)}", align: :right, size: 12, style: :bold
     move_down 10
-    text "Next Savings: #{ price(@account.group_savings - @group_fees) }", align: :right, size: 16, style: :bold
+    text "Net Savings: #{ price(@account.group_savings - @group_fees) }", align: :right, size: 16, style: :bold
     # bounding_box([200, cursor], :width => 325, :height => 25) do
     #   stroke_bounds
     # end
