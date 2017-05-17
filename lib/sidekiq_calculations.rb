@@ -45,12 +45,12 @@ Sidekiq Server Configuration failed.
 
     # ENV used in `config/puma.rb` too.
     def puma_workers
-      Integer(ENV["WEB_CONCURRENCY", 2])
+      Integer(ENV.fetch("WEB_CONCURRENCY", 2))
     end
 
     # ENV used in `config/puma.rb` too.
     def puma_threads
-      Integer(ENV["WEB_MAX_THREADS", 5])
+      Integer(ENV.fetch("WEB_MAX_THREADS", 5))
     end
 
     # https://github.com/mperham/sidekiq/blob/master/lib/sidekiq/redis_connection.rb#L12
