@@ -107,6 +107,10 @@ class Account < ActiveRecord::Base
 
           @group_premium = (policy_calculation.manual_class_calculations.sum(:manual_class_estimated_group_premium)).round(2)
 
+          if @group_premium < 120
+            @group_premium = 120.00
+          end
+
           @group_savings = (policy_calculation.policy_total_individual_premium - @group_premium).round(2)
 
         else
@@ -166,6 +170,10 @@ class Account < ActiveRecord::Base
           end
 
           @group_premium = policy_calculation.manual_class_calculations.sum(:manual_class_estimated_group_premium).round(2)
+
+          if @group_premium < 120
+            @group_premium = 120.00
+          end
 
           @group_savings = (policy_calculation.policy_total_individual_premium - @group_premium).round(2)
 

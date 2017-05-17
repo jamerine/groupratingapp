@@ -32,25 +32,25 @@ Sidekiq Server Configuration failed.
 
   private
     def web_dynos
-      Integer(ENV.fetch('NUMBER_OF_WEB_DYNOS'))
+      Integer(ENV['NUMBER_OF_WEB_DYNOS'])
     end
 
     def worker_dynos
-      Integer(ENV.fetch('NUMBER_OF_WORKER_DYNOS'))
+      Integer(ENV['NUMBER_OF_WORKER_DYNOS'])
     end
 
     def max_redis_connection
-      Integer(ENV.fetch('MAX_REDIS_CONNECTION'))
+      Integer(ENV['MAX_REDIS_CONNECTION'])
     end
 
     # ENV used in `config/puma.rb` too.
     def puma_workers
-      Integer(ENV.fetch("WEB_CONCURRENCY", 2))
+      Integer(ENV["WEB_CONCURRENCY", 2])
     end
 
     # ENV used in `config/puma.rb` too.
     def puma_threads
-      Integer(ENV.fetch("WEB_MAX_THREADS", 5))
+      Integer(ENV["WEB_MAX_THREADS", 5])
     end
 
     # https://github.com/mperham/sidekiq/blob/master/lib/sidekiq/redis_connection.rb#L12
