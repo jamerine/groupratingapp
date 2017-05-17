@@ -112,9 +112,14 @@ class AccountsController < ApplicationController
     args = params[:account]
     @account = Account.find(params[:account_id])
     if args[:group_rating_qualification] == "auto_run"
+      @account.policy_calculation.calculate_experience
+      @account.policy_calculation.calculate_premium
+      @account.group_rating
+      @account.group_retro
       @account.update_attributes(fee_override: args[:fee_override])
       @account.group_rating(user_override: true)
       flash[:notice] = "Account's automatic group rating calculation was successful."
+      @acount
       redirect_to @account
     else
       args[:user_override] = true
