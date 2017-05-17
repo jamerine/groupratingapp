@@ -66,7 +66,7 @@ class ArmIntro < PdfReport
     text "Enrollment is simple - please complete and return the enclosed forms (listed below) with a copy of the invoice and your check for the management fee by November 1, #{@account.representative.program_year}:", size: 11
     move_down 15
 
-    text "1.    FROM AC-26, EMPLOYER STATEMENT FOR GROUP RATING", size: 9
+    text "1.    FORM AC-26, EMPLOYER STATEMENT FOR GROUP RATING", size: 9
     text "2.    FORM AC-2, PERMANENT AUTHORIZATION (please include your email to receive important reminders and updates)", size: 9
     text "3.    GROUP RATING QUESTIONAIRE", size: 9
     text "4.    Fees* of #{ price(@quote.fees) } –payable to #{@account.representative.abbreviated_name}  *fees are all- inclusive ", size: 9
