@@ -268,7 +268,7 @@ class ArmContract < PdfReport
         text_box "#{@account.representative.abbreviated_name}", :at => [50, 175], :width => 175, height: 40, style: :bold, align: :center
         horizontal_line 50, 225, :at => 160
         text_box "By:", :at => [0, 135], :width => 50, height: 40, style: :bold
-        text_box "Signature", :at => [50, 135], :width => 175, height: 40, style: :bold, align: :center
+        image "#{Rails.root}/app/assets/images/Doug's signature.jpg", :at => [100, 147], height: 45
         horizontal_line 50, 225, :at => 120
         text_box "Name/Title:", :at => [0, 95], :width => 275, height: 40, style: :bold
         text_box "Doug Maag - President", :at => [50, 95], :width => 175, height: 40, style: :bold, align: :center
