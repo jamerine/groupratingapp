@@ -83,11 +83,12 @@ class ArmIntro < PdfReport
     move_down 15
     text "Sincerely,"
     move_down 15
-    text "Signature"
     if [2,9,10,16].include? @account.representative.id
+      text "Signature"
       text "MMHR President"
       text "President"
     else
+      image "#{Rails.root}/app/assets/images/Doug's signature.jpg", height: 50
       text "Doug Maag"
       text "President"
     end
