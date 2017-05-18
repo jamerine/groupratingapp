@@ -6,12 +6,14 @@ class ArmInvoice < PdfReport
     @policy_calculation = policy_calculation
     @view = view
 
-    @group_fees =
-      if @account.group_fees.nil?
-        0
-      else
-        @account.group_fees
-      end
+
+  @group_fees =
+    if @quote.fees.nil?
+      0
+    else
+      @quote.fees
+    end
+    
    @current_date = DateTime.now.to_date
    invoice
 
