@@ -13,7 +13,7 @@ class AccountPolicyExport
 
 
     attributes = Account.attribute_names
-    attributes - ["federal_identification_number"]
+    attributes = attributes - ["federal_identification_number"]
 
 
     PolicyCalculation.column_names.each do |p|
