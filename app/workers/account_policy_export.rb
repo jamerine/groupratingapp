@@ -17,7 +17,7 @@ class AccountPolicyExport
 
 
     PolicyCalculation.column_names.each do |p|
-      unless p == 'id' || p == 'federal_identification_number' || p == 'created_at' || p == 'updated_at' || p == 'account_id' ||
+      unless p == 'id' || p == 'federal_identification_number' || p == 'created_at' || p == 'updated_at' || p == 'account_id' || p == 'representative_id'
         attributes << p
       end
     end
@@ -28,7 +28,7 @@ class AccountPolicyExport
 
       @accounts.each do |account|
         # csv << attributes.map{ |attr| account.send(attr) }
-        csv_line = account.attributes.except("account_id, federal_identification_number").values
+        csv_line = account.attributes.except("account_id", "federal_identification_number").values
         csv_line << account.group_rating_rejections.where(program_type: 'group_rating').pluck(:reject_reason).to_s
         csv << csv_line
       end
