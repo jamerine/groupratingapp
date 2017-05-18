@@ -19,7 +19,7 @@ class AccountPolicyExport
     PolicyCalculation.column_names.each do |p|
       unless p == 'id' || p == 'federal_identification_number' || p == 'created_at' || p == 'updated_at' || p == 'account_id' ||
         attributes << p
-      # end
+      end
     end
     attributes << "reject_reason"
 
