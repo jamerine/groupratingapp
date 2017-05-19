@@ -1,5 +1,5 @@
 class Contact < ActiveRecord::Base
-  has_many :accounts_contacts
+  has_many :accounts_contacts, dependent: :destroy
   has_many :accounts, through: :accounts_contacts
 
   # before_save {self.first_name = first_name.downcase.titleize}

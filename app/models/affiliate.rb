@@ -1,5 +1,5 @@
 class Affiliate < ActiveRecord::Base
-  has_many :accounts_affiliates
+  has_many :accounts_affiliates, dependent: :destroy
   has_many :accounts, through: :accounts_affiliates
 
   # before_save {self.first_name = first_name.downcase.titleize}
