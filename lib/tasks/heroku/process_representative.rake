@@ -6,7 +6,7 @@ namespace :heroku do
 
     puts "Group Rating Processing for ARM"
     stats = Sidekiq::Stats.new.fetch_stats!
-    if stats[:retry_size] > 0 || stats[:workers_size] > 0 || stats[:enqueued] > 0
+    if stats[:workers_size] > 0 || stats[:enqueued] > 0
       puts "Please wait for background update to finish."
     else
       @representative = Representative.find(1)
