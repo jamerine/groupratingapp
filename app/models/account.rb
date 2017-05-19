@@ -3,10 +3,10 @@ class Account < ActiveRecord::Base
 
   belongs_to :representative
   has_many :account_programs, dependent: :destroy
-  has_many :accounts_affiliates
-  has_many :accounts_contacts
-  has_many :affiliates, through: :accounts_affiliates
-  has_many :contacts, through: :accounts_contacts
+  has_many :accounts_affiliates, dependent: :destroy
+  has_many :accounts_contacts, dependent: :destroy
+  has_many :affiliates, through: :accounts_affiliates, dependent: :destroy
+  has_many :contacts, through: :accounts_contacts, dependent: :destroy
   has_many :group_rating_exceptions, dependent: :destroy
   has_many :group_rating_rejections, dependent: :destroy
   has_one :policy_calculation, dependent: :destroy
