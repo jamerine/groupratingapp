@@ -16,6 +16,7 @@ class FeesController < ApplicationController
     @parameters[:group_rating_tier] = params[:group_rating_tier] if params[:group_rating_tier].present?
     @parameters[:group_retro_tier] = params[:group_retro_tier] if params[:group_retro_tier].present?
     @parameters[:fee_change_percent] = params[:fee_change_percent] if params[:fee_change_percent].present?
+    puts @parameters
 
     respond_to do |format|
       format.html
@@ -40,7 +41,8 @@ class FeesController < ApplicationController
       @accounts = Account.where(representative_id: @parameters["representative_id"])
       @accounts = @accounts.status(@parameters["status"]) if @parameters["status"].present?
       @accounts = @accounts.group_rating_tier(@parameters["group_rating_tier"]) if @parameters["group_rating_tier"].present?
-      @accounts = @accounts.fee_change_percent(@parameters["fee_change_percent"]) if @parameters["fee_change_percent"].present?
+      @percent_change = (@parameters["fee_change_percent"].to_f / 100) if @parameters["fee_change_percent"].present?
+      @accounts = @accounts.fee_change_percent(@percent_change) if @percent_change.present?
     end
 
   end
