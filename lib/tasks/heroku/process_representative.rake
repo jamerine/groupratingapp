@@ -19,7 +19,7 @@ namespace :heroku do
         @import = Import.new(process_representative: @representative.representative_number, representative_id: @new_group_rating.representative_id, group_rating_id: @new_group_rating.id, import_status: 'Queuing', parse_status: 'Queuing')
           # Flat files
           if @import.save
-            ImportProcess.perform_async(@import.process_representative, @import.id, @representative.abbreviated_name, @new_group_rating.id, 1)
+            ImportsProcess.perform_async(@import.process_representative, @import.id, @representative.abbreviated_name, @new_group_rating.id, 1)
           end
         end
     end

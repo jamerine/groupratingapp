@@ -34,7 +34,7 @@ class GroupRatingsController < ApplicationController
         @import = Import.new(process_representative: @group_rating.process_representative, representative_id: @group_rating.representative_id, group_rating_id: @group_rating.id, import_status: 'Queuing', parse_status: 'Queuing')
           # Flat files
           if @import.save
-            ImportProcess.perform_async(@import.process_representative, @import.id, @representative.abbreviated_name, @group_rating.id)
+            ImportsProcess.perform_async(@import.process_representative, @import.id, @representative.abbreviated_name, @group_rating.id)
             redirect_to group_ratings_path, notice: "Import, processing and group rating have been queued. Please refresh your page to view progress"
           end
         end
