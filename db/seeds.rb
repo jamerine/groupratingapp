@@ -44,22 +44,22 @@
     ])
 
   representatives = Representative.create([
-    { representative_number: 219406, abbreviated_name: 'ARM', company_name: 'Alternative Risk Management' },
-    { representative_number: 218265, abbreviated_name: 'COSE', company_name: 'Council of Smaller Enterprises' },
-    { representative_number: 217564, abbreviated_name: 'ECP', company_name: 'Employers Choice Plus' },
-    { representative_number: 1714, abbreviated_name: 'GCADA', company_name: 'Greater Cleveland Automobile Dealers' },
-    { representative_number: 1706, abbreviated_name: 'GMSCLI', company_name: 'Group Management Services Clients' },
-    { representative_number: 217381, abbreviated_name: 'GMSPRO', company_name: 'Group Management Services Prospects' },
-    { representative_number: 1796, abbreviated_name: 'MAAG' , company_name: 'Maag'},
-    { representative_number: 1740, abbreviated_name: 'MATRIX', company_name: 'Matrix' },
-    { representative_number: 220217, abbreviated_name: 'MMHR2', company_name: 'Minute Man HR' },
-    { representative_number: 219313, abbreviated_name: 'MMHR1', company_name: 'Minute Men Select' },
-    { representative_number: 20634, abbreviated_name: 'OBRIEN', company_name: "Dan O'Brien" },
-    { representative_number: 219952, abbreviated_name: 'SCLLC', company_name: 'Tom Stefanik'  },
-    { representative_number: 218961, abbreviated_name: 'TRIDENT', company_name: 'Trident' },
-    { representative_number: 217351, abbreviated_name: 'UNITED', company_name: 'United Corp' },
-    { representative_number: 21152, abbreviated_name: 'WHPCB', company_name: 'Wickens Herzer'  },
-    { representative_number: 1633, abbreviated_name: 'CPM', company_name: 'CPM Risk Management'  }
+    { representative_number: 219406, abbreviated_name: 'ARM', company_name: 'Alternative Risk Management', experience_period_lower_date: '2012-07-01', experience_period_upper_date: '2016-06-30', current_payroll_period_lower_date: '2015-07-01', current_payroll_period_upper_date: '2016-06-30', current_payroll_year: 2015, program_year_lower_date: '2017-07-01', program_year_upper_date: '2018-06-30', program_year: 2017, quote_year_lower_date: '2018-07-01', quote_year_upper_date: '2019-06-30', quote_year: 2018 },
+    { representative_number: 218265, abbreviated_name: 'COSE', company_name: 'Council of Smaller Enterprises', experience_period_lower_date: '2012-07-01', experience_period_upper_date: '2016-06-30', current_payroll_period_lower_date: '2015-07-01', current_payroll_period_upper_date: '2016-06-30', current_payroll_year: 2015, program_year_lower_date: '2017-07-01', program_year_upper_date: '2018-06-30', program_year: 2017, quote_year_lower_date: '2018-07-01', quote_year_upper_date: '2019-06-30', quote_year: 2018 },
+    { representative_number: 217564, abbreviated_name: 'ECP', company_name: 'Employers Choice Plus', experience_period_lower_date: '2012-07-01', experience_period_upper_date: '2016-06-30', current_payroll_period_lower_date: '2015-07-01', current_payroll_period_upper_date: '2016-06-30', current_payroll_year: 2015, program_year_lower_date: '2017-07-01', program_year_upper_date: '2018-06-30', program_year: 2017, quote_year_lower_date: '2018-07-01', quote_year_upper_date: '2019-06-30', quote_year: 2018 },
+    { representative_number: 1714, abbreviated_name: 'GCADA', company_name: 'Greater Cleveland Automobile Dealers', experience_period_lower_date: '2012-07-01', experience_period_upper_date: '2016-06-30', current_payroll_period_lower_date: '2015-07-01', current_payroll_period_upper_date: '2016-06-30', current_payroll_year: 2015, program_year_lower_date: '2017-07-01', program_year_upper_date: '2018-06-30', program_year: 2017, quote_year_lower_date: '2018-07-01', quote_year_upper_date: '2019-06-30', quote_year: 2018 },
+    { representative_number: 1706, abbreviated_name: 'GMSCLI', company_name: 'Group Management Services Clients', experience_period_lower_date: '2012-07-01', experience_period_upper_date: '2016-06-30', current_payroll_period_lower_date: '2015-07-01', current_payroll_period_upper_date: '2016-06-30', current_payroll_year: 2015, program_year_lower_date: '2017-07-01', program_year_upper_date: '2018-06-30', program_year: 2017, quote_year_lower_date: '2018-07-01', quote_year_upper_date: '2019-06-30', quote_year: 2018 },
+    { representative_number: 217381, abbreviated_name: 'GMSPRO', company_name: 'Group Management Services Prospects', experience_period_lower_date: '2012-07-01', experience_period_upper_date: '2016-06-30', current_payroll_period_lower_date: '2015-07-01', current_payroll_period_upper_date: '2016-06-30', current_payroll_year: 2015, program_year_lower_date: '2017-07-01', program_year_upper_date: '2018-06-30', program_year: 2017, quote_year_lower_date: '2018-07-01', quote_year_upper_date: '2019-06-30', quote_year: 2018 },
+    { representative_number: 1796, abbreviated_name: 'MAAG' , company_name: 'Maag', experience_period_lower_date: '2012-07-01', experience_period_upper_date: '2016-06-30', current_payroll_period_lower_date: '2015-07-01', current_payroll_period_upper_date: '2016-06-30', current_payroll_year: 2015, program_year_lower_date: '2017-07-01', program_year_upper_date: '2018-06-30', program_year: 2017, quote_year_lower_date: '2018-07-01', quote_year_upper_date: '2019-06-30', quote_year: 2018},
+    { representative_number: 1740, abbreviated_name: 'MATRIX', company_name: 'Matrix', experience_period_lower_date: '2012-07-01', experience_period_upper_date: '2016-06-30', current_payroll_period_lower_date: '2015-07-01', current_payroll_period_upper_date: '2016-06-30', current_payroll_year: 2015, program_year_lower_date: '2017-07-01', program_year_upper_date: '2018-06-30', program_year: 2017, quote_year_lower_date: '2018-07-01', quote_year_upper_date: '2019-06-30', quote_year: 2018 },
+    { representative_number: 220217, abbreviated_name: 'MMHR2', company_name: 'Minute Man HR', experience_period_lower_date: '2012-07-01', experience_period_upper_date: '2016-06-30', current_payroll_period_lower_date: '2015-07-01', current_payroll_period_upper_date: '2016-06-30', current_payroll_year: 2015, program_year_lower_date: '2017-07-01', program_year_upper_date: '2018-06-30', program_year: 2017, quote_year_lower_date: '2018-07-01', quote_year_upper_date: '2019-06-30', quote_year: 2018 },
+    { representative_number: 219313, abbreviated_name: 'MMHR1', company_name: 'Minute Men Select', experience_period_lower_date: '2012-07-01', experience_period_upper_date: '2016-06-30', current_payroll_period_lower_date: '2015-07-01', current_payroll_period_upper_date: '2016-06-30', current_payroll_year: 2015, program_year_lower_date: '2017-07-01', program_year_upper_date: '2018-06-30', program_year: 2017, quote_year_lower_date: '2018-07-01', quote_year_upper_date: '2019-06-30', quote_year: 2018 },
+    { representative_number: 20634, abbreviated_name: 'OBRIEN', company_name: "Dan O'Brien", experience_period_lower_date: '2012-07-01', experience_period_upper_date: '2016-06-30', current_payroll_period_lower_date: '2015-07-01', current_payroll_period_upper_date: '2016-06-30', current_payroll_year: 2015, program_year_lower_date: '2017-07-01', program_year_upper_date: '2018-06-30', program_year: 2017, quote_year_lower_date: '2018-07-01', quote_year_upper_date: '2019-06-30', quote_year: 2018 },
+    { representative_number: 219952, abbreviated_name: 'SCLLC', company_name: 'Tom Stefanik', experience_period_lower_date: '2012-07-01', experience_period_upper_date: '2016-06-30', current_payroll_period_lower_date: '2015-07-01', current_payroll_period_upper_date: '2016-06-30', current_payroll_year: 2015, program_year_lower_date: '2017-07-01', program_year_upper_date: '2018-06-30', program_year: 2017, quote_year_lower_date: '2018-07-01', quote_year_upper_date: '2019-06-30', quote_year: 2018  },
+    { representative_number: 218961, abbreviated_name: 'TRIDENT', company_name: 'Trident', experience_period_lower_date: '2012-07-01', experience_period_upper_date: '2016-06-30', current_payroll_period_lower_date: '2015-07-01', current_payroll_period_upper_date: '2016-06-30', current_payroll_year: 2015, program_year_lower_date: '2017-07-01', program_year_upper_date: '2018-06-30', program_year: 2017, quote_year_lower_date: '2018-07-01', quote_year_upper_date: '2019-06-30', quote_year: 2018 },
+    { representative_number: 217351, abbreviated_name: 'UNITED', company_name: 'United Corp', experience_period_lower_date: '2012-07-01', experience_period_upper_date: '2016-06-30', current_payroll_period_lower_date: '2015-07-01', current_payroll_period_upper_date: '2016-06-30', current_payroll_year: 2015, program_year_lower_date: '2017-07-01', program_year_upper_date: '2018-06-30', program_year: 2017, quote_year_lower_date: '2018-07-01', quote_year_upper_date: '2019-06-30', quote_year: 2018 },
+    { representative_number: 21152, abbreviated_name: 'WHPCB', company_name: 'Wickens Herzer', experience_period_lower_date: '2012-07-01', experience_period_upper_date: '2016-06-30', current_payroll_period_lower_date: '2015-07-01', current_payroll_period_upper_date: '2016-06-30', current_payroll_year: 2015, program_year_lower_date: '2017-07-01', program_year_upper_date: '2018-06-30', program_year: 2017, quote_year_lower_date: '2018-07-01', quote_year_upper_date: '2019-06-30', quote_year: 2018  },
+    { representative_number: 1633, abbreviated_name: 'CPM', company_name: 'CPM Risk Management', experience_period_lower_date: '2012-07-01', experience_period_upper_date: '2016-06-30', current_payroll_period_lower_date: '2015-07-01', current_payroll_period_upper_date: '2016-06-30', current_payroll_year: 2015, program_year_lower_date: '2017-07-01', program_year_upper_date: '2018-06-30', program_year: 2017, quote_year_lower_date: '2018-07-01', quote_year_upper_date: '2019-06-30', quote_year: 2018  }
 
     ])
 
@@ -133,6 +133,40 @@ RepresentativesUser.create({user_id: 5, representative_id: 15})
 RepresentativesUser.create({user_id: 6, representative_id: 1})
 RepresentativesUser.create({user_id: 7, representative_id: 1})
 RepresentativesUser.create({user_id: 8, representative_id: 1})
+RepresentativesUser.create({user_id: 17, representative_id: 1})
+RepresentativesUser.create({user_id: 18, representative_id: 1})
+RepresentativesUser.create({user_id: 9, representative_id: 2})
+RepresentativesUser.create({user_id: 10, representative_id: 2})
+RepresentativesUser.create({user_id: 11, representative_id: 2})
+RepresentativesUser.create({user_id: 12, representative_id: 2})
+RepresentativesUser.create({user_id: 13, representative_id: 2})
+RepresentativesUser.create({user_id: 14, representative_id: 2})
+RepresentativesUser.create({user_id: 15, representative_id: 2})
+RepresentativesUser.create({user_id: 16, representative_id: 2})
+RepresentativesUser.create({user_id: 9, representative_id: 16})
+RepresentativesUser.create({user_id: 10, representative_id: 16})
+RepresentativesUser.create({user_id: 11, representative_id: 16})
+RepresentativesUser.create({user_id: 12, representative_id: 16})
+RepresentativesUser.create({user_id: 13, representative_id: 16})
+RepresentativesUser.create({user_id: 14, representative_id: 16})
+RepresentativesUser.create({user_id: 15, representative_id: 16})
+RepresentativesUser.create({user_id: 16, representative_id: 16})
+RepresentativesUser.create({user_id: 9, representative_id: 9})
+RepresentativesUser.create({user_id: 10, representative_id: 9})
+RepresentativesUser.create({user_id: 11, representative_id: 9})
+RepresentativesUser.create({user_id: 12, representative_id: 9})
+RepresentativesUser.create({user_id: 13, representative_id: 9})
+RepresentativesUser.create({user_id: 14, representative_id: 9})
+RepresentativesUser.create({user_id: 15, representative_id: 9})
+RepresentativesUser.create({user_id: 16, representative_id: 9})
+RepresentativesUser.create({user_id: 9, representative_id: 10})
+RepresentativesUser.create({user_id: 10, representative_id: 10})
+RepresentativesUser.create({user_id: 11, representative_id: 10})
+RepresentativesUser.create({user_id: 12, representative_id: 10})
+RepresentativesUser.create({user_id: 13, representative_id: 10})
+RepresentativesUser.create({user_id: 14, representative_id: 10})
+RepresentativesUser.create({user_id: 15, representative_id: 10})
+RepresentativesUser.create({user_id: 16, representative_id: 10})
 
 BwcAnnualManualClassChange.create([
   { manual_class_from: 8061, manual_class_to: 8006, policy_year: 1999 },
