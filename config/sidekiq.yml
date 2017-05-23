@@ -5,8 +5,8 @@ production:
 
 :queues:
   - default
-  - import_files
-  - imports_process
+  - import_file
+  - import_process
   - parse_file
   - group_rating_step_one
   - group_rating_step_two
