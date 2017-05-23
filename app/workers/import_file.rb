@@ -1,6 +1,6 @@
-class ImportFiles
+class ImportFile
   include Sidekiq::Worker
-  sidekiq_options queue: :import_files, retry: 1
+  sidekiq_options queue: :import_file, retry: 1
 
   def perform(url, table_name, import_id, group_rating_id, all_process=nil)
     time1 = Time.new
