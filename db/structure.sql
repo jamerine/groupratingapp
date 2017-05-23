@@ -8205,26 +8205,6 @@ ALTER SEQUENCE bwc_codes_industry_group_savings_ratio_criteria_id_seq OWNED BY b
 
 
 --
--- Name: bwc_codes_limited_loss_rate_2017; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE bwc_codes_limited_loss_rate_2017 (
-    industry_group integer,
-    credibility_group integer,
-    limited_loss_rate numeric
-);
-
-
---
--- Name: bwc_codes_limited_loss_rate_2017_flat; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE bwc_codes_limited_loss_rate_2017_flat (
-    single_rec character(100)
-);
-
-
---
 -- Name: bwc_codes_limited_loss_ratios; Type: TABLE; Schema: public; Owner: -
 --
 
