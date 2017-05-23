@@ -68,9 +68,19 @@ User.create({first_name: "Paul", last_name: "Collins", role: 0, email: 'paul@dit
 User.create({first_name: "Doug", last_name: "Maag", role: 0, email: 'dmaag@alternativeriskltd.com', password: 'tigers'})
 User.create({first_name: "Steve", last_name: "Chmielewski", role: 0, email: 'steve.chmielewski@minutemenhr.com', password: 'indians'})
 User.create({first_name: "Tim", last_name: "Betz", role: 2, email: 'tbetz@alternativeriskltd.com', password: 'password'})
-User.create({first_name: "Richard", last_name: "Kurth", role: 2, email: 'rkurth@alternativeriskltd.com', password: 'password'})
+User.create({first_name: "Richard", last_name: "Kurth", role: 0, email: 'rkurth@alternativeriskltd.com', password: 'password'})
 User.create({first_name: "Deanna", last_name: "Sanders", role: 2, email: 'dsanders@alternativeriskltd.com', password: 'password'})
 User.create({first_name: "Paul", last_name: "Kay", role: 2, email: 'PaulKay@alternativeriskltd.com', password: 'password'})
+User.create({first_name: "Brenden", last_name: "Dalzell", role: 0, email: 'brenden.dalzell@minutemenhr.com', password: 'password'})
+User.create({first_name: "Bryan", last_name: "Richert", role: 0, email: 'bryan.richert@minutemenhr.com', password: 'password'})
+User.create({first_name: "Nicole", last_name: "Rainier", role: 0, email: 'nicole.rainier@minutemenhr.com', password: 'password'})
+User.create({first_name: "Mike", last_name: "Cipullo", role: 0, email: 'mike.cipullo@minutemenhr.com', password: 'password'})
+User.create({first_name: "Sam", last_name: "Busacca", role: 0, email: 'sam.busacca@minutemenhr.com', password: 'password'})
+User.create({first_name: "David", last_name: "Wells", role: 0, email: 'david.wells@minutemenhr.com', password: 'password'})
+User.create({first_name: "Maria", last_name: "Mastrandrea", role: 0, email: 'maria.mastrandrea@minutemenhr.com', password: 'password'})
+User.create({first_name: "Steve", last_name: "Chmielewski", role: 0, email: 'stevechmielewski@hotmail.com', password: 'password'})
+User.create({first_name: "Stephanie", last_name: "Shepherd", role: 2, email: 'sshepherd@alternativeriskltd.com', password: 'password'})
+User.create({first_name: "Jessica", last_name: "Abrams", role: 2, email: 'jabrams@alternativeriskltd.com', password: 'password'})
 
 
 
