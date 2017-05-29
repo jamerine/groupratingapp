@@ -31,6 +31,9 @@
 # AccountImportProcess.perform_async('https://s3.amazonaws.com/grouprating/BwcSupportTables/cpm_account_convert.csv')
 
 
+##### NEW CONVERSIONS ###### 05-24
+# AccountImportProcess.perform_async('https://s3.amazonaws.com/grouprating/BwcSupportTables/all_mmhr_accounts_5_24.csv')
+
 
 
 
@@ -59,8 +62,8 @@
     { representative_number: 218961, abbreviated_name: 'TRIDENT', company_name: 'Trident', experience_period_lower_date: '2012-07-01', experience_period_upper_date: '2016-06-30', current_payroll_period_lower_date: '2015-07-01', current_payroll_period_upper_date: '2016-06-30', current_payroll_year: 2015, program_year_lower_date: '2017-07-01', program_year_upper_date: '2018-06-30', program_year: 2017, quote_year_lower_date: '2018-07-01', quote_year_upper_date: '2019-06-30', quote_year: 2018 },
     { representative_number: 217351, abbreviated_name: 'UNITED', company_name: 'United Corp', experience_period_lower_date: '2012-07-01', experience_period_upper_date: '2016-06-30', current_payroll_period_lower_date: '2015-07-01', current_payroll_period_upper_date: '2016-06-30', current_payroll_year: 2015, program_year_lower_date: '2017-07-01', program_year_upper_date: '2018-06-30', program_year: 2017, quote_year_lower_date: '2018-07-01', quote_year_upper_date: '2019-06-30', quote_year: 2018 },
     { representative_number: 21152, abbreviated_name: 'WHPCB', company_name: 'Wickens Herzer', experience_period_lower_date: '2012-07-01', experience_period_upper_date: '2016-06-30', current_payroll_period_lower_date: '2015-07-01', current_payroll_period_upper_date: '2016-06-30', current_payroll_year: 2015, program_year_lower_date: '2017-07-01', program_year_upper_date: '2018-06-30', program_year: 2017, quote_year_lower_date: '2018-07-01', quote_year_upper_date: '2019-06-30', quote_year: 2018  },
-    { representative_number: 1633, abbreviated_name: 'CPM', company_name: 'CPM Risk Management', experience_period_lower_date: '2012-07-01', experience_period_upper_date: '2016-06-30', current_payroll_period_lower_date: '2015-07-01', current_payroll_period_upper_date: '2016-06-30', current_payroll_year: 2015, program_year_lower_date: '2017-07-01', program_year_upper_date: '2018-06-30', program_year: 2017, quote_year_lower_date: '2018-07-01', quote_year_upper_date: '2019-06-30', quote_year: 2018  }
-
+    { representative_number: 1633, abbreviated_name: 'CPM', company_name: 'CPM Risk Management', experience_period_lower_date: '2012-07-01', experience_period_upper_date: '2016-06-30', current_payroll_period_lower_date: '2015-07-01', current_payroll_period_upper_date: '2016-06-30', current_payroll_year: 2015, program_year_lower_date: '2017-07-01', program_year_upper_date: '2018-06-30', program_year: 2017, quote_year_lower_date: '2018-07-01', quote_year_upper_date: '2019-06-30', quote_year: 2018  },
+    { representative_number: 1334, abbreviated_name: 'TARTAN', company_name: 'Tartan Benefit Services', experience_period_lower_date: '2012-07-01', experience_period_upper_date: '2016-06-30', current_payroll_period_lower_date: '2015-07-01', current_payroll_period_upper_date: '2016-06-30', current_payroll_year: 2015, program_year_lower_date: '2017-07-01', program_year_upper_date: '2018-06-30', program_year: 2017, quote_year_lower_date: '2018-07-01', quote_year_upper_date: '2019-06-30', quote_year: 2018  }
     ])
 
 User.create({first_name: "Jason", last_name: "Amerine", role: 0, email: 'jason@dittoh.com', password: 'Jamrine08'})
@@ -167,6 +170,17 @@ RepresentativesUser.create({user_id: 13, representative_id: 10})
 RepresentativesUser.create({user_id: 14, representative_id: 10})
 RepresentativesUser.create({user_id: 15, representative_id: 10})
 RepresentativesUser.create({user_id: 16, representative_id: 10})
+RepresentativesUser.create({user_id: 1, representative_id: 17})
+RepresentativesUser.create({user_id: 9, representative_id: 17})
+RepresentativesUser.create({user_id: 10, representative_id: 17})
+RepresentativesUser.create({user_id: 11, representative_id: 17})
+RepresentativesUser.create({user_id: 12, representative_id: 17})
+RepresentativesUser.create({user_id: 13, representative_id: 17})
+RepresentativesUser.create({user_id: 14, representative_id: 17})
+RepresentativesUser.create({user_id: 15, representative_id: 17})
+RepresentativesUser.create({user_id: 16, representative_id: 17})
+RepresentativesUser.create({user_id: 4, representative_id: 17})
+
 
 BwcAnnualManualClassChange.create([
   { manual_class_from: 8061, manual_class_to: 8006, policy_year: 1999 },

@@ -31,7 +31,7 @@ class ContactsController < ApplicationController
   end
 
   def import_contact_process
-    CSV.foreach(params[:file].path, headers: true) do |row|
+    CSV.foreach(params[:file].path, headers: true, encoding:'iso-8859-1:utf-8') do |row|
       contact_hash = row.to_hash # exclude the price field
       ContactImport.perform_async(contact_hash)
     end

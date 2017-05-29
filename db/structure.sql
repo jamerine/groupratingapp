@@ -47,6 +47,23 @@ CREATE FUNCTION cast_to_int(text) RETURNS integer
 
 
 --
+-- Name: cast_to_numeric(text); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION cast_to_numeric(text) RETURNS numeric
+    LANGUAGE plpgsql
+    AS $_$
+      begin
+          -- Note the double casting to avoid infinite recursion.
+          return cast($1::varchar as double precision);
+      exception
+          when invalid_text_representation then
+              return 0;
+      end;
+      $_$;
+
+
+--
 -- Name: proc_process_flat_democs(); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -1012,8 +1029,12 @@ CREATE FUNCTION proc_process_flat_rates() RETURNS void
         cast_to_int(split_part(single_rec, '|',7)),
         split_part(single_rec, '|',8)::date,
         split_part(single_rec, '|',9),
-        split_part(single_rec, '|',10)::date,
-        split_part(single_rec, '|',11)::date,
+        case when split_part(single_rec, '|',10) = ' ' THEN null
+          else split_part(single_rec, '|',10)::date
+        end,
+        case when split_part(single_rec, '|',11) = ' ' THEN null
+          else split_part(single_rec, '|',11)::date
+        end,
         cast_to_int(split_part(single_rec, '|',12)),
         split_part(single_rec, '|',13),
         split_part(single_rec, '|',14),
@@ -1022,13 +1043,14 @@ CREATE FUNCTION proc_process_flat_rates() RETURNS void
         split_part(single_rec, '|',17),
         split_part(single_rec, '|',18),
         cast_to_int(split_part(single_rec, '|',19)),
-        cast(split_part(single_rec, '|',20) as numeric),
+        cast_to_numeric(split_part(single_rec, '|',20)),
         split_part(single_rec, '|',21),
         cast_to_int(split_part(single_rec, '|',22)),
-        cast(split_part(single_rec, '|',23) as numeric),
+        cast_to_numeric(split_part(single_rec, '|',23)),
         current_timestamp::timestamp as created_at,
         current_timestamp::timestamp as updated_at
        FROM public.rates
+
 
       );
 
@@ -13528,4 +13550,8 @@ INSERT INTO schema_migrations (version) VALUES ('20170512111623');
 INSERT INTO schema_migrations (version) VALUES ('20170512112035');
 
 INSERT INTO schema_migrations (version) VALUES ('20170512152432');
+
+INSERT INTO schema_migrations (version) VALUES ('20170529174752');
+
+INSERT INTO schema_migrations (version) VALUES ('20170529174917');
 
