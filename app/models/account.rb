@@ -306,9 +306,9 @@ class Account < ActiveRecord::Base
 
            if lapse_sum >= 60
              GroupRatingRejection.create(program_type: 'group_rating', account_id: self.id, reject_reason: 'reject_60+_lapse', representative_id: self.representative_id)
-             if self.group_rating_exceptions.where(exception_reason: 'group_rating_60+_lapse', resolved: true).empty?
-               GroupRatingException.create(account_id: self.id, exception_reason: 'group_rating_60+_lapse', representative_id: self.representative_id)
-             end
+            #  if self.group_rating_exceptions.where(exception_reason: 'group_rating_60+_lapse', resolved: true).empty?
+            #    GroupRatingException.create(account_id: self.id, exception_reason: 'group_rating_60+_lapse', representative_id: self.representative_id)
+            #  end
            elsif lapse_sum < 60 && lapse_sum >= 40
              if self.group_rating_exceptions.where(exception_reason: 'group_rating_40-60_lapse', resolved: true).empty?
                GroupRatingException.create(account_id: self.id, exception_reason: 'group_rating_40-60_lapse', representative_id: self.representative_id)
@@ -398,9 +398,10 @@ class Account < ActiveRecord::Base
               GroupRatingRejection.create(program_type: 'group_retro', account_id: self.id, reject_reason: 'reject_si_peo', representative_id: @group_rating.representative_id)
             end
           else
+            # Fixed group retro to only reject if effective date is within range and termination dat nil saying that they are still in a sf peo.
             if
               ((!peo_record.manual_class_sf_peo_lease_effective_date.nil? && peo_record.manual_class_sf_peo_lease_termination_date.nil?) || (peo_record.manual_class_sf_peo_lease_effective_date > peo_record.manual_class_sf_peo_lease_termination_date)) ||
-              ((group_retro_range === peo_record.manual_class_sf_peo_lease_effective_date) || (group_retro_range === peo_record.manual_class_sf_peo_lease_termination_date))
+              ((group_retro_range === peo_record.manual_class_sf_peo_lease_effective_date) && (peo_record.manual_class_sf_peo_lease_termination_date.nil?))
               GroupRatingRejection.create(program_type: 'group_retro', account_id: self.id, reject_reason: 'reject_sf_peo', representative_id: @group_rating.representative_id)
             end
           end
