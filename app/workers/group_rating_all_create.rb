@@ -69,7 +69,7 @@ class GroupRatingAllCreate
           )
 
           FinalClaimCostCalculationTable.where(representative_number: @policy_calculation.representative_number, policy_number: @policy_calculation.policy_number).each do |claim|
-            ClaimCalculation.where(representative_number: claim.representative_number, policy_number: claim.policy_number, claim_number: claim.claim_number, claim_status_effective_date: claim.claim_status_effective_date).update_or_create(
+            ClaimCalculation.where(representative_number: claim.representative_number, policy_number: claim.policy_number, claim_number: claim.claim_number).update_or_create(
               representative_number: claim.representative_number,
               policy_number: claim.policy_number,
               policy_calculation_id: @policy_calculation.id,
@@ -186,7 +186,6 @@ class GroupRatingAllCreate
                   manual_class_type: payroll_transaction.manual_class_type,
                   manual_number: payroll_transaction.manual_number,
                   manual_class_calculation_id: @manual_class_calculation.id,
-                  manual_class_rate: payroll_transaction.manual_class_rate,
                   reporting_period_start_date: payroll_transaction.reporting_period_start_date,
                   reporting_period_end_date: payroll_transaction.reporting_period_end_date,
                   policy_transferred: payroll_transaction.policy_transferred,
