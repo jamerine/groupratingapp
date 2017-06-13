@@ -1,7 +1,7 @@
 class AccountImport
   include Sidekiq::Worker
 
-  sidekiq_options queue: :import_file
+  sidekiq_options queue: :import_file, retry: 1
 
   def perform(hash)
 
