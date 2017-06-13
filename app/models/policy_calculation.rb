@@ -147,6 +147,20 @@ class PolicyCalculation < ActiveRecord::Base
       end
 
 
+      # Added this logic to default to industry_group 7 when a policy is calculated to industry_group 9 and then changed to 8 if there is more premium in 8 than 7
+      
+      if @highest_industry_group == 9
+        if @collection.include? 7
+          @highest_industry_group = {industry_group: 7, standard_premium: self.manual_class_calculations.where(manual_class_industry_group: 7).sum(:manual_class_standard_premium)}
+        end
+        if @collection.include? 8
+          if self.manual_class_calculations.where(manual_class_industry_group: 8).sum(:manual_class_standard_premium) > self.manual_class_calculations.where(manual_class_industry_group: 7).sum(:manual_class_standard_premium)
+            @highest_industry_group = {industry_group: 8, standard_premium: self.manual_class_calculations.where(manual_class_industry_group: 8).sum(:manual_class_standard_premium)}
+          end
+        end
+      end
+
+
     @policy_total_individual_premium =   self.manual_class_calculations.sum(:manual_class_estimated_individual_premium).round(2)
     # @policy_total_individual_premium =   policy.manual_class_calculations.sum(:manual_class_estimated_individual_premium).round(2)
 

@@ -2,7 +2,7 @@ require 'open-uri'
 class AccountProgramImportProcess
   include Sidekiq::Worker
 
-  sidekiq_options queue: :import_file
+  sidekiq_options queue: :import_file, retry: 1
 
   def perform(file)
     csv_file = open(file,'rb:UTF-8')

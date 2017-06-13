@@ -2,7 +2,7 @@ class AccountPolicyExport
   require 'csv'
   include Sidekiq::Worker
 
-  sidekiq_options queue: :account_policy_export
+  sidekiq_options queue: :account_policy_export, retry: 1
 
   def perform(current_user_id, representative_id)
     @user = User.find(current_user_id)
