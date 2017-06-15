@@ -64,6 +64,8 @@ class ManualClassCalculation < ActiveRecord::Base
 
       @manual_class_four_year_sum = @manual_class_self_four_year_sum + @manual_class_comb_four_year_sum
 
+      @manual_class_four_year_sum = @manual_class_four_year_sum < 0 ? 0 : @manual_class_four_year_sum
+
       @manual_class_current_payroll = self.payroll_calculations.where("reporting_period_start_date >= :current_payroll_period_lower_date and reporting_period_start_date < :current_payroll_period_upper_date", current_payroll_period_lower_date: @group_rating.current_payroll_period_lower_date, current_payroll_period_upper_date: @group_rating.current_payroll_period_upper_date).sum(:manual_class_payroll).round(2)
 
 
