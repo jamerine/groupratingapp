@@ -83,6 +83,8 @@ class ManualClassCalculation < ActiveRecord::Base
         end
       end
 
+      @manual_class_current_payroll = @manual_class_current_payroll < 0 ? 0 : @manual_class_current_payroll
+
       @bwc_base_rate = BwcCodesBaseRatesExpLossRate.find_by(class_code: self.manual_number)
       # @bwc_base_rate = BwcCodesBaseRatesExpLossRate.find_by(class_code: manual.manual_number)
 
