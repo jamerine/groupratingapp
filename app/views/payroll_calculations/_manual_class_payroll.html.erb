@@ -48,7 +48,7 @@
       </div>
       <div class="col-md-2 col-sm-6 col-xs-6">
         <h5 class="hidden-md hidden-lg">Payroll Origin</h5>
-        <p> <%= payroll_calculation.payroll_origin %></p>
+        <p> <%= payroll_calculation.payroll_origin.truncate(30) %></p>
       </div>
       <div class="col-md-1 col-sm-6 col-xs-6">
         <h5 class="hidden-md hidden-lg">Payroll Source</h5>
