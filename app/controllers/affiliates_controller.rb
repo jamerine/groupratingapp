@@ -29,12 +29,17 @@ class AffiliatesController < ApplicationController
 
   def import_affiliate_process
 
-    CSV.foreach(params[:file].path, headers: true, encoding: 'iso-8859-1:utf-8') do |row|
-      affiliate_hash = row.to_hash # exclude the price field
-      AffiliateImport.perform_async(affiliate_hash)
-    end
+    # CSV.foreach(params[:file].path, headers: true, encoding: 'iso-8859-1:utf-8') do |row|
+    #   affiliate_hash = row.to_hash # exclude the price field
+    #   AffiliateImport.perform_async(affiliate_hash)
+    # end
 
-    redirect_to root_url, notice: "Affiliates imported."
+    begin
+      AffiliateImportProcess.perform_async(params[:file].path)
+      redirect_to :back, notice: "Affiliates imported."
+    rescue
+      redirect_to :back, alert: "There was an error importing file.  Please ensure file columns and file type are correct"
+    end
   end
 
 

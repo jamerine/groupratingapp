@@ -17,10 +17,10 @@
     <tbody>
       <% accounts.order("representative_id asc, status desc, name asc").each do |account| %>
       <tr>
-        <td><%= link_to "#{account.policy_calculation.policy_number}",account_path(account.id), class: 'btn btn-info' %> </td>
+        <td><%= link_to "#{account.policy_number_entered}",account_path(account.id), class: 'btn btn-info' %> </td>
         <td><%= account.try(:name).try(:titleize) %> </td>
         <td><%= account.status.humanize %> </td>
-        <td><%= account.policy_calculation.current_coverage_status %></td>
+        <td><%= account.policy_calculation.try(:current_coverage_status) %></td>
         <td><%= account.representative.abbreviated_name %></td>
         <td><%= account.updated_at.in_time_zone("America/New_York").strftime("%m/%d/%y @ %I:%M %p") %> </td>
       </tr>

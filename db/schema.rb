@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170615180338) do
+ActiveRecord::Schema.define(version: 20170616125644) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1390,11 +1390,9 @@ ActiveRecord::Schema.define(version: 20170615180338) do
     t.integer  "program_type"
     t.integer  "status"
     t.float    "fees"
-    t.float    "amount"
     t.string   "invoice_number"
     t.string   "quote_generated"
     t.date     "quote_date"
-    t.date     "quote_sent_date"
     t.date     "effective_start_date"
     t.date     "effective_end_date"
     t.date     "ac2_signed_on"
@@ -1426,6 +1424,10 @@ ActiveRecord::Schema.define(version: 20170615180338) do
     t.integer  "quote_year"
     t.float    "paid_amount"
     t.string   "check_number"
+    t.boolean  "questionnaire_question_6"
+    t.string   "updated_by"
+    t.string   "created_by"
+    t.date     "paid_date"
   end
 
   add_index "quotes", ["account_id"], name: "index_quotes_on_account_id", using: :btree
