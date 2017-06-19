@@ -20,24 +20,6 @@
   BwcGroupAcceptRejectList.import_table('https://s3.amazonaws.com/grouprating/BwcSupportTables/2017+GROUP+ACCEPT_REJECT+LISTS+04-28-17.csv')
 
 
-# AccountProgramImportProcess.perform_async('https://s3.amazonaws.com/grouprating/BwcSupportTables/all_mmhr_account_prgram_05_02.csv')
-# AccountProgramImportProcess.perform_async('https://s3.amazonaws.com/grouprating/BwcSupportTables/ARM_2017_Account_Programs_05_02_retainer.csv')
-# AccountProgramImportProcess.perform_async('https://s3.amazonaws.com/grouprating/BwcSupportTables/ARM_2017_Account_Programs_05_02.csv')
-#### CPM Recent Account Programs
-# AccountProgramImportProcess.perform_async('https://s3.amazonaws.com/grouprating/BwcSupportTables/CURRENT_CLIENT_LIST_05-19_account_program.csv')
-# AccountImportProcess.perform_async('https://s3.amazonaws.com/grouprating/BwcSupportTables/ARM+Account+Update+Impot.csv')
-# AccountImportProcess.perform_async('https://s3.amazonaws.com/grouprating/BwcSupportTables/WC_CUSTOMER_convert.csv')
-# AccountImportProcess.perform_async('https://s3.amazonaws.com/grouprating/BwcSupportTables/WC_CUSTOMER_05_16_2017.csv')
-# AccountImportProcess.perform_async('https://s3.amazonaws.com/grouprating/BwcSupportTables/cpm_account_convert.csv')
-
-
-##### NEW CONVERSIONS ###### 05-24
-# AccountImportProcess.perform_async('https://s3.amazonaws.com/grouprating/BwcSupportTables/all_mmhr_accounts_5_24.csv')
-
-
-
-
-
   BwcCodesGroupRetroTier.create([
     { industry_group: 3, discount_tier: -0.51 },
     { industry_group: 7, discount_tier: -0.51 },
@@ -71,7 +53,7 @@ User.create({first_name: "Jason", last_name: "Amerine", role: 0, email: 'jason@d
 User.create({first_name: "Paul", last_name: "Collins", role: 0, email: 'paul@dittoh.com', password: 'password'})
 User.create({first_name: "Doug", last_name: "Maag", role: 0, email: 'dmaag@alternativeriskltd.com', password: 'tigers'})
 User.create({first_name: "Steve", last_name: "Chmielewski", role: 0, email: 'steve.chmielewski@minutemenhr.com', password: 'indians'})
-User.create({first_name: "Tim", last_name: "Betz", role: 2, email: 'tbetz@alternativeriskltd.com', password: 'password'})
+User.create({first_name: "Tim", last_name: "Betz", role: 0, email: 'tbetz@alternativeriskltd.com', password: 'password'})
 User.create({first_name: "Richard", last_name: "Kurth", role: 0, email: 'rkurth@alternativeriskltd.com', password: 'password'})
 User.create({first_name: "Deanna", last_name: "Sanders", role: 2, email: 'dsanders@alternativeriskltd.com', password: 'password'})
 User.create({first_name: "Paul", last_name: "Kay", role: 2, email: 'PaulKay@alternativeriskltd.com', password: 'password'})
@@ -224,3 +206,17 @@ BwcAnnualManualClassChange.create([
   { manual_class_from: 7228, manual_class_to: 7219, policy_year: 2016 },
   { manual_class_from: 7229, manual_class_to: 7219, policy_year: 2016 }
 ])
+
+
+
+##### MMHR CONVERSIONS 06-19 #####
+# AccountImportProcess.perform_async('https://s3.amazonaws.com/grouprating/Conversions/MMHR/all_account_update_customer_table_6_8.csv')
+# ContactImportProcess.perform_async('https://s3.amazonaws.com/grouprating/Conversions/MMHR/contact_6_12.csv')
+# AffiliateImportProcess.perform_async('https://s3.amazonaws.com/grouprating/Conversions/MMHR/Allifiates_6_12.csv')
+# AccountProgramImportProcess.perform_async('https://s3.amazonaws.com/grouprating/Conversions/MMHR/current_customer_table_6_9.csv')
+# QuoteImportProcess.perform_async('https://s3.amazonaws.com/grouprating/Conversions/MMHR/quotes_6_16.csv')
+
+
+##### ARM CONVERSION 06-19 #####
+# AccountImportProcess.perform_async('https://s3.amazonaws.com/grouprating/Conversions/ARM/ARM+Account+Update+Import.csv')
+# AccountProgramImportProcess.perform_async('https://s3.amazonaws.com/grouprating/Conversions/ARM/ARM_2017_Account_Programs_05_02.csv')

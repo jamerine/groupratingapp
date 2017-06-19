@@ -61,10 +61,6 @@
           <%= f.select :program_type, options_for_select(@program_types.collect { |s| [s[0].humanize, s[0]] }, selected: @quote.program_type), {} , class: "form-control"%>
         </div>
         <div class="col-md-2">
-          <%= f.label 'Quote sent:' %>
-          <%= f.date_field :quote_sent_date, class: "form-control" %>
-        </div>
-        <div class="col-md-2">
           <%= f.label :group_code %>
           <%= f.text_field :group_code, class: "form-control" %>
         </div>
@@ -137,6 +133,12 @@
             <%= f.check_box :questionnaire_question_5 %>
           </div>
         </div>
+        <div class="col-md-2">
+          <div class="form-group">
+            <%= f.label "Questionnaire 6" %>
+            <%= f.check_box :questionnaire_question_6 %>
+          </div>
+        </div>
       </div>
 
       <div class="row">
@@ -171,11 +173,9 @@
       </div>
       <div class="col-md-3">
         <h4>Step 2</h4>
-        <% if @quote.quote_sent_date %>
+
         <%= link_to 'Enroll Account in Program', new_account_program_path(quote_id: @quote.id), class: 'btn btn-primary' %>
-        <% else %>
-        <%= link_to 'Enroll Account in Program', new_account_program_path(quote_id: @quote.id), class: 'btn btn-primary disabled'  %>
-        <% end %>
+
       </div>
 
     </div>

@@ -31,11 +31,12 @@ class ContactsController < ApplicationController
   end
 
   def import_contact_process
-    CSV.foreach(params[:file].path, headers: true, encoding:'iso-8859-1:utf-8') do |row|
-      contact_hash = row.to_hash # exclude the price field
-      ContactImport.perform_async(contact_hash)
+    begin
+      ContactImportProcess.perform_async(params[:file].path)
+      redirect_to :back, notice: "Contacts imported."
+    rescue
+      redirect_to :back, alert: "There was an error importing file.  Please ensure file columns and file type are correct"
     end
-    redirect_to root_url, notice: "Contacts imported."
   end
 
 
