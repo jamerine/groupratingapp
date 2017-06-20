@@ -184,7 +184,7 @@ class GroupRatingAllCreate
                     manual_class_industry_group: man_class_exp.manual_class_industry_group,
                     data_source: man_class_exp.data_source)
 
-           unless man_class_exp.empty?
+
               ProcessPayrollAllTransactionsBreakdownByManualClass.where("reporting_period_start_date >= :reporting_period_start_date and representative_number = :representative_number and manual_number = :manual_number and policy_number = :policy_number",  reporting_period_start_date: experience_period_lower_date, representative_number: process_representative, manual_number: @manual_class_calculation.manual_number, policy_number: @manual_class_calculation.policy_number).find_each do |payroll_transaction|
                 unless @manual_class_calculation.nil? || payroll_transaction.id.nil? || payroll_transaction.manual_number == 0
                   PayrollCalculation.where(representative_number: payroll_transaction.representative_number,
@@ -219,8 +219,6 @@ class GroupRatingAllCreate
                   )
                 end
               end
-
-            end
 
               #Fix for termination of peos without a negative action on the transfer
               @termination_peo_payroll = @manual_class_calculation.payroll_calculations.where(payroll_origin: 'lease_terminated')
