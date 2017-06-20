@@ -198,7 +198,8 @@ class GroupRatingAllCreate
                   manual_class_transferred: payroll_transaction.manual_class_transferred,
                   transfer_creation_date: payroll_transaction.transfer_creation_date,
                   payroll_origin: payroll_transaction.payroll_origin,
-                  data_source: payroll_transaction.data_source).update_or_create(
+                  data_source: payroll_transaction.data_source
+                  ).update_or_create(
                     representative_number: payroll_transaction.representative_number,
                     policy_number: payroll_transaction.policy_number,
                     manual_class_type: payroll_transaction.manual_class_type,
