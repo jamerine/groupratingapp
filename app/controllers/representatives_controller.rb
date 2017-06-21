@@ -43,7 +43,11 @@ class RepresentativesController < ApplicationController
 
   def export_159_request_weekly
     @representative = Representative.find(params[:representative_id])
-    @weekly_request = params[:weekly_request]
+    if params[:weekly_request] == 'all'
+      @weekly_request = nil
+    else
+      @weekly_request = params[:weekly_request]
+    end
     @statuses = params[:statuses]
     @account_statuses = Account.statuses
     @status_integers = []

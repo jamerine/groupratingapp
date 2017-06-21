@@ -38,8 +38,13 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-
-          <%= link_to '', root_path, class: 'navbar-brand brand-logo'  %>
+          <% if current_user %>
+            <% if (@representatives_users & [2, 9, 10, 17]).present? %>
+              <%= link_to '', root_path, class: 'navbar-brand mmhr-brand-logo'  %>
+            <% else %>
+              <%= link_to '', root_path, class: 'navbar-brand arm-brand-logo'  %>
+            <% end %>
+          <% end %>
 
         </div>
 

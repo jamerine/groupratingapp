@@ -31,10 +31,27 @@ class Ac2 < PdfReport
         text "[  ] Self-Insured Department 26th Floor", indent_paragraphs: 24, size: 11
         move_down 25
         text "Please mark a box and return to", indent_paragraphs: 25, size: 11
-        text "ARM/Baylor", indent_paragraphs: 25, size: 11, style: :bold
-        text "P.O. Box 880", indent_paragraphs: 25, size: 11, style: :bold
-        text "Hilliard, OH 43026", indent_paragraphs: 25, size: 11, style: :bold
-        text "Fax: 614-219-1292", indent_paragraphs: 25, size: 11, style: :bold
+        if [2].include? @account.representative.id
+          text "COSE ADDRESS", align: :center, color: "333333"
+          text "COSE ADDRESS", align: :center, color: "333333"
+          text "COSE ADDRESS", align: :center, color: "333333"
+          text "COSE ADDRESS", align: :center, color: "333333"
+        elsif [9,10,16].include? @account.representative.id
+          text "MMHR ADDRESS", align: :center, color: "333333"
+          text "MMHR ADDRESS", align: :center, color: "333333"
+          text "MMHR ADDRESS", align: :center, color: "333333"
+          text "MMHR ADDRESS", align: :center, color: "333333"
+        elsif [17].include? @account.representative.id
+          text "TARTAN ADDRESS", indent_paragraphs: 25, size: 11, style: :bold
+          text "TARTAN ADDRESS", indent_paragraphs: 25, size: 11, style: :bold
+          text "TARTAN ADDRESS", indent_paragraphs: 25, size: 11, style: :bold
+          text "TARTAN ADDRESS", indent_paragraphs: 25, size: 11, style: :bold
+        else
+          text "ARM/Baylor", indent_paragraphs: 25, size: 11, style: :bold
+          text "P.O. Box 880", indent_paragraphs: 25, size: 11, style: :bold
+          text "Hilliard, OH 43026", indent_paragraphs: 25, size: 11, style: :bold
+          text "Fax: 614-219-1292", indent_paragraphs: 25, size: 11, style: :bold
+        end
 
       transparent(0) { stroke_bounds }
       # stroke_bounds

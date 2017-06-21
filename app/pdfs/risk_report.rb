@@ -284,7 +284,7 @@ class RiskReport < PdfReport
           if @account.quotes.where("program_type = 0").first.nil?
             'N/A'
           else
-            @account.quotes.where("program_type = 0").first.quote_sent_date
+            @account.quotes.where("program_type = 0").first.quote_date
           end
 
       @group_retro_date =
@@ -327,8 +327,12 @@ class RiskReport < PdfReport
     bounding_box([0, current_cursor], :width => 80, :height => 80) do
       if [9,10,16].include? @account.representative.id
         image "#{Rails.root}/app/assets/images/minute men hr.jpeg", height: 80
+      elsif [2].include? @account.representative.id
+        image "#{Rails.root}/app/assets/images/cose_logo.jpg", height: 80
+      elsif [17].include? @account.representative.id
+        image "#{Rails.root}/app/assets/images/tartan_logo.jpg", height: 80
       else
-        image "#{Rails.root}/app/assets/images/logo.png", height: 80
+        image "#{Rails.root}/app/assets/images/logo.png", height: 50
       end
       transparent(0) { stroke_bounds }
       # stroke_bounds
@@ -525,8 +529,12 @@ class RiskReport < PdfReport
     bounding_box([0, current_cursor], :width => 80, :height => 80) do
       if [9,10,16].include? @account.representative.id
         image "#{Rails.root}/app/assets/images/minute men hr.jpeg", height: 80
+      elsif [2].include? @account.representative.id
+        image "#{Rails.root}/app/assets/images/cose_logo.jpg", height: 80
+      elsif [17].include? @account.representative.id
+        image "#{Rails.root}/app/assets/images/tartan_logo.jpg", height: 80
       else
-        image "#{Rails.root}/app/assets/images/logo.png", height: 80
+        image "#{Rails.root}/app/assets/images/logo.png", height: 50
       end
       transparent(0) { stroke_bounds }
       # stroke_bounds
@@ -678,7 +686,7 @@ class RiskReport < PdfReport
       end
 
 
-    @data = [[" ","Experience Rated", "EM Cap", "One Claim Program", " #{ @account.group_rating_tier } Group", "Group Retro", "Individual Retro", "Minute Men Select" ]]
+    @data = [[" ","Experience Rated", "EM Cap", "One Claim Program", " #{ @account.group_rating_tier } Group", "Group Retro", "Individual Retro", "#{@account.representative.abbreviated_name}" ]]
     @data += [[ "Eligibility","#{@experience_eligibility}","#{@em_cap_eligibility}"," ","#{@group_rating_eligibility}","#{@group_retro_eligibility}"," "," "]]
     @data += [[ "Projected Premium","#{ round(@experience_projected_premium, 0) }","#{ round(@em_cap_projected_premium,0)}"," ","#{round(@group_rating_projected_premium, 0)}","#{round(@group_retro_projected_premium, 0)}"," "," "]]
     @data += [[ "Est Cost/-Credits","#{ round(@experience_costs,0) }","#{ round(@em_cap_costs,0)}"," ","#{ round(@group_rating_costs,0) }","#{ round(@group_retro_costs, 0)}"," "," "]]
