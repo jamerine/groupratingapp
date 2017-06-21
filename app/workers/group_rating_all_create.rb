@@ -173,74 +173,60 @@ class GroupRatingAllCreate
 
           end
 
-          FinalManualClassFourYearPayrollAndExpLoss.where(representative_number: @policy_calculation.representative_number, policy_number: @policy_calculation.policy_number).find_each do |man_class_exp|
-                  @manual_class_calculation = ManualClassCalculation.where(policy_calculation_id: @policy_calculation.id, manual_number: man_class_exp.manual_number).update_or_create(
-                    representative_number: man_class_exp.representative_number,
-                    policy_number: man_class_exp.policy_number,
-                    policy_calculation_id: @policy_calculation.id,
-                    manual_number: man_class_exp.manual_number,
-                    manual_class_type: man_class_exp.manual_class_type,
-                    manual_class_base_rate: man_class_exp.manual_class_base_rate,
-                    manual_class_industry_group: man_class_exp.manual_class_industry_group,
-                    data_source: man_class_exp.data_source)
+          unless FinalManualClassFourYearPayrollAndExpLoss.where(representative_number: @policy_calculation.representative_number, policy_number: @policy_calculation.policy_number).empty?
+
+            FinalManualClassFourYearPayrollAndExpLoss.where(representative_number: @policy_calculation.representative_number, policy_number: @policy_calculation.policy_number).find_each do |man_class_exp|
+                    @manual_class_calculation = ManualClassCalculation.where(policy_calculation_id: @policy_calculation.id, manual_number: man_class_exp.manual_number).update_or_create(
+                      representative_number: man_class_exp.representative_number,
+                      policy_number: man_class_exp.policy_number,
+                      policy_calculation_id: @policy_calculation.id,
+                      manual_number: man_class_exp.manual_number,
+                      manual_class_type: man_class_exp.manual_class_type,
+                      manual_class_base_rate: man_class_exp.manual_class_base_rate,
+                      manual_class_industry_group: man_class_exp.manual_class_industry_group,
+                      data_source: man_class_exp.data_source)
 
 
-              ProcessPayrollAllTransactionsBreakdownByManualClass.where("reporting_period_start_date >= :reporting_period_start_date and representative_number = :representative_number and manual_number = :manual_number and policy_number = :policy_number",  reporting_period_start_date: experience_period_lower_date, representative_number: process_representative, manual_number: @manual_class_calculation.manual_number, policy_number: @manual_class_calculation.policy_number).find_each do |payroll_transaction|
-                unless @manual_class_calculation.nil? || payroll_transaction.id.nil? || payroll_transaction.manual_number == 0
-                  PayrollCalculation.where(representative_number: payroll_transaction.representative_number,
-                  policy_number: payroll_transaction.policy_number,
-                  manual_class_type: payroll_transaction.manual_class_type,
-                  manual_number: payroll_transaction.manual_number,
-                  manual_class_calculation_id: @manual_class_calculation.id,
-                  reporting_period_start_date: payroll_transaction.reporting_period_start_date,
-                  reporting_period_end_date: payroll_transaction.reporting_period_end_date,
-                  policy_transferred: payroll_transaction.policy_transferred,
-                  manual_class_transferred: payroll_transaction.manual_class_transferred,
-                  transfer_creation_date: payroll_transaction.transfer_creation_date,
-                  payroll_origin: payroll_transaction.payroll_origin,
-                  data_source: payroll_transaction.data_source
-                  ).update_or_create(
-                    representative_number: payroll_transaction.representative_number,
+                ProcessPayrollAllTransactionsBreakdownByManualClass.where("reporting_period_start_date >= :reporting_period_start_date and representative_number = :representative_number and manual_number = :manual_number and policy_number = :policy_number",  reporting_period_start_date: experience_period_lower_date, representative_number: process_representative, manual_number: @manual_class_calculation.manual_number, policy_number: @manual_class_calculation.policy_number).find_each do |payroll_transaction|
+                  unless @manual_class_calculation.nil? || payroll_transaction.id.nil? || payroll_transaction.manual_number == 0
+                    PayrollCalculation.where(representative_number: payroll_transaction.representative_number,
                     policy_number: payroll_transaction.policy_number,
                     manual_class_type: payroll_transaction.manual_class_type,
                     manual_number: payroll_transaction.manual_number,
                     manual_class_calculation_id: @manual_class_calculation.id,
-                    manual_class_rate: payroll_transaction.manual_class_rate,
                     reporting_period_start_date: payroll_transaction.reporting_period_start_date,
                     reporting_period_end_date: payroll_transaction.reporting_period_end_date,
                     policy_transferred: payroll_transaction.policy_transferred,
                     manual_class_transferred: payroll_transaction.manual_class_transferred,
                     transfer_creation_date: payroll_transaction.transfer_creation_date,
-                    manual_class_payroll: payroll_transaction.manual_class_payroll,
-                    reporting_type: payroll_transaction.reporting_type,
-                    number_of_employees: payroll_transaction.number_of_employees,
                     payroll_origin: payroll_transaction.payroll_origin,
                     data_source: payroll_transaction.data_source
-                  )
+                    ).update_or_create(
+                      representative_number: payroll_transaction.representative_number,
+                      policy_number: payroll_transaction.policy_number,
+                      manual_class_type: payroll_transaction.manual_class_type,
+                      manual_number: payroll_transaction.manual_number,
+                      manual_class_calculation_id: @manual_class_calculation.id,
+                      manual_class_rate: payroll_transaction.manual_class_rate,
+                      reporting_period_start_date: payroll_transaction.reporting_period_start_date,
+                      reporting_period_end_date: payroll_transaction.reporting_period_end_date,
+                      policy_transferred: payroll_transaction.policy_transferred,
+                      manual_class_transferred: payroll_transaction.manual_class_transferred,
+                      transfer_creation_date: payroll_transaction.transfer_creation_date,
+                      manual_class_payroll: payroll_transaction.manual_class_payroll,
+                      reporting_type: payroll_transaction.reporting_type,
+                      number_of_employees: payroll_transaction.number_of_employees,
+                      payroll_origin: payroll_transaction.payroll_origin,
+                      data_source: payroll_transaction.data_source
+                    )
+                  end
                 end
-              end
 
-              #Fix for termination of peos without a negative action on the transfer
-              @termination_peo_payroll = @manual_class_calculation.payroll_calculations.where(payroll_origin: 'lease_terminated')
-              @termination_peo_payroll.each do |term_payroll|
-                if @manual_class_calculation.payroll_calculations.find_by(reporting_period_start_date: term_payroll.reporting_period_start_date, reporting_period_end_date: term_payroll.reporting_period_end_date, manual_class_payroll: term_payroll.manual_class_payroll, payroll_origin: 'payroll') && !@manual_class_calculation.payroll_calculations.find_by(reporting_period_start_date: term_payroll.reporting_period_start_date, reporting_period_end_date: term_payroll.reporting_period_end_date, manual_class_payroll: (-term_payroll.manual_class_payroll), payroll_origin: 'partial_to_full_lease')
-                  PayrollCalculation.where(representative_number: term_payroll.representative_number,
-                    policy_number: term_payroll.policy_number,
-                    manual_class_type: term_payroll.manual_class_type,
-                    manual_number: term_payroll.manual_number,
-                    manual_class_calculation_id: @manual_class_calculation.id,
-                    manual_class_rate: term_payroll.manual_class_rate,
-                    reporting_period_start_date: term_payroll.reporting_period_start_date,
-                    reporting_period_end_date: term_payroll.reporting_period_end_date,
-                    policy_transferred: term_payroll.policy_transferred,
-                    manual_class_transferred: term_payroll.manual_class_transferred,
-                    transfer_creation_date: term_payroll.transfer_creation_date,
-                    manual_class_payroll: (-term_payroll.manual_class_payroll),
-                    reporting_type: term_payroll.reporting_type,
-                    number_of_employees: term_payroll.number_of_employees,
-                    payroll_origin: term_payroll.payroll_origin,
-                    data_source: term_payroll.data_source).update_or_create(
-                      representative_number: term_payroll.representative_number,
+                #Fix for termination of peos without a negative action on the transfer
+                @termination_peo_payroll = @manual_class_calculation.payroll_calculations.where(payroll_origin: 'lease_terminated')
+                @termination_peo_payroll.each do |term_payroll|
+                  if @manual_class_calculation.payroll_calculations.find_by(reporting_period_start_date: term_payroll.reporting_period_start_date, reporting_period_end_date: term_payroll.reporting_period_end_date, manual_class_payroll: term_payroll.manual_class_payroll, payroll_origin: 'payroll') && !@manual_class_calculation.payroll_calculations.find_by(reporting_period_start_date: term_payroll.reporting_period_start_date, reporting_period_end_date: term_payroll.reporting_period_end_date, manual_class_payroll: (-term_payroll.manual_class_payroll), payroll_origin: 'partial_to_full_lease')
+                    PayrollCalculation.where(representative_number: term_payroll.representative_number,
                       policy_number: term_payroll.policy_number,
                       manual_class_type: term_payroll.manual_class_type,
                       manual_number: term_payroll.manual_number,
@@ -255,12 +241,28 @@ class GroupRatingAllCreate
                       reporting_type: term_payroll.reporting_type,
                       number_of_employees: term_payroll.number_of_employees,
                       payroll_origin: term_payroll.payroll_origin,
-                      data_source: term_payroll.data_source
-                  )
+                      data_source: term_payroll.data_source).update_or_create(
+                        representative_number: term_payroll.representative_number,
+                        policy_number: term_payroll.policy_number,
+                        manual_class_type: term_payroll.manual_class_type,
+                        manual_number: term_payroll.manual_number,
+                        manual_class_calculation_id: @manual_class_calculation.id,
+                        manual_class_rate: term_payroll.manual_class_rate,
+                        reporting_period_start_date: term_payroll.reporting_period_start_date,
+                        reporting_period_end_date: term_payroll.reporting_period_end_date,
+                        policy_transferred: term_payroll.policy_transferred,
+                        manual_class_transferred: term_payroll.manual_class_transferred,
+                        transfer_creation_date: term_payroll.transfer_creation_date,
+                        manual_class_payroll: (-term_payroll.manual_class_payroll),
+                        reporting_type: term_payroll.reporting_type,
+                        number_of_employees: term_payroll.number_of_employees,
+                        payroll_origin: term_payroll.payroll_origin,
+                        data_source: term_payroll.data_source
+                    )
+                  end
                 end
-              end
+          end
         end
-
         @account.policy_calculation.calculate_experience
         @account.policy_calculation.calculate_premium
         @account.group_rating

@@ -18,7 +18,7 @@ class QuotesController < ApplicationController
     @type = @program_types[params[:quote][:program_type]]
     @policy_calculation = @account.policy_calculation
     if @quote.save
-      @quote.update_attributes(quote_sent_date: @quote.created_at)
+      @quote.update_attributes(quote_date: @quote.created_at)
       policy_year = @quote.quote_year
       s = "#{@account.policy_number_entered}-#{policy_year}-#{@quote.id}"
       @quote.assign_attributes(invoice_number: s)
@@ -303,7 +303,7 @@ class QuotesController < ApplicationController
   private
 
   def quote_params
-    params.require(:quote).permit(:account_id, :program_type, :fees, :amount, :group_code, :quote_tier, :invoice_number, :quote, :quote_generated, :quote_date, :quote_sent_date, :effective_start_date, :effective_end_date, :status, :ac2_signed_on, :ac26_signed_on, :u153_signed_on, :contract_signed_on, :questionnaire_signed_on, :questionnaire_question_1, :questionnaire_question_2, :questionnaire_question_3, :questionnaire_question_4, :questionnaire_question_5, :experience_period_lower_date, :experience_period_upper_date, :current_payroll_period_lower_date, :current_payroll_period_upper_date, :current_payroll_year, :program_year_lower_date, :program_year_upper_date, :program_year, :quote_year_lower_date, :quote_year_upper_date, :quote_year, :paid_amount, :check_number)
+    params.require(:quote).permit(:account_id, :program_type, :fees, :group_code, :quote_tier, :invoice_number, :quote, :quote_generated, :quote_date, :effective_start_date, :effective_end_date, :status, :ac2_signed_on, :ac26_signed_on, :u153_signed_on, :contract_signed_on, :questionnaire_signed_on, :questionnaire_question_1, :questionnaire_question_2, :questionnaire_question_3, :questionnaire_question_4, :questionnaire_question_5, :questionnaire_question_6, :updated_by, :created_by, :paid_date, :experience_period_lower_date, :experience_period_upper_date, :current_payroll_period_lower_date, :current_payroll_period_upper_date, :current_payroll_year, :program_year_lower_date, :program_year_upper_date, :program_year, :quote_year_lower_date, :quote_year_upper_date, :quote_year, :paid_amount, :check_number, :questionnaire_question_6, :updated_by, :created_by, :paid_date)
   end
 
 end

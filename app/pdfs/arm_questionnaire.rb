@@ -22,11 +22,16 @@ class ArmQuestionnaire < PdfReport
   private
 
   def questionnaire
-    if [2, 9,10,16].include? @account.representative.id
+    if [9,10,16].include? @account.representative.id
       image "#{Rails.root}/app/assets/images/minute men hr.jpeg", height: 100
+    elsif [2].include? @account.representative.id
+      image "#{Rails.root}/app/assets/images/cose_logo.jpg", height: 100
+    elsif [17].include? @account.representative.id
+      image "#{Rails.root}/app/assets/images/tartan_logo.jpg", height: 100
     else
       image "#{Rails.root}/app/assets/images/logo.png", height: 50
     end
+
     move_down 15
     text "GROUP RATING PROGRAM QUESTIONNAIRE", style: :bold, align: :center, size: 14
     move_down 15

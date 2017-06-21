@@ -13,7 +13,7 @@ class ArmInvoice < PdfReport
     else
       @quote.fees
     end
-    
+
    @current_date = DateTime.now.to_date
    invoice
 
@@ -24,8 +24,12 @@ class ArmInvoice < PdfReport
   def invoice
     current_cursor = cursor
     bounding_box([0, current_cursor], :width => 550, :height => 100) do
-      if [2, 9,10,16].include? @account.representative.id
+      if [9,10,16].include? @account.representative.id
         image "#{Rails.root}/app/assets/images/minute men hr.jpeg", height: 100
+      elsif [2].include? @account.representative.id
+        image "#{Rails.root}/app/assets/images/cose_logo.jpg", height: 100
+      elsif [17].include? @account.representative.id
+        image "#{Rails.root}/app/assets/images/tartan_logo.jpg", height: 100
       else
         image "#{Rails.root}/app/assets/images/logo.png", height: 50
       end
