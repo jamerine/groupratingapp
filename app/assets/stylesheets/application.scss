@@ -30,8 +30,14 @@
   width: 25%;
 }
 
-.navbar-default .navbar-header .navbar-brand {
+.navbar-default .navbar-header .arm-brand-logo {
   background: image-url("logo.png") center / contain no-repeat;
+  width: 150px;
+  margin-left: 25px;
+}
+
+.navbar-default .navbar-header .mmhr-brand-logo {
+  background: image-url("minute_men_hr_logo.jpg") center / contain no-repeat;
   width: 150px;
   margin-left: 25px;
 }

@@ -32,7 +32,7 @@
           <%= fields_for "accounts[]", account do |f| %>
             <tr>
               <td><%= account.policy_calculation.policy_number %> </td>
-              <td><%= account.try(:name).slice(0..20).try(:titleize) %> </td>
+              <td><%= account.try(:name).slice(0..20) if account.name.present? %> </td>
               <td><%= account.status.humanize %> </td>
               <td><%= account.group_rating_qualification == 'accept' ? account.group_rating_tier : account.group_rating_qualification %> </td>
               <td><%= number_to_currency(account.group_fees) %> </td>

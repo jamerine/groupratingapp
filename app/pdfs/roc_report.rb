@@ -38,9 +38,13 @@ class RocReport < PdfReport
     current_cursor = cursor
     bounding_box([0, current_cursor], :width => 80, :height => 80) do
       if [9,10,16].include? @account.representative.id
-        image "#{Rails.root}/app/assets/images/minute men hr.jpeg", height: 80
+        image "#{Rails.root}/app/assets/images/minute men hr.jpeg", height: 100
+      elsif [2].include? @account.representative.id
+        image "#{Rails.root}/app/assets/images/cose_logo.jpg", height: 100
+      elsif [17].include? @account.representative.id
+        image "#{Rails.root}/app/assets/images/tartan_logo.jpg", height: 100
       else
-        image "#{Rails.root}/app/assets/images/logo.png", height: 80
+        image "#{Rails.root}/app/assets/images/logo.png", height: 50
       end
       transparent(0) { stroke_bounds }
       # stroke_bounds

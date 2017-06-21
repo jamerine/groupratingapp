@@ -57,11 +57,11 @@ class AccountsController < ApplicationController
     @representative = Representative.find(@account.representative_id)
     @policy_calculation = PolicyCalculation.find_by(account_id: @account.id)
     @statuses = Account.statuses
-    @mailing_address = {:address_type => "mailing", :address_line_1 => @policy_calculation.mailing_address_line_1, :address_line_2 => @policy_calculation.mailing_address_line_2, :city => @policy_calculation.mailing_city, :state => @policy_calculation.mailing_state, :zip_code => @policy_calculation.mailing_zip_code}
-    @location_address = {:address_type => "location", :address_line_1 => @policy_calculation.location_address_line_1, :address_line_2 => @policy_calculation.location_address_line_2, :city => @policy_calculation.location_city, :state => @policy_calculation.location_state, :zip_code => @policy_calculation.location_zip_code}
-    @locations = []
-    @locations.push(@mailing_address)
-    @locations.push(@location_address)
+    # @mailing_address = {:address_type => "mailing", :address_line_1 => @policy_calculation.mailing_address_line_1, :address_line_2 => @policy_calculation.mailing_address_line_2, :city => @policy_calculation.mailing_city, :state => @policy_calculation.mailing_state, :zip_code => @policy_calculation.mailing_zip_code}
+    # @location_address = {:address_type => "location", :address_line_1 => @policy_calculation.location_address_line_1, :address_line_2 => @policy_calculation.location_address_line_2, :city => @policy_calculation.location_city, :state => @policy_calculation.location_state, :zip_code => @policy_calculation.location_zip_code}
+    # @locations = []
+    # @locations.push(@mailing_address)
+    # @locations.push(@location_address)
   end
 
   def update
@@ -140,7 +140,7 @@ class AccountsController < ApplicationController
 
   def assign_address
     @account = Account.find(params[:account_id])
-
+    puts params[:address_type]
     redirect_to @account
   end
 

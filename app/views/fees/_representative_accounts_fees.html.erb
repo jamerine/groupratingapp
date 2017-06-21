@@ -6,7 +6,7 @@
   <%= form_tag fee_accounts_fees_path do %>
       <%= submit_tag "Edit Fees for Selected", class: 'btn btn-success' %>
       <%= hidden_field_tag(:representative_id, @representative.id) %>
-      <%= link_to "Edit Fees for #{accounts.count} Filtered Accounts", edit_individual_fees_path(parameters: @parameters, representative_id: @representative.id), class: 'btn btn-info' %> 
+      <%= link_to "Edit Fees for #{accounts.count} Filtered Accounts", edit_individual_fees_path(parameters: @parameters, representative_id: @representative.id), class: 'btn btn-info' %>
     <table class="table table-hover table-condensed table-responsive" id="representativeAccountsFeesTable">
       <thead>
         <tr class="header">
@@ -27,7 +27,7 @@
         <tr>
           <td><%= check_box_tag "account_ids[]", account.id %></td>
           <td><%= link_to "#{account.policy_calculation.policy_number}",account_path(account.id) %></td>
-          <td><%= account.try(:name).slice(0..20).try(:titleize) %></td>
+          <td><%= account.try(:name).slice(0..20).try(:titleize) if account.name.present?  %></td>
           <td><%= account.status.humanize %></td>
           <td><%= account.account_programs.empty? ? 'N/A' : account.account_programs.last.program_type.humanize %></td>
           <td><%= account.group_rating_qualification == 'accept' ? account.group_rating_tier : account.group_rating_qualification %></td>

@@ -43,7 +43,7 @@
   </div>
 
   <br>
-  <% unless @account.policy_calculation.current_coverage_status.nil? %>
+
     <div class="container">
         <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Reports
         <span class="caret"></span></button>
@@ -64,7 +64,7 @@
 
     <%= link_to "Change History", versions_path(item_id: @account.id, item_type: @account.class.name), class: 'btn btn-info', method: :get %>
     </div>
-  <% end %>
+
 <div class="container">
     <div class="row">
       <h3>Account Current Program Qualification</h3>

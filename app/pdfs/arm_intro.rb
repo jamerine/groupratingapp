@@ -60,7 +60,7 @@ class ArmIntro < PdfReport
     end
 
     move_down 15
-    text "Congratulations!  <b>#{@account.name}</b> is invited to participate in ARM’s #{@account.representative.quote_year} <b><u>Group Rating Program</u></b>.  We have designed a program that includes the best representation, claims administration, and group premium discounts for Ohio employers through the Northeast Ohio Safety Council.", size: 11, inline_format: true
+    text "Congratulations!  <b>#{@account.name}</b> is invited to participate in #{ @account.representative.abbreviated_name }’s #{@account.representative.quote_year} <b><u>Group Rating Program</u></b>.  We have designed a program that includes the best representation, claims administration, and group premium discounts for Ohio employers through the Northeast Ohio Safety Council.", size: 11, inline_format: true
     move_down 15
     text "Please find the enclosed #{@account.representative.quote_year} group quote and premium projection.  We stand behind our estimations for their accuracy.", size: 11
     move_down 15
@@ -94,11 +94,21 @@ class ArmIntro < PdfReport
     end
 
     bounding_box([0, 50], :width => 550, :height => 50) do
-      if [2,9,10,16].include? @account.representative.id
+      if [2].include? @account.representative.id
+        text "COSE FOOTER", align: :center, color: "333333"
+        text "COSE FOOTER", align: :center, color: "333333"
+        text "COSE FOOTER", align: :center, color: "333333"
+        text "COSE FOOTER", align: :center, color: "333333"
+      elsif [9,10,16].include? @account.representative.id
         text "MMHR FOOTER", align: :center, color: "333333"
         text "MMHR FOOTER", align: :center, color: "333333"
         text "MMHR FOOTER", align: :center, color: "333333"
         text "MMHR FOOTER", align: :center, color: "333333"
+      elsif [17].include? @account.representative.id
+        text "TARTAN FOOTER", align: :center, color: "333333"
+        text "TARTAN FOOTER", align: :center, color: "333333"
+        text "TARTAN FOOTER", align: :center, color: "333333"
+        text "TARTAN FOOTER", align: :center, color: "333333"
       else
         text "Cleveland/Columbus Offices", align: :center, color: "333333"
         text "Telephone (888) 235-8051  |  Fax (614) 219-1292", align: :center, color: "333333"
