@@ -54,7 +54,7 @@ class Step300Proc2 < ActiveRecord::Migration
                               FROM public.pcomb_detail_records) t
              WHERE t.rnum > 1);
 
-             
+
 
         -- STEP 3A POLICY COMBINE FULL TRANSFER
 
@@ -104,7 +104,7 @@ class Step300Proc2 < ActiveRecord::Migration
           ON a.policy_number = b.predecessor_policy_number
           RIGHT JOIN public.final_employer_demographics_informations c
           ON a.policy_number = c.policy_number
-          Where b.transfer_type = 'FC' and a.representative_number = process_representative
+          Where (b.transfer_type = 'FC' or b.transfer_type = 'BF') and a.representative_number = process_representative
           and a.reporting_period_start_date >= c.policy_creation_date
           GROUP BY a.representative_number,
             a.policy_type,
