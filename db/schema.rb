@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170620105359) do
+ActiveRecord::Schema.define(version: 20170621125447) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1485,6 +1485,22 @@ ActiveRecord::Schema.define(version: 20170620105359) do
     t.date     "quote_year_lower_date"
     t.date     "quote_year_upper_date"
     t.integer  "quote_year"
+    t.string   "location_address_1"
+    t.string   "location_address_2"
+    t.string   "location_city"
+    t.string   "location_state"
+    t.string   "location_zip_code"
+    t.string   "mailing_address_1"
+    t.string   "mailing_address_2"
+    t.string   "mailing_city"
+    t.string   "mailing_state"
+    t.string   "mailing_zip_code"
+    t.string   "phone_number"
+    t.string   "toll_free_number"
+    t.string   "fax_number"
+    t.string   "email_address"
+    t.string   "president_first_name"
+    t.string   "president_last_name"
   end
 
   create_table "representatives_users", force: :cascade do |t|
