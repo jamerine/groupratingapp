@@ -20,6 +20,7 @@
         new_positive_transferred_payroll = new_positive_transferred_payroll.attributes.except("id")
 
         new_positive_transferred_payroll["policy_number"] = pcomb_array[1]
+        new_positive_transferred_payroll["reporting_type"] = 'A'
         new_positive_transferred_payroll["payroll_origin"] = 'full_transfer'
         new_positive_transferred_payroll["policy_transferred"] = pcomb_array[0]
         new_positive_transferred_payroll["manual_class_transferred"] = payroll.manual_number
@@ -31,6 +32,7 @@
         new_negative_transferred_payroll = payroll.dup
         new_negative_transferred_payroll = new_negative_transferred_payroll.attributes.except("id")
         new_negative_transferred_payroll["manual_class_payroll"] = -payroll.manual_class_payroll
+        new_negative_transferred_payroll["reporting_type"] = 'A'
         new_negative_transferred_payroll["payroll_origin"] = 'full_transfer'
         new_negative_transferred_payroll["policy_transferred"] = pcomb_array[1]
         new_negative_transferred_payroll["manual_class_transferred"] = payroll.manual_number
