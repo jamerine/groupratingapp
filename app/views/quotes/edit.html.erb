@@ -58,15 +58,27 @@
         </div>
         <div class="col-md-2">
           <%= f.label :program_type %>
-          <%= f.select :program_type, options_for_select(@program_types.collect { |s| [s[0].humanize, s[0]] }, selected: @quote.program_type), {} , class: "form-control"%>
+          <% if current_user.admin? %>
+            <%= f.select :program_type, options_for_select(@program_types.collect { |s| [s[0].humanize, s[0]] }, selected: @quote.program_type), {} , class: "form-control"%>
+          <% else %>
+            <p><%= @quote.program_type %></p>
+          <% end %>
         </div>
         <div class="col-md-2">
           <%= f.label :group_code %>
-          <%= f.text_field :group_code, class: "form-control" %>
+          <% if current_user.admin? %>
+            <%= f.text_field :group_code, class: "form-control" %>
+          <% else %>
+            <p><%= @quote.group_code %></p>
+          <% end %>
         </div>
         <div class="col-md-2">
           <%= f.label :quote_tier %>
-          <%= f.text_field :quote_tier, class: "form-control" %>
+          <% if current_user.admin? %>
+            <%= f.text_field :quote_tier, class: "form-control" %>
+          <% else %>
+            <p><%= @quote.quote_tier %></p>
+          <% end %>
         </div>
       </div>
       <br>

@@ -8,7 +8,7 @@
       <div class="row">
           <div class="col-md-2">
             <%= f.label 'Qualification' %>
-            <%= f.select :group_rating_qualification, options_for_select(@group_rating_qualifications.collect { |s| [s[0].humanize, s[0]] }, selected: @account.group_rating_qualification), {} , class: "form-control" %>
+            <%= f.select :group_rating_qualification, options_for_select(@group_rating_qualifications.collect { |s| [s[0].humanize, s[0]] }, selected: :auto_run), {} , class: "form-control" %>
           </div>
           <div class="col-md-2">
             <%= f.label 'Discount Tier' %>
