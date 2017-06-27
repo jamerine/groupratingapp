@@ -1,6 +1,7 @@
 class FeesController < ApplicationController
 
   def index
+    authorize :fee
     @representative = Representative.includes(accounts: [:account_programs] ).find(params[:representative_id])
     @statuses = Account.statuses
     @group_rating_tiers = BwcCodesIndustryGroupSavingsRatioCriterium.all.order(market_rate: :asc).pluck(:market_rate).uniq
@@ -25,6 +26,8 @@ class FeesController < ApplicationController
   end
 
   def fee_accounts
+    authorize :fee
+
     if !params[:account_ids].nil?
       redirect_to edit_individual_fees_path(account_ids: params[:account_ids], representative_id: params[:representative_id])
     else
@@ -34,6 +37,8 @@ class FeesController < ApplicationController
 
   def edit_individual
     @representative = Representative.find(params[:representative_id])
+    @fee = Fee.new
+    authorize @fee
     if params[:account_ids].present?
       @accounts = Account.find(params[:account_ids])
     elsif params[:parameters].present?
