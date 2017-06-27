@@ -488,9 +488,15 @@ class RiskReport < PdfReport
   end
 
   def expected_loss_table_data
-    @data = [["Man Num", "IG", "Experience Payroll", "Exp. Loss Rate", "Total Exp Losses", "Base Rate", "Estimated Payroll", "Ind. Rate", "Est Ind Premium", "#{@account.group_rating_tier} Group Rate", "Group Premium", "MMS Rate", "MMS Premium"]]
-    @data +=  @account.policy_calculation.manual_class_calculations.order(manual_number: :asc).map { |e| [e.manual_number, e.manual_class_industry_group, round(e.manual_class_four_year_period_payroll,0), rate(e.manual_class_expected_loss_rate/100, 2),  round(e.manual_class_expected_losses,0), rate(e.manual_class_base_rate/100,2), round(e.manual_class_current_estimated_payroll, 0), rate(e.manual_class_individual_total_rate, 4), round(e.manual_class_estimated_individual_premium,0), rate(e.manual_class_group_total_rate,4), round(e.manual_class_estimated_group_premium,0)] }
-    @data += [[{:content => " #{ } Totals", :colspan => 4},"#{round(@policy_calculation.policy_total_expected_losses, 0)}","","#{round(@policy_calculation.policy_total_current_payroll, 0)}","","#{round(@policy_calculation.policy_total_individual_premium, 0)}","","#{round(@account.group_premium, 0)}", "", ""]]
+    if ['MMHR2','MMHR1','CPM'].include? @account.representative.abbreviated_name
+      @data = [["Man Num", "IG", "Experience Payroll", "Exp. Loss Rate", "Total Exp Losses", "Base Rate", "Estimated Payroll", "Ind. Rate", "Est Ind Premium", "#{@account.group_rating_tier} Group Rate", "Group Premium", "MMS Rate", "MMS Premium"]]
+      @data +=  @account.policy_calculation.manual_class_calculations.order(manual_number: :asc).map { |e| [e.manual_number, e.manual_class_industry_group, round(e.manual_class_four_year_period_payroll,0), rate(e.manual_class_expected_loss_rate/100, 2),  round(e.manual_class_expected_losses,0), rate(e.manual_class_base_rate/100,2), round(e.manual_class_current_estimated_payroll, 0), rate(e.manual_class_individual_total_rate, 4), round(e.manual_class_estimated_individual_premium,0), rate(e.manual_class_group_total_rate,4), round(e.manual_class_estimated_group_premium,0)] }
+      @data += [[{:content => " #{ } Totals", :colspan => 4},"#{round(@policy_calculation.policy_total_expected_losses, 0)}","","#{round(@policy_calculation.policy_total_current_payroll, 0)}","","#{round(@policy_calculation.policy_total_individual_premium, 0)}","","#{round(@account.group_premium, 0)}", "", ""]]
+    else
+      @data = [["Man Num", "IG", "Experience Payroll", "Exp. Loss Rate", "Total Exp Losses", "Base Rate", "Estimated Payroll", "Ind. Rate", "Est Ind Premium", "#{@account.group_rating_tier} Group Rate", "Group Premium"]]
+      @data +=  @account.policy_calculation.manual_class_calculations.order(manual_number: :asc).map { |e| [e.manual_number, e.manual_class_industry_group, round(e.manual_class_four_year_period_payroll,0), rate(e.manual_class_expected_loss_rate/100, 2),  round(e.manual_class_expected_losses,0), rate(e.manual_class_base_rate/100,2), round(e.manual_class_current_estimated_payroll, 0), rate(e.manual_class_individual_total_rate, 4), round(e.manual_class_estimated_individual_premium,0), rate(e.manual_class_group_total_rate,4), round(e.manual_class_estimated_group_premium,0)] }
+      @data += [[{:content => " #{ } Totals", :colspan => 4},"#{round(@policy_calculation.policy_total_expected_losses, 0)}","","#{round(@policy_calculation.policy_total_current_payroll, 0)}","","#{round(@policy_calculation.policy_total_individual_premium, 0)}","","#{round(@account.group_premium, 0)}"]]
+    end
   end
 
   def roc_report
