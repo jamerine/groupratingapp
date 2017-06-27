@@ -32,8 +32,8 @@ class RiskReport < PdfReport
       elsif period.coverage_effective_date < @lower_lapse && period.coverage_end_date < @higher_lapse
           @group_lapse_sum += period.coverage_end_date - @lower_lapse
         # period starts after and ends in range
-        elsif period.coverage_effective_date > lower_lapse && period.coverage_end_date < higher_lapse
-          @group_lapse_sum += period.coverage_end_date - @period.coverage_effective_date
+      elsif period.coverage_effective_date > @lower_lapse && period.coverage_end_date < @higher_lapse
+          @group_lapse_sum += period.coverage_end_date - period.coverage_effective_date
         end
       end
 

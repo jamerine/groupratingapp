@@ -7,6 +7,7 @@ class RepresentativesController < ApplicationController
 
   def show
     @representative = Representative.find(params[:id])
+    authorize @representative
     @accounts = @representative.accounts
     @users = @representative.users
     # respond_to do |format|
@@ -24,6 +25,7 @@ class RepresentativesController < ApplicationController
 
   def export_accounts
     @representative = Representative.find(params[:representative_id])
+    authorize @representative
     AccountPolicyExport.perform_async(current_user.id, @representative.id)
 
     flash[:notice] = "Your Accounts and Policies export is now being generated.  Please checkout your email for your generated file."
@@ -33,6 +35,7 @@ class RepresentativesController < ApplicationController
 
   def export_manual_classes
     @representative = Representative.find(params[:representative_id])
+    authorize @representative
     ManualClassExport.perform_async(current_user.id, @representative.id)
 
     flash[:notice] = "Your Manual Class export is now being generated.  Please checkout your email for your generated file."
@@ -43,6 +46,7 @@ class RepresentativesController < ApplicationController
 
   def export_159_request_weekly
     @representative = Representative.find(params[:representative_id])
+    authorize @representative
     if params[:weekly_request] == 'all'
       @weekly_request = nil
     else
@@ -67,6 +71,7 @@ class RepresentativesController < ApplicationController
 
   def filter_export_159_request_weekly
     @representative = Representative.find(params[:representative_id])
+    authorize @representative
     @statuses = Account.statuses
 
   end
@@ -87,6 +92,7 @@ class RepresentativesController < ApplicationController
 
   def import_contact_process
     @representative = Representative.find(params[:representative_id])
+    authorize @representative
     begin
       CSV.foreach(params[:file].path, headers: true) do |row|
         contact_hash = row.to_hash
@@ -100,6 +106,7 @@ class RepresentativesController < ApplicationController
 
   def import_payroll_process
     @representative = Representative.find(params[:representative_id])
+    authorize @representative
     begin
       CSV.foreach(params[:file].path, headers: true) do |row|
         payroll_hash = row.to_hash
@@ -113,6 +120,7 @@ class RepresentativesController < ApplicationController
 
   def import_claim_process
     @representative = Representative.find(params[:representative_id])
+    authorize @representative
     begin
       CSV.foreach(params[:file].path, headers: true) do |row|
         claim_hash = row.to_hash
@@ -132,10 +140,12 @@ class RepresentativesController < ApplicationController
 
   def edit_global_dates
     @representative = Representative.find(params[:representative_id])
+    authorize @representative
   end
 
   def fee_calculations
     @representative = Representative.find(params[:representative_id])
+    authorize @representative
     @policy_calculations = PolicyCalculation.where(representative_id: @representative.id )
     flash.now[:alert] = "All of #{@representative.abbreviated_name} policies are beginning to update."
     @policy_calculations.each do |policy|
@@ -148,6 +158,7 @@ class RepresentativesController < ApplicationController
 
   def update
     @representative = Representative.find(params[:id])
+    authorize @representative
     @representative.assign_attributes(representative_params)
     if @representative.save
       redirect_to @representative, notice: 'Logo successfully added to Representative'
@@ -158,6 +169,7 @@ class RepresentativesController < ApplicationController
 
   def all_quote_process
      @representative = Representative.find(params[:representative_id])
+     authorize @representative
      @account_ids = @representative.accounts.pluck(:id)
      GenerateQuoteProcess.perform_async(@representative.id, current_user.id, @account_ids)
      redirect_to quotes_path(representative_id: @representative.id), notice: 'The Group Rating Quoting Process has successfully started.  Please allow a few for this process to complete.'
@@ -165,6 +177,7 @@ class RepresentativesController < ApplicationController
 
   def zip_file
     @representative = Representative.find(params[:representative_id])
+    authorize @representative
     temp_file = Tempfile.new("zipfile.zip")
 
     # begin
@@ -227,9 +240,6 @@ class RepresentativesController < ApplicationController
     # temp_file.unlink
     # redirect_to @representative
   end
-
-
-
 
   private
 

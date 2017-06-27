@@ -4,6 +4,7 @@ class QuotesController < ApplicationController
     @account = Account.find(params[:account_id])
     @representative = @account.representative
     @quote = Quote.new
+    authorize @quote
     @program_types = Quote.program_types
     @statuses = Quote.statuses
     @current_date = Date.current
@@ -15,6 +16,7 @@ class QuotesController < ApplicationController
     @group_rating = @representative.group_ratings.last
     @program_types = Quote.program_types
     @quote = Quote.new(quote_params)
+    authorize @quote
     @type = @program_types[params[:quote][:program_type]]
     @policy_calculation = @account.policy_calculation
     if @quote.save
@@ -84,6 +86,7 @@ class QuotesController < ApplicationController
 
   def index
     @representative = Representative.find(params[:representative_id])
+    authorize Quote
     @statuses = Account.statuses
     @group_rating_tiers = BwcCodesIndustryGroupSavingsRatioCriterium.all.order(market_rate: :asc).pluck(:market_rate).uniq
     @group_retro_tiers = BwcCodesGroupRetroTier.all.order(discount_tier: :asc).pluck(:discount_tier).uniq
@@ -117,11 +120,13 @@ class QuotesController < ApplicationController
 
   def show
     @quote = Quote.find(params[:id])
+    authorize @quote
     @account = @quote.account
   end
 
   def edit
     @quote = Quote.find(params[:id])
+    authorize @quote
     @account = @quote.account
     @program_types = Quote.program_types
     @statuses = Quote.statuses
@@ -140,6 +145,7 @@ class QuotesController < ApplicationController
 
   def destroy
     @quote = Quote.find(params[:id])
+    authorize @quote
     @quote.remove_quote_generated!
     @account = @quote.account
     if @quote.destroy
