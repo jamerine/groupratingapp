@@ -325,14 +325,18 @@ class RiskReport < PdfReport
   def header
     current_cursor = cursor
     bounding_box([0, current_cursor], :width => 80, :height => 80) do
-      if [9,10,16].include? @account.representative.id
-        image "#{Rails.root}/app/assets/images/minute men hr.jpeg", height: 80
-      elsif [2].include? @account.representative.id
-        image "#{Rails.root}/app/assets/images/cose_logo.jpg", height: 80
-      elsif [17].include? @account.representative.id
-        image "#{Rails.root}/app/assets/images/tartan_logo.jpg", height: 80
+      if @account.representative.logo.url.nil?
+        if [9,10,16].include? @account.representative.id
+          image "#{Rails.root}/app/assets/images/minute men hr.jpeg", height: 100
+        elsif [2].include? @account.representative.id
+          image "#{Rails.root}/app/assets/images/cose_logo.jpg", height: 100
+        elsif [17].include? @account.representative.id
+          image "#{Rails.root}/app/assets/images/tartan_logo.jpg", height: 100
+        else
+          image "#{Rails.root}/app/assets/images/logo.png", height: 50
+        end
       else
-        image "#{Rails.root}/app/assets/images/logo.png", height: 50
+        image @account.representative.logo.url, height: 100
       end
       transparent(0) { stroke_bounds }
       # stroke_bounds

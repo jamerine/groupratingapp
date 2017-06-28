@@ -24,15 +24,20 @@ class ArmInvoice < PdfReport
   def invoice
     current_cursor = cursor
     bounding_box([0, current_cursor], :width => 550, :height => 100) do
-      if [9,10,16].include? @account.representative.id
-        image "#{Rails.root}/app/assets/images/minute men hr.jpeg", height: 100
-      elsif [2].include? @account.representative.id
-        image "#{Rails.root}/app/assets/images/cose_logo.jpg", height: 100
-      elsif [17].include? @account.representative.id
-        image "#{Rails.root}/app/assets/images/tartan_logo.jpg", height: 100
+      if @account.representative.logo.nil?
+        if [9,10,16].include? @account.representative.id
+          image "#{Rails.root}/app/assets/images/minute men hr.jpeg", height: 100
+        elsif [2].include? @account.representative.id
+          image "#{Rails.root}/app/assets/images/cose_logo.jpg", height: 100
+        elsif [17].include? @account.representative.id
+          image "#{Rails.root}/app/assets/images/tartan_logo.jpg", height: 100
+        else
+          image "#{Rails.root}/app/assets/images/logo.png", height: 50
+        end
       else
-        image "#{Rails.root}/app/assets/images/logo.png", height: 50
+        image @account.representative.logo.url, height: 100
       end
+
 
       text_box "INVOICE", :at => [400, 75], :width => 150, height: 25, style: :bold, size: 25
     end
