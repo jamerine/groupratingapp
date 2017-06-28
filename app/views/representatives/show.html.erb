@@ -74,10 +74,12 @@
     <hr>
   </div>
   <div class="container text-center">
+    <% if policy(@representative).edit_global_dates? %>
     <div class="row">
       <h3>Representative Global Date Values</h3>
       <%= link_to "Edit Dates", representative_edit_global_dates_path(@representative), class: 'btn btn-primary' %>
     </div>
+    <% end %>
     <div class="row">
       <div class="col-sm-3">
         <h5>Experience Period Dates</h5>
@@ -145,6 +147,8 @@
     <br>
     <hr>
   </div>
+
+  <% if policy(@representative).edit_global_dates? %>
   <div class="container text-center">
     <div class="row">
       <h3>Processing</h3>
@@ -158,6 +162,9 @@
     <br>
     <hr>
   </div>
+  <% end %>
+
+  <% if policy(@representative).fee_calculations? %>
   <div class="container text-center">
     <div class="row">
       <h3>Quoting & Fees</h3>
@@ -186,6 +193,7 @@
     <br>
     <hr>
   </div>
+  <% end %>
 
   <div class="container">
     <div class="jumbotron text-center jumbotron-white">
@@ -272,6 +280,7 @@
       <hr>
     </div>
     <div class="container text-center">
+      <% if policy(@representative).import_contact_process? %>
       <div class="row">
         <h3>Import Data</h3>
       </div>
@@ -306,9 +315,8 @@
         </div>
 
       </div>
+      <% end %>
     </div>
-    <hr>
-  </div>
 
 
 
