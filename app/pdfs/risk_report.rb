@@ -355,7 +355,7 @@ class RiskReport < PdfReport
           image "#{Rails.root}/app/assets/images/logo.png", height: 50
         end
       else
-        image open(@account.representative.logo.url), height: 100
+        image open(@account.representative.logo.url), height: 50
       end
       transparent(0) { stroke_bounds }
       # stroke_bounds
