@@ -238,7 +238,11 @@ class RiskReport < PdfReport
       if @account.policy_calculation.currently_assigned_erc_representative_number == 0
         "N/A"
       else
-        BwcCodesEmployerRepresentative.find_by(representative_number: @account.policy_calculation.currently_assigned_erc_representative_number).employer_rep_name
+        if BwcCodesEmployerRepresentative.find_by(representative_number: @account.policy_calculation.currently_assigned_erc_representative_number).nil?
+          "#{@account.policy_calculation.currently_assigned_erc_representative_number}"
+        else
+          BwcCodesEmployerRepresentative.find_by(representative_number: @account.policy_calculation.currently_assigned_erc_representative_number).employer_rep_name
+        end
       end
 
       @grc =
