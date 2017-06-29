@@ -249,33 +249,36 @@ class RiskReport < PdfReport
       if @account.policy_calculation.currently_assigned_grc_representative_number == 0
         "N/A"
       else
-        if BwcCodesEmployerRepresentative.find_by(representative_number: @account.policy_calculation.currently_assigned_erc_representative_number).nil?
-          "#{@account.policy_calculation.currently_assigned_erc_representative_number}"
+        if BwcCodesEmployerRepresentative.find_by(representative_number: @account.policy_calculation.currently_assigned_grc_representative_number).nil?
+          "#{@account.policy_calculation.currently_assigned_grc_representative_number}"
         else
-          BwcCodesEmployerRepresentative.find_by(representative_number: @account.policy_calculation.currently_assigned_erc_representative_number).employer_rep_name
+          BwcCodesEmployerRepresentative.find_by(representative_number: @account.policy_calculation.currently_assigned_grc_representative_number).employer_rep_name
         end
+
       end
 
       @clm =
       if @account.policy_calculation.currently_assigned_clm_representative_number == 0
         "N/A"
       else
-        if BwcCodesEmployerRepresentative.find_by(representative_number: @account.policy_calculation.currently_assigned_erc_representative_number).nil?
-          "#{@account.policy_calculation.currently_assigned_erc_representative_number}"
+        if BwcCodesEmployerRepresentative.find_by(representative_number: @account.policy_calculation.currently_assigned_clm_representative_number).nil?
+          "#{@account.policy_calculation.currently_assigned_clm_representative_number}"
         else
-          BwcCodesEmployerRepresentative.find_by(representative_number: @account.policy_calculation.currently_assigned_erc_representative_number).employer_rep_name
+          BwcCodesEmployerRepresentative.find_by(representative_number: @account.policy_calculation.currently_assigned_clm_representative_number).employer_rep_name
         end
+
       end
 
       @risk =
       if @account.policy_calculation.currently_assigned_risk_representative_number == 0
         "N/A"
       else
-        if BwcCodesEmployerRepresentative.find_by(representative_number: @account.policy_calculation.currently_assigned_erc_representative_number).nil?
-          "#{@account.policy_calculation.currently_assigned_erc_representative_number}"
+        if BwcCodesEmployerRepresentative.find_by(representative_number: @account.policy_calculation.currently_assigned_risk_representative_number).nil?
+          "#{@account.policy_calculation.currently_assigned_risk_representative_number}"
         else
-          BwcCodesEmployerRepresentative.find_by(representative_number: @account.policy_calculation.currently_assigned_erc_representative_number).employer_rep_name
+          BwcCodesEmployerRepresentative.find_by(representative_number: @account.policy_calculation.currently_assigned_risk_representative_number).try(:employer_rep_name)
         end
+
       end
 
       @group_rating_levels = BwcCodesIndustryGroupSavingsRatioCriterium.where(industry_group: @account.industry_group)
