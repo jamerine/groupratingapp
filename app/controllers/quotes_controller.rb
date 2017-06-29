@@ -51,7 +51,7 @@ class QuotesController < ApplicationController
         combine_pdf << CombinePDF.parse(ac_2_pdf_render)
       end
 
-      if params[:quote][:quote] == "1"
+      if params[:quote][:contract] == "1"
         contract_pdf = ArmContract.new(@quote, @account, @policy_calculation, view_context)
         contract_pdf_render = contract_pdf.render
         combine_pdf << CombinePDF.parse(contract_pdf_render)

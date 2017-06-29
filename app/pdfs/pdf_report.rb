@@ -1,4 +1,5 @@
 class PdfReport < Prawn::Document
+  require "open-uri"
 
   # Often-Used Constants
 
