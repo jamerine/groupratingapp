@@ -44,8 +44,10 @@ Rails.application.routes.draw do
     collection { post :generate_account_quotes }
     collection { delete :delete_all_quotes }
     get :view_group_rating_quote
+    get :view_group_retro_quote
     get :view_invoice
-
+    get :new_group_retro
+    post :create_group_retro
   end
 
   resources :fees do

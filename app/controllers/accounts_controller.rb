@@ -104,8 +104,10 @@ class AccountsController < ApplicationController
     @account = Account.find(params[:account_id])
     authorize @account
     @policy_calculation = @account.policy_calculation
-    @group_retro_qualifications = ["accept", "pending_predecessor", "reject", "auto_run"]
+    @group_retro_qualifications = Account.group_rating_qualifications
+    @group_retro_qualifications[:auto_run] = "3"
     @group_retro_tier = BwcCodesGroupRetroTier.find_by(industry_group: @account.industry_group).discount_tier
+    @group_retro_tiers = ["#{@group_retro_tier}"]
   end
 
   def group_rating_calc
@@ -129,6 +131,26 @@ class AccountsController < ApplicationController
     end
   end
 
+  def group_retro_calc
+    args = params[:account]
+    @account = Account.find(params[:account_id])
+    if args[:group_retro_qualification] == "auto_run"
+      @account.policy_calculation.calculate_experience
+      @account.policy_calculation.calculate_premium
+      @account.group_rating
+      @account.group_retro
+      @account.update_attributes(fee_override: args[:fee_override])
+      @account.group_retro(user_override: false)
+      flash[:notice] = "Account's automatic group retro calculation was successful."
+      @acount
+      redirect_to @account
+    else
+      args[:user_override] = true
+      @account.group_retro_calc(args)
+      flash[:notice] = "Account's group retro calculation was successful."
+      redirect_to @account
+    end
+  end
 
 
   def assign
@@ -198,6 +220,36 @@ class AccountsController < ApplicationController
       end
     end
     # redirect_to @account, notice: "Quote Generated"
+  end
+
+  def group_retro_quote
+    @account = Account.find(params[:account_id])
+    @group_rating = GroupRating.find(params[:group_rating_id])
+    @quote = @account.quotes.where(program_type: 1).last
+    respond_to do |format|
+      format.html
+      format.pdf do
+        pdf = ArmGroupRetroAssessment.new(@quote, @account, @account.policy_calculation, view_context)
+
+        # uploader = QuoteUploader.new
+        # tmpfile = Tempfile.new("#{ @account.policy_number_entered }_quote_#{ @quote.id }.pdf")
+        # quote = File.basename(tmpfile)
+        # quote_path = "https://console.aws.amazon.com/s3/buckets/grouprating/uploads/#{quote}"
+        # tmpfile.binmode
+        # tmpfile.write (pdf.render)
+        # uploader.store! tmpfile
+        #
+        # @quote.update_attributes(quote_generated: quote_path)
+        # tmpfile.close
+        # tmpfile.unlink
+        send_data pdf.render, filename: "#{ @account.policy_number_entered }_risk_report.pdf",
+                              type: "application/pdf",
+                              disposition: "inline"
+        # pdf.render_file "app/reports/risk_report_#{@account.id}.pdf"
+      end
+    end
+
+
   end
 
   def roc_report

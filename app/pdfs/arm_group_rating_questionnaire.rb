@@ -1,4 +1,4 @@
-class ArmQuestionnaire < PdfReport
+class ArmGroupRatingQuestionnaire < PdfReport
   def initialize(quote=[],account=[],policy_calculation=[],view)
     super()
     @quote = quote
@@ -22,16 +22,31 @@ class ArmQuestionnaire < PdfReport
   private
 
   def questionnaire
-    if [9,10,16].include? @account.representative.id
-      image "#{Rails.root}/app/assets/images/minute men hr.jpeg", height: 100
-    elsif [2].include? @account.representative.id
-      image "#{Rails.root}/app/assets/images/cose_logo.jpg", height: 100
-    elsif [17].include? @account.representative.id
-      image "#{Rails.root}/app/assets/images/tartan_logo.jpg", height: 100
+    if @account.representative.logo.nil?
+      if [9,10,16].include? @account.representative.id
+        image "#{Rails.root}/app/assets/images/minute men hr.jpeg", height: 75
+      elsif [2].include? @account.representative.id
+        image "#{Rails.root}/app/assets/images/cose_logo.jpg", height: 75
+      elsif [17].include? @account.representative.id
+        image "#{Rails.root}/app/assets/images/tartan_logo.jpg", height: 75
+      else
+        image "#{Rails.root}/app/assets/images/logo.png", height: 50
+      end
     else
-      image "#{Rails.root}/app/assets/images/logo.png", height: 50
+      if [9,10,16,2,17].include? @account.representative.id
+        if Rails.env.production?
+          image open(@account.representative.logo.url), height: 75
+        else
+          image "#{Rails.root}/app/assets/images/minute men hr.jpeg", height: 75
+        end
+      else
+        if Rails.env.production?
+          image open(@account.representative.logo.url), height: 50
+        else
+          image "#{Rails.root}/app/assets/images/logo.png", height: 50
+        end
+      end
     end
-
     move_down 15
     text "GROUP RATING PROGRAM QUESTIONNAIRE", style: :bold, align: :center, size: 14
     move_down 15

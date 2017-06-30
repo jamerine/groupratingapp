@@ -44,5 +44,9 @@ class QuotePolicy < ApplicationPolicy
      user.admin? || user.read_only?
   end
 
+  def create_group_retro?
+    user.admin? || user.read_only?
+  end
+
 
 end

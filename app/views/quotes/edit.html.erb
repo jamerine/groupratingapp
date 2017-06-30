@@ -18,7 +18,11 @@
           <%= link_to 'View Generated Quote PDF', @quote.quote_generated.url, class: 'btn btn-primary' %>
         </div>
         <div class="col col-md-1 col-md-offset-8">
-          <%= link_to 'Generate New Full Quote Packet PDF', quote_view_group_rating_quote_path(@quote, format: :pdf), class: 'btn btn-success' %>
+          <% if @quote.program_type == 'group_rating' %>
+            <%= link_to 'Generate New Full Quote Packet PDF', quote_view_group_rating_quote_path(@quote, format: :pdf), class: 'btn btn-success' %>
+          <% elsif @quote.program_type == 'group_retro' %>
+              <%= link_to 'Generate New Full Quote Packet PDF', quote_view_group_retro_quote_path(@quote, format: :pdf), class: 'btn btn-success' %>
+          <% end %>
         </div>
       </div>
       <div class="row">

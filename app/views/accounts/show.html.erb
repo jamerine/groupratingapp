@@ -116,11 +116,12 @@
 
         </tr>
         <tr>
-          <% if  @account.group_retro_qualification == 'accept'  %>
-            <td><%= link_to 'Quote',new_quote_path(account_id: params[:id], program_type: 'group_retro', fees: @account.group_fees, group_code: @account.group_retro_group_number, quote_tier: @account.group_retro_tier), class:'btn btn-sm btn-info' %> </td>
+          <% if  @account.group_rating_qualification == 'accept'  %>
+            <td><%= link_to 'Quote',quote_new_group_retro_path(account_id: params[:id], program_type: 'group_retro', fees: (@account.fee_override.nil? ? @account.group_fees : @account.fee_override), group_code: @account.group_retro_group_number, quote_tier: @account.group_retro_tier, quote_id: 1), class:'btn btn-sm btn-info' %></td>
           <% else %>
-            <td><%= link_to 'Quote',new_quote_path(account_id: params[:id], program_type: 'group_retro', fees: @account.group_fees, group_code: @account.group_retro_group_number, quote_tier: @account.group_retro_tier), class:'btn btn-sm btn-info disabled' %> </td>
+            <td><%= link_to 'Quote',new_quote_path(account_id: params[:id], program_type: 'group_retro', fees: (@account.fee_override.nil? ? @account.group_fees : @account.fee_override), group_code: @account.group_retro_group_number, quote_tier: @account.group_retro_tier), class:'btn btn-sm btn-info disabled' %> </td>
           <% end %>
+
           <td>Group Retro</td>
           <td><%= link_to @account.group_retro_qualification, '#', "data-toggle" => "modal", "data-target" => "#groupRetroRejectModal", "data-rejections" => @account.group_rating_rejections %> </td>
           <td><%= @account.group_retro_group_number %></td>
@@ -129,7 +130,7 @@
           <td><%= number_to_currency(@account.group_retro_savings) %></td>
           <td>
             <% if policy(@account).edit? %>
-              <%= link_to "Override", account_edit_group_retro_path(params[:id]), class: 'btn btn-primary btn-sm disabled', method: :get %>
+              <%= link_to "Override", account_edit_group_retro_path(params[:id]), class: 'btn btn-primary btn-sm', method: :get %>
             <% else %>
               <%= link_to "Override", account_edit_group_retro_path(params[:id]), class: 'btn btn-default btn-sm disabled', method: :get %>
             <% end %>
