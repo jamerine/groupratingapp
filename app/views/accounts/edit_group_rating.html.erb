@@ -4,7 +4,7 @@
   <br>
   <div class="jumbotron text-center">
     <h1>Override Group Rating</h1>
-      <%= form_for :account , :url => account_group_rating_calc_path(@account) do |f| %>
+      <%= form_for :account, :url => account_group_rating_calc_path(account_id: @account) do |f| %>
       <div class="row">
           <div class="col-md-2">
             <%= f.label 'Qualification' %>
@@ -27,7 +27,7 @@
 
           <div class="col-md-2">
             <%= f.label 'Fees Override' %>
-            <%= f.number_field :fee_override, class: "form-control", value: @account.fee_override  %>
+            <%= f.number_field :fee_override, class: "form-control", value: @account.fee_override, min: 0, step: 0.01    %>
           </div>
 
       </div>

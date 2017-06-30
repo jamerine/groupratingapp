@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170623120817) do
+ActiveRecord::Schema.define(version: 20170629202919) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -74,7 +74,7 @@ ActiveRecord::Schema.define(version: 20170623120817) do
     t.boolean  "ac3_approval"
     t.boolean  "user_override"
     t.string   "group_retro_qualification"
-    t.string   "group_retro_tier"
+    t.float    "group_retro_tier"
     t.string   "group_retro_group_number"
     t.float    "group_retro_premium"
     t.float    "group_retro_savings"

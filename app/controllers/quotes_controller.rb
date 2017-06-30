@@ -10,6 +10,16 @@ class QuotesController < ApplicationController
     @current_date = Date.current
   end
 
+  def new_group_retro
+    @account = Account.find(params[:account_id])
+    @representative = @account.representative
+    @quote = Quote.new
+    # authorize @quote
+    @program_types = Quote.program_types
+    @statuses = Quote.statuses
+    @current_date = Date.current
+  end
+
   def create
     @account = Account.find(params[:quote][:account_id])
     @representative = @account.representative
@@ -22,13 +32,13 @@ class QuotesController < ApplicationController
     if @quote.save
       @quote.update_attributes(quote_date: @quote.created_at)
       policy_year = @quote.quote_year
-      s = "#{@account.policy_number_entered}-#{policy_year}-#{@quote.id}"
+      s = "#{@account.policy_number_entered}-#{policy_year}-#{@quote.program_type}-#{@quote.id}"
       @quote.assign_attributes(invoice_number: s)
       ##### ADDED THIS PART #####
       combine_pdf = CombinePDF.new
 
       if params[:quote][:intro] == "1"
-        intro_pdf = ArmIntro.new(@quote, @account, @policy_calculation, view_context)
+        intro_pdf = ArmGroupRatingIntro.new(@quote, @account, @policy_calculation, view_context)
         intro_pdf_render = intro_pdf.render
         combine_pdf << CombinePDF.parse(intro_pdf_render)
       end
@@ -52,25 +62,99 @@ class QuotesController < ApplicationController
       end
 
       if params[:quote][:contract] == "1"
-        contract_pdf = ArmContract.new(@quote, @account, @policy_calculation, view_context)
+        contract_pdf = ArmGroupRatingContract.new(@quote, @account, @policy_calculation, view_context)
         contract_pdf_render = contract_pdf.render
         combine_pdf << CombinePDF.parse(contract_pdf_render)
       end
 
       if params[:quote][:questionnaire] == "1"
-        questionnaire_pdf = ArmQuestionnaire.new(@quote, @account, @policy_calculation, view_context)
+        questionnaire_pdf = ArmGroupRatingQuestionnaire.new(@quote, @account, @policy_calculation, view_context)
         questionnaire_pdf_render = questionnaire_pdf.render
         combine_pdf << CombinePDF.parse(questionnaire_pdf_render)
       end
 
       if params[:quote][:invoice] == "1"
-        invoice_pdf = ArmInvoice.new(@quote, @account, @policy_calculation, view_context)
+        invoice_pdf = ArmGroupRatingInvoice.new(@quote, @account, @policy_calculation, view_context)
         invoice_pdf_render = invoice_pdf.render
         combine_pdf << CombinePDF.parse(invoice_pdf_render)
       end
 
       # uploader = QuoteUploader.new
-      tmpfile = Tempfile.new(["#{ @account.policy_number_entered }_quote_#{ @quote.id }", '.pdf'])
+      tmpfile = Tempfile.new(["#{ @account.policy_number_entered }-#{@quote.program_type}-#{ @quote.id }", '.pdf'])
+      tmpfile.binmode
+      tmpfile.write(combine_pdf.to_pdf)
+      @quote.quote_generated = tmpfile
+      tmpfile.close
+      tmpfile.unlink
+      @quote.save!
+      #######
+      redirect_to edit_quote_path(@quote), notice: "Quote successfully created"
+    else
+      render :new
+    end
+  end
+
+  def create_group_retro
+    @account = Account.find(params[:quote][:account_id])
+    @representative = @account.representative
+    @group_rating = @representative.group_ratings.last
+    @program_types = Quote.program_types
+    @quote = Quote.new(quote_params)
+    authorize @quote
+    @type = @program_types[params[:quote][:program_type]]
+    @policy_calculation = @account.policy_calculation
+    if @quote.save
+      @quote.update_attributes(quote_date: @quote.created_at)
+      policy_year = @quote.quote_year
+      s = "#{@account.policy_number_entered}-#{policy_year}-#{@quote.program_type}-#{@quote.id}"
+      @quote.assign_attributes(invoice_number: s)
+      ##### ADDED THIS PART #####
+      combine_pdf = CombinePDF.new
+
+      if params[:quote][:intro] == "1"
+        intro_pdf = ArmGroupRetroIntro.new(@quote, @account, @policy_calculation, view_context)
+        intro_pdf_render = intro_pdf.render
+        combine_pdf << CombinePDF.parse(intro_pdf_render)
+      end
+
+      if params[:quote][:quote] == "1"
+        quote_pdf = GroupRetroQuote.new(@quote, @account, @policy_calculation, view_context)
+        quote_pdf_render = quote_pdf.render
+        combine_pdf << CombinePDF.parse(quote_pdf_render)
+      end
+
+      if params[:quote][:u_153] == "1"
+        u_153_pdf = U153.new(@quote, @account, @policy_calculation, view_context)
+        u_153_pdf_render = u_153_pdf.render
+        combine_pdf << CombinePDF.parse(u_153_pdf_render)
+      end
+
+      if params[:quote][:ac_2] == "1"
+        ac_2_pdf = Ac2.new(@quote, @account, @policy_calculation, view_context)
+        ac_2_pdf_render = ac_2_pdf.render
+        combine_pdf << CombinePDF.parse(ac_2_pdf_render)
+      end
+
+      if params[:quote][:contract] == "1"
+        contract_pdf = ArmGroupRetroContract.new(@quote, @account, @policy_calculation, view_context)
+        contract_pdf_render = contract_pdf.render
+        combine_pdf << CombinePDF.parse(contract_pdf_render)
+      end
+
+      if params[:quote][:assessment] == "1"
+        assessment_pdf = ArmGroupRetroAssessment.new(@quote, @account, @policy_calculation, view_context)
+        assessment_pdf_render = assessment_pdf.render
+        combine_pdf << CombinePDF.parse(assessment_pdf_render)
+      end
+
+      if params[:quote][:invoice] == "1"
+        invoice_pdf = ArmGroupRetroInvoice.new(@quote, @account, @policy_calculation, view_context)
+        invoice_pdf_render = invoice_pdf.render
+        combine_pdf << CombinePDF.parse(invoice_pdf_render)
+      end
+
+      # uploader = QuoteUploader.new
+      tmpfile = Tempfile.new(["#{ @account.policy_number_entered }_#{@quote.program_type}_#{ @quote.id }", '.pdf'])
       tmpfile.binmode
       tmpfile.write(combine_pdf.to_pdf)
       @quote.quote_generated = tmpfile
@@ -184,7 +268,7 @@ class QuotesController < ApplicationController
         # pdf.render_file "app/reports/#{ @account.policy_number_entered }_quote_#{ @quote.id }.pdf"
       end
     end
-    # redirect_to edit_quote_path(@quote), notice: "Quote Generated"
+    # redirect_to edit_quote_path(@quote), notice: "Quote `Generate`d"
   end
   #
   # def run_quote_process
@@ -242,7 +326,7 @@ class QuotesController < ApplicationController
 
       @account_ids = @accounts.pluck(:id)
     end
-    GenerateQuoteProcess.perform_async(@representative.id, current_user.id, @account_ids, params[:quote_checkboxes]["ac_2"], params[:quote_checkboxes]["ac_26"], params[:quote_checkboxes]["contract"], params[:quote_checkboxes]["intro"], params[:quote_checkboxes]["invoice"], params[:quote_checkboxes]["questionnaire"], params[:quote_checkboxes]["quote"])
+    GenerateGroupRatingQuoteProcess.perform_async(@representative.id, current_user.id, @account_ids, params[:quote_checkboxes]["ac_2"], params[:quote_checkboxes]["ac_26"], params[:quote_checkboxes]["contract"], params[:quote_checkboxes]["intro"], params[:quote_checkboxes]["invoice"], params[:quote_checkboxes]["questionnaire"], params[:quote_checkboxes]["quote"])
     redirect_to quotes_path(representative_id: @representative.id), notice: "Quoting packet process has started. Please check your email for a link to a zip file for the collection of the quote pdf packets."
   end
 
@@ -268,7 +352,7 @@ class QuotesController < ApplicationController
       format.pdf do
         combine_pdf = CombinePDF.new
 
-        intro_pdf = ArmIntro.new(@quote, @account, @policy_calculation, view_context)
+        intro_pdf = ArmGroupRatingIntro.new(@quote, @account, @policy_calculation, view_context)
         intro_pdf_render = intro_pdf.render
         combine_pdf = CombinePDF.parse(intro_pdf_render)
 
@@ -296,6 +380,52 @@ class QuotesController < ApplicationController
         invoice_pdf_render = invoice_pdf.render
         combine_pdf << CombinePDF.parse(invoice_pdf_render)
 
+
+        send_data combine_pdf.to_pdf, filename: "#{ @account.policy_number_entered }_quote_#{ @quote.id }.pdf",
+                              type: "application/pdf",
+                              disposition: "inline"
+        # pdf.render_file "app/reports/#{ @account.policy_number_entered }_quote_#{ @quote.id }.pdf"
+      end
+    end
+    # redirect_to edit_quote_path(@quote), notice: "Quote Generated"
+  end
+
+  def view_group_retro_quote
+    @quote = Quote.find(params[:quote_id])
+    @account = @quote.account
+    @policy_calculation = @account.policy_calculation
+    respond_to do |format|
+      format.html
+      format.pdf do
+        combine_pdf = CombinePDF.new
+
+        intro_pdf = ArmGroupRetroIntro.new(@quote, @account, @policy_calculation, view_context)
+        intro_pdf_render = intro_pdf.render
+        combine_pdf << CombinePDF.parse(intro_pdf_render)
+
+        quote_pdf = GroupRetroQuote.new(@quote, @account, @policy_calculation, view_context)
+        quote_pdf_render = quote_pdf.render
+        combine_pdf << CombinePDF.parse(quote_pdf_render)
+
+        u_153_pdf = U153.new(@quote, @account, @policy_calculation, view_context)
+        u_153_pdf_render = u_153_pdf.render
+        combine_pdf << CombinePDF.parse(u_153_pdf_render)
+
+        ac_2_pdf = Ac2.new(@quote, @account, @policy_calculation, view_context)
+        ac_2_pdf_render = ac_2_pdf.render
+        combine_pdf << CombinePDF.parse(ac_2_pdf_render)
+
+        contract_pdf = ArmGroupRetroContract.new(@quote, @account, @policy_calculation, view_context)
+        contract_pdf_render = contract_pdf.render
+        combine_pdf << CombinePDF.parse(contract_pdf_render)
+
+        assessment_pdf = ArmGroupRetroAssessment.new(@quote, @account, @policy_calculation, view_context)
+        assessment_pdf_render = assessment_pdf.render
+        combine_pdf << CombinePDF.parse(assessment_pdf_render)
+
+        invoice_pdf = ArmGroupRetroInvoice.new(@quote, @account, @policy_calculation, view_context)
+        invoice_pdf_render = invoice_pdf.render
+        combine_pdf << CombinePDF.parse(invoice_pdf_render)
 
         send_data combine_pdf.to_pdf, filename: "#{ @account.policy_number_entered }_quote_#{ @quote.id }.pdf",
                               type: "application/pdf",

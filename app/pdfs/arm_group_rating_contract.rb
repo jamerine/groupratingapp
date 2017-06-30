@@ -1,4 +1,4 @@
-class ArmContract < PdfReport
+class ArmGroupRatingContract < PdfReport
   def initialize(quote=[],account=[],policy_calculation=[],view)
     super()
     @quote = quote

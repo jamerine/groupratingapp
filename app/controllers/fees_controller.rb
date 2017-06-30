@@ -37,8 +37,7 @@ class FeesController < ApplicationController
 
   def edit_individual
     @representative = Representative.find(params[:representative_id])
-    @fee = Fee.new
-    authorize @fee
+    authorize :fee
     if params[:account_ids].present?
       @accounts = Account.find(params[:account_ids])
     elsif params[:parameters].present?
