@@ -116,7 +116,7 @@
 
         </tr>
         <tr>
-          <% if  @account.group_rating_qualification == 'accept'  %>
+          <% if  @account.group_retro_qualification == 'accept'  %>
             <td><%= link_to 'Quote',quote_new_group_retro_path(account_id: params[:id], program_type: 'group_retro', fees: (@account.fee_override.nil? ? @account.group_fees : @account.fee_override), group_code: @account.group_retro_group_number, quote_tier: @account.group_retro_tier, quote_id: 1), class:'btn btn-sm btn-info' %></td>
           <% else %>
             <td><%= link_to 'Quote',new_quote_path(account_id: params[:id], program_type: 'group_retro', fees: (@account.fee_override.nil? ? @account.group_fees : @account.fee_override), group_code: @account.group_retro_group_number, quote_tier: @account.group_retro_tier), class:'btn btn-sm btn-info disabled' %> </td>
