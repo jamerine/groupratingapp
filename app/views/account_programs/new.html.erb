@@ -16,7 +16,6 @@
       <%= f.hidden_field :effective_start_date, value: @quote.quote_year_lower_date %>
       <%= f.hidden_field :effective_end_date, value: @quote.quote_year_upper_date %>
       <%= f.hidden_field :quote_date, value: @quote.quote_date %>
-      <%= f.hidden_field :quote_sent_date, value: @quote.quote_sent_date %>
       <%= f.hidden_field :program_type, value: @quote.program_type %>
       <%= f.hidden_field :fees_amount, value: @quote.fees %>
       <%= f.hidden_field :quote_generated, value: @quote.quote_generated %>
@@ -36,10 +35,6 @@
         <div class="form-group col-md-2" >
           <p>Quoted Date</p>
           <h4> <%= @quote.quote_date.try(:strftime,"%m/%d/%y") %> </h4>
-        </div>
-        <div class="form-group col-md-2" >
-          <p>Quote Sent Date</p>
-          <h4> <%= @quote.quote_sent_date.try(:strftime,"%m/%d/%y") %> </h4>
         </div>
       </div>
       <div class="row">

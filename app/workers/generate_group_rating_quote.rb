@@ -1,4 +1,4 @@
-class GenerateQuote
+class GenerateGroupRatingQuote
   include Sidekiq::Worker
 
   sidekiq_options queue: :generate_quote
@@ -26,7 +26,7 @@ class GenerateQuote
       combine_pdf = CombinePDF.new
 
       if intro == "1"
-        intro_pdf = ArmIntro.new(@quote, @account, @policy_calculation, view_context)
+        intro_pdf = ArmGroupRatingIntro.new(@quote, @account, @policy_calculation, view_context)
         intro_pdf_render = intro_pdf.render
         combine_pdf << CombinePDF.parse(intro_pdf_render)
       end
@@ -50,19 +50,19 @@ class GenerateQuote
       end
 
       if contract == "1"
-        contract_pdf = ArmContract.new(@quote, @account, @policy_calculation, view_context)
+        contract_pdf = ArmGroupRatingContract.new(@quote, @account, @policy_calculation, view_context)
         contract_pdf_render = contract_pdf.render
         combine_pdf << CombinePDF.parse(contract_pdf_render)
       end
 
       if questionnaire == "1"
-        questionnaire_pdf = ArmQuestionnaire.new(@quote, @account, @policy_calculation, view_context)
+        questionnaire_pdf = ArmGroupRatingQuestionnaire.new(@quote, @account, @policy_calculation, view_context)
         questionnaire_pdf_render = questionnaire_pdf.render
         combine_pdf << CombinePDF.parse(questionnaire_pdf_render)
       end
 
       if invoice == "1"
-        invoice_pdf = ArmInvoice.new(@quote, @account, @policy_calculation, view_context)
+        invoice_pdf = ArmGroupRatingInvoice.new(@quote, @account, @policy_calculation, view_context)
         invoice_pdf_render = invoice_pdf.render
         combine_pdf << CombinePDF.parse(invoice_pdf_render)
       end

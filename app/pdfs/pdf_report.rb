@@ -13,18 +13,30 @@ class PdfReport < Prawn::Document
   end
 
   def header(title=nil)
-    if [9,10,16].include? @account.representative.id
-      image "#{Rails.root}/app/assets/images/minute men hr.jpeg", height: 100
-    elsif [2].include? @account.representative.id
-      image "#{Rails.root}/app/assets/images/cose_logo.jpg", height: 100
-    elsif [17].include? @account.representative.id
-      image "#{Rails.root}/app/assets/images/tartan_logo.jpg", height: 100
+    if @account.representative.logo.nil?
+      if [9,10,16].include? @account.representative.id
+        image "#{Rails.root}/app/assets/images/minute men hr.jpeg", height: 75
+      elsif [2].include? @account.representative.id
+        image "#{Rails.root}/app/assets/images/cose_logo.jpg", height: 75
+      elsif [17].include? @account.representative.id
+        image "#{Rails.root}/app/assets/images/tartan_logo.jpg", height: 75
+      else
+        image "#{Rails.root}/app/assets/images/logo.png", height: 50
+      end
     else
-      image "#{Rails.root}/app/assets/images/logo.png", height: 50
-    end
-    text "#{ @account.representative.company_name}", size: 18, style: :bold, align: :center
-    if title
-      text title, size: 14, style: :bold_italic, align: :center
+      if [9,10,16,2,17].include? @account.representative.id
+        if Rails.env.production?
+          image open(@account.representative.logo.url), height: 75
+        else
+          image "#{Rails.root}/app/assets/images/minute men hr.jpeg", height: 75
+        end
+      else
+        if Rails.env.production?
+          image open(@account.representative.logo.url), height: 50
+        else
+          image "#{Rails.root}/app/assets/images/logo.png", height: 50
+        end
+      end
     end
   end
 

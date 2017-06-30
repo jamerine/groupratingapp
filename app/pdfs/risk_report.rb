@@ -310,7 +310,7 @@ class RiskReport < PdfReport
           if @account.quotes.where("program_type = 1").first.nil?
             'N/A'
           else
-            @account.quotes.where("program_type = 1").first.quote_sent_date
+            @account.quotes.where("program_type = 1").first.quote_date
           end
 
 
@@ -346,16 +346,28 @@ class RiskReport < PdfReport
     bounding_box([0, current_cursor], :width => 80, :height => 80) do
       if @account.representative.logo.nil?
         if [9,10,16].include? @account.representative.id
-          image "#{Rails.root}/app/assets/images/minute men hr.jpeg", height: 100
+          image "#{Rails.root}/app/assets/images/minute men hr.jpeg", height: 75
         elsif [2].include? @account.representative.id
-          image "#{Rails.root}/app/assets/images/cose_logo.jpg", height: 100
+          image "#{Rails.root}/app/assets/images/cose_logo.jpg", height: 75
         elsif [17].include? @account.representative.id
-          image "#{Rails.root}/app/assets/images/tartan_logo.jpg", height: 100
+          image "#{Rails.root}/app/assets/images/tartan_logo.jpg", height: 75
         else
           image "#{Rails.root}/app/assets/images/logo.png", height: 50
         end
       else
-        image open(@account.representative.logo.url), height: 50
+        if [9,10,16,2,17].include? @account.representative.id
+          if Rails.env.production?
+            image open(@account.representative.logo.url), height: 75
+          else
+            image "#{Rails.root}/app/assets/images/minute men hr.jpeg", height: 75
+          end
+        else
+          if Rails.env.production?
+            image open(@account.representative.logo.url), height: 50
+          else
+            image "#{Rails.root}/app/assets/images/logo.png", height: 50
+          end
+        end
       end
       transparent(0) { stroke_bounds }
       # stroke_bounds
@@ -556,14 +568,30 @@ class RiskReport < PdfReport
   def header_two
     current_cursor = cursor
     bounding_box([0, current_cursor], :width => 80, :height => 80) do
-      if [9,10,16].include? @account.representative.id
-        image "#{Rails.root}/app/assets/images/minute men hr.jpeg", height: 80
-      elsif [2].include? @account.representative.id
-        image "#{Rails.root}/app/assets/images/cose_logo.jpg", height: 80
-      elsif [17].include? @account.representative.id
-        image "#{Rails.root}/app/assets/images/tartan_logo.jpg", height: 80
+      if @account.representative.logo.nil?
+        if [9,10,16].include? @account.representative.id
+          image "#{Rails.root}/app/assets/images/minute men hr.jpeg", height: 75
+        elsif [2].include? @account.representative.id
+          image "#{Rails.root}/app/assets/images/cose_logo.jpg", height: 75
+        elsif [17].include? @account.representative.id
+          image "#{Rails.root}/app/assets/images/tartan_logo.jpg", height: 75
+        else
+          image "#{Rails.root}/app/assets/images/logo.png", height: 50
+        end
       else
-        image "#{Rails.root}/app/assets/images/logo.png", height: 50
+        if [9,10,16,2,17].include? @account.representative.id
+          if Rails.env.production?
+            image open(@account.representative.logo.url), height: 75
+          else
+            image "#{Rails.root}/app/assets/images/minute men hr.jpeg", height: 75
+          end
+        else
+          if Rails.env.production?
+            image open(@account.representative.logo.url), height: 50
+          else
+            image "#{Rails.root}/app/assets/images/logo.png", height: 50
+          end
+        end
       end
       transparent(0) { stroke_bounds }
       # stroke_bounds

@@ -8,13 +8,12 @@
       <div class="row">
           <div class="col-md-2">
             <%= f.label 'Qualification' %>
-            <%= f.select :group_retro_qualification, options_for_select(@group_retro_qualifications.collect { |s| [s.humanize] } , selected: @account.group_retro_qualification.humanize), {} , class: "form-control" %>
+            <%= f.select :group_retro_qualification, options_for_select(@group_retro_qualifications.collect { |s| [s[0].humanize, s[0]] }, selected: :auto_run), {} , class: "form-control" %>
           </div>
-
           <div class="col-md-2">
             <%= f.label 'Discount Tier' %>
 
-            <%= f.select :group_retro_tier, options_for_select(BwcCodesGroupRetroTier.pluck(:discount_tier).uniq, selected: @account.group_rating_tier), {include_blank: true}, class: "form-control" %>
+            <%= f.select :group_retro_tier, options_for_select(BwcCodesGroupRetroTier.pluck(:discount_tier).uniq, selected: @account.group_retro_tier), {include_blank: true}, class: "form-control" %>
           </div>
 
           <div class="col-md-2">
@@ -24,13 +23,18 @@
 
           <div class="col-md-2">
             <%= f.label 'Group Fees' %>
-            <%= f.text_field :group_fees, class: "form-control", value: nil  %>
+            <p><%= number_to_currency(@account.try(:group_fees)) %></p>
+          </div>
+
+          <div class="col-md-2">
+            <%= f.label 'Fees Override' %>
+            <%= f.number_field :fee_override, class: "form-control", value: @account.fee_override, min: 0, step: 0.01   %>
           </div>
 
       </div>
       <br>
       <div class="col-md-12" >
-        <%= f.submit 'Calculate Group Rating', class: 'btn btn-info' %>
+        <%= f.submit 'Calculate Group Retro', class: 'btn btn-info' %>
       </div>
       <% end %>
 
