@@ -1206,15 +1206,16 @@ class RiskReport < PdfReport
     @payroll_periods.each do |period|
       @premium_total = 0
       @policy_calculation.manual_class_calculations.each do |man|
-        unless PayrollCalculation.find_by(reporting_period_start_date: period, policy_number: @policy_calculation.policy_number, manual_number: man.manual_number).nil?
-          if PayrollCalculation.find_by(reporting_period_start_date: period, policy_number: @policy_calculation.policy_number, manual_number: man.manual_number).manual_class_rate.nil?
+        unless PayrollCalculation.find_by(reporting_period_start_date: period, policy_number: @policy_calculation.policy_number, manual_number: man.manual_number, representative_number: @account.representative.representative_number).nil?
+          if PayrollCalculation.find_by(reporting_period_start_date: period, policy_number: @policy_calculation.policy_number, manual_number: man.manual_number, representative_number: @account.representative.representative_number).manual_class_rate.nil?
             @premium_total = 0.0
           else
-            @premium_total += ((PayrollCalculation.find_by(reporting_period_start_date: period, policy_number: @policy_calculation.policy_number, manual_number: man.manual_number).manual_class_payroll)  * (PayrollCalculation.find_by(reporting_period_start_date: period, policy_number: @policy_calculation.policy_number, manual_number: man.manual_number).manual_class_rate * 0.01))
+            @premium_total += ((PayrollCalculation.find_by(reporting_period_start_date: period, policy_number: @policy_calculation.policy_number, manual_number: man.manual_number, representative_number: @account.representative.representative_number).manual_class_payroll)  * (PayrollCalculation.find_by(reporting_period_start_date: period, policy_number: @policy_calculation.policy_number, manual_number: man.manual_number, representative_number: @account.representative.representative_number).manual_class_rate * 0.01))
           end
         end
       end
-      payroll_and_premium_history_table(payroll_and_premium_history_data(PayrollCalculation.where("reporting_period_start_date = ? and policy_number = ?", period, @policy_calculation.policy_number), @premium_total))
+      payroll_and_premium_history_table(payroll_and_premium_history_data(PayrollCalculation.where("reporting_period_start_date = ? and policy_number = ? and representative_number = ?", period, @policy_calculation.policy_number, @account.representative.representative_number), @premium_total))
+
     end
   end
 
