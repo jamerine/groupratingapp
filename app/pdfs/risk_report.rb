@@ -223,6 +223,8 @@ class RiskReport < PdfReport
         @current_expected_losses += man.manual_class_expected_loss_rate * man.manual_class_current_estimated_payroll
       end
 
+      @current_expected_losses = @current_expected_losses/100
+      
       @payroll_calculations = @policy_calculation.manual_class_calculations.map{|u| u.payroll_calculations}.flatten
 
       @payroll_periods = PayrollCalculation.select('reporting_period_start_date').group('payroll_calculations.reporting_period_start_date').where(:policy_number => @policy_calculation.policy_number).order(reporting_period_start_date: :desc).pluck(:reporting_period_start_date)
@@ -1039,7 +1041,7 @@ class RiskReport < PdfReport
       text "Med Only Claim Count: #{@experience_med_only}", style: :bold, :indent_paragraphs => 30
       text "Lost Time Claim Count: #{@experience_lost_time}", style: :bold, :indent_paragraphs => 30
     end
-    bounding_box([380, first_cursor], :width => 100, :height => 25) do
+    bounding_box([380, first_cursor], :width => 125, :height => 25) do
       text "SI Average: #{round(@experience_si_avg, 0)}", style: :bold
       text "SI Ratio Avg: #{round(@experience_si_ratio_avg, 0)}", style: :bold
     end
@@ -1067,7 +1069,7 @@ class RiskReport < PdfReport
       text "Med Only Claim Count: #{@ten_year_med_only}     RCO1: #{ @ten_year_rc_01 }", style: :bold, :indent_paragraphs => 30
       text "Lost Time Claim Count: #{@ten_year_lost_time}     RCO1: #{@ten_year_rc_02}", style: :bold, :indent_paragraphs => 30
     end
-    bounding_box([380, first_cursor], :width => 100, :height => 25) do
+    bounding_box([380, first_cursor], :width => 125, :height => 25) do
       text "SI Average: #{round(@ten_year_si_average, 0)}", style: :bold
       text "SI Ratio Avg: #{@ten_year_si_ratio_avg}", style: :bold
     end
