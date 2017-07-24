@@ -148,7 +148,7 @@ class PolicyCalculation < ActiveRecord::Base
 
 
       # Added this logic to default to industry_group 7 when a policy is calculated to industry_group 9 and then changed to 8 if there is more premium in 8 than 7
-      
+
       if @highest_industry_group == 9
         if @collection.include? 7
           @highest_industry_group = {industry_group: 7, standard_premium: self.manual_class_calculations.where(manual_class_industry_group: 7).sum(:manual_class_standard_premium)}
@@ -190,7 +190,13 @@ class PolicyCalculation < ActiveRecord::Base
           manual_class.calculate_premium(self.policy_individual_experience_modified_rate, @administrative_rate )
           # manual_class.calculate_premium(policy.policy_individual_experience_modified_rate, @administrative_rate )
         end
+        # Added logic to update current payroll on 7/24/07
+        @policy_total_current_payroll = self.manual_class_calculations.sum(:manual_class_current_estimated_payroll).round(0)
+        @policy_total_standard_premium = self.manual_class_calculations.sum(:manual_class_standard_premium).round(0)
+        @policy_total_individual_premium = self.manual_class_calculations.sum(:manual_class_estimated_individual_premium).round(2)
+        self.update_attributes(policy_total_current_payroll: @policy_total_current_payroll, policy_total_standard_premium: @policy_total_standard_premium)
       end
+
 
     end
 
