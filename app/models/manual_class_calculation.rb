@@ -163,8 +163,9 @@ class ManualClassCalculation < ActiveRecord::Base
   def calculate_premium(policy_individual_experience_modified_rate, administrative_rate)
     self.transaction do
 
-        @manual_class_standard_premium = ((self.manual_class_base_rate * self.manual_class_current_estimated_payroll * policy_individual_experience_modified_rate)/100).round(2)
         @manual_class_modification_rate = (self.manual_class_base_rate * policy_individual_experience_modified_rate).round(2)
+        @manual_class_standard_premium = ((@manual_class_modification_rate * self.manual_class_current_estimated_payroll)/100).round(2)
+
         @manual_class_individual_total_rate = ((@manual_class_modification_rate * administrative_rate)).round(4)/100
         @manual_class_estimated_individual_premium = (self.manual_class_current_estimated_payroll * @manual_class_individual_total_rate).round(2)
 

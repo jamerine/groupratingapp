@@ -224,7 +224,7 @@ class RiskReport < PdfReport
       end
 
       @current_expected_losses = @current_expected_losses/100
-      
+
       @payroll_calculations = @policy_calculation.manual_class_calculations.map{|u| u.payroll_calculations}.flatten
 
       @payroll_periods = PayrollCalculation.select('reporting_period_start_date').group('payroll_calculations.reporting_period_start_date').where(:policy_number => @policy_calculation.policy_number).order(reporting_period_start_date: :desc).pluck(:reporting_period_start_date)
@@ -543,7 +543,7 @@ class RiskReport < PdfReport
 
     @current_date = DateTime.now.to_date
 
-    @total_est_payroll = 0
+    @total_est_premium = 0
     @account.policy_calculation.manual_class_calculations.each do |man|
       unless man.payroll_calculations.where("reporting_period_start_date < :current_date and reporting_period_end_date > :current_date", current_date: @current_date).first.nil?
         rate = man.payroll_calculations.where("reporting_period_start_date < :current_date and reporting_period_end_date > :current_date", current_date: @current_date).first.manual_class_rate
@@ -552,7 +552,7 @@ class RiskReport < PdfReport
         else
           est_premium = rate * man.manual_class_current_estimated_payroll * 0.01
         end
-        @total_est_payroll += est_premium
+        @total_est_premium += est_premium
       end
     end
 
@@ -662,7 +662,7 @@ class RiskReport < PdfReport
   end
 
   def current_policy_data_total
-    @data = [["Totals", "#{ round(@policy_calculation.policy_total_current_payroll,0) }", "", "#{round(@total_est_payroll, 0)}" ]]
+    @data = [["Totals", "#{ round(@policy_calculation.policy_total_current_payroll,0) }", "", "#{round(@total_est_premium, 0)}" ]]
   end
 
   def workers_comp_program_options
