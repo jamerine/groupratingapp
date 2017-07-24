@@ -30,11 +30,11 @@ class GroupRetroQuote < PdfReport
     move_down 15
     text "<b>Congratulations, #{@account.name}!</b>", size: 11, inline_format: true
     move_down 15
-    text "#{@account.representative.company_name} and the North East Ohio Safety Council have selectively chosen your company to become a member and receive a premium refund through our Group Retro program for the #{@quote.program_year} rate year. Unlike the prospective Group Rating program, premium refunds are paid based on the performance of the group. Members receive a dependable and aggressive cost control strategy upon enrollment. All members will be required to meet the program safety requirements. <i>(i.e.: salary continuation and/or transitional work for a minimum of 8 weeks, IME requirements, aggressive settlements, handicap reimbursement and subrogation)</i> These safety requirements along with #{@account.representative.company_name.upcase}’s superior claims management are why our program is the best for maximizing refunds and limiting any risks.", size: 8, inline_format: true
+    text "#{@account.representative.company_name} and the North East Ohio Safety Council have selectively chosen your company to become a member and receive a premium refund through our Group Retro program for the #{@quote.quote_year} rate year. Unlike the prospective Group Rating program, premium refunds are paid based on the performance of the group. Members receive a dependable and aggressive cost control strategy upon enrollment. All members will be required to meet the program safety requirements. <i>(i.e.: salary continuation and/or transitional work for a minimum of 8 weeks, IME requirements, aggressive settlements, handicap reimbursement and subrogation)</i> These safety requirements along with #{@account.representative.company_name.upcase}’s superior claims management are why our program is the best for maximizing refunds and limiting any risks.", size: 8, inline_format: true
     move_down 15
-    text "Cost Control Strategies and requirement for membership:", size: 10
+    text "Cost Control Strategies and requirements for membership:", size: 10
     move_down 5
-        text "\u2022 All industrial commission hearings will have legal counsel representation on behalf of the employer", :indent_paragraphs => 3, size: 8
+        text "\u2022 All Industrial Commission hearings will have legal counsel representation on behalf of the employer", :indent_paragraphs => 3, size: 8
         move_down 3
         text "\u2022 Members are required to be of adequate size and to complete a safety review, results may require further enhancements", :indent_paragraphs => 3, size: 8
         move_down 3
@@ -74,7 +74,7 @@ class GroupRetroQuote < PdfReport
     move_down 25
     text "To clarify the timeline for group retro premium refunds, the Ohio BWC and #{@account.representative.company_name} operate under the following timeframe.", size: 8
     move_down 5
-    text "\u2022 Group Retro enrollment plan year begins #{@quote.quote_year_lower_date} and ends #{@quote.quote_year_upper_date}.", size: 8, :indent_paragraphs => 10
+    text "\u2022 Group Retro enrollment plan year begins #{@quote.quote_year_lower_date.try(:strftime, "%m/%d/%y")} and ends #{@quote.quote_year_upper_date.try(:strftime, "%m/%d/%y")}.", size: 8, :indent_paragraphs => 10
     text "\u2022 Group Retro partial premium refunds will be refunded in November #{@quote.quote_year + 2}, November #{@quote.quote_year + 3} with a final rebate in November #{@quote.quote_year + 4}.", size: 8, :indent_paragraphs => 10
     move_down 15
     text "Group Retro is not compatible with the following programs:", size: 8
@@ -86,7 +86,7 @@ class GroupRetroQuote < PdfReport
     text "\u2022 Retrospective Rating", size: 8, :indent_paragraphs => 40
     text "\u2022 Safety Council - Performance", size: 8, :indent_paragraphs => 40
     move_down 15
-    text "If you have any questions regarding the Group Retro Program and the above quote, please do not hesitate to call one of our associates at #{@account.representative.phone_number}.", size: 8
+    text "If you have any questions regarding the Group Retro Program and the above quote, please do not hesitate to call one of our associates at #{@account.representative.toll_free_number}.", size: 8
     move_down 15
     text "As noted above there is a potential maximum assessment for your company in this program that could increase your individual premium. However to ensure program success and premium savings the sponsor requires members to fulfill the outlined cost control methods working with #{@account.representative.company_name}: safety program, salary continuation, transitional duty program, lump sum settlement and onsite safety visits. Statements made to the employer regarding the Group Retro Program and potential refunds, are not guarantees, but projections based upon information available from BWC at the time of review. This offer may be withdrawn or revised based upon participation levels", style: :bold_italic, size: 9
 

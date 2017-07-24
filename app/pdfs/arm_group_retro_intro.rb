@@ -50,7 +50,7 @@ class ArmGroupRetroIntro < PdfReport
 
     text "Congratulations!  <b>#{@account.name}</b> is invited to participate in the Northeast Ohio Safety Council's <b><u>#{@quote.quote_year} Group Retrospective Program</u></b>. Group Retrospective employers pay their premium to the Ohio BWC and receive a refund based upon claims performance and management for the retrospective year. Retro is a performance based program that the BWC enacted, which carries more benefit than risk potential. Our program includes conservative underwriting and the best program management necessary to maximize your refund. The program does carry a risk of a premium increase. <b><i>Therefore conservative underwriting and superior claims management reduces the liability of members paying additional premiums. Your worst case scenario is capped at 15% of premium.</b></i>", size: 11, inline_format: true
     move_down 15
-    text "<b>**REFUNDS MAY VARY FROM THEORETICAL MAX OF OVER 80% AND ARE NOT GUARANTEED.**</b>", size: 11, inline_format: true
+    text "<b>**REFUNDS MAY VARY FROM THEORETICAL MAX OF OVER 70% AND ARE NOT GUARANTEED.**</b>", size: 11, inline_format: true
     text "<b>#{@account.representative.abbreviated_name} HAS ENCLOSED A CONSERVATIVE ILLUSTRATION OF YOUR POSSIBLE SAVINGS.</b>", size: 11, inline_format: true
     move_down 15
     text "Please find the enclosed #{@quote.quote_year} rate year Group Retro Quote.", size: 11

@@ -55,7 +55,7 @@ class ArmGroupRetroAssessment < PdfReport
     bounding_box([0, cursor], width: 550) do
       move_down 3
       indent(3) do
-        text "Please indicate “Yes” or “No” on this assessment. Answering “No” does not preclude your company from eligibility in this program but one of our safety specialists will assist you in establishing that particular safety plan element prior to the begin of the policy year.", style: :bold, size: 8
+        text "Please indicate “Yes” or “No” on this assessment. Answering “No” does not preclude your company from eligibility in this program but one of our safety specialists will assist you in establishing that particular safety plan element prior to the beginning of the policy year.", style: :bold, size: 8
       end
       stroke_bounds
     end
@@ -118,7 +118,7 @@ class ArmGroupRetroAssessment < PdfReport
           text "Y / N", style: :bold, size: 9
         end
         bounding_box([40, current_cursor], :width => 400, :height => 25) do
-          text "Our company uses written safety communications to employees. (For example, company news letter or payroll stuffer).", size: 9
+          text "Our company uses written safety communications to employees. (For example, company newsletter or payroll stuffer).", size: 9
         end
         current_cursor = cursor
         bounding_box([40, current_cursor], :width => 400, :height => 15) do
@@ -154,7 +154,7 @@ class ArmGroupRetroAssessment < PdfReport
           text "Y / N", style: :bold, size: 9
         end
         bounding_box([40, current_cursor], :width => 400, :height => 25) do
-          text "We have designated an employee as accident-prevention coordinator who will work with employees and management to implement safety strategies.", size: 9
+          text "We have designated an employee as accident prevention coordinator who will work with employees and management to implement safety strategies.", size: 9
         end
         current_cursor = cursor
         indent (40) do
