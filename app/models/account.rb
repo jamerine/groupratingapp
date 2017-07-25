@@ -432,7 +432,8 @@ end
         GroupRatingRejection.create(program_type: 'group_retro', account_id: self.id, reject_reason: 'reject_invalid_policy_number', representative_id: @group_rating.representative_id)
       end
 
-      if self.policy_calculation.policy_total_standard_premium < 5000
+      if self.policy_calculation.policy_total_standard_premium.nil? || self.policy_calculation.policy_total_standard_premium < 5000
+      # @account.policy_calculation.policy_total_standard_premium.nil? || @account.policy_calculation.policy_total_standard_premium < 5000
         GroupRatingRejection.create(program_type: 'group_retro', account_id: self.id, reject_reason: 'reject_low_standard_premium', representative_id: @group_rating.representative_id)
       end
 
