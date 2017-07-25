@@ -88,7 +88,7 @@ class GroupRetroQuote < PdfReport
     move_down 15
     text "If you have any questions regarding the Group Retro Program and the above quote, please do not hesitate to call one of our associates at #{@account.representative.toll_free_number}.", size: 8
     move_down 15
-    text "As noted above there is a potential maximum assessment for your company in this program that could increase your individual premium. However to ensure program success and premium savings the sponsor requires members to fulfill the outlined cost control methods working with #{@account.representative.company_name}: safety program, salary continuation, transitional duty program, lump sum settlement and onsite safety visits. Statements made to the employer regarding the Group Retro Program and potential refunds, are not guarantees, but projections based upon information available from BWC at the time of review. This offer may be withdrawn or revised based upon participation levels", style: :bold_italic, size: 9
+    text "As noted above there is a potential maximum assessment for your company in this program that could increase your individual premium. However to ensure program success and premium savings the sponsor requires members to fulfill the outlined cost control methods working with #{@account.representative.company_name}: safety program, salary continuation, transitional duty program, lump sum settlement and onsite safety visits. Statements made to the employer regarding the Group Retro Program and potential refunds are not guarantees, but projections based upon information available from BWC at the time of review. This offer may be withdrawn or revised based upon participation levels.", style: :bold_italic, size: 9
 
 
     # move_down 25
