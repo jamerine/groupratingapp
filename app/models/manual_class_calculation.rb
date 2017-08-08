@@ -36,7 +36,8 @@ class ManualClassCalculation < ActiveRecord::Base
         @group_rating.assign_attributes(current_payroll_period_lower_date: (@group_rating.current_payroll_period_lower_date + 1.years), current_payroll_period_upper_date: (@group_rating.current_payroll_period_upper_date + 1.years))
       end
 
-      @policy_creation = self.policy_calculation.policy_coverage_status_histories.find_by(coverage_status: 'ACTIV')
+      @policy_creation = self.policy_calculation.policy_coverage_status_histories.order(:coverage_effective_date).where(coverage_status: 'ACTIV').first
+      # @policy_creation = manual.policy_calculation.policy_coverage_status_histories.order(:coverage_effective_date).where(coverage_status: 'ACTIV').first
       # @policy_creation = manual_class.policy_calculation.policy_coverage_status_histories.find_by(coverage_status: 'ACTIV')
 
       @policy_creation_dip = self.policy_calculation.policy_coverage_status_histories.find_by(coverage_status: 'DIP  ')
