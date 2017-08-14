@@ -7,24 +7,19 @@ class GroupRatingAllCreate
 
 
       @policy_demographic = FinalEmployerDemographicsInformation.find_by(policy_number: policy_number, representative_number: process_representative)
-      # @policy_demographic = FinalEmployerDemographicsInformation.find_by(policy_number: 1613346)
+      # @policy_demographic = FinalEmployerDemographicsInformation.find_by(policy_number: 1283284)
 
-      @account = Account.where(policy_number_entered: @policy_demographic.policy_number, representative_id: representative_id)
-      # @account = Account.where(policy_number_entered: 1613346)
+      @account = Account.find_by(policy_number_entered: @policy_demographic.policy_number, representative_id: representative_id)
+      # @account = Account.find_by(policy_number_entered: 1283284)
 
-        if @account.empty?
-          @account = @account.create(policy_number_entered: @policy_demographic.policy_number, representative_id: representative_id, status: 4, name: @policy_demographic.business_name, street_address: @policy_demographic.mailing_address_line_1, street_address_2: @policy_demographic.mailing_address_line_2, city: @policy_demographic.mailing_city, state: @policy_demographic.mailing_state, zip_code: @policy_demographic.mailing_zip_code, weekly_request: true)
-        elsif @account.first.policy_calculation.policy_creation_date.nil?
-          @account = @account.first
+        if @account.nil?
+          @account = Account.create(policy_number_entered: @policy_demographic.policy_number, representative_id: representative_id, status: 4, name: @policy_demographic.business_name, street_address: @policy_demographic.mailing_address_line_1, street_address_2: @policy_demographic.mailing_address_line_2, city: @policy_demographic.mailing_city, state: @policy_demographic.mailing_state, zip_code: @policy_demographic.mailing_zip_code, weekly_request: true)
+        elsif @account.policy_calculation.policy_creation_date.nil?
           @account.update_attributes(policy_number_entered: @policy_demographic.policy_number, representative_id: representative_id, name: @policy_demographic.business_name, street_address: @policy_demographic.mailing_address_line_1, street_address_2: @policy_demographic.mailing_address_line_2, city: @policy_demographic.mailing_city, state: @policy_demographic.mailing_state, zip_code: @policy_demographic.mailing_zip_code)
-        elsif @account.first.status == "predecessor"
-          @account = @account.first
+        elsif @account.status == "predecessor"
           @account.update_attributes(policy_number_entered: @policy_demographic.policy_number, representative_id: representative_id, name: @policy_demographic.business_name, street_address: @policy_demographic.mailing_address_line_1, street_address_2: @policy_demographic.mailing_address_line_2, city: @policy_demographic.mailing_city, state: @policy_demographic.mailing_state, zip_code: @policy_demographic.mailing_zip_code)
-        elsif @account.first.status == "invalid_policy_number"
-          @account = @account.first
+        elsif @account.status == "invalid_policy_number"
           @account.update_attributes(policy_number_entered: @policy_demographic.policy_number, representative_id: representative_id, name: @policy_demographic.business_name, street_address: @policy_demographic.mailing_address_line_1, street_address_2: @policy_demographic.mailing_address_line_2, city: @policy_demographic.mailing_city, state: @policy_demographic.mailing_state, zip_code: @policy_demographic.mailing_zip_code, status: 2)
-        else
-          @account = @account.first
         end
 
       @policy_calculation = PolicyCalculation.where(account_id: @account.id).update_or_create(
