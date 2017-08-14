@@ -140,11 +140,13 @@ class PolicyCalculation < ActiveRecord::Base
 
       @highest_industry_group = {industry_group: @collection.first, standard_premium: self.manual_class_calculations.where(manual_class_industry_group: @collection.first).sum(:manual_class_standard_premium)}
 
+
       @collection.each do |c|
         if self.manual_class_calculations.where(manual_class_industry_group: c).sum(:manual_class_standard_premium) > @highest_industry_group[:standard_premium]
           @highest_industry_group = {industry_group: c, standard_premium: self.manual_class_calculations.where(manual_class_industry_group: c).sum(:manual_class_standard_premium)}
         end
       end
+
 
 
       # Added this logic to default to industry_group 7 when a policy is calculated to industry_group 9 and then changed to 8 if there is more premium in 8 than 7
@@ -161,43 +163,44 @@ class PolicyCalculation < ActiveRecord::Base
       end
 
 
+
     @policy_total_individual_premium =   self.manual_class_calculations.sum(:manual_class_estimated_individual_premium).round(2)
     # @policy_total_individual_premium =   policy.manual_class_calculations.sum(:manual_class_estimated_individual_premium).round(2)
 
     # ADDED NEW LOGIC FOR CURRENT PAYROLL FIX FOR NEW POLICIES
 
-    if self.policy_creation_date >= @group_rating.current_payroll_period_lower_date
-      new_policy_individual_premium = 0
-      self.manual_class_calculations.each do |manual|
-        manual_class_current_payroll = manual.payroll_calculations.where("reporting_period_start_date >= :current_payroll_period_lower_date and reporting_period_start_date < :current_payroll_period_upper_date", current_payroll_period_lower_date: (@group_rating.current_payroll_period_lower_date + 1.years), current_payroll_period_upper_date: (@group_rating.current_payroll_period_upper_date + 1.years)).sum(:manual_class_payroll).round(2)
+    unless self.policy_creation_date.nil?
+      if self.policy_creation_date >= @group_rating.current_payroll_period_lower_date
+        new_policy_individual_premium = 0
+        self.manual_class_calculations.each do |manual|
+          manual_class_current_payroll = manual.payroll_calculations.where("reporting_period_start_date >= :current_payroll_period_lower_date and reporting_period_start_date < :current_payroll_period_upper_date", current_payroll_period_lower_date: (@group_rating.current_payroll_period_lower_date + 1.years), current_payroll_period_upper_date: (@group_rating.current_payroll_period_upper_date + 1.years)).sum(:manual_class_payroll).round(2)
 
-        manual_class_standard_premium = ((manual.manual_class_base_rate * manual_class_current_payroll * self.policy_individual_experience_modified_rate)/100).round(2)
-        # manual_class_standard_premium = ((manual.manual_class_base_rate * manual_class_current_payroll * policy.policy_individual_experience_modified_rate)/100).round(2)
+          manual_class_standard_premium = ((manual.manual_class_base_rate * manual_class_current_payroll * self.policy_individual_experience_modified_rate)/100).round(2)
+          # manual_class_standard_premium = ((manual.manual_class_base_rate * manual_class_current_payroll * policy.policy_individual_experience_modified_rate)/100).round(2)
 
-        manual_class_modification_rate = (manual.manual_class_base_rate * self.policy_individual_experience_modified_rate).round(2)
-        # manual_class_modification_rate = (manual.manual_class_base_rate * policy.policy_individual_experience_modified_rate).round(2)
-        manual_class_individual_total_rate = ((manual_class_modification_rate * @administrative_rate)).round(4)/100
-        # manual_class_individual_total_rate = ((manual_class_modification_rate * @administrative_rate)).round(4)/100
-        manual_class_estimated_individual_premium = (manual_class_current_payroll * manual_class_individual_total_rate).round(2)
+          manual_class_modification_rate = (manual.manual_class_base_rate * self.policy_individual_experience_modified_rate).round(2)
+          # manual_class_modification_rate = (manual.manual_class_base_rate * policy.policy_individual_experience_modified_rate).round(2)
+          manual_class_individual_total_rate = ((manual_class_modification_rate * @administrative_rate)).round(4)/100
+          # manual_class_individual_total_rate = ((manual_class_modification_rate * @administrative_rate)).round(4)/100
+          manual_class_estimated_individual_premium = (manual_class_current_payroll * manual_class_individual_total_rate).round(2)
 
-        new_policy_individual_premium += manual_class_estimated_individual_premium
-      end
-
-      if new_policy_individual_premium > @policy_total_individual_premium
-        self.manual_class_calculations.find_each do |manual_class|
-        # policy.manual_class_calculations.find_each do |manual_class|
-          manual_class.calculate_payroll(true)
-          manual_class.calculate_premium(self.policy_individual_experience_modified_rate, @administrative_rate )
-          # manual_class.calculate_premium(policy.policy_individual_experience_modified_rate, @administrative_rate )
+          new_policy_individual_premium += manual_class_estimated_individual_premium
         end
-        # Added logic to update current payroll on 7/24/07
-        @policy_total_current_payroll = self.manual_class_calculations.sum(:manual_class_current_estimated_payroll).round(0)
-        @policy_total_standard_premium = self.manual_class_calculations.sum(:manual_class_standard_premium).round(0)
-        @policy_total_individual_premium = self.manual_class_calculations.sum(:manual_class_estimated_individual_premium).round(2)
-        self.update_attributes(policy_total_current_payroll: @policy_total_current_payroll, policy_total_standard_premium: @policy_total_standard_premium)
+
+        if new_policy_individual_premium > @policy_total_individual_premium
+          self.manual_class_calculations.find_each do |manual_class|
+          # policy.manual_class_calculations.find_each do |manual_class|
+            manual_class.calculate_payroll(true)
+            manual_class.calculate_premium(self.policy_individual_experience_modified_rate, @administrative_rate )
+            # manual_class.calculate_premium(policy.policy_individual_experience_modified_rate, @administrative_rate )
+          end
+          # Added logic to update current payroll on 7/24/07
+          @policy_total_current_payroll = self.manual_class_calculations.sum(:manual_class_current_estimated_payroll).round(0)
+          @policy_total_standard_premium = self.manual_class_calculations.sum(:manual_class_standard_premium).round(0)
+          @policy_total_individual_premium = self.manual_class_calculations.sum(:manual_class_estimated_individual_premium).round(2)
+          self.update_attributes(policy_total_current_payroll: @policy_total_current_payroll, policy_total_standard_premium: @policy_total_standard_premium)
+        end
       end
-
-
     end
 
     if @policy_total_individual_premium < 120
