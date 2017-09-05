@@ -203,16 +203,14 @@ class Account < ActiveRecord::Base
     self.group_rating_exceptions.where(resolved: nil).destroy_all
 
     @group_rating = GroupRating.where(representative_id: self.representative_id).last
-    if !self.predecessor?
-
         # NEGATIVE PAYROLL ON A MANUAL CLASS
 
-        if !self.policy_calculation.manual_class_calculations.where("manual_class_current_estimated_payroll < 0 or manual_class_four_year_period_payroll < 0").empty?
-          if self.group_rating_exceptions.where(exception_reason: 'manual_class_negative_payroll', resolved: true).empty?
-            GroupRatingException.create(account_id: self.id, exception_reason: 'manual_class_negative_payroll', representative_id: self.representative_id)
-          end
-          GroupRatingRejection.create(account_id: self.id, reject_reason: 'manual_class_negative_payroll', representative_id: @group_rating.representative_id, program_type: 'group_rating')
+      if !self.policy_calculation.manual_class_calculations.where("manual_class_current_estimated_payroll < 0 or manual_class_four_year_period_payroll < 0").empty?
+        if self.group_rating_exceptions.where(exception_reason: 'manual_class_negative_payroll', resolved: true).empty?
+          GroupRatingException.create(account_id: self.id, exception_reason: 'manual_class_negative_payroll', representative_id: self.representative_id)
         end
+        GroupRatingRejection.create(account_id: self.id, reject_reason: 'manual_class_negative_payroll', representative_id: @group_rating.representative_id, program_type: 'group_rating')
+      end
 
       # ----------- Rejection Section -----------
       group_rating_range = @group_rating.experience_period_lower_date..@group_rating.experience_period_upper_date
@@ -317,10 +315,10 @@ class Account < ActiveRecord::Base
 
          end
 
-      # update_attributes(group_rating_qualification: qualification)
-    else
-      GroupRatingRejection.create(program_type: 'group_rating', account_id: self.id, reject_reason: 'reject_pending_predecessor', representative_id: @group_rating.representative_id)
-    end
+      # Removed the if else for reject_pending_predecessor for predecessor accounts.  It is the wrong reason for rejecting
+      # else
+      #   GroupRatingRejection.create(program_type: 'group_rating', account_id: self.id, reject_reason: 'reject_pending_predecessor', representative_id: @group_rating.representative_id)
+      # end
     if self.group_rating_rejections.where("program_type = ?", :group_rating).count > 0
       qualification = "reject"
     else
@@ -419,7 +417,6 @@ end
   def group_retro_reject
     self.group_rating_rejections.where(program_type: 'group_retro').destroy_all
     @group_rating = GroupRating.where(representative_id: self.representative_id).last
-    if !self.predecessor?
         # NEGATIVE PAYROLL ON A MANUAL CLASS
         if !self.policy_calculation.manual_class_calculations.where("manual_class_current_estimated_payroll < 0 or manual_class_four_year_period_payroll < 0").empty?
           GroupRatingRejection.create(program_type: 'group_retro', account_id: self.id, reject_reason: 'manual_class_negative_payroll', representative_id: @group_rating.representative_id)
@@ -529,10 +526,10 @@ end
 
       # update_attributes(group_rating_qualification: qualification)
 
-
-    else
-      GroupRatingRejection.create(program_type: 'group_retro', account_id: self.id, reject_reason: 'reject_pending_predecessor', representative_id: @group_rating.representative_id)
-    end
+    # Removed the if else for reject_pending_predecessor for predecessor accounts.  It is the wrong reason for rejecting
+    # else
+    #   GroupRatingRejection.create(program_type: 'group_retro', account_id: self.id, reject_reason: 'reject_pending_predecessor', representative_id: @group_rating.representative_id)
+    # end
 
     if self.group_rating_rejections.where("program_type = ?", :group_retro).count > 0
       qualification = "reject"
