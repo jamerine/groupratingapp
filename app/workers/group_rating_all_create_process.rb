@@ -7,9 +7,13 @@ class GroupRatingAllCreateProcess
     @group_rating = GroupRating.find_by(id: group_rating_id)
     @group_rating.status = "Combined Updated Process"
     @group_rating.save
-    FinalEmployerDemographicsInformation.order("policy_number asc").find_each do |policy_demographic|
-      GroupRatingAllCreate.perform_async(@group_rating.id, @group_rating.experience_period_lower_date, @group_rating.process_representative, @group_rating.representative_id, policy_demographic.policy_number)
+
+    all_policy_numbers = (FinalEmployerDemographicsInformation.all.pluck(:policy_number) + ProcessPayrollAllTransactionsBreakdownByManualClass.pluck(:policy_number).uniq).uniq
+
+    all_policy_numbers.each do |policy|
+      GroupRatingAllCreate.perform_async(@group_rating.id, @group_rating.experience_period_lower_date, @group_rating.process_representative, @group_rating.representative_id, policy)
     end
+
     GroupRatingMarkComplete.perform_async(@group_rating.id, all_process)
   end
 
