@@ -6,7 +6,8 @@ class GroupRatingAllCreate
   def perform(group_rating_id, experience_period_lower_date, process_representative, representative_id, policy_number)
 
 
-      @policy_demographic = FinalEmployerDemographicsInformation.find_by(policy_number: policy_number, representative_number: process_representative).nil? ? PolicyCalculation.find_by(policy_number: policy_number, representative_number: process_representative) : FinalEmployerDemographicsInformation.find_by(policy_number: policy_number, representative_number: process_representative)
+      @policy_demographic = FinalEmployerDemographicsInformation.find_by(policy_number: policy_number, representative_number: process_representative)
+      # @policy_demographic = FinalEmployerDemographicsInformation.find_by(policy_number: 1740451, representative_number: 1740).nil? ? PolicyCalculation.find_by(policy_number: 1740451, representative_number: 1740) : FinalEmployerDemographicsInformation.find_by(policy_number: 1740451, representative_number: 1740)
       # @policy_demographic = FinalEmployerDemographicsInformation.find_by(policy_number: 1283284)
 
       unless @policy_demographic.nil?
@@ -263,6 +264,47 @@ class GroupRatingAllCreate
           @account.policy_calculation.calculate_premium
           @account.group_rating
           @account.group_retro
+      else
+        @policy_demographic = PolicyCalculation.find_by(policy_number: policy_number, representative_number: process_representative)
+        unless @policy_demographic.nil?
+          @account = Account.find_by(policy_number_entered: policy_number, representative_id: representative_id) if
+          @account.policy_calculation.manual_class_calculations.each do |manual_class|
+            ProcessPayrollAllTransactionsBreakdownByManualClass.where("reporting_period_start_date >= :reporting_period_start_date and representative_number = :representative_number and manual_number = :manual_number and policy_number = :policy_number",  reporting_period_start_date: experience_period_lower_date, representative_number: process_representative, manual_number: manual_class.manual_number, policy_number: @manual_class_calculation.policy_number).find_each do |payroll_transaction|
+              unless manual_class.nil? || payroll_transaction.id.nil? || payroll_transaction.manual_number == 0
+                PayrollCalculation.where(representative_number: payroll_transaction.representative_number,
+                policy_number: payroll_transaction.policy_number,
+                manual_class_type: payroll_transaction.manual_class_type,
+                manual_number: payroll_transaction.manual_number,
+                manual_class_calculation_id: manual_class.id,
+                reporting_period_start_date: payroll_transaction.reporting_period_start_date,
+                reporting_period_end_date: payroll_transaction.reporting_period_end_date,
+                policy_transferred: payroll_transaction.policy_transferred,
+                manual_class_transferred: payroll_transaction.manual_class_transferred,
+                transfer_creation_date: payroll_transaction.transfer_creation_date,
+                payroll_origin: payroll_transaction.payroll_origin,
+                data_source: payroll_transaction.data_source
+                ).update_or_create(
+                  representative_number: payroll_transaction.representative_number,
+                  policy_number: payroll_transaction.policy_number,
+                  manual_class_type: payroll_transaction.manual_class_type,
+                  manual_number: payroll_transaction.manual_number,
+                  manual_class_calculation_id: manual_class.id,
+                  manual_class_rate: payroll_transaction.manual_class_rate,
+                  reporting_period_start_date: payroll_transaction.reporting_period_start_date,
+                  reporting_period_end_date: payroll_transaction.reporting_period_end_date,
+                  policy_transferred: payroll_transaction.policy_transferred,
+                  manual_class_transferred: payroll_transaction.manual_class_transferred,
+                  transfer_creation_date: payroll_transaction.transfer_creation_date,
+                  manual_class_payroll: payroll_transaction.manual_class_payroll,
+                  reporting_type: payroll_transaction.reporting_type,
+                  number_of_employees: payroll_transaction.number_of_employees,
+                  payroll_origin: payroll_transaction.payroll_origin,
+                  data_source: payroll_transaction.data_source
+                )
+              end
+            end
+          end
+        end
       end
   end
 
