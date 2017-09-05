@@ -267,7 +267,7 @@ class GroupRatingAllCreate
       else
         @policy_demographic = PolicyCalculation.find_by(policy_number: policy_number, representative_number: process_representative)
         unless @policy_demographic.nil?
-          @account = Account.find_by(policy_number_entered: policy_number, representative_id: representative_id) if
+          @account = Account.find_by(policy_number_entered: policy_number, representative_id: representative_id)
           @account.policy_calculation.manual_class_calculations.each do |manual_class|
             ProcessPayrollAllTransactionsBreakdownByManualClass.where("reporting_period_start_date >= :reporting_period_start_date and representative_number = :representative_number and manual_number = :manual_number and policy_number = :policy_number",  reporting_period_start_date: experience_period_lower_date, representative_number: process_representative, manual_number: manual_class.manual_number, policy_number: @manual_class_calculation.policy_number).find_each do |payroll_transaction|
               unless manual_class.nil? || payroll_transaction.id.nil? || payroll_transaction.manual_number == 0
@@ -304,6 +304,10 @@ class GroupRatingAllCreate
               end
             end
           end
+          @account.policy_calculation.calculate_experience
+          @account.policy_calculation.calculate_premium
+          @account.group_rating
+          @account.group_retro
         end
       end
   end
