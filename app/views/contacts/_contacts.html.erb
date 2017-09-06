@@ -1,28 +1,38 @@
-<div class="table-responsive">
-  <table class="table">
-    <caption align: "center"><h3>Account Contacts</h3> <%= link_to 'Add Contacts', new_contact_path(account_id: params[:id]) %></caption>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Title</th>
-        <th>Email Address</th>
-        <th>Phone Number</th>
-        <th></th>
-      </tr>
-    </thead>
+<h3>Contacts - <%= link_to 'Add Contacts', new_contact_path(account_id: params[:id]), class:'btn btn-success btn-sm' %></h3>
 
-    <tbody>
-      <% contacts.find_each do |contact| %>
-      <tr>
-        <td> <%= contact.contact_type.humanize %></td>
-        <td> <%= contact.full_name %></td>
-        <td> <%= contact.title %></td>
-        <td> <%= contact.email_address %></td>
-        <td> <%= number_to_phone(contact.phone_number) %></td>
-        <td> <%= link_to 'View' %> | <%= link_to 'Delete', contact_path(id: contact.id, account_id: @account.id), method: :delete %> </td>
-      </tr>
-      <% end %>
-    </tbody>
-  </table>
+<div class="table-responsive">
+  <% if contacts.empty? %>
+    <div class="container">
+      <h5>No Contacts have been added.</h5>
+    </div>
+  <% else %>
+    <table class="table">
+      <caption align: "center"><h3>Account Contacts</h3> </caption>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Name</th>
+          <th>Title</th>
+          <th>Email Address</th>
+          <th>Phone Number</th>
+          <th></th>
+        </tr>
+      </thead>
+
+      <tbody>
+          <% contacts.find_each do |contact| %>
+            <tr>
+              <td> <%= contact.contact_type.humanize %></td>
+              <td> <%= contact.full_name %></td>
+              <td> <%= contact.title %></td>
+              <td> <%= contact.email_address %></td>
+              <td> <%= number_to_phone(contact.phone_number) %></td>
+              <td> <%= link_to 'View' %> | <%= link_to 'Delete', contact_path(id: contact.id, account_id: @account.id), method: :delete %> </td>
+            </tr>
+          <% end %>
+      </tbody>
+    </table>
+  <% end %>
 </div>
+
+<br>
