@@ -1,30 +1,39 @@
-<div class="table-responsive">
-  <table class="table">
-    <caption align: "center"><h3> Account Affiliates</h3> <%= link_to 'Add Affiliate', new_affiliate_path(account_id: params[:id]) %></caption>
-    <thead>
-      <tr>
-        <th>Role</th>
-        <th>First Name</th>
-        <th>Last Name</th>
-        <th>Company Name</th>
-        <th>Email</th>
-        <th>External Id</th>
-        <th></th>
-      </tr>
-    </thead>
+<br>
+<h3>Affiliates - <%= link_to 'Add Affiliate', new_affiliate_path(account_id: params[:id]), class: "btn btn-success btn-sm" %></h3>
 
-    <tbody>
-      <% affiliates.find_each do |affiliate| %>
-      <tr>
-        <td> <%= affiliate.role.titleize %></td>
-        <td> <%= affiliate.first_name %></td>
-        <td> <%= affiliate.last_name %></td>
-        <td> <%= affiliate.company_name %></td>
-        <td> <%= affiliate.email_address %></td>
-        <td> <%= affiliate.external_id %></td>
-        <td> <%= link_to 'Edit' %> | <%= link_to 'Delete', affiliate_path(id: affiliate.id, account_id: @account.id), method: :delete  %> </td>
-      </tr>
-      <% end %>
-    </tbody>
-  </table>
+<div class="table-responsive">
+  <% if affiliates.empty? %>
+    <div class="container">
+      <h5>No Affiliates have been added.</h5>
+    </div>
+  <% else %>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Role</th>
+          <th>First Name</th>
+          <th>Last Name</th>
+          <th>Company Name</th>
+          <th>Email</th>
+          <th>External Id</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% affiliates.find_each do |affiliate| %>
+          <tr>
+            <td> <%= affiliate.role.titleize %></td>
+            <td> <%= affiliate.first_name %></td>
+            <td> <%= affiliate.last_name %></td>
+            <td> <%= affiliate.company_name %></td>
+            <td> <%= affiliate.email_address %></td>
+            <td> <%= affiliate.external_id %></td>
+            <td> <%= link_to 'Edit' %> | <%= link_to 'Delete', affiliate_path(id: affiliate.id, account_id: @account.id), method: :delete  %> </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% end %>
 </div>
+
+<br>
