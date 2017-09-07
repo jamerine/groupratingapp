@@ -1,0 +1,121 @@
+
+<div class="container">
+  <%= render partial: "shared/account_navbar", locals: { object: @account } %>
+
+  <div class="row">
+    <%= link_to 'Back', @account, class: 'btn btn-primary' %>
+  </div>
+
+  <br/>
+  <div class="jumbotron text-center">
+    <h2>Generate Risk Report for <%= @account.name %> </h2>
+    <br>
+      <%= form_for(@account, url: account_risk_report_path, html: {method: "get"}) do |f| %>
+      <!-- Hidden Values -->
+      <%= f.hidden_field :account_id, value: @account.id %>
+      <%= f.hidden_field :group_rating_id, value: @group_rating.id %>
+      <%= hidden_field_tag :format, :pdf %>
+
+      <div class="row">
+        <div class="col col-md-12">
+          <h4>Customize Sections for Report Packet</h4>
+        </div>
+      </div>
+      <div class="row">
+        <p>Policy Information</p>
+        <div class="col col-md-4">
+          <div class="form-group">
+            <%= f.check_box :at_a_glance, checked: true %>
+            <%= f.label :at_a_glance %>
+          </div>
+        </div>
+        <div class="col col-md-4">
+          <div class="form-group">
+            <%= f.check_box :experience_statistics, checked: true %>
+            <%= f.label :experience_statistics %>
+          </div>
+        </div>
+        <div class="col col-md-4">
+          <div class="form-group">
+            <%= f.check_box :expected_loss_and_premium, checked: true %>
+            <%= f.label :expected_loss_and_premium %>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <p>Program Information</p>
+        <div class="col col-md-4">
+          <div class="form-group">
+            <%= f.check_box :estimated_current_premium, checked: true %>
+            <%= f.label :estimated_current_premium %>
+          </div>
+        </div>
+        <div class="col col-md-4">
+          <div class="form-group">
+            <%= f.check_box :program_options, checked: true %>
+            <%= f.label :program_options%>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <p>Claim Loss Run</p>
+        <div class="col col-md-4">
+          <div class="form-group">
+            <%= f.check_box :out_of_experience_claims, checked: true %>
+            <%= f.label :out_of_experience_claims %>
+          </div>
+        </div>
+        <div class="col col-md-4">
+          <div class="form-group">
+            <%= f.check_box :in_experience_claims, checked: true %>
+            <%= f.label :in_experience_claims %>
+          </div>
+        </div>
+        <div class="col col-md-4">
+          <div class="form-group">
+            <%= f.check_box :green_year_claims, checked: true %>
+            <%= f.label :green_year_claims %>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <p>Discounts and Coverage Status</p>
+        <div class="col col-md-4">
+          <div class="form-group">
+            <%= f.check_box :group_discount_levels, checked: true %>
+            <%= f.label :group_discount_levels %>
+          </div>
+        </div>
+        <div class="col col-md-4">
+          <div class="form-group">
+            <%= f.check_box :coverage_status, checked: true %>
+            <%= f.label :coverage_status %>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <p>Experience Modification and Payroll</p>
+        <div class="col col-md-4">
+          <div class="form-group">
+            <%= f.check_box :experience_modifier_info, checked: true %>
+            <%= f.label :experience_modifier_info %>
+          </div>
+        </div>
+        <div class="col col-md-4">
+          <div class="form-group">
+            <%= f.check_box :payroll_history, checked: true %>
+            <%= f.label :payroll_history %>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group col-md-4  col-md-offset-4" >
+        <%= f.submit 'Generate Quote', class: 'btn btn-info' %>
+      </div>
+
+    <% end %>
+  </div>
+</div>
