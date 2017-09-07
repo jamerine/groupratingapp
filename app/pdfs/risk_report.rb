@@ -1,11 +1,14 @@
 class RiskReport < PdfReport
 
-  def initialize(account=[],policy_calculation=[],group_rating=[],view)
+  def initialize(account=[], policy_calculation=[], group_rating=[], report_params={}, view)
     super()
     @account = account
     @policy_calculation = policy_calculation
     @policy_program_history = @policy_calculation.policy_program_histories.order(:policy_year).last
     @group_rating = group_rating
+    @report_params = report_params
+
+
     @view = view
 
     @account = Account.includes(policy_calculation: [:claim_calculations, :policy_coverage_status_histories, :policy_program_histories, { manual_class_calculations: :payroll_calculations }]).find(@account.id)
@@ -318,23 +321,40 @@ class RiskReport < PdfReport
 
       header
       stroke_horizontal_rule
-      at_a_glance
-      experience_statistics
-      stroke_horizontal_rule
-      expected_loss_development
 
-      start_new_page
+      if @report_params["at_a_glance"] == "1"
+        at_a_glance
+      end
+      if @report_params["experience_statistics"] == "1"
+        experience_statistics
+        stroke_horizontal_rule
+      end
+      if @report_params["expected_loss_and_premium"] == "1"
+        expected_loss_development
+      end
+
+      if @report_params["at_a_glance"] == "1" || @report_params["experience_statistics"] == "1" || @report_params["expected_loss_and_premium"] == "1"
+        start_new_page
+      end
       roc_report
 
-      start_new_page
       claim_loss_run
 
-      start_new_page
-      group_discount_level
-      coverage_status_history
-      experience_modifier_history
-      start_new_page
-      payroll_and_premium_history
+      if @report_params["group_discount_levels"] == "1" || @report_params[":coverage_status"] == "1" || @report_params["experience_modifier_info"] == "1" || @report_params["payroll_history"] == "1"
+        start_new_page
+      end
+      if @report_params["group_discount_levels"] == "1"
+        group_discount_level
+      end
+      if @report_params["coverage_status"] == "1"
+        coverage_status_history
+      end
+      if @report_params["experience_modifier_info"] == "1"
+        experience_modifier_history
+      end
+      if @report_params["payroll_history"] == "1"
+        payroll_and_premium_history
+      end
       # number_pages "<page> in a total of <total>", { :start_count_at => 0, :page_filter => :all, :at => [bounds.right - 50, 0], :align => :right, :size => 14 }
       footer(@account)
   end
@@ -543,6 +563,7 @@ class RiskReport < PdfReport
 
     @current_date = DateTime.now.to_date
 
+
     @total_est_premium = 0
     @account.policy_calculation.manual_class_calculations.each do |man|
       unless man.payroll_calculations.where("reporting_period_start_date < :current_date and reporting_period_end_date > :current_date", current_date: @current_date).first.nil?
@@ -555,14 +576,18 @@ class RiskReport < PdfReport
         @total_est_premium += est_premium
       end
     end
-
-    header_two
-    stroke_horizontal_rule
-    estimated_current_period_premium
-
-    workers_comp_program_options
-    workers_comp_program_additional_options
-    descriptions
+    if @report_params["estimated_current_premium"] == "1" || @report_params["program_options"] == "1"
+      header_two
+      stroke_horizontal_rule
+    end
+    if @report_params["estimated_current_premium"] == "1"
+      estimated_current_period_premium
+    end
+    if @report_params["program_options"] == "1"
+      workers_comp_program_options
+      workers_comp_program_additional_options
+      descriptions
+    end
 
   end
 
@@ -888,98 +913,109 @@ class RiskReport < PdfReport
 
 
   def claim_loss_run
-    text "Claim Loss Run", size: 14, style: :bold, align: :center
-    # OUT OF EXPERIENCE
-    stroke_horizontal_rule
-    move_down 5
-    text "Out Of Experience", style: :bold, size: 12
-    stroke_horizontal_rule
-    move_down 15
-    text "Injury Year: #{ @first_out_of_experience_year}", style: :bold
-    year_claim_table(claim_data(@first_out_of_experience_year_claims))
-    move_down 30
-    text "Injury Year: #{ @second_out_of_experience_year}", style: :bold
-    year_claim_table(claim_data(@second_out_of_experience_year_claims))
-    move_down 30
-    text "Injury Year: #{ @third_out_of_experience_year}", style: :bold
-    year_claim_table(claim_data(@third_out_of_experience_year_claims))
-    move_down 30
-    text "Injury Year: #{ @fourth_out_of_experience_year}", style: :bold
-    year_claim_table(claim_data(@fourth_out_of_experience_year_claims))
-    move_down 30
-    text "Injury Year: #{ @fifth_out_of_experience_year}", style: :bold
-    year_claim_table(claim_data(@fifth_out_of_experience_year_claims))
+    if @report_params["out_of_experience_claims"] == "1" || @report_params["in_experience_claims"] == "1" || @report_params["green_year_claims"] == "1"
+      start_new_page
+      text "Claim Loss Run", size: 14, style: :bold, align: :center
+    end
+    if @report_params["out_of_experience_claims"] == "1"
+      # OUT OF EXPERIENCE
+      stroke_horizontal_rule
+      move_down 5
+      text "Out Of Experience", style: :bold, size: 12
+      stroke_horizontal_rule
+      move_down 15
+      text "Injury Year: #{ @first_out_of_experience_year}", style: :bold
+      year_claim_table(claim_data(@first_out_of_experience_year_claims))
+      move_down 30
+      text "Injury Year: #{ @second_out_of_experience_year}", style: :bold
+      year_claim_table(claim_data(@second_out_of_experience_year_claims))
+      move_down 30
+      text "Injury Year: #{ @third_out_of_experience_year}", style: :bold
+      year_claim_table(claim_data(@third_out_of_experience_year_claims))
+      move_down 30
+      text "Injury Year: #{ @fourth_out_of_experience_year}", style: :bold
+      year_claim_table(claim_data(@fourth_out_of_experience_year_claims))
+      move_down 30
+      text "Injury Year: #{ @fifth_out_of_experience_year}", style: :bold
+      year_claim_table(claim_data(@fifth_out_of_experience_year_claims))
 
 
-    #############################################################
-    # Out of Experience Totals
-    move_down 15
-    out_of_experience_year_total_table
-    move_down 10
-    text "Med Only Claim Count: #{@out_of_experience_med_only}", style: :bold, :indent_paragraphs => 30
-    text "Lost Time Claim Count: #{@out_of_experience_lost_time}", style: :bold, :indent_paragraphs => 30
-    move_down 30
+      #############################################################
+      # Out of Experience Totals
+      move_down 15
+      out_of_experience_year_total_table
+      move_down 10
+      text "Med Only Claim Count: #{@out_of_experience_med_only}", style: :bold, :indent_paragraphs => 30
+      text "Lost Time Claim Count: #{@out_of_experience_lost_time}", style: :bold, :indent_paragraphs => 30
+      move_down 30
 
-    #############################################################
+    end
 
-    #IN EXPERIENCE
-    stroke_horizontal_rule
-    move_down 5
-    text "Experience", style: :bold, size: 12
-    stroke_horizontal_rule
-    move_down 15
-    text "Injury Year: #{ @first_experience_year}", style: :bold
-    year_claim_table(claim_data(@first_experience_year_claims))
-    move_down 30
-    text "Injury Year: #{ @second_experience_year}", style: :bold
-    year_claim_table(claim_data(@second_experience_year_claims))
-    move_down 30
-    text "Injury Year: #{ @third_experience_year}", style: :bold
-    year_claim_table(claim_data(@third_experience_year_claims))
-    move_down 30
-    text "Injury Year: #{ @fourth_experience_year}", style: :bold
-    year_claim_table(claim_data(@fourth_experience_year_claims))
+    if @report_params["in_experience_claims"] == "1"
+      #############################################################
 
-    #############################################################
-    # IN Experience Totals
-    move_down 15
-    experience_year_total_table
-    move_down 15
+      #IN EXPERIENCE
+      stroke_horizontal_rule
+      move_down 5
+      text "Experience", style: :bold, size: 12
+      stroke_horizontal_rule
+      move_down 15
+      text "Injury Year: #{ @first_experience_year}", style: :bold
+      year_claim_table(claim_data(@first_experience_year_claims))
+      move_down 30
+      text "Injury Year: #{ @second_experience_year}", style: :bold
+      year_claim_table(claim_data(@second_experience_year_claims))
+      move_down 30
+      text "Injury Year: #{ @third_experience_year}", style: :bold
+      year_claim_table(claim_data(@third_experience_year_claims))
+      move_down 30
+      text "Injury Year: #{ @fourth_experience_year}", style: :bold
+      year_claim_table(claim_data(@fourth_experience_year_claims))
 
-    #############################################################
-    # TEN YEAR Experience Totals
-    move_down 15
-    ten_year_total_table
-    move_down 15
+      #############################################################
+      # IN Experience Totals
+      move_down 15
+      experience_year_total_table
+      move_down 15
+    end
 
-    #############################################################
-    #Green Year
-    move_down 15
-    stroke_horizontal_rule
-    move_down 5
-    text "Green Year", style: :bold, size: 12
-    stroke_horizontal_rule
-    move_down 15
-    text "Injury Year: #{ @first_green_year}", style: :bold
-    year_claim_table(claim_data(@first_green_year_claims))
-    move_down 30
-    text "Injury Year: #{ @second_green_year}", style: :bold
-    year_claim_table(claim_data(@second_green_year_claims))
+    if @report_params["out_of_experience_claims"] == "1" && @report_params["in_experience_claims"] == "1"
+      #############################################################
+      # TEN YEAR Experience Totals
+      move_down 15
+      ten_year_total_table
+      move_down 15
+    end
 
-    #############################################################
+    if @report_params["green_year_claims"] == "1"
+      #############################################################
+      #Green Year
+      move_down 15
+      stroke_horizontal_rule
+      move_down 5
+      text "Green Year", style: :bold, size: 12
+      stroke_horizontal_rule
+      move_down 15
+      text "Injury Year: #{ @first_green_year}", style: :bold
+      year_claim_table(claim_data(@first_green_year_claims))
+      move_down 30
+      text "Injury Year: #{ @second_green_year}", style: :bold
+      year_claim_table(claim_data(@second_green_year_claims))
 
-    # Green Year Totals
+      #############################################################
 
-    move_down 15
-    green_year_total_table
-    move_down 10
-    text "Med Only Claim Count: #{@green_year_med_only}", style: :bold, :indent_paragraphs => 30
-    text "Lost Time Claim Count: #{@green_year_loss_time}", style: :bold, :indent_paragraphs => 30
-    move_down 30
-    stroke_horizontal_rule
+      # Green Year Totals
 
-    #############################################################
+      move_down 15
+      green_year_total_table
+      move_down 10
+      text "Med Only Claim Count: #{@green_year_med_only}", style: :bold, :indent_paragraphs => 30
+      text "Lost Time Claim Count: #{@green_year_loss_time}", style: :bold, :indent_paragraphs => 30
+      move_down 30
+      stroke_horizontal_rule
 
+      #############################################################
+    end
   end
 
 
@@ -1121,7 +1157,7 @@ class RiskReport < PdfReport
 
   def group_discount_level
     move_down 30
-    text "Group Discount Levels", style: :bold, size: 18, align: :center
+    text "Group Discount Levels", style: :bold, size: 14, align: :center
     group_discount_level_table
   end
 
@@ -1203,6 +1239,7 @@ class RiskReport < PdfReport
   end
 
   def payroll_and_premium_history
+    move_down 30
     text "Payroll And Premium Histroy", style: :bold, size: 14, align: :center
 
     @payroll_periods.each do |period|
