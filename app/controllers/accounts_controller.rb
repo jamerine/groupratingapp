@@ -193,14 +193,25 @@ class AccountsController < ApplicationController
 
   end
 
-
-  def risk_report
+  def new_risk_report
     @account = Account.find(params[:account_id])
     @group_rating = GroupRating.find(params[:group_rating_id])
+    @representative = @account.representative
+
+  end
+
+
+  def risk_report
+    @account = Account.find(params[:account][:account_id])
+    @group_rating = GroupRating.find(params[:account][:group_rating_id])
+    @report_params = params[:account]
+
     respond_to do |format|
       format.html
       format.pdf do
-        pdf = RiskReport.new(@account, @account.policy_calculation, @group_rating, view_context)
+
+        pdf = RiskReport.new(@account, @account.policy_calculation, @group_rating,  @report_params, view_context)
+        # pdf = RiskReport.new(@account, @account.policy_calculation, @group_rating, @glance, @experience_stats, @expected_loss_and_premium, @estimated_current_premium, @program_options, @out_of_experience_claims, @in_experience_claims, @green_year_claims, @group_discount_levels, @coverage_status, @experience_modifier_info, @payroll_history, view_context)
 
         # uploader = QuoteUploader.new
         # tmpfile = Tempfile.new("#{ @account.policy_number_entered }_quote_#{ @quote.id }.pdf")
@@ -223,8 +234,8 @@ class AccountsController < ApplicationController
   end
 
   def payroll_test_report
-    @account = Account.find(params[:account_id])
-    @group_rating = GroupRating.find(params[:group_rating_id])
+    @account = Account.find(params[:account][:account_id])
+    @group_rating = GroupRating.find(params[:account][:group_rating_id])
     respond_to do |format|
       format.html
       format.pdf do
