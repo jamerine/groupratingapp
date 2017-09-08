@@ -407,21 +407,21 @@ class RiskReport < PdfReport
   end
 
   def at_a_glance
-    move_down 10
-    text "At A Glance", size: 16, style: :bold, align: :center
-    move_down 10
-    text "Current Employer Rep: #{ @erc }", size: 12
+    move_down 5
+    text "At A Glance", size: 12, style: :bold, align: :center
+    move_down 5
+    text "Current Employer Rep: #{ @erc }", size: 10
     move_down 2
-    text "Employer Rep Group Risk/Claim: #{ @grc }", size: 12
+    text "Employer Rep Group Risk/Claim: #{ @grc }", size: 10
     move_down 2
-    text "Employer Rep Claim: #{ @clm }", size: 12
+    text "Employer Rep Claim: #{ @clm }", size: 10
     move_down 2
-    text "Employer Rep Risk Management: #{ @risk }", size: 12
-    move_down 10
+    text "Employer Rep Risk Management: #{ @risk }", size: 10
+    move_down 5
     stroke_horizontal_rule
     pre_current_cursor = cursor
 
-    move_down 10
+    move_down 5
 
     current_cursor = cursor
     bounding_box([0, current_cursor], :width => 275, :height => 125) do
@@ -472,7 +472,7 @@ class RiskReport < PdfReport
   end
 
   def experience_statistics
-    move_down 20
+    move_down 10
     text "Experience Statistics and EM Calculation:", style: :bold
     move_down 5
     table experience_table_data do
@@ -513,7 +513,7 @@ class RiskReport < PdfReport
       transparent(0) { stroke_bounds }
     end
 
-    move_down 10
+    move_down 5
 
   end
 
@@ -525,7 +525,7 @@ class RiskReport < PdfReport
   def expected_loss_development
     move_down 10
     text "Expected Loss Development and Estimated Premium:", style: :bold
-    move_down 10
+    move_down 5
     table expected_loss_table_data, :column_widths => {0 => 30, 1 => 20, 2 => 60, 3 => 30, 4 => 55, 5 => 30, 6 => 60, 7 => 35, 8 => 50, 9 => 35, 10 => 50, 11 => 35, 12 => 50 } do
       self.position = :center
       row(0).font_style = :bold
@@ -630,7 +630,7 @@ class RiskReport < PdfReport
       move_down 2
       text "#{ @account.street_address}, #{ @account.city}, #{ @account.state}, #{ @account.zip_code}", size: 10, align: :center
       move_down 2
-      text "As of #{@group_rating.updated_at.in_time_zone("America/New_York").strftime("%m/%d/%y")} with #{ @group_rating.current_payroll_period_upper_date.in_time_zone("America/New_York").strftime("%Y").to_i + 1 } Rates", size: 10, align: :center
+      text "As of #{@group_rating.updated_at.in_time_zone("America/New_York").strftime("%m/%d/%y")} with #{ @group_rating.quote_year } Rates", size: 10, align: :center
       move_down 2
       text "Rating Option Comparison Report", size: 12, align: :center, style: :bold_italic
       transparent(0) { stroke_bounds }
@@ -645,7 +645,7 @@ class RiskReport < PdfReport
       text "Estimated Current Period Premium", size: 10, style: :bold, align: :center
       horizontal_line 0, 350, :at => cursor
       bounding_box([0, cursor], :width => 350) do
-        table ([[ "Rating Plan: #{@current_policy_program.group_type }" , "Current EM: #{ @current_policy_program.experience_modifier_rate }", "OCP: #{ @current_policy_program.ocp_participation_indicator }", "EM CAP: #{ @current_policy_program.em_cap_participation_indicator }" ], [ "DFSP: #{@current_policy_program.drug_free_program_participation_indicator }" , "Ded Pct: #{ @current_policy_program.deductible_discount_percentage }", "ISSP: #{ @current_policy_program.issp_participation_indicator }", "TWBNS: #{ @current_policy_program.twbns_participation_indicator }" ]]), :column_widths => {0 => 87, 1 => 87, 2 => 87, 3 => 87 } do
+        table ([[ "Rating Plan: #{@current_policy_program.group_type }" , "Current EM: #{ @current_policy_program.experience_modifier_rate }", "OCP: #{ @current_policy_program.ocp_participation_indicator }", "EM CAP: #{ @current_policy_program.em_cap_participation_indicator }" ], [ "DFSP: #{@current_policy_program.drug_free_program_participation_indicator }" , "Ded Pct: #{ @current_policy_program.deductible_discount_percentage }", "ISSP: #{ @current_policy_program.issp_participation_indicator }", "TWBNS: #{ @current_policy_program.twbns_participation_indicator }" ]]), :column_widths => {0 => 89, 1 => 87, 2 => 87, 3 => 87 } do
           self.position = :center
           row(0..-1).borders = []
           self.cell_style = { size: 9 }
@@ -673,6 +673,7 @@ class RiskReport < PdfReport
           row(0).borders = [:top]
           row(0..-1).align = :center
           self.cell_style = { size: 9 }
+          cells.padding = 3
         end
         stroke_bounds
       end
@@ -692,16 +693,19 @@ class RiskReport < PdfReport
 
   def workers_comp_program_options
     move_down 10
-    text "#{@account.representative.quote_year} Workers' Compensation Program Options [1]", size: 12, style: :bold, align: :center
+    text "#{@account.representative.quote_year} Workers' Compensation Program Options [1]", size: 10, style: :bold, align: :center
 
-    table workers_comp_program_options_data, :column_widths => {0 => 100, 1 => 63, 2 => 62, 3 => 62, 4 => 62, 5 => 62, 6 => 62, 7 => 62 }, :row_colors => ["FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "F0F0F0", "F0F0F0" ]  do
+    table workers_comp_program_options_data,
+    :column_widths => {0 => 100, 1 => 63, 2 => 62, 3 => 62, 4 => 62, 5 => 62, 6 => 62, 7 => 62 },
+    :row_colors => ["FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "F0F0F0", "F0F0F0" ],
+    :cell_style => {:height => 20} do
       self.position = :center
       row(0).font_style = :bold
       row(0).align = :center
       row(0).borders = [:bottom]
       row(0..-1).align = :right
       row(-2..-1).font_style = :bold
-      self.cell_style = { size: 10 }
+      self.cell_style = { size: 9 }
       self.before_rendering_page do |t|
         t.row(-2).border_top_width = 2
       end
@@ -770,7 +774,7 @@ class RiskReport < PdfReport
       end
 
 
-    @data = [[" ","Experience Rated", "EM Cap", "One Claim Program", " #{ @account.group_rating_tier } Group", "Group Retro", "Individual Retro", "#{@account.representative.abbreviated_name}" ]]
+    @data = [[" ","Exp. Rated", "EM Cap", "OCP", " #{ @account.group_rating_tier } Gr.", "Gr. Retro", "Ind. Retro", "#{@account.representative.abbreviated_name}" ]]
     @data += [[ "Eligibility","#{@experience_eligibility}","#{@em_cap_eligibility}"," ","#{@group_rating_eligibility}","#{@group_retro_eligibility}"," "," "]]
     @data += [[ "Projected Premium","#{ round(@experience_projected_premium, 0) }","#{ round(@em_cap_projected_premium,0)}"," ","#{round(@group_rating_projected_premium, 0)}","#{round(@group_retro_projected_premium, 0)}"," "," "]]
     @data += [[ "Est Cost/-Credits","#{ round(@experience_costs,0) }","#{ round(@em_cap_costs,0)}"," ","#{ round(@group_rating_costs,0) }","#{ round(@group_retro_costs, 0)}"," "," "]]
@@ -782,14 +786,17 @@ class RiskReport < PdfReport
 
   def workers_comp_program_additional_options
     move_down 10
-    text "Additional BWC Discounts, Rebates and Bonuses [2]", size: 12, style: :bold, align: :center
+    text "Additional BWC Discounts, Rebates and Bonuses [2]", size: 10, style: :bold, align: :center
     move_down 5
-    table workers_comp_program_additional_options_data, :column_widths => {0 => 100, 1 => 63, 2 => 62, 3 => 62, 4 => 62, 5 => 62, 6 => 62, 7 => 62 }, :row_colors => ["FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "F0F0F0", "F0F0F0"] do
+    table workers_comp_program_additional_options_data,
+      :column_widths => {0 => 100, 1 => 63, 2 => 62, 3 => 62, 4 => 62, 5 => 62, 6 => 62, 7 => 62 },
+      :row_colors => ["FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "F0F0F0", "F0F0F0"],
+      :cell_style => {:height => 20} do
       self.position = :center
       row(0).align = :center
       row(0..-1).align = :center
       row(-3..-1).font_style = :bold
-      self.cell_style = { size: 10 }
+      self.cell_style = { size: 9 }
       self.before_rendering_page do |t|
         t.row(-3).border_top_width = 2
         t.row(-2).border_top_width = 2
@@ -906,9 +913,9 @@ class RiskReport < PdfReport
 
   def descriptions
     move_down 5
-    text "[1] Program Options and costs estimates are based on current eligibility and current and historical data and is not guaranteed. See detail sheets for program parameters. Retro and Deductible Programs savings can vary based on parameters selected.", size: 7
+    text "[1] Program Options and costs estimates are based on current eligibility and current and historical data and is not guaranteed. See detail sheets for program parameters. Retro and Deductible Programs savings can vary based on parameters selected.", size: 6
     move_down 3
-    text "[2] Additional BWC Discounts often include costs of setting up the program and full savings on certain programs will be difficult to acheive.", size: 7
+    text "[2] Additional BWC Discounts often include costs of setting up the program and full savings on certain programs will be difficult to acheive.", size: 6
   end
 
 
