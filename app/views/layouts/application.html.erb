@@ -59,6 +59,7 @@
               <li><%= link_to 'Representatives', representatives_path %></li>
               <li><%= link_to 'Processing', group_ratings_path %></li>
               <li><%= link_to 'Accounts', accounts_path %></li>
+              <li><%= link_to 'Rejections', program_rejections_path, class: 'navbar-link'  %></li>
               <li><%= link_to 'Exceptions', group_rating_exceptions_path, class: 'navbar-link'  %></li>
               <li><%= link_to "Sign Out", destroy_user_session_path, method: :delete, :class => 'navbar-link'  %> </li>
             <% else %>

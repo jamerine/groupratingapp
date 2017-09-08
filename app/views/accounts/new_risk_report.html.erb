@@ -11,6 +11,7 @@
     <h2>Generate Risk Report for <%= @account.name %> </h2>
     <br>
       <%= form_for(@account, url: account_risk_report_path, html: {method: "get"}) do |f| %>
+
       <!-- Hidden Values -->
       <%= f.hidden_field :account_id, value: @account.id %>
       <%= f.hidden_field :group_rating_id, value: @group_rating.id %>
@@ -20,6 +21,7 @@
         <div class="col col-md-12">
           <h4>Customize Sections for Report Packet</h4>
         </div>
+
       </div>
       <div class="row">
         <p>Policy Information</p>

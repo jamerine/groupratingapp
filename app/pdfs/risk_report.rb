@@ -318,10 +318,10 @@ class RiskReport < PdfReport
             @account.quotes.where("program_type = 1").first.quote_date
           end
 
-
-      header
-      stroke_horizontal_rule
-
+      if @report_params["at_a_glance"] == "1" || @report_params["experience_statistics"] == "1" || @report_params["expected_loss_and_premium"] == "1"
+        header
+        stroke_horizontal_rule
+      end
       if @report_params["at_a_glance"] == "1"
         at_a_glance
       end
@@ -399,7 +399,7 @@ class RiskReport < PdfReport
       text "DBA: #{ @account.policy_calculation.try(:trading_as_name) }", size: 10, align: :center
       text "Policy#: #{ @account.policy_number_entered }   |   Sale Contact: #{ @account.affiliates.find_by(role: 6).try(:first_name)} #{@account.affiliates.find_by(role: 6).try(:last_name)}   |   Co Code: #{ @account.affiliates.find_by(role: 2).try(:company_name)}", size: 10, align: :center
       text "Risk Report", size: 10, align: :center
-      text "As of #{@group_rating.updated_at.in_time_zone("America/New_York").strftime("%m/%d/%y")} with #{ @group_rating.current_payroll_period_upper_date.in_time_zone("America/New_York").strftime("%Y").to_i + 1 } Rates", size: 10, align: :center
+      text "As of #{@group_rating.updated_at.in_time_zone("America/New_York").strftime("%m/%d/%y")} with #{ @account.representative.quote_year } Rates", size: 10, align: :center
       text "Projected #{@account.representative.quote_year} Experience", size: 12, align: :center, style: :bold_italic
       transparent(0) { stroke_bounds }
       # stroke_bounds
