@@ -1,23 +1,23 @@
 class QuotePolicy < ApplicationPolicy
 
   def new?
-     user.admin? || user.read_only?
+     user.admin? || user.read_only? || user.general?
   end
 
   def index?
-     user.admin?
+     user.admin? || user.read_only? || user.general?
   end
 
   def create?
-     user.admin? || user.read_only?
+     user.admin? || user.read_only? || user.general?
   end
 
   def edit?
-     user.admin? || user.read_only?
+     user.admin? || user.read_only? || user.general?
   end
 
   def update?
-     user.admin? || user.read_only?
+     user.admin? || user.read_only? || user.general?
   end
 
   def destroy?
@@ -29,7 +29,7 @@ class QuotePolicy < ApplicationPolicy
   end
 
   def group_rating_report?
-     user.admin? || user.read_only?
+     user.admin? || user.read_only? || user.general?
   end
 
   def generate_account_quotes?
@@ -41,11 +41,11 @@ class QuotePolicy < ApplicationPolicy
   end
 
   def view_group_rating_quote?
-     user.admin? || user.read_only?
+     user.admin? || user.read_only? || user.general?
   end
 
   def create_group_retro?
-    user.admin? || user.read_only?
+    user.admin? || user.read_only? || user.general?
   end
 
 
