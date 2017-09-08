@@ -1,0 +1,27 @@
+<div class="container">
+  <div class="jumbotron text-center">
+    <h1>Program Rejections</h1>
+  </div>
+  <%= form_tag(program_rejections_path, :method => "get", id: "search-form", remote: true ) do %>
+    <div class="form-inline">
+      <div class="form-group">
+        <%= select_tag(:representative_id, options_from_collection_for_select(@representatives, :id, :abbreviated_name, params[:representative_number]), include_blank: "All Representatives", class: 'dropdown-toggle form-control')%>
+      </div>
+      <div class="form-group">
+        <%= select_tag(:program_type, options_for_select(@program_types), include_blank: "All Program Types" ,class: 'dropdown-toggle form-control')%>
+      </div>
+      <div class="form-group">
+        <%= select_tag(:reject_reason, options_for_select(@rejection_reasons), include_blank: "All Rejections" ,class: 'dropdown-toggle form-control')%>
+      </div>
+
+    <%= submit_tag "Search", name: nil, class: 'btn btn-primary' %>
+
+    </div>
+
+  <% end %>
+  <br>
+  <div id="filter_rejections">
+    <%= render partial: 'program_rejections/list', locals: { program_rejections: @program_rejections } %>
+  </div>
+
+</div>

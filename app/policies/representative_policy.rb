@@ -1,27 +1,27 @@
 class RepresentativePolicy < ApplicationPolicy
 
   def show?
-    user.admin? || user.read_only?
+    user.admin? || user.read_only? || user.general?
   end
 
   def edit?
-    user.admin? || user.read_only?
+    user.admin? || user.read_only? || user.general?
   end
 
   def update?
-    user.admin? || user.read_only?
+    user.admin? || user.read_only? || user.general?
   end
 
   def all_quote_process?
-    user.admin? || user.read_only?
+    user.admin? || user.read_only? || user.general?
   end
 
   def all_quote_process?
-    user.admin? || user.read_only?
+    user.admin? || user.read_only? || user.general?
   end
 
   def zip_file?
-    user.admin? || user.read_only?
+    user.admin? || user.read_only? || user.general?
   end
 
   def edit_global_dates?
@@ -37,19 +37,19 @@ class RepresentativePolicy < ApplicationPolicy
   end
 
   def export_accounts?
-    user.admin? || user.read_only?
+    user.admin? || user.read_only? || user.general?
   end
 
   def export_manual_classes?
-    user.admin? || user.read_only?
+    user.admin? || user.read_only? || user.general?
   end
 
   def export_159_request_weekly?
-    user.admin? || user.read_only?
+    user.admin? || user.read_only? || user.general?
   end
 
   def filter_export_159_request_weekly?
-    user.admin? || user.read_only?
+    user.admin? || user.read_only? || user.general?
   end
 
   def conversion?
