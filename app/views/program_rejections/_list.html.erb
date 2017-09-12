@@ -9,19 +9,12 @@
       <th>Program Type</th>
       <th>Representative</th>
       <th>Action</th>
+      <th>Dismiss</th>
     </tr>
   </thead>
   <tbody>
    <% program_rejections.order("representative_id").each do |program_rejection| %>
-    <tr>
-      <td><%= link_to "#{program_rejection.account.policy_number_entered}", account_path(program_rejection.account.id), class: 'btn btn-info' %> </td>
-      <td><%= program_rejection.account.try(:name).slice(0..25).try(:titleize) %> </td>
-      <td><%= program_rejection.account.policy_calculation.try(:current_coverage_status) %> </td>
-      <td><%= program_rejection.reject_reason.gsub("reject", "").humanize.titleize %> </td>
-      <td><%= program_rejection.program_type.humanize.titleize %> </td>
-      <td><%= program_rejection.representative.abbreviated_name %> </td>
-      <td><%= link_to 'Override', account_path(program_rejection.account.id), target: '_blank' %></td>
-    </tr>
+    <%= render partial: 'program_rejections/rejection', locals: { program_rejection: program_rejection, program_rejections: program_rejections } %>
   <% end %>
 
   </tbody>

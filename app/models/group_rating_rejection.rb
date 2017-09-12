@@ -10,4 +10,6 @@ class GroupRatingRejection < ActiveRecord::Base
     where("program_type = ?", "#{program_type}")
   end
 
+  scope :with_active_policy, -> { joins(:account).merge(Account.active_policy) }
+
 end
