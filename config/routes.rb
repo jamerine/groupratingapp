@@ -93,7 +93,9 @@ Rails.application.routes.draw do
     post :resolve
   end
 
-  resources :program_rejections 
+  resources :program_rejections do
+    post :resolve
+  end
 
   resources :representatives do
     get :users_management

@@ -11,6 +11,7 @@ class Account < ActiveRecord::Base
   has_many :group_rating_rejections, dependent: :destroy
   has_one :policy_calculation, dependent: :destroy
   has_many :quotes, dependent: :destroy
+  has_many :group_rating_rejections, dependent: :destroy
 
   validates :policy_number_entered, :presence => true, length: { maximum: 8 }
 
@@ -19,6 +20,8 @@ class Account < ActiveRecord::Base
   enum group_rating_qualification: [:accept, :pending_predecessor, :reject]
 
   # Scopes
+  scope :active_policy, -> { joins(:policy_calculation).where('policy_calculations.current_coverage_status IN (?)', ["ACTIV", "REINS", "LAPSE"])}
+
   scope :status, -> (status) { where status: status }
   scope :group_rating_tier, -> (group_rating_tier) { where group_rating_tier: group_rating_tier }
   scope :group_retro_tier, -> (group_retro_tier) { where group_retro_tier: group_retro_tier }
@@ -60,8 +63,12 @@ class Account < ActiveRecord::Base
 
   def group_rating_calc(args = {})
     # MANUAL EDIT OF GROUP RATING METHOD
-      @user_override = args['user_override']
+      if args['user_override'] == true
+        @user_override = args['user_override']
+        self.group_rating_rejections.where(program_type: 'group_rating').destroy_all
+      end
       @fee_override = args['fee_override']
+
       if args.empty?
         self.group_rating_reject
       else
@@ -199,136 +206,184 @@ class Account < ActiveRecord::Base
 
 
   def group_rating_reject
-    self.group_rating_rejections.where(program_type: 'group_rating').destroy_all
-    self.group_rating_exceptions.where(resolved: nil).destroy_all
+    #  self.group_rating_rejections.where(program_type: 'group_rating').destroy_all
+     self.group_rating_exceptions.where(resolved: nil).destroy_all
+     @group_rating_rejection_array = []
 
-    @group_rating = GroupRating.where(representative_id: self.representative_id).last
-        # NEGATIVE PAYROLL ON A MANUAL CLASS
+     @group_rating = GroupRating.where(representative_id: self.representative_id).last
+         # NEGATIVE PAYROLL ON A MANUAL CLASS
 
-      if !self.policy_calculation.manual_class_calculations.where("manual_class_current_estimated_payroll < 0 or manual_class_four_year_period_payroll < 0").empty?
-        if self.group_rating_exceptions.where(exception_reason: 'manual_class_negative_payroll', resolved: true).empty?
-          GroupRatingException.create(account_id: self.id, exception_reason: 'manual_class_negative_payroll', representative_id: self.representative_id)
-        end
-        GroupRatingRejection.create(account_id: self.id, reject_reason: 'manual_class_negative_payroll', representative_id: @group_rating.representative_id, program_type: 'group_rating')
-      end
-
-      # ----------- Rejection Section -----------
-      group_rating_range = @group_rating.experience_period_lower_date..@group_rating.experience_period_upper_date
-
-      if policy_calculation.valid_policy_number == 'N'
-        GroupRatingRejection.create(program_type: 'group_rating', account_id: self.id, reject_reason: 'reject_invalid_policy_number', representative_id: @group_rating.representative_id)
-        if self.group_rating_exceptions.where(exception_reason: 'invalid_policy_number', resolved: true).empty?
-          GroupRatingException.create(account_id: self.id, exception_reason: 'invalid_policy_number', representative_id: self.representative_id)
-        end
-      end
-
-      if ["CANFI","CANPN","BKPCA","BKPCO","COMB","CANUN"].include? policy_calculation.current_coverage_status
-        GroupRatingRejection.create(program_type: 'group_rating', account_id: self.id, reject_reason: 'reject_inactive_policy', representative_id: @group_rating.representative_id)
-      end
-
-      if policy_calculation.policy_group_ratio.nil? || policy_calculation.policy_group_ratio >= 0.85
-        GroupRatingRejection.create(program_type: 'group_rating', account_id: self.id, reject_reason: 'reject_high_group_ratio', representative_id: @group_rating.representative_id)
-      end
-
-      if [3,4,5,7,8,10].exclude? policy_calculation.policy_industry_group
-        GroupRatingRejection.create(program_type: 'group_rating', account_id: self.id, reject_reason: 'reject_homogeneity', representative_id: @group_rating.representative_id)
-      end
-
-      # Check for waiting on predecessor payroll
-      if !Account.where("name LIKE ? and representative_id = ? ", "%#{self.policy_number_entered}%", self.representative_id).empty?
-        GroupRatingRejection.create(program_type: 'group_rating', account_id: self.id, reject_reason: 'reject_pending_predecessor', representative_id: @group_rating.representative_id)
-      end
-
-      #Check if Policy_number is on the Accept Reject List for Group Rating
-      @accept_reject_list = BwcGroupAcceptRejectList.find_by(policy_number: self.policy_number_entered)
-      @representative_number_adjust = "#{self.representative.representative_number.to_s.rjust(6, "0")}-80"
-      if @accept_reject_list && (@accept_reject_list.bwc_rep_id != @representative_number_adjust)
-        GroupRatingRejection.create(program_type: 'group_rating', account_id: self.id, reject_reason: 'reject_partner_conflict', representative_id: @group_rating.representative_id)
-      end
-
-      # CONDITIONS FOR State Fund and Self Insured PEO
-      if peo_records = ProcessPolicyExperiencePeriodPeo.where(policy_number: policy_calculation.policy_number, representative_number: @group_rating.process_representative)
-        peo_records.each do |peo_record|
-          if (peo_record.manual_class_sf_peo_lease_effective_date.nil? && peo_record.manual_class_sf_peo_lease_termination_date.nil?)
-            if
-              ((group_rating_range === peo_record.manual_class_si_peo_lease_effective_date) || (group_rating_range === peo_record.manual_class_si_peo_lease_termination_date))
-              GroupRatingRejection.create(program_type: 'group_rating', account_id: self.id, reject_reason: 'reject_si_peo', representative_id: @group_rating.representative_id)
-            end
-          else
-            if
-              ((!peo_record.manual_class_sf_peo_lease_effective_date.nil? && peo_record.manual_class_sf_peo_lease_termination_date.nil?) || (peo_record.manual_class_sf_peo_lease_effective_date > peo_record.manual_class_sf_peo_lease_termination_date)) ||
-              ((group_rating_range === peo_record.manual_class_sf_peo_lease_effective_date) && (peo_record.manual_class_sf_peo_lease_termination_date.nil?))
-              GroupRatingRejection.create(program_type: 'group_rating', account_id: self.id, reject_reason: 'reject_sf_peo', representative_id: @group_rating.representative_id)
-            end
-          end
-        end
-      end
-
-      if  self.group_rating_rejections.where("program_type = ?", :group_rating).pluck(:reject_reason).include? 'reject_pending_predecessor'
-         qualification = "pending_predecessor"
-      elsif self.group_rating_rejections.where("program_type = ?", :group_rating).count > 0
-         qualification = "reject"
-       else
-         qualification = "accept"
+       if !self.policy_calculation.manual_class_calculations.where("manual_class_current_estimated_payroll < 0 or manual_class_four_year_period_payroll < 0").empty?
+         if self.group_rating_exceptions.where(exception_reason: 'manual_class_negative_payroll', resolved: true).empty?
+           GroupRatingException.create(account_id: self.id, exception_reason: 'manual_class_negative_payroll', representative_id: self.representative_id)
+         end
+        if @found_rejection = self.group_rating_rejections.find_by(reject_reason: 'manual_class_negative_payroll', program_type: 'group_rating')
+          @group_rating_rejection_array << self.group_rating_rejections.new(reject_reason: 'manual_class_negative_payroll', representative_id: @group_rating.representative_id, program_type: 'group_rating', hide: @found_rejection.hide)
+        else
+           @group_rating_rejection_array << self.group_rating_rejections.new(reject_reason: 'manual_class_negative_payroll', representative_id: @group_rating.representative_id, program_type: 'group_rating')
+         end
        end
 
-       if qualification == "accept"
-         # ----------- Exception Section -----------
+       # ----------- Rejection Section -----------
+       group_rating_range = @group_rating.experience_period_lower_date..@group_rating.experience_period_upper_date
 
-         #LAPSE PERIOD FOR GROUP RATING
-           nov_first = (Date.current.year.to_s + '-11-01').to_date
-           days_to_add = (4 - nov_first.wday) % 7
-           fourth_thursday = nov_first + days_to_add + 21
-
-           higher_lapse = fourth_thursday - 3
-           lower_lapse = higher_lapse - 12.months
-           lapse_sum = 0
-
-           coverage_lapse_periods = self.policy_calculation.policy_coverage_status_histories.where("coverage_status = :coverage_status and (coverage_end_date BETWEEN :lower_lapse and :higher_lapse or coverage_end_date is null)", coverage_status: "LAPSE", lower_lapse: lower_lapse, higher_lapse: higher_lapse)
-
-           coverage_lapse_periods.each do |period|
-             # period starts before and ends out of range
-             if period.coverage_effective_date < lower_lapse && period.coverage_end_date.nil?
-               lapse_sum += Date.current - lower_lapse
-             # period starts after and ends out of range
-             elsif period.coverage_effective_date > lower_lapse && period.coverage_end_date.nil?
-               lapse_sum += Date.current - period.coverage_effective_date
-             # period starts before and ends in range
-             elsif period.coverage_effective_date < lower_lapse && period.coverage_end_date < higher_lapse
-               lapse_sum += period.coverage_end_date - lower_lapse
-             # period starts after and ends in range
-             elsif period.coverage_effective_date > lower_lapse && period.coverage_end_date < higher_lapse
-               lapse_sum += period.coverage_end_date - period.coverage_effective_date
-             end
-           end
-
-           if lapse_sum >= 60
-             GroupRatingRejection.create(program_type: 'group_rating', account_id: self.id, reject_reason: 'reject_60+_lapse', representative_id: self.representative_id)
-            #  if self.group_rating_exceptions.where(exception_reason: 'group_rating_60+_lapse', resolved: true).empty?
-            #    GroupRatingException.create(account_id: self.id, exception_reason: 'group_rating_60+_lapse', representative_id: self.representative_id)
-            #  end
-           elsif lapse_sum < 60 && lapse_sum >= 40
-             if self.group_rating_exceptions.where(exception_reason: 'group_rating_40-60_lapse', resolved: true).empty?
-               GroupRatingException.create(account_id: self.id, exception_reason: 'group_rating_40-60_lapse', representative_id: self.representative_id)
-             end
-           end
-
+       if policy_calculation.valid_policy_number == 'N'
+         if @found_rejection = self.group_rating_rejections.find_by(reject_reason: 'reject_invalid_policy_number', program_type: 'group_rating')
+           @group_rating_rejection_array << self.group_rating_rejections.new(reject_reason: 'reject_invalid_policy_number', representative_id: @group_rating.representative_id, program_type: 'group_rating', hide: @found_rejection.hide)
+         else
+            @group_rating_rejection_array << self.group_rating_rejections.new(reject_reason: 'reject_invalid_policy_number', representative_id: @group_rating.representative_id, program_type: 'group_rating')
+          end
+         if self.group_rating_exceptions.where(exception_reason: 'invalid_policy_number', resolved: true).empty?
+           GroupRatingException.create(account_id: self.id, exception_reason: 'invalid_policy_number', representative_id: self.representative_id)
          end
+       end
 
-      # Removed the if else for reject_pending_predecessor for predecessor accounts.  It is the wrong reason for rejecting
-      # else
-      #   GroupRatingRejection.create(program_type: 'group_rating', account_id: self.id, reject_reason: 'reject_pending_predecessor', representative_id: @group_rating.representative_id)
-      # end
-    if self.group_rating_rejections.where("program_type = ?", :group_rating).count > 0
-      qualification = "reject"
-    else
-      qualification = "accept"
-    end
+       if ["CANFI","CANPN","BKPCA","BKPCO","COMB","CANUN"].include? policy_calculation.current_coverage_status
+         if @found_rejection = self.group_rating_rejections.find_by(reject_reason: 'reject_inactive_policy', program_type: 'group_rating')
+           @group_rating_rejection_array << self.group_rating_rejections.new(reject_reason: 'reject_inactive_policy', representative_id: @group_rating.representative_id, program_type: 'group_rating', hide: @found_rejection.hide)
+         else
+            @group_rating_rejection_array << self.group_rating_rejections.new(reject_reason: 'reject_inactive_policy', representative_id: @group_rating.representative_id, program_type: 'group_rating')
+          end
+       end
+
+       if policy_calculation.policy_group_ratio.nil? || policy_calculation.policy_group_ratio >= 0.85
+         if @found_rejection = self.group_rating_rejections.find_by(reject_reason: 'reject_high_group_ratio', program_type: 'group_rating')
+           @group_rating_rejection_array << self.group_rating_rejections.new(reject_reason: 'reject_high_group_ratio', representative_id: @group_rating.representative_id, program_type: 'group_rating', hide: @found_rejection.hide)
+         else
+            @group_rating_rejection_array << self.group_rating_rejections.new(reject_reason: 'reject_high_group_ratio', representative_id: @group_rating.representative_id, program_type: 'group_rating')
+          end
+       end
+
+       if [3,4,5,7,8,10].exclude? policy_calculation.policy_industry_group
+         if @found_rejection = self.group_rating_rejections.find_by(reject_reason: 'reject_homogeneity', program_type: 'group_rating')
+           @group_rating_rejection_array << self.group_rating_rejections.new(reject_reason: 'reject_homogeneity', representative_id: @group_rating.representative_id, program_type: 'group_rating', hide: @found_rejection.hide)
+         else
+            @group_rating_rejection_array << self.group_rating_rejections.new(reject_reason: 'reject_homogeneity', representative_id: @group_rating.representative_id, program_type: 'group_rating')
+
+          end
+       end
+
+       # Check for waiting on predecessor payroll
+       if !Account.where("name LIKE ? and representative_id = ? ", "%#{self.policy_number_entered}%", self.representative_id).empty?
+         if @found_rejection = self.group_rating_rejections.find_by(reject_reason: 'reject_pending_predecessor', program_type: 'group_rating')
+           @group_rating_rejection_array << self.group_rating_rejections.new(reject_reason: 'reject_pending_predecessor', representative_id: @group_rating.representative_id, program_type: 'group_rating', hide: @found_rejection.hide)
+         else
+            @group_rating_rejection_array << self.group_rating_rejections.new(reject_reason: 'reject_pending_predecessor', representative_id: @group_rating.representative_id, program_type: 'group_rating')
+          end
+       end
+
+       #Check if Policy_number is on the Accept Reject List for Group Rating
+       @accept_reject_list = BwcGroupAcceptRejectList.find_by(policy_number: self.policy_number_entered)
+       @representative_number_adjust = "#{self.representative.representative_number.to_s.rjust(6, "0")}-80"
+       if @accept_reject_list && (@accept_reject_list.bwc_rep_id != @representative_number_adjust)
+         if @found_rejection = self.group_rating_rejections.find_by(reject_reason: 'reject_partner_conflict', program_type: 'group_rating')
+           @group_rating_rejection_array << self.group_rating_rejections.new(reject_reason: 'reject_partner_conflict', representative_id: @group_rating.representative_id, program_type: 'group_rating', hide: @found_rejection.hide)
+         else
+            @group_rating_rejection_array << self.group_rating_rejections.new(reject_reason: 'reject_partner_conflict', representative_id: @group_rating.representative_id, program_type: 'group_rating')
+          end
+       end
+
+       # CONDITIONS FOR State Fund and Self Insured PEO
+       if peo_records = ProcessPolicyExperiencePeriodPeo.where(policy_number: policy_calculation.policy_number, representative_number: @group_rating.process_representative)
+         peo_records.each do |peo_record|
+           if (peo_record.manual_class_sf_peo_lease_effective_date.nil? && peo_record.manual_class_sf_peo_lease_termination_date.nil?)
+             if
+               ((group_rating_range === peo_record.manual_class_si_peo_lease_effective_date) || (group_rating_range === peo_record.manual_class_si_peo_lease_termination_date))
+               if @accept_reject_list && (@accept_reject_list.bwc_rep_id != @representative_number_adjust)
+                 if @found_rejection = self.group_rating_rejections.find_by(reject_reason: 'reject_si_peo', program_type: 'group_rating')
+                   @group_rating_rejection_array << self.group_rating_rejections.new(reject_reason: 'reject_si_peo', representative_id: @group_rating.representative_id, program_type: 'group_rating', hide: @found_rejection.hide)
+                 else
+                    @group_rating_rejection_array << self.group_rating_rejections.new(reject_reason: 'reject_si_peo', representative_id: @group_rating.representative_id, program_type: 'group_rating')
+                  end
+                end
+             end
+           else
+             if
+               ((!peo_record.manual_class_sf_peo_lease_effective_date.nil? && peo_record.manual_class_sf_peo_lease_termination_date.nil?) || (peo_record.manual_class_sf_peo_lease_effective_date > peo_record.manual_class_sf_peo_lease_termination_date)) ||
+               ((group_rating_range === peo_record.manual_class_sf_peo_lease_effective_date) && (peo_record.manual_class_sf_peo_lease_termination_date.nil?))
+                 if @found_rejection = self.group_rating_rejections.find_by(reject_reason: 'reject_sf_peo', program_type: 'group_rating')
+                   @group_rating_rejection_array << self.group_rating_rejections.new(reject_reason: 'reject_sf_peo', representative_id: @group_rating.representative_id, program_type: 'group_rating', hide: @found_rejection.hide)
+                 else
+                    @group_rating_rejection_array << self.group_rating_rejections.new(reject_reason: 'reject_sf_peo', representative_id: @group_rating.representative_id, program_type: 'group_rating')
+                  end
+             end
+           end
+         end
+       end
+
+       if @group_rating_rejection_array.collect(&:reject_reason).include? 'reject_pending_predecessor'
+          qualification = "pending_predecessor"
+       elsif @group_rating_rejection_array.count > 0
+          qualification = "reject"
+        else
+          qualification = "accept"
+        end
+
+        if qualification == "accept"
+          # ----------- Exception Section -----------
+
+          #LAPSE PERIOD FOR GROUP RATING
+            nov_first = (Date.current.year.to_s + '-11-01').to_date
+            days_to_add = (4 - nov_first.wday) % 7
+            fourth_thursday = nov_first + days_to_add + 21
+
+            higher_lapse = fourth_thursday - 3
+            lower_lapse = higher_lapse - 12.months
+            lapse_sum = 0
+
+            coverage_lapse_periods = self.policy_calculation.policy_coverage_status_histories.where("coverage_status = :coverage_status and (coverage_end_date BETWEEN :lower_lapse and :higher_lapse or coverage_end_date is null)", coverage_status: "LAPSE", lower_lapse: lower_lapse, higher_lapse: higher_lapse)
+
+            coverage_lapse_periods.each do |period|
+              # period starts before and ends out of range
+              if period.coverage_effective_date < lower_lapse && period.coverage_end_date.nil?
+                lapse_sum += Date.current - lower_lapse
+              # period starts after and ends out of range
+              elsif period.coverage_effective_date > lower_lapse && period.coverage_end_date.nil?
+                lapse_sum += Date.current - period.coverage_effective_date
+              # period starts before and ends in range
+              elsif period.coverage_effective_date < lower_lapse && period.coverage_end_date < higher_lapse
+                lapse_sum += period.coverage_end_date - lower_lapse
+              # period starts after and ends in range
+              elsif period.coverage_effective_date > lower_lapse && period.coverage_end_date < higher_lapse
+                lapse_sum += period.coverage_end_date - period.coverage_effective_date
+              end
+            end
+
+            if lapse_sum >= 60
+              if @found_rejection = self.group_rating_rejections.find_by(reject_reason: 'reject_60', program_type: 'group_rating')
+                @group_rating_rejection_array << self.group_rating_rejections.new(reject_reason: 'reject_60', representative_id: @group_rating.representative_id, program_type: 'group_rating', hide: @found_rejection.hide)
+              else
+                 @group_rating_rejection_array << self.group_rating_rejections.new(reject_reason: 'reject_60', representative_id: @group_rating.representative_id, program_type: 'group_rating')
+              end
+             #  if self.group_rating_exceptions.where(exception_reason: 'group_rating_60+_lapse', resolved: true).empty?
+             #    GroupRatingException.create(account_id: self.id, exception_reason: 'group_rating_60+_lapse', representative_id: self.representative_id)
+             #  end
+            elsif lapse_sum < 60 && lapse_sum >= 40
+              if self.group_rating_exceptions.where(exception_reason: 'group_rating_40-60_lapse', resolved: true).empty?
+                GroupRatingException.create(account_id: self.id, exception_reason: 'group_rating_40-60_lapse', representative_id: self.representative_id)
+              end
+            end
+
+          end
+
+       # Removed the if else for reject_pending_predecessor for predecessor accounts.  It is the wrong reason for rejecting
+       # else
+       #   GroupRatingRejection.create(program_type: 'group_rating', account_id: self.id, reject_reason: 'reject_pending_predecessor', representative_id: @group_rating.representative_id)
+       # end
+
+    self.group_rating_rejections.where(program_type: 'group_rating').destroy_all
+
+     if @group_rating_rejection_array.count > 0
+       qualification = "reject"
+       @group_rating_rejection_array.each { |a| a.save }
+     else
+       qualification = "accept"
+     end
 
 
-    return @group_rating_qualification = qualification
+     return @group_rating_qualification = qualification
 
-  end
+   end
 
   def group_retro(user_override=nil)
       self.group_retro_reject
@@ -415,27 +470,46 @@ end
 
 
   def group_retro_reject
-    self.group_rating_rejections.where(program_type: 'group_retro').destroy_all
+    # self.group_rating_rejections.where(program_type: 'group_retro').destroy_all
+
+    @group_retro_rejection_array = []
+
     @group_rating = GroupRating.where(representative_id: self.representative_id).last
         # NEGATIVE PAYROLL ON A MANUAL CLASS
         if !self.policy_calculation.manual_class_calculations.where("manual_class_current_estimated_payroll < 0 or manual_class_four_year_period_payroll < 0").empty?
-          GroupRatingRejection.create(program_type: 'group_retro', account_id: self.id, reject_reason: 'manual_class_negative_payroll', representative_id: @group_rating.representative_id)
+          if @found_rejection = self.group_rating_rejections.find_by(reject_reason: 'manual_class_negative_payroll', program_type: 'group_retro')
+            @group_retro_rejection_array << self.group_rating_rejections.new(reject_reason: 'manual_class_negative_payroll', representative_id: @group_rating.representative_id, program_type: 'group_retro', hide: @found_rejection.hide)
+          else
+            @group_retro_rejection_array << self.group_rating_rejections.new(reject_reason: 'manual_class_negative_payroll', representative_id: @group_rating.representative_id, program_type: 'group_retro')
+          end
         end
 
       # ----------- Rejection Section -----------
       group_retro_range = @group_rating.experience_period_lower_date..@group_rating.experience_period_upper_date
 
       if policy_calculation.valid_policy_number == 'N'
-        GroupRatingRejection.create(program_type: 'group_retro', account_id: self.id, reject_reason: 'reject_invalid_policy_number', representative_id: @group_rating.representative_id)
+        if @found_rejection = self.group_rating_rejections.find_by(reject_reason: 'reject_invalid_policy_number', program_type: 'group_retro')
+          @group_retro_rejection_array << self.group_rating_rejections.new(reject_reason: 'reject_invalid_policy_number', representative_id: @group_rating.representative_id, program_type: 'group_retro', hide: @found_rejection.hide)
+        else
+          @group_retro_rejection_array << self.group_rating_rejections.new(reject_reason: 'reject_invalid_policy_number', representative_id: @group_rating.representative_id, program_type: 'group_retro')
+        end
       end
 
       if self.policy_calculation.policy_total_standard_premium.nil? || self.policy_calculation.policy_total_standard_premium < 5000
       # @account.policy_calculation.policy_total_standard_premium.nil? || @account.policy_calculation.policy_total_standard_premium < 5000
-        GroupRatingRejection.create(program_type: 'group_retro', account_id: self.id, reject_reason: 'reject_low_standard_premium', representative_id: @group_rating.representative_id)
+        if @found_rejection = self.group_rating_rejections.find_by(reject_reason: 'reject_low_standard_premium', program_type: 'group_retro')
+          @group_retro_rejection_array << self.group_rating_rejections.new(reject_reason: 'reject_low_standard_premium', representative_id: @group_rating.representative_id, program_type: 'group_retro', hide: @found_rejection.hide)
+        else
+          @group_retro_rejection_array << self.group_rating_rejections.new(reject_reason: 'reject_low_standard_premium', representative_id: @group_rating.representative_id, program_type: 'group_retro')
+        end
       end
 
       if [3,4,5,7,8].exclude? policy_calculation.policy_industry_group
-        GroupRatingRejection.create(program_type: 'group_retro', account_id: self.id, reject_reason: 'reject_homogeneity', representative_id: @group_rating.representative_id)
+        if @found_rejection = self.group_rating_rejections.find_by(reject_reason: 'reject_homogeneity', program_type: 'group_retro')
+          @group_retro_rejection_array << self.group_rating_rejections.new(reject_reason: 'reject_homogeneity', representative_id: @group_rating.representative_id, program_type: 'group_retro', hide: @found_rejection.hide)
+        else
+          @group_retro_rejection_array << self.group_rating_rejections.new(reject_reason: 'reject_homogeneity', representative_id: @group_rating.representative_id, program_type: 'group_retro')
+        end
       end
 
       if peo_records = ProcessPolicyExperiencePeriodPeo.where(policy_number: policy_calculation.policy_number, representative_number: @group_rating.process_representative)
@@ -443,42 +517,66 @@ end
           if (peo_record.manual_class_sf_peo_lease_effective_date.nil? && peo_record.manual_class_sf_peo_lease_termination_date.nil?)
             if
               ((group_retro_range === peo_record.manual_class_si_peo_lease_effective_date) || (group_retro_range === peo_record.manual_class_si_peo_lease_termination_date))
-              GroupRatingRejection.create(program_type: 'group_retro', account_id: self.id, reject_reason: 'reject_si_peo', representative_id: @group_rating.representative_id)
+              if @found_rejection = self.group_rating_rejections.find_by(reject_reason: 'reject_si_peo', program_type: 'group_retro')
+                @group_retro_rejection_array << self.group_rating_rejections.new(reject_reason: 'reject_si_peo', representative_id: @group_rating.representative_id, program_type: 'group_retro', hide: @found_rejection.hide)
+              else
+                @group_retro_rejection_array << self.group_rating_rejections.new(reject_reason: 'reject_si_peo', representative_id: @group_rating.representative_id, program_type: 'group_retro')
+              end
             end
           else
             # Fixed group retro to only reject if effective date is within range and termination dat nil saying that they are still in a sf peo.
             if
               ((!peo_record.manual_class_sf_peo_lease_effective_date.nil? && peo_record.manual_class_sf_peo_lease_termination_date.nil?) || (peo_record.manual_class_sf_peo_lease_effective_date > peo_record.manual_class_sf_peo_lease_termination_date)) ||
               ((group_retro_range === peo_record.manual_class_sf_peo_lease_effective_date) && (peo_record.manual_class_sf_peo_lease_termination_date.nil?))
-              GroupRatingRejection.create(program_type: 'group_retro', account_id: self.id, reject_reason: 'reject_sf_peo', representative_id: @group_rating.representative_id)
+              if @found_rejection = self.group_rating_rejections.find_by(reject_reason: 'reject_sf_peo', program_type: 'group_retro')
+                @group_retro_rejection_array << self.group_rating_rejections.new(reject_reason: 'reject_sf_peo', representative_id: @group_rating.representative_id, program_type: 'group_retro', hide: @found_rejection.hide)
+              else
+                @group_retro_rejection_array << self.group_rating_rejections.new(reject_reason: 'reject_sf_peo', representative_id: @group_rating.representative_id, program_type: 'group_retro')
+              end
             end
           end
         end
       end
 
       if ["CANFI","CANPN","BKPCA","BKPCO","COMB","CANUN"].include? policy_calculation.current_coverage_status
-        GroupRatingRejection.create(program_type: 'group_retro', account_id: self.id, reject_reason: 'reject_inactive_policy', representative_id: @group_rating.representative_id)
+        if @found_rejection = self.group_rating_rejections.find_by(reject_reason: 'reject_inactive_policy', program_type: 'group_retro')
+          @group_retro_rejection_array << self.group_rating_rejections.new(reject_reason: 'reject_inactive_policy', representative_id: @group_rating.representative_id, program_type: 'group_retro', hide: @found_rejection.hide)
+        else
+          @group_retro_rejection_array << self.group_rating_rejections.new(reject_reason: 'reject_inactive_policy', representative_id: @group_rating.representative_id, program_type: 'group_retro')
+        end
       end
 
       if policy_calculation.policy_group_ratio.nil? || policy_calculation.policy_group_ratio >= 3.0
-        GroupRatingRejection.create(program_type: 'group_retro', account_id: self.id, reject_reason: 'reject_high_group_ratio', representative_id: @group_rating.representative_id)
+        if @found_rejection = self.group_rating_rejections.find_by(reject_reason: 'reject_high_group_ratio', program_type: 'group_retro')
+          @group_retro_rejection_array << self.group_rating_rejections.new(reject_reason: 'reject_high_group_ratio', representative_id: @group_rating.representative_id, program_type: 'group_retro', hide: @found_rejection.hide)
+        else
+          @group_retro_rejection_array << self.group_rating_rejections.new(reject_reason: 'reject_high_group_ratio', representative_id: @group_rating.representative_id, program_type: 'group_retro')
+        end
       end
 
       # Check for waiting on predecessor payroll
       if PolicyCalculation.find_by(business_name: "Predecessor Policy for #{self.policy_calculation.policy_number}")
-        GroupRatingRejection.create(program_type: 'group_retro', account_id: self.id, reject_reason: 'reject_pending_predecessor', representative_id: @group_rating.representative_id)
+        if @found_rejection = self.group_rating_rejections.find_by(reject_reason: 'reject_pending_predecessor', program_type: 'group_retro')
+          @group_retro_rejection_array << self.group_rating_rejections.new(reject_reason: 'reject_pending_predecessor', representative_id: @group_rating.representative_id, program_type: 'group_retro', hide: @found_rejection.hide)
+        else
+          @group_retro_rejection_array << self.group_rating_rejections.new(reject_reason: 'reject_pending_predecessor', representative_id: @group_rating.representative_id, program_type: 'group_retro')
+        end
       end
 
       @accept_reject_list = BwcGroupAcceptRejectList.find_by(policy_number: self.policy_number_entered)
       @representative_number_adjust = "#{self.representative.representative_number.to_s.rjust(6, "0")}-80"
       if @accept_reject_list && (@accept_reject_list.bwc_rep_id != @representative_number_adjust)
-        GroupRatingRejection.create(program_type: 'group_retro', account_id: self.id, reject_reason: 'reject_partner_conflict', representative_id: @group_rating.representative_id)
+        if @found_rejection = self.group_rating_rejections.find_by(reject_reason: 'reject_partner_conflict', program_type: 'group_retro')
+          @group_retro_rejection_array << self.group_rating_rejections.new(reject_reason: 'reject_partner_conflict', representative_id: @group_rating.representative_id, program_type: 'group_retro', hide: @found_rejection.hide)
+        else
+          @group_retro_rejection_array << self.group_rating_rejections.new(reject_reason: 'reject_partner_conflict', representative_id: @group_rating.representative_id, program_type: 'group_retro')
+        end
       end
 
 
-      if  self.group_rating_rejections.where("program_type = ?", :group_retro).pluck(:reject_reason).include? 'reject_pending_predecessor'
+      if @group_retro_rejection_array.collect(&:reject_reason).include? 'reject_pending_predecessor'
          qualification = "pending_predecessor"
-      elsif self.group_rating_rejections.where("program_type = ?", :group_retro).count > 0
+      elsif @group_retro_rejection_array.count > 0
          qualification = "reject"
        else
          qualification = "accept"
@@ -514,7 +612,11 @@ end
            end
 
            if lapse_sum >= 40
-             GroupRatingRejection.create(program_type: 'group_retro', account_id: self.id, reject_reason: 'reject_40+_lapse', representative_id: self.representative_id)
+             if @found_rejection = self.group_rating_rejections.find_by(reject_reason: 'reject_40+_lapse', program_type: 'group_retro')
+               @group_retro_rejection_array << self.group_rating_rejections.new(reject_reason: 'reject_40+_lapse', representative_id: @group_rating.representative_id, program_type: 'group_retro', hide: @found_rejection.hide)
+             else
+               @group_retro_rejection_array << self.group_rating_rejections.new(reject_reason: 'reject_40+_lapse', representative_id: @group_rating.representative_id, program_type: 'group_retro')
+             end
            end
 
             if self.group_rating_rejections.where("program_type = ?", :group_retro).count > 0
@@ -530,12 +632,16 @@ end
     # else
     #   GroupRatingRejection.create(program_type: 'group_retro', account_id: self.id, reject_reason: 'reject_pending_predecessor', representative_id: @group_rating.representative_id)
     # end
+    self.group_rating_rejections.where(program_type: 'group_retro').destroy_all
 
-    if self.group_rating_rejections.where("program_type = ?", :group_retro).count > 0
+
+    if @group_retro_rejection_array.count > 0
       qualification = "reject"
+      @group_retro_rejection_array.each { |a| a.save }
     else
       qualification = "accept"
     end
+    
     return @group_retro_qualification = qualification
   end
 

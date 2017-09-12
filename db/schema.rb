@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170711111037) do
+ActiveRecord::Schema.define(version: 20170911152351) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -596,6 +596,7 @@ ActiveRecord::Schema.define(version: 20170711111037) do
     t.datetime "created_at",        null: false
     t.datetime "updated_at",        null: false
     t.string   "program_type"
+    t.boolean  "hide"
   end
 
   add_index "group_rating_rejections", ["account_id"], name: "index_group_rating_rejections_on_account_id", using: :btree
