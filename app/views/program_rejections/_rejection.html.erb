@@ -1,0 +1,10 @@
+<tr id=<%="program_rejection-#{program_rejection.id}"%>>
+  <td><%= link_to "#{program_rejection.account.policy_number_entered}", account_path(program_rejection.account.id), class: 'btn btn-info' %> </td>
+  <td><%= program_rejection.account.try(:name).slice(0..25).try(:titleize) %> </td>
+  <td><%= program_rejection.account.policy_calculation.try(:current_coverage_status) %> </td>
+  <td><%= program_rejection.reject_reason.gsub("reject", "").humanize.titleize %> </td>
+  <td><%= program_rejection.program_type.humanize.titleize %> </td>
+  <td><%= program_rejection.representative.abbreviated_name %> </td>
+  <td><%= link_to 'Override', account_path(program_rejection.account.id), target: '_blank' %></td>
+  <td><%= link_to 'Hide', program_rejection_resolve_path(program_rejection_id: program_rejection.id, program_rejections: program_rejections.ids), method: :post, remote: true  %></td>
+</tr>

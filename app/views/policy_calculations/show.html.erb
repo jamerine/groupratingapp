@@ -3,9 +3,9 @@
     <%= render partial: "shared/account_navbar", locals: { object: @account } %>
 
     <!-- <%= link_to 'Return to Account', account_path(@account.id), class: 'btn btn-default' %> -->
-    <%= render partial: 'policy_calculations/policy_calculation' %>
-    <%= render partial: 'manual_class_calculations/manual_classes', locals: { manual_class_calculations: @manual_class_calculations, policy_calculation: @policy_calculation} %>
-  <%= render partial: 'claim_calculations/claims', locals: { claims: @policy_calculation.claim_calculations } %>
+  <%= render partial: 'policy_calculations/policy_calculation' %>
+  <%= render partial: 'manual_class_calculations/manual_classes', locals: { manual_class_calculations: @manual_class_calculations, policy_calculation: @policy_calculation} %>
+  <%= render partial: 'claim_calculations/claims', locals: { claims: @claim_calculations } %>
   <%= render partial: 'policy_coverage_status_histories/policy_coverage_status_histories', locals: { status_histories: @policy_calculation.policy_coverage_status_histories } %>
 <div class="container">
   <%= render partial: 'policy_program_histories/policy_program_histories', locals: { program_histories: @policy_calculation.policy_program_histories } %>
