@@ -7,7 +7,9 @@
       <div class="panel panel-primary">
         <div class="panel-heading">
             <div class="row text-center">
-              <div class="col col-sm-3">
+              <div class="col col-sm-1">
+              </div>
+              <div class="col col-sm-2">
                 <b>Category</b>
               </div>
               <div class="col col-sm-3">
@@ -25,7 +27,6 @@
     <% @notes.each do |note| %>
       <%= render partial: 'notes/full_note', locals: { note: note } %>
     <% end %>
-
   </div>
 
 </div>
