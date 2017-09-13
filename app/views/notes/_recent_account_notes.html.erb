@@ -1,4 +1,4 @@
-<h3>Notes - <%= link_to 'Add Note', '', class: 'btn btn-success' %></h3>
+<h3>Notes - <%= link_to 'Add Note', new_account_note_path(account_id: @account.id), class: 'btn btn-success' %></h3>
   <% if notes.empty? %>
     <div class="container">
       <h5>No Notes have been added.</h5>
@@ -19,8 +19,12 @@
           <% @notes.each do |note| %>
             <tr>
               <td class="col-sm-2"><%= note.category.titleize %></td>
-              <td class="col-sm-2"><%= note.title.titleize %></td>
-              <td class="col-sm-4 note-description-column"><%= sanitize(note.description.truncate(30), :tags=>[]) %></td>
+              <% if note.attachment_url  %>
+                <td class="col-sm-2"><%= sanitize(note.title.titleize.truncate(30), :tags=>[]) %> - <i class="fa fa-paperclip" aria-hidden="true"></i></td>
+              <% else %>
+                <td class="col-sm-2"><%= sanitize(note.title.titleize.truncate(30), :tags=>[]) %></td>
+              <% end %>
+              <td class="col-sm-3"><%= sanitize(note.description.truncate(40), :tags=>[]) %></td>
               <td class="col-sm-2"><%= note.user.email %></td>
               <td class="col-sm-2"><%= note.created_at.in_time_zone("America/New_York").strftime("%m/%d/%y %I:%M %P") %></td>
             </tr>
