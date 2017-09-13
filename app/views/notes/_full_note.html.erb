@@ -26,14 +26,17 @@
   <div class="panel panel-default">
       <div class="panel-heading panel-note">
         <a class="collapsed panel-link" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse<%= note.id %>" aria-expanded="false" aria-controls="collapse<%= note.id %>">
-        <div class="row panel-heading-text">
+        <div class="row panel-heading-text text-center">
           <div class="col col-sm-3">
             <b><%= note.category.humanize.titleize %></b>
           </div>
           <div class="col col-sm-3">
             <b><%= note.user.email %></b>
           </div>
-          <div class="col col-sm-3 col-sm-offset-3 text-right">
+          <div class="col col-sm-3">
+            <b><%= note.title.titleize %></b>
+          </div>
+          <div class="col col-sm-3">
             <b><%= note.created_at.in_time_zone("America/New_York").strftime("%m/%d/%y %I:%M %P") %></b>
           </div>
         </div>
@@ -46,7 +49,7 @@
               <label>Note:</label>
           </div>
           <div class="col col-md-11">
-              <p><%= note.description %></p>
+              <p><%= sanitize(note.description, :tags=>[]) %></p>
           </div>
         </div>
 

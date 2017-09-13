@@ -825,6 +825,7 @@ ActiveRecord::Schema.define(version: 20170912143427) do
   create_table "notes", force: :cascade do |t|
     t.text     "description"
     t.integer  "category"
+    t.string   "title"
     t.integer  "account_id"
     t.integer  "user_id"
     t.datetime "created_at",  null: false

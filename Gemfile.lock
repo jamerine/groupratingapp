@@ -119,8 +119,6 @@ GEM
       railties (>= 3.0.0)
     ffi (1.9.14)
     filterrific (2.1.2)
-    font-awesome-rails (4.7.0.2)
-      railties (>= 3.2, < 5.2)
     formatador (0.2.5)
     get_process_mem (0.2.1)
     globalid (0.3.7)
@@ -328,6 +326,8 @@ GEM
     thor (0.19.4)
     thread_safe (0.3.5)
     tilt (2.0.5)
+    trix (0.10.1)
+      rails
     ttfunk (1.4.0)
     turbolinks (5.0.1)
       turbolinks-source (~> 5)
@@ -369,7 +369,6 @@ DEPENDENCIES
   devise
   factory_girl_rails (~> 4.0)
   filterrific
-  font-awesome-rails
   guard-rspec
   jbuilder (~> 2.0)
   jquery-rails
@@ -394,6 +393,7 @@ DEPENDENCIES
   sinatra
   spring
   spring-commands-rspec
+  trix
   turbolinks
   uglifier (>= 1.3.0)
   vcr

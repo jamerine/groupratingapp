@@ -79,7 +79,8 @@ gem 'combine_pdf'
 
 gem 'rb-readline'
 
-gem "font-awesome-rails"
+# Use Trix for WYSIWYG rich HTML text editor
+gem 'trix'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

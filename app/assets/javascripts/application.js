@@ -14,35 +14,12 @@
 //= require jquery_ujs
 //= require turbolinks
 //= require bootstrap
+//= require trix
 //= require_tree .
 //= require filterrific/filterrific-jquery
+
 
 // Javascript to check_all boxes
 $('#selectAll').click(function (e) {
     $(this).closest('table').find('td input:checkbox').prop('checked', this.checked);
-});
-
-$(document).ready(function() {
-  //mouse over navbar
-  $('.navbar').mouseover(function(event) {
-    $(this).find('.navbar-tool').show();
-  });
-
-  //mouse out of navbar
-  $('.navbar').mouseout(function(event) {
-    $(this).find('.navbar-tool').hide();
-  });
-
-  //on close collapse
-  $('.collapse').on('hidden.bs.collapse', function () {
-    var target = '#'+$(this).attr('data-parent');
-    $(target).removeClass('collapse-open');
-  });
-
-  //on open collapse
-  $('.collapse').on('shown.bs.collapse', function () {
-    var target = '#'+$(this).attr('data-parent');
-    $(target).addClass('collapse-open');
-  })
-
 });
