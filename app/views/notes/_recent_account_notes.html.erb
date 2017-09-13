@@ -1,0 +1,34 @@
+<h3>Notes - <%= link_to 'Add Note', '', class: 'btn btn-success' %></h3>
+  <% if notes.empty? %>
+    <div class="container">
+      <h5>No Notes have been added.</h5>
+    </div>
+  <% else %>
+    <div class="table-responsive">
+      <table class="table table-hover table-striped" id="accountNotesTable">
+        <thead class="list-group active">
+          <tr class="header">
+            <th>Category</th>
+            <th>Description</th>
+            <th>User</th>
+            <th>Created</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @notes.each do |note| %>
+            <tr>
+              <td class="col-sm-2"><%= note.category.titleize %></td>
+              <td class="col-sm-6 note-description-column"><%= note.description.slice(0..30) %></td>
+              <td class="col-sm-2"><%= note.user.email %></td>
+              <td class="col-sm-2"><%= note.created_at.in_time_zone("America/New_York").strftime("%m/%d/%y %I:%M %P") %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+    <div class="container">
+      <div class="row text-center">
+        <%= link_to 'View All Notes', account_notes_path(@account), class: 'btn btn-default' %>
+      </div>
+    </div>
+  <% end %>

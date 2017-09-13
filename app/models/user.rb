@@ -6,6 +6,8 @@ class User < ActiveRecord::Base
 
   has_many :representatives_users
   has_many :representatives, through: :representatives_users
+  has_many :notes
+
 
   enum role: [:admin, :client, :general, :read_only]
 

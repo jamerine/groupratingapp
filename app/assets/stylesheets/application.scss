@@ -16,11 +16,12 @@
 
   @import "bootstrap-sprockets";
   @import "bootstrap";
+  @import "font-awesome";
 
 
 .table td, th {
      text-align: center;
-  }
+}
 
 #programHistoryTable .table tr .header{
      background-color: blue;
@@ -60,4 +61,21 @@ body {
 
 .jumbotron-white {
   background-color: white;
+}
+
+
+#accountNotesTable .note-description-column {
+    text-align: left;
+}
+
+#accountNotesTable .note-description {
+    text-align: left;
+}
+
+.panel {
+  margin: 0px;
+}
+
+.panel-note a {
+  color: #333333;
 }
