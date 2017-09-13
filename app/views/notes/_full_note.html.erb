@@ -31,10 +31,10 @@
             <b><%= note.category.humanize.titleize %></b>
           </div>
           <div class="col col-sm-3">
-            <b><%= note.user.email %></b>
+            <b><%= note.title.titleize %></b>
           </div>
           <div class="col col-sm-3">
-            <b><%= note.title.titleize %></b>
+            <b><%= note.user.email %></b>
           </div>
           <div class="col col-sm-3">
             <b><%= note.created_at.in_time_zone("America/New_York").strftime("%m/%d/%y %I:%M %P") %></b>
@@ -44,14 +44,22 @@
       </div>
     <div id="collapse<%= note.id %>" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading<%= note.id %>">
       <div class="panel-body">
+
         <div class="row">
-          <div class="col col-md-1">
+          <div class="col col-md-1 col-md-offset-1">
               <label>Note:</label>
           </div>
-          <div class="col col-md-11">
+          <div class="col col-md-10">
               <p><%= sanitize(note.description, :tags=>[]) %></p>
           </div>
         </div>
+        <% if note.attachment_url %>
+          <div class="row">
+            <div class="col col-md-12 text-center">
+                <%= link_to 'View Attachment', note.attachment_url, class:'btn btn-primary' %>
+            </div>
+          </div>
+        <% end %>
 
 
       </div>

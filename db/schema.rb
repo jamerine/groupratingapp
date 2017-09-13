@@ -826,6 +826,7 @@ ActiveRecord::Schema.define(version: 20170912143427) do
     t.text     "description"
     t.integer  "category"
     t.string   "title"
+    t.string   "attachment"
     t.integer  "account_id"
     t.integer  "user_id"
     t.datetime "created_at",  null: false
