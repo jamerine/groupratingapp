@@ -1,0 +1,28 @@
+<div class="container">
+  <%= link_to 'Return to Account', account_path(@account.id), class: 'btn btn-default' %>
+  <div class="row text-center">
+    <h3>Notes for <%= @account.name %></h3>
+  </div>
+  <div class="row">
+      <div class="panel panel-primary">
+        <div class="panel-heading">
+            <div class="row">
+              <div class="col col-sm-3">
+                <b>Category</b>
+              </div>
+              <div class="col col-sm-3">
+                <b>User</b>
+              </div>
+              <div class="col col-sm-3 col-sm-offset-3 text-right">
+                <b>Created</b>
+              </div>
+            </div>
+          </div>
+      </div>
+    <% @notes.each do |note| %>
+      <%= render partial: 'notes/full_note', locals: { note: note } %>
+    <% end %>
+
+  </div>
+
+</div>

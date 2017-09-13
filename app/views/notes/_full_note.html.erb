@@ -1,0 +1,56 @@
+<!-- <div class="panel panel-default">
+  <div class="panel-heading">
+    <div class="row">
+      <div class="col col-sm-3">
+        <b><%= note.user.email %></b>
+      </div>
+      <div class="col col-sm-3 col-sm-offset-6 text-right">
+        <b><%= note.created_at.in_time_zone("America/New_York").strftime("%m/%d/%y %I:%M %P") %></b>
+      </div>
+    </div>
+  </div>
+  <div class="panel-body">
+    <p>
+      <%= note.description %>
+    </p>
+    <div class="row">
+      <div class="col col-sm-3 text-left">
+          <%= link_to 'View Full Note', '#' %>
+      </div>
+      <div class="col col-sm-3 col-sm-offset-6 text-right">
+          <%= link_to 'Edit Note', '#' %>
+      </div>
+    </div>
+  </div>
+</div> -->
+  <div class="panel panel-default">
+      <div class="panel-heading panel-note">
+        <a class="collapsed panel-link" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse<%= note.id %>" aria-expanded="false" aria-controls="collapse<%= note.id %>">
+        <div class="row panel-heading-text">
+          <div class="col col-sm-3">
+            <b><%= note.category.humanize.titleize %></b>
+          </div>
+          <div class="col col-sm-3">
+            <b><%= note.user.email %></b>
+          </div>
+          <div class="col col-sm-3 col-sm-offset-3 text-right">
+            <b><%= note.created_at.in_time_zone("America/New_York").strftime("%m/%d/%y %I:%M %P") %></b>
+          </div>
+        </div>
+      </a>
+      </div>
+    <div id="collapse<%= note.id %>" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading<%= note.id %>">
+      <div class="panel-body">
+        <div class="row">
+          <div class="col col-md-1">
+              <label>Note:</label>
+          </div>
+          <div class="col col-md-11">
+              <p><%= note.description %></p>
+          </div>
+        </div>
+
+
+      </div>
+    </div>
+  </div>

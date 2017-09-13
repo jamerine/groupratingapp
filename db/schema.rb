@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170911152351) do
+ActiveRecord::Schema.define(version: 20170912143427) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -821,6 +821,18 @@ ActiveRecord::Schema.define(version: 20170911152351) do
   create_table "mremps", force: :cascade do |t|
     t.string "single_rec"
   end
+
+  create_table "notes", force: :cascade do |t|
+    t.text     "description"
+    t.integer  "category"
+    t.integer  "account_id"
+    t.integer  "user_id"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
+  add_index "notes", ["account_id"], name: "index_notes_on_account_id", using: :btree
+  add_index "notes", ["user_id"], name: "index_notes_on_user_id", using: :btree
 
   create_table "payroll_calculations", force: :cascade do |t|
     t.integer  "representative_number"
@@ -1930,6 +1942,8 @@ ActiveRecord::Schema.define(version: 20170911152351) do
   add_foreign_key "imports", "group_ratings"
   add_foreign_key "imports", "representatives"
   add_foreign_key "manual_class_calculations", "policy_calculations"
+  add_foreign_key "notes", "accounts"
+  add_foreign_key "notes", "users"
   add_foreign_key "payroll_calculations", "manual_class_calculations"
   add_foreign_key "policy_calculations", "accounts"
   add_foreign_key "policy_calculations", "representatives"
