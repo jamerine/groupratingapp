@@ -1,0 +1,16 @@
+<%= content_tag_for :div, @note do %>
+<%= render partial: "shared/account_navbar", locals: { object: @account } %>
+  <div class="container">
+
+    <%= link_to 'Return to Account', account_path(@account.id), class: 'btn btn-default' %>
+    <div class="jumbotron">
+      <div class="row text-center">
+        <h2>Add Note To <%= @account.name %></h2>
+      </div>
+
+      <div class="row">
+        <%= render partial: 'form', locals: { account: @account, note: @note } %>
+      </div>
+    </div>
+  </div>
+<% end %>

@@ -4,15 +4,6 @@ Rails.application.routes.draw do
 
   mount Sidekiq::Web, at: '/sidekiq'
 
-  devise_for :users, controllers: {
-        sessions: 'users/sessions',
-        confirmations: 'users/confirmations',
-        registrations: 'users/registrations',
-      }
-
-  resources :users, except: :create
-
-  post 'create_user' => 'users#create', as: :create_user
 
   resources :accounts do
     get :edit_group_rating
@@ -26,17 +17,90 @@ Rails.application.routes.draw do
     get :risk_report
     get :new_risk_report
     get :roc_report
+    
+    resources :notes
+  end
+
+  resources :account_programs do
+    collection { post :import_account_program_process }
+    collection { put :update_individual }
   end
 
   resources :affiliates do
     collection { post :import_affiliate_process }
   end
 
+  resources :claim_calculations
 
   resources :contacts do
     collection { post :import_contact_process }
   end
 
+  resources :democ_detail_records do
+     collection { post :parse }
+     collection { delete :destroy}
+  end
+
+  resources :fees do
+    collection { get :edit_individual }
+    collection { put :update_individual }
+    collection { post :fee_accounts }
+  end
+
+  resources :final_policy_group_rating_and_premium_projections
+
+  resources :group_ratings
+
+  resources :group_rating_exceptions do
+    post :resolve
+  end
+
+  resources :imports do
+    collection { delete :destroy }
+  end
+
+  resources :manual_class_calculations do
+    collection {get 'create_manual_class_objects'}
+  end
+
+  resources :mremp_employer_experience do
+     collection { post :parse }
+     collection { delete :destroy}
+  end
+
+  resources :mrcl_detail_records do
+     collection { post :parse }
+     collection { delete :destroy}
+  end
+
+  resources :parse do
+    collection { delete :destroy}
+  end
+
+  resources :payroll_calculations
+
+  resources :pcomb_detail_records do
+     collection { post :parse }
+     collection { delete :destroy}
+  end
+
+
+  resources :phmgn_detail_records do
+     collection { post :parse }
+     collection { delete :destroy}
+  end
+
+  resources :policy_calculations do
+    collection {get 'create_policy_objects'}
+  end
+
+  resources :policy_coverage_status_histories
+
+  resources :policy_program_histories
+
+  resources :program_rejections do
+    post :resolve
+  end
 
   resources :quotes do
     get :group_rating_report
@@ -49,52 +113,6 @@ Rails.application.routes.draw do
     get :view_invoice
     get :new_group_retro
     post :create_group_retro
-  end
-
-  resources :fees do
-    collection { get :edit_individual }
-    collection { put :update_individual }
-    collection { post :fee_accounts }
-  end
-
-
-  resources :account_programs do
-    collection { post :import_account_program_process }
-    collection { put :update_individual }
-  end
-
-  resources :imports do
-    collection { delete :destroy }
-  end
-
-  resources :parse do
-    collection { delete :destroy}
-  end
-
-  resources :representatives_users
-
-  resources :group_ratings
-
-  resources :payroll_calculations
-
-  resources :claim_calculations
-
-  resources :policy_coverage_status_histories
-
-  resources :policy_program_histories
-
-  resources :final_policy_group_rating_and_premium_projections
-
-  resources :policy_calculations do
-    collection {get 'create_policy_objects'}
-  end
-
-  resources :group_rating_exceptions do
-    post :resolve
-  end
-
-  resources :program_rejections do
-    post :resolve
   end
 
   resources :representatives do
@@ -113,35 +131,7 @@ Rails.application.routes.draw do
     get :edit_global_dates
   end
 
-
-  resources :manual_class_calculations do
-    collection {get 'create_manual_class_objects'}
-  end
-
-  resources :democ_detail_records do
-     collection { post :parse }
-     collection { delete :destroy}
-  end
-
-  resources :mremp_employer_experience do
-     collection { post :parse }
-     collection { delete :destroy}
-  end
-
-  resources :mrcl_detail_records do
-     collection { post :parse }
-     collection { delete :destroy}
-  end
-
-  resources :pcomb_detail_records do
-     collection { post :parse }
-     collection { delete :destroy}
-  end
-
-  resources :phmgn_detail_records do
-     collection { post :parse }
-     collection { delete :destroy}
-  end
+  resources :representatives_users
 
   resources :sc220_employer_demographics do
      collection { post :parse }
@@ -152,6 +142,16 @@ Rails.application.routes.draw do
      collection { post :parse }
      collection { delete :destroy}
   end
+
+  devise_for :users, controllers: {
+        sessions: 'users/sessions',
+        confirmations: 'users/confirmations',
+        registrations: 'users/registrations',
+      }
+
+  resources :users, except: :create
+
+  post 'create_user' => 'users#create', as: :create_user
 
   resources :versions
 
