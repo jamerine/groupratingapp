@@ -7,6 +7,7 @@ class Note < ActiveRecord::Base
 
   validates :category, presence: true
   validates :description, presence: true
+  validates :title, presence: true
   validates :user, presence: true
   validates :account, presence: true
 

@@ -9,6 +9,7 @@
         <thead class="list-group active">
           <tr class="header">
             <th>Category</th>
+            <th>Title</th>
             <th>Description</th>
             <th>User</th>
             <th>Created</th>
@@ -18,7 +19,8 @@
           <% @notes.each do |note| %>
             <tr>
               <td class="col-sm-2"><%= note.category.titleize %></td>
-              <td class="col-sm-6 note-description-column"><%= note.description.slice(0..30) %></td>
+              <td class="col-sm-2"><%= note.title.titleize %></td>
+              <td class="col-sm-4 note-description-column"><%= sanitize(note.description.truncate(30), :tags=>[]) %></td>
               <td class="col-sm-2"><%= note.user.email %></td>
               <td class="col-sm-2"><%= note.created_at.in_time_zone("America/New_York").strftime("%m/%d/%y %I:%M %P") %></td>
             </tr>

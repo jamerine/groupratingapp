@@ -3,6 +3,7 @@ class CreateNotes < ActiveRecord::Migration
     create_table :notes do |t|
       t.text :description
       t.integer :category
+      t.string :title
       t.references :account, index: true, foreign_key: true
       t.references :user, index: true, foreign_key: true
 

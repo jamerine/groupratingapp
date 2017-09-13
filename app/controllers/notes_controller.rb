@@ -26,7 +26,7 @@ class NotesController < ApplicationController
 
   def index
     @account = Account.find(params[:account_id])
-    @notes = @account.notes
+    @notes = @account.notes.order(created_at: :desc)
   end
 
   private
@@ -38,7 +38,7 @@ class NotesController < ApplicationController
 
 
   def notes_params
-    params.require(:note).permit(:category, :description )
+    params.require(:note).permit(:category, :description, :title )
   end
 
 end
