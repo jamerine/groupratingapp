@@ -10,13 +10,13 @@
  * defined in the other CSS/SCSS files in this directory. It is generally better to create a new
  * file per style scope.
  *
- *= require_tree .
- *= require_self
+ *= require trix
  */
-
+  @import "normalize";
   @import "bootstrap-sprockets";
   @import "bootstrap";
-  @import "font-awesome";
+
+
 
 
 .table td, th {
@@ -78,4 +78,9 @@ body {
 
 .panel-note a {
   color: #333333;
+}
+
+
+trix-editor {
+  background-color: white;
 }
