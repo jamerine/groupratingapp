@@ -4,6 +4,7 @@ class CreateNotes < ActiveRecord::Migration
       t.text :description
       t.integer :category
       t.string :title
+      t.string :attachment
       t.references :account, index: true, foreign_key: true
       t.references :user, index: true, foreign_key: true
 

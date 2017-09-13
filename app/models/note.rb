@@ -11,4 +11,6 @@ class Note < ActiveRecord::Base
   validates :user, presence: true
   validates :account, presence: true
 
+  mount_uploader :attachment, NoteUploader
+
 end
