@@ -1,0 +1,44 @@
+<%= content_tag_for :div, @note do %>
+<%= render partial: "shared/account_navbar", locals: { object: @account } %>
+  <div class="container">
+
+    <%= link_to 'Return to Notes', account_notes_path(@account.id), class: 'btn btn-default' %>
+    <div class="jumbotron">
+      <div class="row text-center">
+        <h2><%= @account.name.titleize %></h2>
+        <h3>(Policy Number: <%= @account.policy_number_entered %>)</h3>
+      </div>
+      <br>
+      <div class="row text-center">
+        <div class="col col-sm-4">
+          <label>Category</label>
+          <p><%= @note.category.humanize.titleize %></p>
+        </div>
+        <div class="col col-sm-4">
+          <label>User</label>
+          <p><%= @note.user.email %></p>
+        </div>
+        <div class="col col-sm-4">
+          <label>Created At</label>
+          <p><%= @note.created_at.in_time_zone("America/New_York").strftime("%m/%d/%y %I:%M %P") %></p>
+        </div>
+
+      </div>
+      <div class="row text-center">
+        <div class="col col-sm-12">
+          <label>Title</label>
+          <h4><%= @note.title %></h4>
+          <br>
+        </div>
+        <div class="col col-sm-12">
+          <label>Description</label>
+          <div class="trix-content"><%= raw @note.description %></div>
+        </div>
+      </div>
+      <br>
+      <div class="col col-sm-12 text-center">
+        <%= (link_to 'Edit Note', edit_account_note_path(account_id: @note.account.id, id: @note.id), class:'btn btn-info') if policy(@note).edit? %>
+      </div>
+    </div>
+  </div>
+<% end %>
