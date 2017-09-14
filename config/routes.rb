@@ -17,8 +17,10 @@ Rails.application.routes.draw do
     get :risk_report
     get :new_risk_report
     get :roc_report
-    
-    resources :notes
+
+    resources :notes do
+      delete :remove_attachment
+    end
   end
 
   resources :account_programs do

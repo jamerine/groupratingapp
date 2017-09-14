@@ -1,5 +1,5 @@
 class NotesController < ApplicationController
-  before_action :find_note, only: [:show, :edit, :update, :destroy]
+  before_action :find_note, only: [:show, :edit, :update, :destroy, :remove_attachment]
   before_action :authenticate_user!
 
   def show
@@ -38,10 +38,10 @@ class NotesController < ApplicationController
     @note.assign_attributes(note_params)
     if @note.save
       flash[:notice] = "Notes was updated successfully"
-      redirect_to account_path(@account)
+      redirect_to account_note_path(@account, @note)
     else
       flash[:alert] = "There was an error updating note. Please try again."
-      redirect_to account_path(@account)
+      redirect_to account_note_path(@account, @note)
     end
   end
 
@@ -52,6 +52,17 @@ class NotesController < ApplicationController
     else
       flash[:alert] = "There was an error creating note. Please try again."
       redirect_to account_path(@account)
+    end
+  end
+
+  def remove_attachment
+    @note.remove_attachment!
+    if @note.save
+      flash[:notice] = "Attachment was deleted successfully"
+      redirect_to account_note_path(@account)
+    else
+      flash[:alert] = "There was an error deleting attachment"
+      redirect_to account_note_path(@account, @note)
     end
   end
 

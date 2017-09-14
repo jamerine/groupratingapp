@@ -32,7 +32,7 @@
 
 
               <% if @note.attachment_url %>
-              <label>Current Attachment: <%= @note.attachment_identifier %></label>
+              <label>Current Attachment: <%= @note.attachment_identifier %> <%= link_to 'Remove Attachment', account_note_remove_attachment_path(account_id: @note.account, id: @note.id, note_id: @note.id), method: :delete %></label>
               <% else %>
               <label>Attachment</label>
               <% end %>
@@ -45,7 +45,7 @@
           </div>
 
           <div class="form-group col-md-4 col-md-offset-4 text-right" >
-            <%= link_to 'Delete', account_note_path(account_id: @note.account.id, id: @note.id), method: :delete, data: {:confirm => "Are you sure you want to delete the note?"}, class: 'btn btn-danger'  %>
+            <%= link_to 'Delete Note', account_note_path(account_id: @note.account.id, id: @note.id, note_id: @note.id), method: :delete, data: {:confirm => "Are you sure you want to delete the note?"}, class: 'btn btn-danger'  %>
           </div>
 
         <% end %>
