@@ -1,0 +1,4 @@
+<% js = escape_javascript(
+  render( partial: 'notes', locals: {notes: @notes} )
+) %>
+$("#filter_notes").html("<%= js %>");

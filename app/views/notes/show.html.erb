@@ -4,6 +4,9 @@
 
     <%= link_to 'Return to Notes', account_notes_path(@account.id), class: 'btn btn-default' %>
     <div class="jumbotron">
+      <div class="row text-right">
+        <%= link_to 'Edit Note', edit_account_note_path(@account, @note), class:'btn btn-info'%>
+      </div>
       <div class="row text-center">
         <h2><%= @account.name.titleize %></h2>
         <h3>(Policy Number: <%= @account.policy_number_entered %>)</h3>
@@ -30,15 +33,22 @@
           <h4><%= @note.title %></h4>
           <br>
         </div>
+
         <div class="col col-sm-12">
           <label>Description</label>
           <div class="trix-content"><%= raw @note.description %></div>
+          <br>
         </div>
+        <% if @note.attachment_url %>
+          <div class="col col-sm-12">
+            <%= link_to 'View Attachment', @note.attachment_url, class:'btn btn-primary', target: '_blank' %>
+            <br>
+          </div>
+        <% end %>
       </div>
       <br>
-      <div class="col col-sm-12 text-center">
-        <%= (link_to 'Edit Note', edit_account_note_path(account_id: @note.account.id, id: @note.id), class:'btn btn-info') if policy(@note).edit? %>
-      </div>
+
+
     </div>
   </div>
 <% end %>

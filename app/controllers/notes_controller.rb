@@ -27,6 +27,15 @@ class NotesController < ApplicationController
   def index
     @account = Account.find(params[:account_id])
     @notes = @account.notes.order(created_at: :desc)
+    @categories = Note.categories
+    @users = []
+    @notes.each do |note|
+      unless @users.include? note.user
+        @users << note.user
+      end
+    end
+    @notes = @notes.category_filter(params[:category_filter]) if params[:category_filter].present?
+    @notes = @notes.user_filter(params[:user_filter]) if params[:user_filter].present?
   end
 
   def edit
@@ -59,10 +68,10 @@ class NotesController < ApplicationController
     @note.remove_attachment!
     if @note.save
       flash[:notice] = "Attachment was deleted successfully"
-      redirect_to account_note_path(@account)
+      redirect_to edit_account_note_path(@account, @note)
     else
       flash[:alert] = "There was an error deleting attachment"
-      redirect_to account_note_path(@account, @note)
+      redirect_to edit_account_note_path(@account, @note)
     end
   end
 

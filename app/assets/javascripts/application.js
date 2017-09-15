@@ -18,6 +18,26 @@
 //= require_tree .
 //= require filterrific/filterrific-jquery
 
+function validateFiles(inputFile) {
+  var maxExceededMessage = "This file exceeds the maximum allowed file size (1 MB)";
+  // var extErrorMessage = "Only image file with extension: .jpg, .jpeg, .gif or .png is allowed";
+  // var allowedExtension = ["jpg", "jpeg", "gif", "png"];
+
+  var extName;
+  var maxFileSize = $(inputFile).data('max-file-size');
+  var sizeExceeded = false;
+
+  $.each(inputFile.files, function() {
+    if (this.size && maxFileSize && this.size > parseInt(maxFileSize)) {sizeExceeded=true;};
+    extName = this.name.split('.').pop();
+  });
+  if (sizeExceeded) {
+    window.alert(maxExceededMessage);
+    $(inputFile).val('');
+  };
+}
+
+
 
 // Javascript to check_all boxes
 $('#selectAll').click(function (e) {
