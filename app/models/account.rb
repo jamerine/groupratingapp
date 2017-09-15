@@ -265,7 +265,7 @@ class Account < ActiveRecord::Base
        end
 
        # Check for waiting on predecessor payroll
-       if !Account.where("name LIKE ? and representative_id = ? ", "%#{self.policy_number_entered}%", self.representative_id).empty?
+       if Account.find_by(name: "Predecessor Policy for #{self.policy_number_entered}", representative_id: self.representative_id)
          if @found_rejection = self.group_rating_rejections.find_by(reject_reason: 'reject_pending_predecessor', program_type: 'group_rating')
            @group_rating_rejection_array << self.group_rating_rejections.new(reject_reason: 'reject_pending_predecessor', representative_id: @group_rating.representative_id, program_type: 'group_rating', hide: @found_rejection.hide)
          else

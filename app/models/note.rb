@@ -12,5 +12,15 @@ class Note < ActiveRecord::Base
   validates :account, presence: true
 
   mount_uploader :attachment, NoteUploader
+  validate :attachment_size_validation
+
+  scope :user_filter, -> (user) { where user: user }
+  scope :category_filter, -> (category) { where category: category }
+
+  private
+
+  def attachment_size_validation
+    errors[:image] << "Should be less than 3 MB" if attachment.size > 1.megabytes
+  end
 
 end
