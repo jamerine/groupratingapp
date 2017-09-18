@@ -4,9 +4,11 @@
 
     <%= link_to 'Return to Notes', account_notes_path(@account.id), class: 'btn btn-default' %>
     <div class="jumbotron">
-      <div class="row text-right">
-        <%= link_to 'Edit Note', edit_account_note_path(@account, @note), class:'btn btn-info'%>
-      </div>
+      <% if policy(@note).edit? %>
+        <div class="row text-right">
+          <%= link_to 'Edit Note', edit_account_note_path(@account, @note), class:'btn btn-info'%>
+        </div>
+      <% end %>
       <div class="row text-center">
         <h2><%= @account.name.titleize %></h2>
         <h3>(Policy Number: <%= @account.policy_number_entered %>)</h3>
