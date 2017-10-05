@@ -21,11 +21,11 @@ class QuotePolicy < ApplicationPolicy
   end
 
   def destroy?
-    user.admin?
+    user.admin? || user.read_only? || user.general?
   end
 
   def edit_quote_accounts?
-    user.admin?
+    user.admin? || user.read_only? || user.general?
   end
 
   def group_rating_report?
@@ -33,7 +33,7 @@ class QuotePolicy < ApplicationPolicy
   end
 
   def generate_account_quotes?
-    user.admin?
+    user.admin? || user.read_only? || user.general?
   end
 
   def delete_all_quotes?
