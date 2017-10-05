@@ -1,19 +1,19 @@
 class AccountPolicy < ApplicationPolicy
 
   def new?
-    user.admin?
+    user.admin? || user.read_only? || user.general?
   end
 
   def create?
-    new?
+    new? || user.read_only? || user.general?
   end
 
   def edit?
-    new?
+    new? || user.read_only? || user.general?
   end
 
   def update?
-    new?
+    new? || user.read_only? || user.general?
   end
 
   def edit_group_retro?

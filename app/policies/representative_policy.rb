@@ -29,7 +29,7 @@ class RepresentativePolicy < ApplicationPolicy
   end
 
   def fee_calculations?
-    user.admin?
+    user.admin? || user.read_only? || user.general?
   end
 
   def users_management?
