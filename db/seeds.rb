@@ -30,65 +30,65 @@
 
   representatives = Representative.create([
     { representative_number: 219406, abbreviated_name: 'ARM', company_name: 'Alternative Risk Management', experience_period_lower_date: '2012-07-01', experience_period_upper_date: '2016-06-30', current_payroll_period_lower_date: '2015-07-01', current_payroll_period_upper_date: '2016-06-30', current_payroll_year: 2015, program_year_lower_date: '2017-07-01', program_year_upper_date: '2018-06-30', program_year: 2017, quote_year_lower_date: '2018-07-01', quote_year_upper_date: '2019-06-30', quote_year: 2018 },
-    { representative_number: 218265, abbreviated_name: 'COSE', company_name: 'Council of Smaller Enterprises', experience_period_lower_date: '2012-07-01', experience_period_upper_date: '2016-06-30', current_payroll_period_lower_date: '2015-07-01', current_payroll_period_upper_date: '2016-06-30', current_payroll_year: 2015, program_year_lower_date: '2017-07-01', program_year_upper_date: '2018-06-30', program_year: 2017, quote_year_lower_date: '2018-07-01', quote_year_upper_date: '2019-06-30', quote_year: 2018 },
+    # { representative_number: 218265, abbreviated_name: 'COSE', company_name: 'Council of Smaller Enterprises', experience_period_lower_date: '2012-07-01', experience_period_upper_date: '2016-06-30', current_payroll_period_lower_date: '2015-07-01', current_payroll_period_upper_date: '2016-06-30', current_payroll_year: 2015, program_year_lower_date: '2017-07-01', program_year_upper_date: '2018-06-30', program_year: 2017, quote_year_lower_date: '2018-07-01', quote_year_upper_date: '2019-06-30', quote_year: 2018 },
     { representative_number: 217564, abbreviated_name: 'ECP', company_name: 'Employers Choice Plus', experience_period_lower_date: '2012-07-01', experience_period_upper_date: '2016-06-30', current_payroll_period_lower_date: '2015-07-01', current_payroll_period_upper_date: '2016-06-30', current_payroll_year: 2015, program_year_lower_date: '2017-07-01', program_year_upper_date: '2018-06-30', program_year: 2017, quote_year_lower_date: '2018-07-01', quote_year_upper_date: '2019-06-30', quote_year: 2018 },
     { representative_number: 1714, abbreviated_name: 'GCADA', company_name: 'Greater Cleveland Automobile Dealers', experience_period_lower_date: '2012-07-01', experience_period_upper_date: '2016-06-30', current_payroll_period_lower_date: '2015-07-01', current_payroll_period_upper_date: '2016-06-30', current_payroll_year: 2015, program_year_lower_date: '2017-07-01', program_year_upper_date: '2018-06-30', program_year: 2017, quote_year_lower_date: '2018-07-01', quote_year_upper_date: '2019-06-30', quote_year: 2018 },
     { representative_number: 1706, abbreviated_name: 'GMSCLI', company_name: 'Group Management Services Clients', experience_period_lower_date: '2012-07-01', experience_period_upper_date: '2016-06-30', current_payroll_period_lower_date: '2015-07-01', current_payroll_period_upper_date: '2016-06-30', current_payroll_year: 2015, program_year_lower_date: '2017-07-01', program_year_upper_date: '2018-06-30', program_year: 2017, quote_year_lower_date: '2018-07-01', quote_year_upper_date: '2019-06-30', quote_year: 2018 },
     { representative_number: 217381, abbreviated_name: 'GMSPRO', company_name: 'Group Management Services Prospects', experience_period_lower_date: '2012-07-01', experience_period_upper_date: '2016-06-30', current_payroll_period_lower_date: '2015-07-01', current_payroll_period_upper_date: '2016-06-30', current_payroll_year: 2015, program_year_lower_date: '2017-07-01', program_year_upper_date: '2018-06-30', program_year: 2017, quote_year_lower_date: '2018-07-01', quote_year_upper_date: '2019-06-30', quote_year: 2018 },
     { representative_number: 1796, abbreviated_name: 'MAAG' , company_name: 'Maag', experience_period_lower_date: '2012-07-01', experience_period_upper_date: '2016-06-30', current_payroll_period_lower_date: '2015-07-01', current_payroll_period_upper_date: '2016-06-30', current_payroll_year: 2015, program_year_lower_date: '2017-07-01', program_year_upper_date: '2018-06-30', program_year: 2017, quote_year_lower_date: '2018-07-01', quote_year_upper_date: '2019-06-30', quote_year: 2018},
     { representative_number: 1740, abbreviated_name: 'MATRIX', company_name: 'Matrix', experience_period_lower_date: '2012-07-01', experience_period_upper_date: '2016-06-30', current_payroll_period_lower_date: '2015-07-01', current_payroll_period_upper_date: '2016-06-30', current_payroll_year: 2015, program_year_lower_date: '2017-07-01', program_year_upper_date: '2018-06-30', program_year: 2017, quote_year_lower_date: '2018-07-01', quote_year_upper_date: '2019-06-30', quote_year: 2018 },
-    { representative_number: 220217, abbreviated_name: 'MMHR2', company_name: 'Minute Man HR', experience_period_lower_date: '2012-07-01', experience_period_upper_date: '2016-06-30', current_payroll_period_lower_date: '2015-07-01', current_payroll_period_upper_date: '2016-06-30', current_payroll_year: 2015, program_year_lower_date: '2017-07-01', program_year_upper_date: '2018-06-30', program_year: 2017, quote_year_lower_date: '2018-07-01', quote_year_upper_date: '2019-06-30', quote_year: 2018 },
-    { representative_number: 219313, abbreviated_name: 'MMHR1', company_name: 'Minute Men Select', experience_period_lower_date: '2012-07-01', experience_period_upper_date: '2016-06-30', current_payroll_period_lower_date: '2015-07-01', current_payroll_period_upper_date: '2016-06-30', current_payroll_year: 2015, program_year_lower_date: '2017-07-01', program_year_upper_date: '2018-06-30', program_year: 2017, quote_year_lower_date: '2018-07-01', quote_year_upper_date: '2019-06-30', quote_year: 2018 },
+    # { representative_number: 220217, abbreviated_name: 'MMHR2', company_name: 'Minute Man HR', experience_period_lower_date: '2012-07-01', experience_period_upper_date: '2016-06-30', current_payroll_period_lower_date: '2015-07-01', current_payroll_period_upper_date: '2016-06-30', current_payroll_year: 2015, program_year_lower_date: '2017-07-01', program_year_upper_date: '2018-06-30', program_year: 2017, quote_year_lower_date: '2018-07-01', quote_year_upper_date: '2019-06-30', quote_year: 2018 },
+    # { representative_number: 219313, abbreviated_name: 'MMHR1', company_name: 'Minute Men Select', experience_period_lower_date: '2012-07-01', experience_period_upper_date: '2016-06-30', current_payroll_period_lower_date: '2015-07-01', current_payroll_period_upper_date: '2016-06-30', current_payroll_year: 2015, program_year_lower_date: '2017-07-01', program_year_upper_date: '2018-06-30', program_year: 2017, quote_year_lower_date: '2018-07-01', quote_year_upper_date: '2019-06-30', quote_year: 2018 },
     { representative_number: 20634, abbreviated_name: 'OBRIEN', company_name: "Dan O'Brien", experience_period_lower_date: '2012-07-01', experience_period_upper_date: '2016-06-30', current_payroll_period_lower_date: '2015-07-01', current_payroll_period_upper_date: '2016-06-30', current_payroll_year: 2015, program_year_lower_date: '2017-07-01', program_year_upper_date: '2018-06-30', program_year: 2017, quote_year_lower_date: '2018-07-01', quote_year_upper_date: '2019-06-30', quote_year: 2018 },
     { representative_number: 219952, abbreviated_name: 'SCLLC', company_name: 'Tom Stefanik', experience_period_lower_date: '2012-07-01', experience_period_upper_date: '2016-06-30', current_payroll_period_lower_date: '2015-07-01', current_payroll_period_upper_date: '2016-06-30', current_payroll_year: 2015, program_year_lower_date: '2017-07-01', program_year_upper_date: '2018-06-30', program_year: 2017, quote_year_lower_date: '2018-07-01', quote_year_upper_date: '2019-06-30', quote_year: 2018  },
     { representative_number: 218961, abbreviated_name: 'TRIDENT', company_name: 'Trident', experience_period_lower_date: '2012-07-01', experience_period_upper_date: '2016-06-30', current_payroll_period_lower_date: '2015-07-01', current_payroll_period_upper_date: '2016-06-30', current_payroll_year: 2015, program_year_lower_date: '2017-07-01', program_year_upper_date: '2018-06-30', program_year: 2017, quote_year_lower_date: '2018-07-01', quote_year_upper_date: '2019-06-30', quote_year: 2018 },
     { representative_number: 217351, abbreviated_name: 'UNITED', company_name: 'United Corp', experience_period_lower_date: '2012-07-01', experience_period_upper_date: '2016-06-30', current_payroll_period_lower_date: '2015-07-01', current_payroll_period_upper_date: '2016-06-30', current_payroll_year: 2015, program_year_lower_date: '2017-07-01', program_year_upper_date: '2018-06-30', program_year: 2017, quote_year_lower_date: '2018-07-01', quote_year_upper_date: '2019-06-30', quote_year: 2018 },
     { representative_number: 21152, abbreviated_name: 'WHPCB', company_name: 'Wickens Herzer', experience_period_lower_date: '2012-07-01', experience_period_upper_date: '2016-06-30', current_payroll_period_lower_date: '2015-07-01', current_payroll_period_upper_date: '2016-06-30', current_payroll_year: 2015, program_year_lower_date: '2017-07-01', program_year_upper_date: '2018-06-30', program_year: 2017, quote_year_lower_date: '2018-07-01', quote_year_upper_date: '2019-06-30', quote_year: 2018  },
-    { representative_number: 1633, abbreviated_name: 'CPM', company_name: 'CPM Risk Management', experience_period_lower_date: '2012-07-01', experience_period_upper_date: '2016-06-30', current_payroll_period_lower_date: '2015-07-01', current_payroll_period_upper_date: '2016-06-30', current_payroll_year: 2015, program_year_lower_date: '2017-07-01', program_year_upper_date: '2018-06-30', program_year: 2017, quote_year_lower_date: '2018-07-01', quote_year_upper_date: '2019-06-30', quote_year: 2018  },
-    { representative_number: 1334, abbreviated_name: 'TARTAN', company_name: 'Tartan Benefit Services', experience_period_lower_date: '2012-07-01', experience_period_upper_date: '2016-06-30', current_payroll_period_lower_date: '2015-07-01', current_payroll_period_upper_date: '2016-06-30', current_payroll_year: 2015, program_year_lower_date: '2017-07-01', program_year_upper_date: '2018-06-30', program_year: 2017, quote_year_lower_date: '2018-07-01', quote_year_upper_date: '2019-06-30', quote_year: 2018  },
+    # { representative_number: 1633, abbreviated_name: 'CPM', company_name: 'CPM Risk Management', experience_period_lower_date: '2012-07-01', experience_period_upper_date: '2016-06-30', current_payroll_period_lower_date: '2015-07-01', current_payroll_period_upper_date: '2016-06-30', current_payroll_year: 2015, program_year_lower_date: '2017-07-01', program_year_upper_date: '2018-06-30', program_year: 2017, quote_year_lower_date: '2018-07-01', quote_year_upper_date: '2019-06-30', quote_year: 2018  },
+    # { representative_number: 1334, abbreviated_name: 'TARTAN', company_name: 'Tartan Benefit Services', experience_period_lower_date: '2012-07-01', experience_period_upper_date: '2016-06-30', current_payroll_period_lower_date: '2015-07-01', current_payroll_period_upper_date: '2016-06-30', current_payroll_year: 2015, program_year_lower_date: '2017-07-01', program_year_upper_date: '2018-06-30', program_year: 2017, quote_year_lower_date: '2018-07-01', quote_year_upper_date: '2019-06-30', quote_year: 2018  },
     { representative_number: 222188, abbreviated_name: 'CES', company_name: 'CES', experience_period_lower_date: '2012-07-01', experience_period_upper_date: '2016-06-30', current_payroll_period_lower_date: '2015-07-01', current_payroll_period_upper_date: '2016-06-30', current_payroll_year: 2015, program_year_lower_date: '2017-07-01', program_year_upper_date: '2018-06-30', program_year: 2017, quote_year_lower_date: '2018-07-01', quote_year_upper_date: '2019-06-30', quote_year: 2018  }
     ])
 
 User.create({first_name: "Jason", last_name: "Amerine", role: 0, email: 'jason@dittoh.com', password: 'Jamrine08'})
 User.create({first_name: "Paul", last_name: "Collins", role: 0, email: 'paul@dittoh.com', password: 'password'})
 User.create({first_name: "Doug", last_name: "Maag", role: 0, email: 'dmaag@alternativeriskltd.com', password: 'tigers'})
-User.create({first_name: "Steve", last_name: "Chmielewski", role: 0, email: 'steve.chmielewski@minutemenhr.com', password: 'indians'})
+# User.create({first_name: "Steve", last_name: "Chmielewski", role: 0, email: 'steve.chmielewski@minutemenhr.com', password: 'indians'})
 User.create({first_name: "Tim", last_name: "Betz", role: 0, email: 'tbetz@alternativeriskltd.com', password: 'password'})
 User.create({first_name: "Richard", last_name: "Kurth", role: 0, email: 'rkurth@alternativeriskltd.com', password: 'password'})
 User.create({first_name: "Deanna", last_name: "Sanders", role: 2, email: 'dsanders@alternativeriskltd.com', password: 'password'})
 User.create({first_name: "Paul", last_name: "Kay", role: 2, email: 'PaulKay@alternativeriskltd.com', password: 'password'})
-User.create({first_name: "Brenden", last_name: "Dalzell", role: 0, email: 'brenden.dalzell@minutemenhr.com', password: 'password'})
-User.create({first_name: "Bryan", last_name: "Richert", role: 0, email: 'bryan.richert@minutemenhr.com', password: 'password'})
-User.create({first_name: "Nicole", last_name: "Rainier", role: 0, email: 'nicole.rainier@minutemenhr.com', password: 'password'})
-User.create({first_name: "Mike", last_name: "Cipullo", role: 0, email: 'mike.cipullo@minutemenhr.com', password: 'password'})
-User.create({first_name: "Sam", last_name: "Busacca", role: 0, email: 'sam.busacca@minutemenhr.com', password: 'password'})
-User.create({first_name: "David", last_name: "Wells", role: 0, email: 'david.wells@minutemenhr.com', password: 'password'})
-User.create({first_name: "Maria", last_name: "Mastrandrea", role: 0, email: 'maria.mastrandrea@minutemenhr.com', password: 'password'})
-User.create({first_name: "Steve", last_name: "Chmielewski", role: 0, email: 'stevechmielewski@hotmail.com', password: 'password'})
+# User.create({first_name: "Brenden", last_name: "Dalzell", role: 0, email: 'brenden.dalzell@minutemenhr.com', password: 'password'})
+# User.create({first_name: "Bryan", last_name: "Richert", role: 0, email: 'bryan.richert@minutemenhr.com', password: 'password'})
+# User.create({first_name: "Nicole", last_name: "Rainier", role: 0, email: 'nicole.rainier@minutemenhr.com', password: 'password'})
+# User.create({first_name: "Mike", last_name: "Cipullo", role: 0, email: 'mike.cipullo@minutemenhr.com', password: 'password'})
+# User.create({first_name: "Sam", last_name: "Busacca", role: 0, email: 'sam.busacca@minutemenhr.com', password: 'password'})
+# User.create({first_name: "David", last_name: "Wells", role: 0, email: 'david.wells@minutemenhr.com', password: 'password'})
+# User.create({first_name: "Maria", last_name: "Mastrandrea", role: 0, email: 'maria.mastrandrea@minutemenhr.com', password: 'password'})
+# User.create({first_name: "Steve", last_name: "Chmielewski", role: 0, email: 'stevechmielewski@hotmail.com', password: 'password'})
 User.create({first_name: "Stephanie", last_name: "Shepherd", role: 2, email: 'sshepherd@alternativeriskltd.com', password: 'password'})
 User.create({first_name: "Jessica", last_name: "Abrams", role: 2, email: 'jabrams@alternativeriskltd.com', password: 'password'})
 
 
 
 RepresentativesUser.create({user_id: 1, representative_id: 1})
-RepresentativesUser.create({user_id: 1, representative_id: 2})
+# RepresentativesUser.create({user_id: 1, representative_id: 2})
 RepresentativesUser.create({user_id: 1, representative_id: 3})
 RepresentativesUser.create({user_id: 1, representative_id: 4})
 RepresentativesUser.create({user_id: 1, representative_id: 5})
 RepresentativesUser.create({user_id: 1, representative_id: 6})
 RepresentativesUser.create({user_id: 1, representative_id: 7})
 RepresentativesUser.create({user_id: 1, representative_id: 8})
-RepresentativesUser.create({user_id: 1, representative_id: 9})
-RepresentativesUser.create({user_id: 1, representative_id: 10})
+# RepresentativesUser.create({user_id: 1, representative_id: 9})
+# RepresentativesUser.create({user_id: 1, representative_id: 10})
 RepresentativesUser.create({user_id: 1, representative_id: 11})
 RepresentativesUser.create({user_id: 1, representative_id: 12})
 RepresentativesUser.create({user_id: 1, representative_id: 13})
 RepresentativesUser.create({user_id: 1, representative_id: 14})
 RepresentativesUser.create({user_id: 1, representative_id: 15})
-RepresentativesUser.create({user_id: 1, representative_id: 16})
+# RepresentativesUser.create({user_id: 1, representative_id: 16})
 RepresentativesUser.create({user_id: 2, representative_id: 1})
 RepresentativesUser.create({user_id: 2, representative_id: 18})
-RepresentativesUser.create({user_id: 2, representative_id: 16})
+# RepresentativesUser.create({user_id: 2, representative_id: 16})
 RepresentativesUser.create({user_id: 3, representative_id: 1})
 RepresentativesUser.create({user_id: 3, representative_id: 3})
 RepresentativesUser.create({user_id: 3, representative_id: 4})
@@ -102,10 +102,10 @@ RepresentativesUser.create({user_id: 3, representative_id: 13})
 RepresentativesUser.create({user_id: 3, representative_id: 14})
 RepresentativesUser.create({user_id: 3, representative_id: 15})
 RepresentativesUser.create({user_id: 3, representative_id: 18})
-RepresentativesUser.create({user_id: 4, representative_id: 2})
-RepresentativesUser.create({user_id: 4, representative_id: 9})
-RepresentativesUser.create({user_id: 4, representative_id: 10})
-RepresentativesUser.create({user_id: 4, representative_id: 16})
+# RepresentativesUser.create({user_id: 4, representative_id: 2})
+# RepresentativesUser.create({user_id: 4, representative_id: 9})
+# RepresentativesUser.create({user_id: 4, representative_id: 10})
+# RepresentativesUser.create({user_id: 4, representative_id: 16})
 RepresentativesUser.create({user_id: 5, representative_id: 1})
 RepresentativesUser.create({user_id: 5, representative_id: 3})
 RepresentativesUser.create({user_id: 5, representative_id: 4})
@@ -125,49 +125,49 @@ RepresentativesUser.create({user_id: 7, representative_id: 1})
 RepresentativesUser.create({user_id: 8, representative_id: 1})
 RepresentativesUser.create({user_id: 17, representative_id: 1})
 RepresentativesUser.create({user_id: 18, representative_id: 1})
-RepresentativesUser.create({user_id: 9, representative_id: 2})
-RepresentativesUser.create({user_id: 10, representative_id: 2})
-RepresentativesUser.create({user_id: 11, representative_id: 2})
-RepresentativesUser.create({user_id: 12, representative_id: 2})
-RepresentativesUser.create({user_id: 13, representative_id: 2})
-RepresentativesUser.create({user_id: 14, representative_id: 2})
-RepresentativesUser.create({user_id: 15, representative_id: 2})
-RepresentativesUser.create({user_id: 16, representative_id: 2})
-RepresentativesUser.create({user_id: 9, representative_id: 16})
-RepresentativesUser.create({user_id: 10, representative_id: 16})
-RepresentativesUser.create({user_id: 11, representative_id: 16})
-RepresentativesUser.create({user_id: 12, representative_id: 16})
-RepresentativesUser.create({user_id: 13, representative_id: 16})
-RepresentativesUser.create({user_id: 14, representative_id: 16})
-RepresentativesUser.create({user_id: 15, representative_id: 16})
-RepresentativesUser.create({user_id: 16, representative_id: 16})
-RepresentativesUser.create({user_id: 9, representative_id: 9})
-RepresentativesUser.create({user_id: 10, representative_id: 9})
-RepresentativesUser.create({user_id: 11, representative_id: 9})
-RepresentativesUser.create({user_id: 12, representative_id: 9})
-RepresentativesUser.create({user_id: 13, representative_id: 9})
-RepresentativesUser.create({user_id: 14, representative_id: 9})
-RepresentativesUser.create({user_id: 15, representative_id: 9})
-RepresentativesUser.create({user_id: 16, representative_id: 9})
-RepresentativesUser.create({user_id: 9, representative_id: 10})
-RepresentativesUser.create({user_id: 10, representative_id: 10})
-RepresentativesUser.create({user_id: 11, representative_id: 10})
-RepresentativesUser.create({user_id: 12, representative_id: 10})
-RepresentativesUser.create({user_id: 13, representative_id: 10})
-RepresentativesUser.create({user_id: 14, representative_id: 10})
-RepresentativesUser.create({user_id: 15, representative_id: 10})
-RepresentativesUser.create({user_id: 16, representative_id: 10})
-RepresentativesUser.create({user_id: 1, representative_id: 17})
+# RepresentativesUser.create({user_id: 9, representative_id: 2})
+# RepresentativesUser.create({user_id: 10, representative_id: 2})
+# RepresentativesUser.create({user_id: 11, representative_id: 2})
+# RepresentativesUser.create({user_id: 12, representative_id: 2})
+# RepresentativesUser.create({user_id: 13, representative_id: 2})
+# RepresentativesUser.create({user_id: 14, representative_id: 2})
+# RepresentativesUser.create({user_id: 15, representative_id: 2})
+# RepresentativesUser.create({user_id: 16, representative_id: 2})
+# RepresentativesUser.create({user_id: 9, representative_id: 16})
+# RepresentativesUser.create({user_id: 10, representative_id: 16})
+# RepresentativesUser.create({user_id: 11, representative_id: 16})
+# RepresentativesUser.create({user_id: 12, representative_id: 16})
+# RepresentativesUser.create({user_id: 13, representative_id: 16})
+# RepresentativesUser.create({user_id: 14, representative_id: 16})
+# RepresentativesUser.create({user_id: 15, representative_id: 16})
+# RepresentativesUser.create({user_id: 16, representative_id: 16})
+# RepresentativesUser.create({user_id: 9, representative_id: 9})
+# RepresentativesUser.create({user_id: 10, representative_id: 9})
+# RepresentativesUser.create({user_id: 11, representative_id: 9})
+# RepresentativesUser.create({user_id: 12, representative_id: 9})
+# RepresentativesUser.create({user_id: 13, representative_id: 9})
+# RepresentativesUser.create({user_id: 14, representative_id: 9})
+# RepresentativesUser.create({user_id: 15, representative_id: 9})
+# RepresentativesUser.create({user_id: 16, representative_id: 9})
+# RepresentativesUser.create({user_id: 9, representative_id: 10})
+# RepresentativesUser.create({user_id: 10, representative_id: 10})
+# RepresentativesUser.create({user_id: 11, representative_id: 10})
+# RepresentativesUser.create({user_id: 12, representative_id: 10})
+# RepresentativesUser.create({user_id: 13, representative_id: 10})
+# RepresentativesUser.create({user_id: 14, representative_id: 10})
+# RepresentativesUser.create({user_id: 15, representative_id: 10})
+# RepresentativesUser.create({user_id: 16, representative_id: 10})
+# RepresentativesUser.create({user_id: 1, representative_id: 17})
 RepresentativesUser.create({user_id: 1, representative_id: 18})
-RepresentativesUser.create({user_id: 9, representative_id: 17})
-RepresentativesUser.create({user_id: 10, representative_id: 17})
-RepresentativesUser.create({user_id: 11, representative_id: 17})
-RepresentativesUser.create({user_id: 12, representative_id: 17})
-RepresentativesUser.create({user_id: 13, representative_id: 17})
-RepresentativesUser.create({user_id: 14, representative_id: 17})
-RepresentativesUser.create({user_id: 15, representative_id: 17})
-RepresentativesUser.create({user_id: 16, representative_id: 17})
-RepresentativesUser.create({user_id: 4, representative_id: 17})
+# RepresentativesUser.create({user_id: 9, representative_id: 17})
+# RepresentativesUser.create({user_id: 10, representative_id: 17})
+# RepresentativesUser.create({user_id: 11, representative_id: 17})
+# RepresentativesUser.create({user_id: 12, representative_id: 17})
+# RepresentativesUser.create({user_id: 13, representative_id: 17})
+# RepresentativesUser.create({user_id: 14, representative_id: 17})
+# RepresentativesUser.create({user_id: 15, representative_id: 17})
+# RepresentativesUser.create({user_id: 16, representative_id: 17})
+# RepresentativesUser.create({user_id: 4, representative_id: 17})
 
 
 BwcAnnualManualClassChange.create([
@@ -221,3 +221,28 @@ BwcAnnualManualClassChange.create([
 ##### ARM CONVERSION 06-19 #####
 # AccountImportProcess.perform_async('https://s3.amazonaws.com/grouprating/Conversions/ARM/ARM+Account+Update+Import.csv')
 # AccountProgramImportProcess.perform_async('https://s3.amazonaws.com/grouprating/Conversions/ARM/ARM_2017_Account_Programs_05_02.csv')
+
+@representative = Representative.find(16)
+@representative.policy_calculations.destroy_all
+@representative.accounts.destroy_all
+@representative.destroy
+
+@representative = Representative.find(17)
+@representative.policy_calculations.destroy_all
+@representative.accounts.destroy_all
+@representative.destroy
+
+@representative = Representative.find(2)
+@representative.policy_calculations.destroy_all
+@representative.accounts.destroy_all
+@representative.destroy
+
+@representative = Representative.find(9)
+@representative.policy_calculations.destroy_all
+@representative.accounts.destroy_all
+@representative.destroy
+
+@representative = Representative.find(10)
+@representative.policy_calculations.destroy_all
+@representative.accounts.destroy_all
+@representative.destroy

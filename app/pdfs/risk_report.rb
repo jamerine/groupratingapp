@@ -1247,7 +1247,7 @@ class RiskReport < PdfReport
 
   def payroll_and_premium_history
     move_down 30
-    text "Payroll And Premium Histroy", style: :bold, size: 14, align: :center
+    text "Payroll And Premium History", style: :bold, size: 14, align: :center
 
     @payroll_periods.each do |period|
       @premium_total = 0
