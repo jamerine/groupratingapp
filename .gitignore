@@ -21,3 +21,6 @@
 
 #environment variables
 .env
+
+.vscode/
+.byebug_history

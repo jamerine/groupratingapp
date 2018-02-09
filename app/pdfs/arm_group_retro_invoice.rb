@@ -126,9 +126,11 @@ class ArmGroupRetroInvoice < PdfReport
     move_down 15
     text "Thank you for your business!", align: :center, size: 10, style: :bold
 
-    bounding_box([0, 25], :width => 550, :height => 25) do
-      text "#{@account.representative.location_address_1}, #{@account.representative.location_address_2} | #{@account.representative.location_city}, #{@account.representative.location_state} | #{@account.representative.location_zip_code}", align: :center, color: "333333"
-      text "Toll Free: #{@account.representative.toll_free_number} | Fax: #{@account.representative.fax_number}", align: :center, color: "333333", inline_format: true
+    bounding_box([0, 25], :width => 550, :height => 50) do
+      text "Cleveland/Columbus Offices", align: :center, color: "333333"
+      text "Telephone (888) 235-8051  |  Fax (614) 219-1292", align: :center, color: "333333"
+      text "Workers' Compensation & Unemployment Compensation Specialists", align: :center, color: "333333"
+      text "<u>www.alternativeriskmgmt.com</u>", align: :center, color: "333333", inline_format: true
     end
   end
   def table_data

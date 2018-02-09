@@ -421,53 +421,56 @@ class Account < ActiveRecord::Base
   end
 
   def group_retro_calc(args={})
-    @user_override = args['user_override']
-      @fee_override = args['fee_override']
-      if args.empty?
-        self.group_retro_reject
-      else
-        #self.update_attributes(group_rating_qualification: args["group_rating_qualification"])
-        @group_retro_qualification = args["group_retro_qualification"]
-      end
+    # manual edit of group retro method
+    if args['user_override'] == true
+      @user_override = args['user_override']
+      self.group_rating_rejections.where(program_type: 'group_retro').destroy_all
+    end
 
-    @industry_group = policy_calculation.policy_industry_group
+    @fee_override = args['fee_override']
+
+    if args.empty?
+      self.group_retro_reject
+    else
+      #self.update_attributes(group_rating_qualification: args["group_rating_qualification"])
+      @group_retro_qualification = args["group_retro_qualification"]
+
+    end
 
     if @group_retro_qualification == "accept"
-      group_retro_calc = GroupRating.find_by(representative_id: policy_calculation.representative_id)
 
-        if (args["group_retro_tier"].empty? && args["industry_group"].empty?) || args.empty? || (args["group_retro_tier"].nil? && args["industry_group"].nil?)
-         @group_retro_tier = BwcCodesGroupRetroTier.find_by(industry_group: @industry_group).discount_tier
-        elsif (args["group_retro_tier"].empty? && !args["industry_group"].empty?)
-          @industry_group = args["industry_group"]
-          @group_retro_tier = BwcCodesGroupRetroTier.find_by(industry_group: @industry_group).discount_tier
-        elsif (!args["group_retro_tier"].empty? && args["industry_group"].empty?)
-          @group_retro_tier = args["group_rating_tier"]
-        else
-          @industry_group = args["industry_group"]
-          @group_retro_tier = args["group_rating_tier"]
-        end
+      if args[:industry_group].empty?
+        @industry_group = policy_calculation.policy_industry_group
+      else
+        @industry_group = args["industry_group"]
+      end
 
-        @group_retro_group_number = "#{@industry_group}"
-
+      if args["group_retro_tier"].empty?
+        @group_retro_tier = BwcCodesGroupRetroTier.find_by(industry_group: @industry_group)&.discount_tier
+      else
+        @group_retro_tier = args["group_retro_tier"]
+      end
 
       if @group_retro_tier.nil?
         @group_retro_qualification = "reject"
         @group_retro_premium = nil
         @group_retro_savings = nil
+        @group_retro_group_number = nil
       else
-        @group_retro_premium = (policy_calculation.policy_total_standard_premium * (1 + @group_retro_tier)).round(0)
-
+        @group_retro_premium = (policy_calculation.policy_total_standard_premium * (1 + @group_retro_tier.to_f)).round(0)
+        @group_retro_group_number = "#{@industry_group}"
         @group_retro_savings = (policy_calculation.policy_total_standard_premium - @group_retro_premium).round(0)
       end
-
     else
-        @group_retro_group_number = nil
-        @group_retro_premium = nil
-        @group_retro_savings = nil
-        @group_retro_tier = nil
+          @group_retro_group_number = nil
+          @group_retro_premium = nil
+          @group_retro_savings = nil
+          @group_retro_tier = nil
     end
-      self.update_attributes(user_override: @user_override, group_retro_qualification: @group_retro_qualification, industry_group: @industry_group, group_retro_tier: @group_retro_tier, group_retro_premium: @group_retro_premium, group_retro_savings: @group_retro_savings, group_retro_group_number: @group_retro_group_number, fee_override: @fee_override)
-end
+
+    self.update_attributes(user_override: @user_override, group_retro_qualification: @group_retro_qualification, industry_group: @industry_group, group_retro_tier: @group_retro_tier, group_retro_premium: @group_retro_premium, group_retro_savings: @group_retro_savings, group_retro_group_number: @group_retro_group_number, fee_override: @fee_override)
+
+  end
 
 
   def group_retro_reject

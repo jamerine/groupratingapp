@@ -84,7 +84,7 @@ class ArmGroupRetroIntro < PdfReport
       text "President"
     end
 
-    bounding_box([0, 25], :width => 550, :height => 25) do
+    bounding_box([0, 25], :width => 550, :height => 50) do
       if [2].include? @account.representative.id
         text "COSE FOOTER", align: :center, color: "333333"
         text "COSE FOOTER", align: :center, color: "333333"
@@ -101,8 +101,10 @@ class ArmGroupRetroIntro < PdfReport
         text "TARTAN FOOTER", align: :center, color: "333333"
         text "TARTAN FOOTER", align: :center, color: "333333"
       else
-        text "#{@account.representative.location_address_1}, #{@account.representative.location_address_2} | #{@account.representative.location_city}, #{@account.representative.location_state} | #{@account.representative.location_zip_code}", align: :center, color: "333333"
-        text "Toll Free: #{@account.representative.toll_free_number} | Fax: #{@account.representative.fax_number}", align: :center, color: "333333", inline_format: true
+        text "Cleveland/Columbus Offices", align: :center, color: "333333"
+        text "Telephone (888) 235-8051  |  Fax (614) 219-1292", align: :center, color: "333333"
+        text "Workers' Compensation & Unemployment Compensation Specialists", align: :center, color: "333333"
+        text "<u>www.alternativeriskmgmt.com</u>", align: :center, color: "333333", inline_format: true
       end
      transparent(0) { stroke_bounds }
     end

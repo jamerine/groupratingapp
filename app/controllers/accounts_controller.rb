@@ -118,7 +118,6 @@ class AccountsController < ApplicationController
       @account.policy_calculation.calculate_experience
       @account.policy_calculation.calculate_premium
       @account.group_rating
-      @account.group_retro
       @account.update_attributes(fee_override: args[:fee_override])
       @account.group_rating(user_override: true)
       flash[:notice] = "Account's automatic group rating calculation was successful."
@@ -138,12 +137,9 @@ class AccountsController < ApplicationController
     if args[:group_retro_qualification] == "auto_run"
       @account.policy_calculation.calculate_experience
       @account.policy_calculation.calculate_premium
-      @account.group_rating
       @account.group_retro
-      @account.update_attributes(fee_override: args[:fee_override])
-      @account.group_retro(user_override: false)
+      @account.update_attributes(fee_override: args[:fee_override], user_override: false)
       flash[:notice] = "Account's automatic group retro calculation was successful."
-      @acount
       redirect_to @account
     else
       args[:user_override] = true
