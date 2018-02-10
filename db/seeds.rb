@@ -183,3 +183,4 @@ BwcAnnualManualClassChange.create([
 # @representative.policy_calculations.limit(1000).destroy_all
 # @representative.accounts.limit(1000).destroy_all
 # @representative.destroy
+AdminUser.create!(email: 'jason@dittoh.com', password: 'password', password_confirmation: 'password') if Rails.env.development?
