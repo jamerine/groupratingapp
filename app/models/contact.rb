@@ -20,8 +20,4 @@ class Contact < ActiveRecord::Base
       "#{prefix}. #{first_name} #{middle_initial} #{last_name}, #{suffix}"
   end
 
-  # def format_phone_number
-  #   self.phone_number
-  # end
-
 end
