@@ -26,6 +26,23 @@ class ContactsController < ApplicationController
     end
   end
 
+  def edit
+    @contact = Contact.find(params[:id])
+    @account = Account.find(params[:account_id])
+    @contact_types = Contact.contact_types
+    @prefixes = Contact.prefixes
+  end
+
+  def update
+    @contact = Contact.find(params[:id])
+    @contact.update_attributes(contact_params)
+    if @contact.save
+      redirect_to @contact.accounts.first, notice: "Contact saved"
+    else
+      redirect :back, alert: "There was an issue saving. Try again."
+    end
+  end
+
   def index
     @representatives = Representative.all
   end

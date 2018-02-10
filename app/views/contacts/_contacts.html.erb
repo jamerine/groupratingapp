@@ -27,7 +27,7 @@
               <td> <%= contact.title %></td>
               <td> <%= contact.email_address %></td>
               <td> <%= number_to_phone(contact.phone_number) %></td>
-              <td> <%= link_to 'View' %> | <%= link_to 'Delete', contact_path(id: contact.id, account_id: @account.id), method: :delete %> </td>
+              <td> <%= link_to 'Edit', edit_contact_path(id: contact.id, account_id: @account.id) %> | <%= link_to 'Delete', contact_path(id: contact.id, account_id: @account.id), method: :delete %> </td>
             </tr>
           <% end %>
       </tbody>
