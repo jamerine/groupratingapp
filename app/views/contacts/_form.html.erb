@@ -1,108 +1,111 @@
-  <div class="container">
+<div class="container">
 
-    <%= link_to 'Back', @account, class: 'btn btn-primary' %>
+  <%= link_to 'Back', @account, class: 'btn btn-primary' %>
 
-    <h1>Edit Contact <%= @contact.full_name  %> At <%= @account.name %></h1>
-      <div class="row">
-        <%= f.hidden_field :id, value: "#{@contact.id}" %>
+  <h1>Contact <%= @contact.full_name  %> At <%= @account.name %></h1>
+  <div class="row">
+    <%= f.hidden_field :id, value: "#{@contact.id}" %>
+    <%= f.hidden_field :account_id, value: "#{@account.id}" %>
 
-        <div class="form-group col-md-3">
-          <%= f.label :contact_type %>
-          <%= f.select :contact_type, options_for_select(@contact_types.collect { |s| [s[0].humanize, s[0]] }), {selected: @contact.contact_type} , class: "form-control" %>
-        </div>
-
-        <div class="form-group col-md-3" >
-          <%= f.label :title %>
-          <%= f.text_field :title, class: "form-control" %>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="form-group col-md-1" >
-          <%= f.label :prefix %>
-          <%= f.select :prefix, options_for_select(@prefixes.collect { |s| [s[0].humanize, s[0]] }), {include_blank: "none"} , class: "form-control" %>
-        </div>
-
-        <div class="form-group col-md-3" >
-          <%= f.label :first_name %>
-          <%= f.text_field :first_name, class: "form-control"%>
-        </div>
-
-        <div class="form-group col-md-2" >
-          <%= f.label :middle_initial %>
-          <%= f.text_field :middle_initial, class: "form-control"%>
-        </div>
-
-        <div class="form-group col-md-3" >
-          <%= f.label :last_name %>
-          <%= f.text_field :last_name, class: "form-control"%>
-        </div>
-
-        <div class="form-group col-md-1" >
-          <%= f.label :suffix %>
-          <%= f.text_field :suffix, class: "form-control"%>
-        </div>
-      </div>
-
-      <div class="row">
-
-        <div class="form-group col-md-3" >
-          <%= f.label :email_address %>
-          <%= f.email_field :email_address, class: "form-control"%>
-        </div>
-
-        <div class="form-group col-md-2" >
-          <%= f.label :phone_number %>
-          <%= f.text_field :phone_number, class: "form-control" %>
-        </div>
-
-        <div class="form-group col-md-1" >
-          <%= f.label 'Ext.' %>
-          <%= f.text_field :phone_extension, class: "form-control" %>
-        </div>
-
-        <div class="form-group col-md-2" >
-          <%= f.label :fax_number %>
-          <%= f.text_field :fax_number, class: "form-control" %>
-        </div>
-
-
-    </div>
-    <div class="row">
-      <div class="form-group col-md-3" >
-        <%= f.label :address_line_1 %>
-        <%= f.text_field :address_line_1, class: "form-control" %>
-      </div>
-
-      <div class="form-group col-md-2" >
-        <%= f.label :address_line_2 %>
-        <%= f.text_field :address_line_2, class: "form-control" %>
-      </div>
-
-      <div class="form-group col-md-2" >
-        <%= f.label :city %>
-        <%= f.text_field :city, class: "form-control" %>
-      </div>
-
-      <div class="form-group col-md-2" >
-        <%= f.label :state %>
-        <%= f.select :state, options_for_select(us_states, "OH"), {} , class: "form-control" %>
-      </div>
-
-      <div class="form-group col-md-2" >
-        <%= f.label :zip_code %>
-          <%= f.text_field :zip_code, class: "form-control" %>
-      </div>
-
-      <div class="form-group col-md-1" >
-        <%= f.label :country %>
-          <%= f.text_field :country, class: "form-control", value: "US" %>
-      </div>
-
-      <div class="form-group col-md-3  col-md-offset-5" >
-        <%= f.submit 'Save Contact', class: 'btn btn-info' %>
-      </div>
-
+    <div class="form-group col-md-3" >
+      <%= f.label :title %>
+      <%= f.text_field :title, class: "form-control" %>
     </div>
   </div>
+
+  <div class="row">
+    <div class="form-group col-md-1" >
+      <%= f.label :prefix %>
+      <%= f.select :prefix, options_for_select(@prefixes.collect { |s| [s[0].humanize, s[0]] }), {include_blank: "none"} , class: "form-control" %>
+    </div>
+
+    <div class="form-group col-md-3" >
+      <%= f.label :first_name %>
+      <%= f.text_field :first_name, class: "form-control"%>
+    </div>
+
+    <div class="form-group col-md-2" >
+      <%= f.label :middle_initial %>
+      <%= f.text_field :middle_initial, class: "form-control"%>
+    </div>
+
+    <div class="form-group col-md-3" >
+      <%= f.label :last_name %>
+      <%= f.text_field :last_name, class: "form-control"%>
+    </div>
+
+    <div class="form-group col-md-1" >
+      <%= f.label :suffix %>
+      <%= f.text_field :suffix, class: "form-control"%>
+    </div>
+  </div>
+
+  <div class="row">
+
+    <div class="form-group col-md-3" >
+      <%= f.label :email_address %>
+      <%= f.email_field :email_address, class: "form-control"%>
+    </div>
+
+    <div class="form-group col-md-2" >
+      <%= f.label :phone_number %>
+      <%= f.text_field :phone_number, class: "form-control" %>
+    </div>
+
+    <div class="form-group col-md-1" >
+      <%= f.label 'Ext.' %>
+      <%= f.text_field :phone_extension, class: "form-control" %>
+    </div>
+
+    <div class="form-group col-md-2" >
+      <%= f.label :fax_number %>
+      <%= f.text_field :fax_number, class: "form-control" %>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="form-group col-md-3" >
+      <%= f.label :address_line_1 %>
+      <%= f.text_field :address_line_1, class: "form-control" %>
+    </div>
+
+    <div class="form-group col-md-2" >
+      <%= f.label :address_line_2 %>
+      <%= f.text_field :address_line_2, class: "form-control" %>
+    </div>
+
+    <div class="form-group col-md-2" >
+      <%= f.label :city %>
+      <%= f.text_field :city, class: "form-control" %>
+    </div>
+
+    <div class="form-group col-md-2" >
+      <%= f.label :state %>
+      <%= f.select :state, options_for_select(us_states, "OH"), {} , class: "form-control" %>
+    </div>
+
+    <div class="form-group col-md-2" >
+      <%= f.label :zip_code %>
+        <%= f.text_field :zip_code, class: "form-control" %>
+    </div>
+
+    <div class="form-group col-md-1" >
+      <%= f.label :country %>
+        <%= f.text_field :country, class: "form-control", value: "US" %>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-2">
+      <h3>Contact Types</h3>
+      <%= select_tag "contact_type_ids[]", options_from_collection_for_select(@contact_types,"id","name",{}), :multiple => true, :id => "contact_type_ids", :class => "form-control", :size => 5 %>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="form-group col-md-3  col-md-offset-5" >
+      <%= f.submit 'Save Contact', class: 'btn btn-info' %>
+    </div>
+  </div>
+
 </div>
