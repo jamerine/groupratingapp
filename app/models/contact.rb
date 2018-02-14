@@ -8,8 +8,6 @@ class Contact < ActiveRecord::Base
   # before_save {self.email_address = email_address.downcase}
   # before_save :format_phone_number
 
-
-  enum contact_type: [:billing, :claims, :general, :hr, :owner, :tpa]
   enum prefix: [:dr, :miss, :mr, :mrs, :ms]
 
   def full_name
