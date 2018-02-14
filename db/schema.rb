@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180210161022) do
+ActiveRecord::Schema.define(version: 20180211170825) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -105,6 +105,16 @@ ActiveRecord::Schema.define(version: 20180210161022) do
 
   add_index "accounts_contacts", ["account_id"], name: "index_accounts_contacts_on_account_id", using: :btree
   add_index "accounts_contacts", ["contact_id"], name: "index_accounts_contacts_on_contact_id", using: :btree
+
+  create_table "accounts_contacts_contact_types", force: :cascade do |t|
+    t.integer  "accounts_contact_id"
+    t.integer  "contact_type_id"
+    t.datetime "created_at",          null: false
+    t.datetime "updated_at",          null: false
+  end
+
+  add_index "accounts_contacts_contact_types", ["accounts_contact_id"], name: "index_accounts_contacts_contact_types_on_accounts_contact_id", using: :btree
+  add_index "accounts_contacts_contact_types", ["contact_type_id"], name: "index_accounts_contacts_contact_types_on_contact_type_id", using: :btree
 
   create_table "active_admin_comments", force: :cascade do |t|
     t.string   "namespace"
@@ -311,6 +321,12 @@ ActiveRecord::Schema.define(version: 20180210161022) do
   add_index "claim_calculations", ["policy_calculation_id"], name: "index_claim_calculations_on_policy_calculation_id", using: :btree
   add_index "claim_calculations", ["policy_number", "claim_number"], name: "index_claim_calc_on_pol_num_and_claim_num", using: :btree
 
+  create_table "contact_types", force: :cascade do |t|
+    t.string   "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "contacts", force: :cascade do |t|
     t.integer  "prefix",          default: 0
     t.string   "first_name"
@@ -322,7 +338,6 @@ ActiveRecord::Schema.define(version: 20180210161022) do
     t.string   "phone_extension"
     t.string   "mobile_phone"
     t.string   "fax_number"
-    t.integer  "contact_type",    default: 1
     t.string   "salesforce_id"
     t.string   "title"
     t.string   "address_line_1"
@@ -1967,6 +1982,8 @@ ActiveRecord::Schema.define(version: 20180210161022) do
   add_foreign_key "accounts_affiliates", "affiliates"
   add_foreign_key "accounts_contacts", "accounts"
   add_foreign_key "accounts_contacts", "contacts"
+  add_foreign_key "accounts_contacts_contact_types", "accounts_contacts"
+  add_foreign_key "accounts_contacts_contact_types", "contact_types"
   add_foreign_key "affiliates", "representatives"
   add_foreign_key "claim_calculations", "policy_calculations"
   add_foreign_key "group_rating_exceptions", "accounts"

@@ -1,0 +1,38 @@
+<h3>Contacts - <%= link_to 'Add Contacts', new_contact_path(account_id: account.id), class:'btn btn-success btn-sm' %></h3>
+
+<div class="table-responsive">
+  <% if accounts_contacts.empty? %>
+    <div class="container">
+      <h5>No Contacts have been added.</h5>
+    </div>
+  <% else %>
+    <table class="table">
+      <caption align: "center"><h3>Account Contacts</h3> </caption>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Title</th>
+          <th>Email Address</th>
+          <th>Phone Number</th>
+          <th></th>
+        </tr>
+      </thead>
+
+      <tbody>
+          <% accounts_contacts.find_each do |ac| %>
+            <tr>
+              <td> <%= ac.contact.full_name %></td>
+              <td> <%= ac.contact_types.map{|ct| ct.name.humanize }.to_s.gsub('"', '') %></td>
+              <td> <%= ac.contact.title %></td>
+              <td> <%= ac.contact.email_address %></td>
+              <td> <%= number_to_phone(ac.contact.phone_number) %></td>
+            <td> <%= link_to 'Edit', edit_contact_path(id: ac.contact.id, account_id: account.id) %> | <%= link_to 'Delete', contact_path(id: ac.contact.id, account_id: account.id), method: :delete %> </td>
+            </tr>
+          <% end %>
+      </tbody>
+    </table>
+  <% end %>
+</div>
+
+<br>
