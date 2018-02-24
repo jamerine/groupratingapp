@@ -32,6 +32,7 @@ ActiveAdmin.register Account do
   end
 
   filter :name
+  filter :representative_id, as: :select, collection: Representative.options_for_select
   filter :policy_number_entered
   filter :industry_group
   filter :group_rating_qualification

@@ -43,7 +43,8 @@
     { representative_number: 21152, abbreviated_name: 'WHPCB', company_name: 'Wickens Herzer', experience_period_lower_date: '2012-07-01', experience_period_upper_date: '2016-06-30', current_payroll_period_lower_date: '2015-07-01', current_payroll_period_upper_date: '2016-06-30', current_payroll_year: 2015, program_year_lower_date: '2017-07-01', program_year_upper_date: '2018-06-30', program_year: 2017, quote_year_lower_date: '2018-07-01', quote_year_upper_date: '2019-06-30', quote_year: 2018  },
     { representative_number: 222188, abbreviated_name: 'CES', company_name: 'CES', experience_period_lower_date: '2012-07-01', experience_period_upper_date: '2016-06-30', current_payroll_period_lower_date: '2015-07-01', current_payroll_period_upper_date: '2016-06-30', current_payroll_year: 2015, program_year_lower_date: '2017-07-01', program_year_upper_date: '2018-06-30', program_year: 2017, quote_year_lower_date: '2018-07-01', quote_year_upper_date: '2019-06-30', quote_year: 2018  }
     ])
-
+AdminUser.create!(email: 'dmaag@alternativeriskltd.com', password: 'tigers', password_confirmation: 'tigers')
+AdminUser.create!(email: 'tbetz@alternativeriskltd.com', password: 'password', password_confirmation: 'password')
 User.create({first_name: "Jason", last_name: "Amerine", role: 0, email: 'jason@dittoh.com', password: 'Jamrine08'})
 # User.create({first_name: "Paul", last_name: "Collins", role: 0, email: 'paul@dittoh.com', password: 'password'})
 # User.create({first_name: "Doug", last_name: "Maag", role: 0, email: 'dmaag@alternativeriskltd.com', password: 'tigers'})
@@ -183,6 +184,6 @@ BwcAnnualManualClassChange.create([
 # @representative.policy_calculations.limit(1000).destroy_all
 # @representative.accounts.limit(1000).destroy_all
 # @representative.destroy
-AdminUser.create!(email: 'jason@dittoh.com', password: 'password', password_confirmation: 'password') if Rails.env.development?
+AdminUser.create!(email: 'jason@dittoh.com', password: 'Jamrine08', password_confirmation: 'Jamrine08') if Rails.env.development?
 
 ContactType.create([{name: "billing"}, {name: "claims"}, {name: "hr"}, {name: "owner"}, {name: "tpa"}])
