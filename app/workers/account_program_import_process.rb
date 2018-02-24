@@ -11,10 +11,11 @@ class AccountProgramImportProcess
 
     begin
 
-      CSV.foreach(csv_file, headers: true) do |row|
+      rows = CSV.parse(csv_file, { headers: true })
+
+      rows.each do |row|
         hash = row.to_hash # exclude the price field
-        # AccountProgramImport.perform_async(hash)
-        puts hash
+        AccountProgramImport.perform_async(hash)
         puts "Import successful."
       end
     rescue
