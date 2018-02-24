@@ -1,4 +1,6 @@
 require 'open-uri'
+require 'csv'
+
 class AccountProgramImportProcess
   include Sidekiq::Worker
 
@@ -11,7 +13,8 @@ class AccountProgramImportProcess
 
       CSV.foreach(csv_file, headers: true) do |row|
         hash = row.to_hash # exclude the price field
-        AccountProgramImport.perform_async(hash)
+        # AccountProgramImport.perform_async(hash)
+        puts hash
         puts "Import successful."
       end
     rescue
