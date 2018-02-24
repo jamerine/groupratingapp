@@ -31,7 +31,13 @@
         </div>
         <div class="col-md-2">
           <p>Quote Packet</p>
-          <h4><%= link_to 'View', @account_program.quote_generated, class: 'btn btn-info' %></h4>
+          <h4>
+            <% if @account_program.quote_generated.present? %>
+             <%= link_to 'View', @account_program.quote_generated, class: 'btn btn-info' %>
+            <% else  %>
+              <p><b>Program Manually Uploaded</b></p>
+            <% end %>
+          </h4>
         </div>
       </div>
   </div>
