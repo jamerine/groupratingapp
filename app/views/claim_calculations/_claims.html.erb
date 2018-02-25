@@ -9,22 +9,26 @@
       <div class="col-md-2 col-sm-4 col-xs-6 hidden-sm hidden-xs">
         <h5>Claimant Name</h5>
       </div>
-      <div class="col-md-2 col-sm-4 col-xs-6 hidden-sm hidden-xs">
+      <div class="col-md-1 col-sm-4 col-xs-6 hidden-sm hidden-xs">
         <h5>Injury Date</h5>
       </div>
       <div class="col-md-1 col-sm-4 col-xs-6 hidden-sm hidden-xs">
         <h5>Handicap Percent</h5>
       </div>
       <div class="col-md-1 col-sm-4 col-xs-6 hidden-sm hidden-xs">
-        <h5>Manual Number</h5>
+        <h5>Comp Awarded</h5>
+      </div>
+      <div class="col-md-1 col-sm-4 col-xs-6 hidden-sm hidden-xs">
+        <h5>Medical Paid</h5>
+      </div>
+      <div class="col-md-1 col-sm-4 col-xs-6 hidden-sm hidden-xs">
+        <h5>Mira Reserve</h5>
       </div>
       <div class="col-md-1 col-sm-4 col-xs-6 hidden-sm hidden-xs">
         <h5>Unlimited Limited Loss</h5>
-
       </div>
       <div class="col-md-1 col-sm-4 col-xs-6 hidden-sm hidden-xs">
         <h5>Mod. Losses Group</h5>
-
       </div>
       <div class="col-md-1 col-sm-4 col-xs-6 hidden-sm hidden-xs">
         <h5>Mod. Losses Individual</h5>
@@ -39,31 +43,39 @@
       </div>
       <div class="col-md-2 col-sm-12 col-xs-12 ">
         <h5 class="hidden-md hidden-lg">Claimant Name</h5>
-        <p><%= claim.claimant_name %></p>
+        <p><%= claim.claimant_name.slice(0..20) %></p>
       </div>
-      <div class="col-md-2 col-sm-4 col-xs-6 ">
+      <div class="col-md-1 col-sm-4 col-xs-6 ">
         <h5 class="hidden-md hidden-lg">Injury Date</h5>
-          <p><%= claim.claim_injury_date %></p>
+          <p><%= claim.claim_injury_date.strftime("%m/%d/%y") %></p>
         </div>
       <div class="col-md-1 col-sm-4 col-xs-6 ">
         <h5 class="hidden-md hidden-lg">Handicap Percent</h5>
           <p><%=  number_to_percentage(claim.claim_handicap_percent * 100, precision: 0) %></p>
       </div>
         <div class="col-md-1 col-sm-4 col-xs-6 ">
-          <h5 class="hidden-md hidden-lg">Manual Number</h5>
-          <p><%= claim.claim_manual_number %></p>
+          <h5 class="hidden-md hidden-lg">Comp Awarded</h5>
+          <p><%= number_to_currency(claim.comp_awarded, precision: 0) %></p>
+        </div>
+        <div class="col-md-1 col-sm-4 col-xs-6 ">
+          <h5 class="hidden-md hidden-lg">Medical Paid</h5>
+          <p><%= number_to_currency(claim.medical_paid, precision: 0) %></p>
+        </div>
+        <div class="col-md-1 col-sm-4 col-xs-6 ">
+          <h5 class="hidden-md hidden-lg">Mira Reserve</h5>
+          <p><%= number_to_currency(claim.mira_reserve, precision: 0) %></p>
         </div>
         <div class="col-md-1 col-sm-4 col-xs-6 ">
           <h5 class="hidden-md hidden-lg">Unlimited Loss</h5>
-          <p><%= number_to_currency(claim.claim_unlimited_limited_loss) %></p>
+          <p><%= number_to_currency(claim.claim_unlimited_limited_loss, precision: 0) %></p>
         </div>
         <div class="col-md-1 col-sm-4 col-xs-6 ">
           <h5 class="hidden-md hidden-lg">Group Reduced</h5>
-          <p><%= number_to_currency(claim.claim_modified_losses_group_reduced) %></p>
+          <p><%= number_to_currency(claim.claim_modified_losses_group_reduced, precision: 0) %></p>
         </div>
         <div class="col-md-1 col-sm-4 col-xs-6 ">
           <h5 class="hidden-md hidden-lg">Individual Reduced</h5>
-          <p><%= number_to_currency(claim.claim_modified_losses_individual_reduced) %></p>
+          <p><%= number_to_currency(claim.claim_modified_losses_individual_reduced, precision: 0) %></p>
         </div>
       </div>
         <% end %>
