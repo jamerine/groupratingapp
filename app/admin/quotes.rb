@@ -1,4 +1,5 @@
 ActiveAdmin.register Quote do
+  actions :all, except: [:update, :destroy, :edit, :create, :new]
   includes :account
 
   index do
