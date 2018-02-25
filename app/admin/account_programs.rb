@@ -1,5 +1,5 @@
 ActiveAdmin.register AccountProgram do
-  actions :all, except: [:update, :destroy, :edit]
+  actions :all, except: [:update, :destroy, :edit, :create, :new]
 
   index do
     selectable_column

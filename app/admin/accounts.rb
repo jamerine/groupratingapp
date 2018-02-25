@@ -1,6 +1,6 @@
 ActiveAdmin.register Account do
   includes :representative
-  actions :all, except: [:update, :destroy, :edit]
+  actions :all, except: [:update, :destroy, :edit, :create, :new]
 # permit_params :list, :of, :attributes, :on, :model
 #
 
