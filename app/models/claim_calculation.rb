@@ -1,11 +1,26 @@
 class ClaimCalculation < ActiveRecord::Base
   belongs_to :policy_calculation
 
+  attr_accessor :comp_awarded, :medical_paid, :mira_reserve
+
   def self.update_or_create(attributes)
     obj = first || new
     obj.assign_attributes(attributes)
     obj.save
     obj
+  end
+
+  def comp_awarded
+   (((claim_mira_reducible_indemnity_paid + claim_mira_non_reducible_indemnity_paid )*( 1 - claim_subrogation_percent )-(claim_mira_non_reducible_indemnity_paid))*(1 - claim_handicap_percent)+( claim_mira_non_reducible_indemnity_paid)
+    ) * claim_group_multiplier
+  end
+
+  def medical_paid
+    (((claim_medical_paid + claim_mira_non_reducible_indemnity_paid_2)*(1 - claim_subrogation_percent) - claim_mira_non_reducible_indemnity_paid_2) *( 1 - claim_handicap_percent) + claim_mira_non_reducible_indemnity_paid_2) * claim_group_multiplier
+  end
+
+  def mira_reserve
+    ((1 - claim_handicap_percent) * ( claim_mira_medical_reserve_amount + (claim_mira_indemnity_reserve_amount)) * claim_group_multiplier * (1 - claim_subrogation_percent))
   end
 
 
