@@ -5,8 +5,6 @@ ActiveAdmin.register Account do
 #
 
   index do
-    selectable_column
-    id_column
     column :representative_id do |i|
       i.representative.abbreviated_name
     end
@@ -33,7 +31,7 @@ ActiveAdmin.register Account do
 
   filter :name
   filter :representative_id, as: :select, collection: Representative.options_for_select
-  filter :policy_number_entered, as: :numeric
+  filter :policy_number_entered_eq, label: 'Policy Number'
   filter :industry_group
   filter :group_rating_qualification, as: :select, collection: proc { Account.group_rating_qualifications.keys }
   filter :group_rating_tier, as: :numeric
