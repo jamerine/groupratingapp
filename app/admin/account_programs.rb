@@ -2,11 +2,13 @@ ActiveAdmin.register AccountProgram do
   actions :all, except: [:update, :destroy, :edit, :create, :new]
 
   index do
-    selectable_column
     column :representative do |i|
       i.representative.abbreviated_name
     end
     column :account
+    column 'Policy Number', :account do |i|
+      i.account.policy_number_entered
+    end
     column :program_type
     column :quoted_tier
     column :group_code
@@ -20,6 +22,7 @@ ActiveAdmin.register AccountProgram do
   end
   filter :representative, as: :select, collection: Representative.options_for_select
   filter :program_type, as: :select, collection: proc { AccountProgram.program_types.keys }
+  filter :account_policy_number_entered_eq, label: 'Policy Number'
   filter :quoted_tier
   filter :group_code
   filter :fees_amount, as: :numeric
