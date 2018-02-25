@@ -33,13 +33,13 @@ ActiveAdmin.register Account do
 
   filter :name
   filter :representative_id, as: :select, collection: Representative.options_for_select
-  filter :policy_number_entered
+  filter :policy_number_entered, as: :numeric
   filter :industry_group
-  filter :group_rating_qualification
-  filter :group_rating_tier
+  filter :group_rating_qualification, as: :select, collection: proc { Account.group_rating_qualifications.keys }
+  filter :group_rating_tier, as: :numeric
   filter :group_retro_qualification
-  filter :group_retro_tier
-  filter :group_fees
-  filter :fee_override
+  filter :group_retro_tier, as: :numeric
+  filter :group_fees, as: :numeric
+  filter :fee_override, as: :numeric
 
 end

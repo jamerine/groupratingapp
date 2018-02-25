@@ -2,6 +2,8 @@ class ManualClassCalculation < ActiveRecord::Base
 
   belongs_to :policy_calculation
   has_many :payroll_calculations, dependent: :destroy
+  has_one :account, through: :policy_calculation
+  has_one :representative, through: :account
 
   def self.update_or_create(attributes)
     obj = first || new

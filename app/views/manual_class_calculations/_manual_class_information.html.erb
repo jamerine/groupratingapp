@@ -3,8 +3,8 @@
       <h2>Manual Class Premium Projections</h2>
       <div class="row text-center">
         <div class="col-md-2 col-sm-4 col-xs-6">
-          <h5>IG Premium Ratio</h5>
-          <p><%= manual_class_calculation.manual_class_industry_group_premium_percentage %></p>
+          <h5>IG Premium Percentage</h5>
+          <p><%= number_to_percentage(manual_class_calculation.manual_class_industry_group_premium_percentage) %></p>
         </div>
         <div class="col-md-2 col-sm-4 col-xs-6">
           <h5>Estimated Payroll</h5>
