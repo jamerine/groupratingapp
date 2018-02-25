@@ -3,7 +3,6 @@ ActiveAdmin.register PolicyCalculation do
   config.per_page = [25, 50, 100]
 
   index do
-    selectable_column
     column :representative do |i|
       i.representative.abbreviated_name
     end
@@ -42,7 +41,7 @@ ActiveAdmin.register PolicyCalculation do
   end
 
   filter :representative, as: :select, collection: Representative.options_for_select
-  filter :policy_number, as: :numeric
+  filter :policy_number_eq, label: 'Policy Number'
   filter :current_coverage_status
 
 end
