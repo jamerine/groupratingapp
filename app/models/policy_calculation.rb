@@ -7,7 +7,6 @@ class PolicyCalculation < ActiveRecord::Base
   belongs_to :representative
   belongs_to :account
 
-
   # Add Papertrail as history tracking
   has_paper_trail :on => [:update]
 
@@ -209,6 +208,11 @@ class PolicyCalculation < ActiveRecord::Base
 
     self.update_attributes(policy_total_individual_premium: @policy_total_individual_premium, policy_industry_group: @highest_industry_group[:industry_group], policy_total_standard_premium: @policy_total_standard_premium)
 
+    self.manual_class_calculations.each do |manual|
+      unless self.policy_total_individual_premium.nil?
+        manual.update_attributes(manual_class_industry_group_premium_percentage: (manual.manual_class_estimated_individual_premium / @policy_total_individual_premium).round(4))
+      end
+    end
 
     end #transaction
   end
