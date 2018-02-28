@@ -2,11 +2,6 @@ class Contact < ActiveRecord::Base
   has_many :accounts_contacts, dependent: :destroy
   has_many :accounts, through: :accounts_contacts
 
-  # before_save {self.first_name = first_name.downcase.titleize}
-  # before_save {self.middle_initial = middle_initial.downcase.titleize}
-  # before_save {self.last_name = last_name.downcase.titleize}
-  # before_save {self.email_address = email_address.downcase}
-  # before_save :format_phone_number
 
   enum prefix: [:dr, :miss, :mr, :mrs, :ms]
 
