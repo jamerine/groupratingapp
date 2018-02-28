@@ -10,7 +10,7 @@ ActiveAdmin.register AccountProgram do
       i.account.policy_number_entered
     end
     column :program_type
-    column :quoted_tier
+    column :quote_tier
     column :group_code
     column :fees_amount
     column :paid_amount
