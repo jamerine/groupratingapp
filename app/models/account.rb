@@ -567,9 +567,17 @@ class Account < ActiveRecord::Base
         end
       end
 
-      @accept_reject_list = BwcGroupAcceptRejectList.find_by(policy_number: self.policy_number_entered)
-      @representative_number_adjust = "#{self.representative.representative_number.to_s.rjust(6, "0")}-80"
-      if @accept_reject_list && (@accept_reject_list.bwc_rep_id != @representative_number_adjust)
+      ## Rejection for Partner Conflict
+      # Check BWCGroupAcceptRejectList
+      accept_reject_list = BwcGroupAcceptRejectList.find_by(policy_number: self.policy_number_entered)
+      representative_number_adjust = "#{self.representative.representative_number.to_s.rjust(6, "0")}"
+      in_bwc_list = @accept_reject_list&.bwc_rep_id&.ljust(6, @representative_number_adjust.present?
+      # Check AccountPrograms of other representatives
+      other_accounts = Account.where("policy_number_entered = ? and representative_id != ?", self.policy_number_entered, self.representative_id).pluck(:id)
+      other_account_programs = AccountProgram.where("effective_start_date = ? and effective_end_date = ? and account_id in (?)", @group_rating.program_year_lower_date, @group_rating.program_year_upper_date, other_accounts)
+      in_other_acct_programs = other_account_programs.present?
+
+      if in_bwc_list || in_other_acct_programs
         if @found_rejection = self.group_rating_rejections.find_by(reject_reason: 'reject_partner_conflict', program_type: 'group_retro')
           @group_retro_rejection_array << self.group_rating_rejections.new(reject_reason: 'reject_partner_conflict', representative_id: @group_rating.representative_id, program_type: 'group_retro', hide: @found_rejection.hide)
         else
