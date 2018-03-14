@@ -256,10 +256,10 @@ class Account < ActiveRecord::Base
        end
 
        if [3,4,5,7,8,10].exclude? policy_calculation.policy_industry_group
-         if @found_rejection = self.group_rating_rejections.find_by(reject_reason: 'reject_homogeneity', program_type: 'group_rating')
-           @group_rating_rejection_array << self.group_rating_rejections.new(reject_reason: 'reject_homogeneity', representative_id: @group_rating.representative_id, program_type: 'group_rating', hide: @found_rejection.hide)
+         if @found_rejection = self.group_rating_rejections.find_by(reject_reason: "reject_homogeneity_ig_#{policy_calculation.policy_industry_group}", program_type: 'group_rating')
+           @group_rating_rejection_array << self.group_rating_rejections.new(reject_reason: "reject_homogeneity_ig_#{policy_calculation.policy_industry_group}", representative_id: @group_rating.representative_id, program_type: 'group_rating', hide: @found_rejection.hide)
          else
-            @group_rating_rejection_array << self.group_rating_rejections.new(reject_reason: 'reject_homogeneity', representative_id: @group_rating.representative_id, program_type: 'group_rating')
+            @group_rating_rejection_array << self.group_rating_rejections.new(reject_reason: "reject_homogeneity_ig_#{policy_calculation.policy_industry_group}", representative_id: @group_rating.representative_id, program_type: 'group_rating')
 
           end
        end
@@ -509,10 +509,10 @@ class Account < ActiveRecord::Base
       end
 
       if [3,4,5,7,8].exclude? policy_calculation.policy_industry_group
-        if @found_rejection = self.group_rating_rejections.find_by(reject_reason: 'reject_homogeneity', program_type: 'group_retro')
-          @group_retro_rejection_array << self.group_rating_rejections.new(reject_reason: 'reject_homogeneity', representative_id: @group_rating.representative_id, program_type: 'group_retro', hide: @found_rejection.hide)
+        if @found_rejection = self.group_rating_rejections.find_by(reject_reason: "reject_homogeneity_ig_#{policy_calculation.policy_industry_group}", program_type: 'group_retro')
+          @group_retro_rejection_array << self.group_rating_rejections.new(reject_reason:"reject_homogeneity_ig_#{policy_calculation.policy_industry_group}", representative_id: @group_rating.representative_id, program_type: 'group_retro', hide: @found_rejection.hide)
         else
-          @group_retro_rejection_array << self.group_rating_rejections.new(reject_reason: 'reject_homogeneity', representative_id: @group_rating.representative_id, program_type: 'group_retro')
+          @group_retro_rejection_array << self.group_rating_rejections.new(reject_reason: "reject_homogeneity_ig_#{policy_calculation.policy_industry_group}", representative_id: @group_rating.representative_id, program_type: 'group_retro')
         end
       end
 
