@@ -17,7 +17,8 @@
   BwcCodesPeoList.import_table('https://s3.amazonaws.com/grouprating/BwcSupportTables/peo_list.csv')
   BwcCodesConstantValue.import_table('https://s3.amazonaws.com/grouprating/BwcSupportTables/bwc_codes_constant_values.csv')
   BwcCodesEmployerRepresentative.import_table('https://s3.amazonaws.com/grouprating/BwcSupportTables/Employer%2BRep%2BList.csv')
-  BwcGroupAcceptRejectList.import_table('https://s3.amazonaws.com/grouprating/BwcSupportTables/2017+GROUP+ACCEPT_REJECT+LISTS+04-28-17.csv')
+  # BwcGroupAcceptRejectList.import_table('https://s3.amazonaws.com/grouprating/BwcSupportTables/2017+GROUP+ACCEPT_REJECT+LISTS+04-28-17.csv')
+  BwcGroupAcceptRejectList.import_table('https://s3.amazonaws.com/grouprating/BwcSupportTables/2018_group_accept_reject.csv')
 
 
   BwcCodesGroupRetroTier.create([
