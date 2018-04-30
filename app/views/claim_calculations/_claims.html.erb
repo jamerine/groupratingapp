@@ -43,11 +43,11 @@
       </div>
       <div class="col-md-2 col-sm-12 col-xs-12 ">
         <h5 class="hidden-md hidden-lg">Claimant Name</h5>
-        <p><%= claim.claimant_name.slice(0..20) %></p>
+        <p><%= claim.claimant_name&.slice(0..20) %></p>
       </div>
       <div class="col-md-1 col-sm-4 col-xs-6 ">
         <h5 class="hidden-md hidden-lg">Injury Date</h5>
-          <p><%= claim.claim_injury_date.strftime("%m/%d/%y") %></p>
+          <p><%= claim.claim_injury_date&.strftime("%m/%d/%y") %></p>
         </div>
       <div class="col-md-1 col-sm-4 col-xs-6 ">
         <h5 class="hidden-md hidden-lg">Handicap Percent</h5>
