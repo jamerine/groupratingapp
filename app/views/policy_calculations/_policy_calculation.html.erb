@@ -53,53 +53,58 @@
 <div class="container text-center">
     <h2>Policy Experience History</h2>
 <div class="row text-center">
-  <div class="col-md-2 col-sm-4 col-xs-6">
+  <div class="col-md-3 col-sm-4 col-xs-6">
     <h5>Total Payroll</h5>
     <p><%= number_to_currency(@policy_calculation.policy_total_four_year_payroll) %></p>
   </div>
-  <div class="col-md-2 col-sm-4 col-xs-6">
+  <div class="col-md-3 col-sm-4 col-xs-6">
     <h5>Credibility Group</h5>
     <p><%= @policy_calculation.policy_credibility_group %></p>
   </div>
-  <div class="col-md-2 col-sm-4 col-xs-6">
+  <div class="col-md-3 col-sm-4 col-xs-6">
     <h5>Credibility %</h5>
     <p><%= @policy_calculation.policy_credibility_percent %></p>
   </div>
-  <div class="col-md-2 col-sm-4 col-xs-6">
+  <div class="col-md-3 col-sm-4 col-xs-6">
     <h5>Max Claim Value</h5>
     <p><%= number_to_currency(@policy_calculation.policy_maximum_claim_value) %></p>
   </div>
-  <div class="col-md-2 col-sm-4 col-xs-6">
+  <div class="col-md-3 col-sm-4 col-xs-6">
     <h5>TEL</h5>
     <p><%= number_to_currency(@policy_calculation.policy_total_expected_losses) %></p>
   </div>
-  <div class="col-md-2 col-sm-4 col-xs-6">
+  <div class="col-md-3 col-sm-4 col-xs-6">
     <h5>TLL</h5>
     <p><%= number_to_currency(@policy_calculation.policy_total_limited_losses) %></p>
   </div>
-  <div class="col-md-2 col-sm-4 col-xs-6">
+  <div class="col-md-3 col-sm-4 col-xs-6">
     <h5>Claim Count</h5>
     <p><%= @policy_calculation.policy_total_claims_count %></p>
   </div>
-  <div class="col-md-2 col-sm-4 col-xs-6">
+  <div class="col-md-3 col-sm-4 col-xs-6">
     <h5>Group TML</h5>
     <p><%= number_to_currency(@policy_calculation.policy_total_modified_losses_group_reduced) %></p>
   </div>
-  <div class="col-md-2 col-sm-4 col-xs-6">
+  <div class="col-md-3 col-sm-4 col-xs-6">
     <h5>Ind TML</h5>
     <p><%= number_to_currency(@policy_calculation.policy_total_modified_losses_individual_reduced) %></p>
   </div>
-  <div class="col-md-2 col-sm-4 col-xs-6">
-    <h5>Group Ratio</h5>
-    <p><%= @policy_calculation.policy_group_ratio %></p>
-  </div>
-  <div class="col-md-2 col-sm-4 col-xs-6">
+
+  <div class="col-md-3 col-sm-4 col-xs-6">
     <h5>Ind TM</h5>
     <p><%= @policy_calculation.policy_individual_total_modifier %></p>
   </div>
-  <div class="col-md-2 col-sm-4 col-xs-6">
+  <div class="col-md-3 col-sm-4 col-xs-6">
     <h5>Ind EMR</h5>
     <p><%= @policy_calculation.policy_individual_experience_modified_rate %></p>
+  </div>
+  <div class="col-md-3 col-sm-4 col-xs-6">
+    <h5>Ind Adjusted EMR</h5>
+    <p><%= @policy_calculation.policy_individual_adjusted_experience_modified_rate %></p>
+  </div>
+  <div class="col-md-3 col-sm-4 col-xs-6">
+    <h5>Group Ratio</h5>
+    <p><%= @policy_calculation.policy_group_ratio %></p>
   </div>
 </div>
 </div>
