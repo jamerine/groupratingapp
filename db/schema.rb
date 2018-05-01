@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180211170825) do
+ActiveRecord::Schema.define(version: 20180430231329) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1157,10 +1157,11 @@ ActiveRecord::Schema.define(version: 20180211170825) do
     t.float    "pending_balance_amount"
     t.float    "advance_deposit_amount"
     t.string   "data_source"
-    t.datetime "created_at",                                      null: false
-    t.datetime "updated_at",                                      null: false
+    t.datetime "created_at",                                          null: false
+    t.datetime "updated_at",                                          null: false
     t.integer  "representative_id"
     t.integer  "account_id"
+    t.float    "policy_individual_adjusted_experience_modified_rate"
   end
 
   add_index "policy_calculations", ["account_id"], name: "index_policy_calculations_on_account_id", using: :btree
