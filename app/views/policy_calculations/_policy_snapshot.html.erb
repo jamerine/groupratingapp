@@ -33,7 +33,7 @@
     <% if policy_calculation.policy_individual_experience_modified_rate.nil? %>
     <p></p>
     <% else %>
-    <p><%= policy_calculation.try(:policy_individual_experience_modified_rate).round(2) %> / <%= policy_calculation.try(:policy_individual_adjusted_experience_modified_rate).round(2) %></p>
+    <p><%= policy_calculation.try(:policy_individual_experience_modified_rate)&.round(2) %> / <%= policy_calculation.try(:policy_individual_adjusted_experience_modified_rate)&.round(2) || 'N/A'%></p>
     <% end %>
   </div>
   <div class="col-md-2">
@@ -45,7 +45,7 @@
     <p><%= number_to_currency(policy_calculation.policy_total_individual_premium, precision: 0) %></p>
   </div>
   <div class="col-md-2">
-    <h5>Std. Premium</h5>
-    <p><%= number_to_currency(policy_calculation.policy_total_standard_premium, precision: 0) %></p>
+    <h5>Std. | Adj. Premium</h5>
+    <p><%= number_to_currency(policy_calculation.policy_total_standard_premium, precision: 0) %> | <%= number_to_currency(policy_calculation.policy_adjusted_standard_premium, precision: 0) %></p>
   </div>
 <% end %>
