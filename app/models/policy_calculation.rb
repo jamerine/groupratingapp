@@ -141,6 +141,8 @@ class PolicyCalculation < ActiveRecord::Base
 
       @policy_total_standard_premium = self.manual_class_calculations.sum(:manual_class_standard_premium).round(0)
 
+      @policy_adjusted_standard_premium = adjust_premium_size_factors(@policy_total_standard_premium)&.round(0)
+
       @collection = self.manual_class_calculations.pluck(:manual_class_industry_group).uniq
 
       @highest_industry_group = {industry_group: @collection.first, standard_premium: self.manual_class_calculations.where(manual_class_industry_group: @collection.first).sum(:manual_class_standard_premium)}
@@ -202,7 +204,7 @@ class PolicyCalculation < ActiveRecord::Base
       @policy_total_individual_premium = 120.00
     end
 
-    self.update_attributes(policy_total_individual_premium: @policy_total_individual_premium, policy_industry_group: @highest_industry_group[:industry_group], policy_total_standard_premium: @policy_total_standard_premium)
+    self.update_attributes(policy_total_individual_premium: @policy_total_individual_premium, policy_industry_group: @highest_industry_group[:industry_group], policy_total_standard_premium: @policy_total_standard_premium, policy_adjusted_standard_premium: @policy_adjusted_standard_premium)
 
     self.manual_class_calculations.each do |manual|
       unless self.policy_total_individual_premium.nil?
@@ -223,6 +225,21 @@ class PolicyCalculation < ActiveRecord::Base
       emr
     else
       emr * 1.05
+    end
+  end
+
+  def adjust_premium_size_factors total_standard_premium
+    return 0 if total_standard_premium < 0
+
+    case total_standard_premium
+    when (0..5000)
+      total_standard_premium
+    when (5001..100000)
+      5000 + (((total_standard_premium || 0) - 5000) * 0.85)
+    when (100000..500000)
+      85750 + (((total_standard_premium || 0) - 100000) * 0.80)
+    else
+      405750 + (((total_standard_premium || 0) - 500000) * 0.75)
     end
   end
 end

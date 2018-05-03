@@ -20,9 +20,11 @@ ActiveAdmin.register PolicyCalculation do
     column 'Group Ratio', :policy_group_ratio
     column 'Ind Total Mod', :policy_individual_total_modifier
     column 'Ind Exp Mod Rate', :policy_individual_experience_modified_rate
+    column 'Ind Adj Exp Mod Rate', :policy_individual_adjusted_experience_modified_rate
     column 'IG', :policy_industry_group
     column 'Current Payroll', :policy_total_current_payroll
     column 'Std Premium', :policy_total_standard_premium
+    column 'Adj Std Premium', :policy_adjusted_standard_premium
     column 'Ind Premium', :policy_total_individual_premium
     column 'Coverage Status', :current_coverage_status
     column 'Status Eff Date', :coverage_status_effective_date
