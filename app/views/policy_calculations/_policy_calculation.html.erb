@@ -39,8 +39,8 @@
       <p><%= number_to_currency(@policy_calculation.policy_total_current_payroll) %></p>
     </div>
     <div class="col-md-3 col-sm-4 col-xs-6 ">
-      <h5>Standard Premium</h5>
-      <p><%= number_to_currency(@policy_calculation.policy_total_standard_premium) %></p>
+      <h5>Std. | Adj. Premium</h5>
+      <p><%= number_to_currency(@policy_calculation.policy_total_standard_premium, precision: 0) %> | <%= number_to_currency(@policy_calculation&.policy_adjusted_standard_premium, precision: 0) %></p>
     </div>
     <div class="col-md-3 col-sm-4 col-xs-6 ">
       <h5>Individual Premium</h5>
@@ -99,7 +99,7 @@
     </div>
     <div class="col-md-3 col-sm-4 col-xs-6">
       <h5>Ind Adjusted EMR</h5>
-      <p><%= @policy_calculation.policy_individual_adjusted_experience_modified_rate %></p>
+      <p><%= @policy_calculation&.policy_individual_adjusted_experience_modified_rate %></p>
     </div>
     <div class="col-md-3 col-sm-4 col-xs-6">
       <h5>Group Ratio</h5>
