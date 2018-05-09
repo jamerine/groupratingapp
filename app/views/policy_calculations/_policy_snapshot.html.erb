@@ -46,6 +46,6 @@
   </div>
   <div class="col-md-2">
     <h5>Std. | Adj. Premium</h5>
-    <p><%= number_to_currency(policy_calculation.policy_total_standard_premium, precision: 0) %> | <%= number_to_currency(policy_calculation.policy_adjusted_standard_premium, precision: 0) %></p>
+    <p><%= number_to_currency(policy_calculation.policy_total_standard_premium, precision: 0) %> | <%= number_to_currency(policy_calculation&.policy_adjusted_standard_premium, precision: 0) %></p>
   </div>
 <% end %>
