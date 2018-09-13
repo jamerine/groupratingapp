@@ -52,6 +52,10 @@
       <% else %>
         <%= link_to "Edit Account Info", edit_account_path(params[:id]), class: 'btn btn-default disabled' %>
       <% end %>
+
+      <% if policy(@account).edit? %>
+        <%= link_to 'Run Group Rating Calculation', account_group_rating_calculation_path(params[:id]), method: :post, class: 'btn btn-primary' %>
+      <% end %>
     </div>
   </div>
 
