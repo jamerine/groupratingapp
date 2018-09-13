@@ -149,6 +149,14 @@ class AccountsController < ApplicationController
     end
   end
 
+  def group_rating_calculation
+    @account = Account.find(params[:account_id])
+    GroupRatingCalculation.new(@account).calculate
+
+    flash[:notice] = "Account Group Rating Calculation Completed."
+    redirect_to @account
+  end
+
 
   def assign
     @account = Account.find(params[:account_id])

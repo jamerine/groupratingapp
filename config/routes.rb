@@ -19,6 +19,7 @@ Rails.application.routes.draw do
     get :risk_report
     get :new_risk_report
     get :roc_report
+    post :group_rating_calculation
 
     resources :notes do
       delete :remove_attachment
