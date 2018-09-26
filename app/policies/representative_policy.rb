@@ -68,6 +68,10 @@ class RepresentativePolicy < ApplicationPolicy
     user.admin?
   end
 
+  def all_account_group_rating?
+    user.admin?
+  end
+
 
 
 

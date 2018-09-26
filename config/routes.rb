@@ -121,6 +121,7 @@ Rails.application.routes.draw do
   end
 
   resources :representatives do
+    get :all_account_group_rating
     get :users_management
     post :fee_calculations
     get :export_manual_classes
