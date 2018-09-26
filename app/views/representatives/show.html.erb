@@ -156,7 +156,11 @@
     <div class="row">
       <div class="col-md-4">
         <h5>Run Worker's Comp Process</h5>
-         <%= link_to "#{@representative.abbreviated_name} Group Rating", new_group_rating_path(representative_id: @representative.id), class: 'btn btn-default' %>
+         <%= link_to "Full Group Rating Process", new_group_rating_path(representative_id: @representative.id), class: 'btn btn-default' %>
+      </div>
+      <div class="col-md-4">
+        <h5>Run Group Rating For All Accounts</h5>
+         <%= link_to "All #{@representative.abbreviated_name} Accounts Group Rating", representative_all_account_group_rating_path(representative_id: @representative.id), class: 'btn btn-default' %>
       </div>
     </div>
     <br>

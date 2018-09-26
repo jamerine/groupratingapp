@@ -241,6 +241,13 @@ class RepresentativesController < ApplicationController
     # redirect_to @representative
   end
 
+  def all_account_group_rating
+    @representative = Representative.find(params[:representative_id])
+    authorize @representative
+    RepresentativeAllAccountRating.perform_async(@representative.id)
+    redirect_to @representative, notice: "Group Rating is being calculated for all accounts under #{@representative.company_name}.  Please allow a few for this process to complete."
+ end
+
   private
 
   def representative_params
