@@ -12,7 +12,6 @@ class ImportFile
       else
         rc.exec("COPY " + table_name + " (single_rec) FROM STDIN WITH DELIMITER AS '|'")
       end
-
       file = open(url)
       while !file.eof?
         # Add row to copy data
