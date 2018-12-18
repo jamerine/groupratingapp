@@ -274,43 +274,43 @@ class Account < ActiveRecord::Base
        end
 
        #Check if Policy_number is on the Accept Reject List for Group Rating
-       @accept_reject_list = BwcGroupAcceptRejectList.find_by(policy_number: self.policy_number_entered)
-       @representative_number_adjust = "#{self.representative.representative_number.to_s.rjust(6, "0")}-80"
-       if @accept_reject_list && (@accept_reject_list.bwc_rep_id != @representative_number_adjust)
-         if @found_rejection = self.group_rating_rejections.find_by(reject_reason: 'reject_partner_conflict', program_type: 'group_rating')
-           @group_rating_rejection_array << self.group_rating_rejections.new(reject_reason: 'reject_partner_conflict', representative_id: @group_rating.representative_id, program_type: 'group_rating', hide: @found_rejection.hide)
-         else
-            @group_rating_rejection_array << self.group_rating_rejections.new(reject_reason: 'reject_partner_conflict', representative_id: @group_rating.representative_id, program_type: 'group_rating')
-          end
-       end
+      #  @accept_reject_list = BwcGroupAcceptRejectList.find_by(policy_number: self.policy_number_entered)
+      #  @representative_number_adjust = "#{self.representative.representative_number.to_s.rjust(6, "0")}-80"
+      #  if @accept_reject_list && (@accept_reject_list.bwc_rep_id != @representative_number_adjust)
+      #    if @found_rejection = self.group_rating_rejections.find_by(reject_reason: 'reject_partner_conflict', program_type: 'group_rating')
+      #      @group_rating_rejection_array << self.group_rating_rejections.new(reject_reason: 'reject_partner_conflict', representative_id: @group_rating.representative_id, program_type: 'group_rating', hide: @found_rejection.hide)
+      #    else
+      #       @group_rating_rejection_array << self.group_rating_rejections.new(reject_reason: 'reject_partner_conflict', representative_id: @group_rating.representative_id, program_type: 'group_rating')
+      #     end
+      #  end
 
        # CONDITIONS FOR State Fund and Self Insured PEO
-       if peo_records = ProcessPolicyExperiencePeriodPeo.where(policy_number: policy_calculation.policy_number, representative_number: @group_rating.process_representative)
-         peo_records.each do |peo_record|
-           if (peo_record.manual_class_sf_peo_lease_effective_date.nil? && peo_record.manual_class_sf_peo_lease_termination_date.nil?)
-             if
-               ((group_rating_range === peo_record.manual_class_si_peo_lease_effective_date) || (group_rating_range === peo_record.manual_class_si_peo_lease_termination_date))
-               if @accept_reject_list && (@accept_reject_list.bwc_rep_id != @representative_number_adjust)
-                 if @found_rejection = self.group_rating_rejections.find_by(reject_reason: 'reject_si_peo', program_type: 'group_rating')
-                   @group_rating_rejection_array << self.group_rating_rejections.new(reject_reason: 'reject_si_peo', representative_id: @group_rating.representative_id, program_type: 'group_rating', hide: @found_rejection.hide)
-                 else
-                    @group_rating_rejection_array << self.group_rating_rejections.new(reject_reason: 'reject_si_peo', representative_id: @group_rating.representative_id, program_type: 'group_rating')
-                  end
+      if peo_records = ProcessPolicyExperiencePeriodPeo.where(policy_number: policy_calculation.policy_number, representative_number: @group_rating.process_representative)
+        peo_records.each do |peo_record|
+          if (peo_record.manual_class_sf_peo_lease_effective_date.nil? && peo_record.manual_class_sf_peo_lease_termination_date.nil?)
+            if
+              ((group_rating_range === peo_record.manual_class_si_peo_lease_effective_date) || (group_rating_range === peo_record.manual_class_si_peo_lease_termination_date))
+              # if @accept_reject_list && (@accept_reject_list.bwc_rep_id != @representative_number_adjust)
+                if @found_rejection = self.group_rating_rejections.find_by(reject_reason: 'reject_si_peo', program_type: 'group_rating')
+                  @group_rating_rejection_array << self.group_rating_rejections.new(reject_reason: 'reject_si_peo', representative_id: @group_rating.representative_id, program_type: 'group_rating', hide: @found_rejection.hide)
+                else
+                  @group_rating_rejection_array << self.group_rating_rejections.new(reject_reason: 'reject_si_peo', representative_id: @group_rating.representative_id, program_type: 'group_rating')
                 end
-             end
-           else
-             if
-               ((!peo_record.manual_class_sf_peo_lease_effective_date.nil? && peo_record.manual_class_sf_peo_lease_termination_date.nil?) || (peo_record.manual_class_sf_peo_lease_effective_date > peo_record.manual_class_sf_peo_lease_termination_date)) ||
-               ((group_rating_range === peo_record.manual_class_sf_peo_lease_effective_date) && (peo_record.manual_class_sf_peo_lease_termination_date.nil?))
-                 if @found_rejection = self.group_rating_rejections.find_by(reject_reason: 'reject_sf_peo', program_type: 'group_rating')
-                   @group_rating_rejection_array << self.group_rating_rejections.new(reject_reason: 'reject_sf_peo', representative_id: @group_rating.representative_id, program_type: 'group_rating', hide: @found_rejection.hide)
-                 else
+              # end
+            end
+          else
+            if
+              ((!peo_record.manual_class_sf_peo_lease_effective_date.nil? && peo_record.manual_class_sf_peo_lease_termination_date.nil?) || (peo_record.manual_class_sf_peo_lease_effective_date > peo_record.manual_class_sf_peo_lease_termination_date)) ||
+              ((group_rating_range === peo_record.manual_class_sf_peo_lease_effective_date) && (peo_record.manual_class_sf_peo_lease_termination_date.nil?))
+                if @found_rejection = self.group_rating_rejections.find_by(reject_reason: 'reject_sf_peo', program_type: 'group_rating')
+                  @group_rating_rejection_array << self.group_rating_rejections.new(reject_reason: 'reject_sf_peo', representative_id: @group_rating.representative_id, program_type: 'group_rating', hide: @found_rejection.hide)
+                else
                     @group_rating_rejection_array << self.group_rating_rejections.new(reject_reason: 'reject_sf_peo', representative_id: @group_rating.representative_id, program_type: 'group_rating')
                   end
-             end
-           end
-         end
-       end
+            end
+          end
+        end
+      end
 
        if @group_rating_rejection_array.collect(&:reject_reason).include? 'reject_pending_predecessor'
           qualification = "pending_predecessor"
@@ -569,21 +569,21 @@ class Account < ActiveRecord::Base
 
       ## Rejection for Partner Conflict
       # Check BWCGroupAcceptRejectList
-      accept_reject_list = BwcGroupAcceptRejectList.find_by(policy_number: self.policy_number_entered)
-      representative_number_adjust = "#{self.representative.representative_number.to_s.rjust(6, "0")}"
-      in_bwc_list = @accept_reject_list&.bwc_rep_id&.ljust(6, @representative_number_adjust).present?
-      # Check AccountPrograms of other representatives
-      other_accounts = Account.where("policy_number_entered = ? and representative_id != ?", self.policy_number_entered, self.representative_id).pluck(:id)
-      other_account_programs = AccountProgram.where("effective_start_date = ? and effective_end_date = ? and account_id in (?)", @group_rating.program_year_lower_date, @group_rating.program_year_upper_date, other_accounts)
-      in_other_acct_programs = other_account_programs.present?
+      # @accept_reject_list = BwcGroupAcceptRejectList.find_by(policy_number: self.policy_number_entered)
+      # representative_number_adjust = "#{self.representative.representative_number.to_s.rjust(6, "0")}"
+      # in_bwc_list = @accept_reject_list&.bwc_rep_id&.ljust(6, @representative_number_adjust).present?
+      # # Check AccountPrograms of other representatives
+      # other_accounts = Account.where("policy_number_entered = ? and representative_id != ?", self.policy_number_entered, self.representative_id).pluck(:id)
+      # other_account_programs = AccountProgram.where("effective_start_date = ? and effective_end_date = ? and account_id in (?)", @group_rating.program_year_lower_date, @group_rating.program_year_upper_date, other_accounts)
+      # in_other_acct_programs = other_account_programs.present?
 
-      if in_bwc_list || in_other_acct_programs
-        if @found_rejection = self.group_rating_rejections.find_by(reject_reason: 'reject_partner_conflict', program_type: 'group_retro')
-          @group_retro_rejection_array << self.group_rating_rejections.new(reject_reason: 'reject_partner_conflict', representative_id: @group_rating.representative_id, program_type: 'group_retro', hide: @found_rejection.hide)
-        else
-          @group_retro_rejection_array << self.group_rating_rejections.new(reject_reason: 'reject_partner_conflict', representative_id: @group_rating.representative_id, program_type: 'group_retro')
-        end
-      end
+      # if in_bwc_list || in_other_acct_programs
+      #   if @found_rejection = self.group_rating_rejections.find_by(reject_reason: 'reject_partner_conflict', program_type: 'group_retro')
+      #     @group_retro_rejection_array << self.group_rating_rejections.new(reject_reason: 'reject_partner_conflict', representative_id: @group_rating.representative_id, program_type: 'group_retro', hide: @found_rejection.hide)
+      #   else
+      #     @group_retro_rejection_array << self.group_rating_rejections.new(reject_reason: 'reject_partner_conflict', representative_id: @group_rating.representative_id, program_type: 'group_retro')
+      #   end
+      # end
 
 
       if @group_retro_rejection_array.collect(&:reject_reason).include? 'reject_pending_predecessor'
