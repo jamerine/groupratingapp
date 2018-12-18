@@ -194,6 +194,7 @@ class PolicyCalculation < ActiveRecord::Base
           # Added logic to update current payroll on 7/24/07
           @policy_total_current_payroll = self.manual_class_calculations.sum(:manual_class_current_estimated_payroll).round(0)
           @policy_total_standard_premium = self.manual_class_calculations.sum(:manual_class_standard_premium).round(0)
+          @policy_adjusted_standard_premium = adjust_premium_size_factors(@policy_total_standard_premium)&.round(0)
           @policy_total_individual_premium = self.manual_class_calculations.sum(:manual_class_estimated_individual_premium).round(2)
           self.update_attributes(policy_total_current_payroll: @policy_total_current_payroll, policy_total_standard_premium: @policy_total_standard_premium)
         end

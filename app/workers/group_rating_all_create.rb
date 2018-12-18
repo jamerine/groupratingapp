@@ -265,7 +265,7 @@ class GroupRatingAllCreate
           @account.group_rating
           @account.group_retro
       else
-        
+
         # PREDECESSOR PAYROLL FIX - 9/5/2017
         @policy_demographic = PolicyCalculation.find_by(policy_number: policy_number, representative_number: process_representative)
         # @policy_demographic = PolicyCalculation.find_by(policy_number: 1740451, representative_number: 1740)
