@@ -1,0 +1,4 @@
+cat public/images/.gitignore
+*
+*/
+!.gitignore

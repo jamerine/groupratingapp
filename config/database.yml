@@ -57,6 +57,7 @@ development:
   database: groupratingapp_development
   username: groupratingapp
   password: <%= ENV['GROUPRATINGAPP_DATABASE_PASSWORD'] %>
+  host: postgres	
 
 test:
   <<: *default

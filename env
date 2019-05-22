@@ -1,0 +1,5 @@
+DATABASE_URL=postgresql://groupratingapp:password@postgres/groupratingapp_development?pool=5
+GROUPRATINGAPP_DATABASE_PASSWORD=password
+SENDGRID_USERNAME=apikey
+SENDGRID_PASSWORD=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
+REDISCLOUD_URL=redis://redis:6379
