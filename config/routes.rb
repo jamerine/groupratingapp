@@ -18,6 +18,7 @@ Rails.application.routes.draw do
     collection { post :import_account_process }
     get :risk_report
     get :new_risk_report
+    get :retention
     get :roc_report
     post :group_rating_calculation
 
