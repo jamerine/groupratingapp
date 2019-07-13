@@ -81,15 +81,7 @@ class AccountsController < ApplicationController
 
 
   def show
-    @account = Account.includes(:group_rating_rejections, :group_rating_exceptions, :policy_calculation, :affiliates, :contacts, :quotes, :account_programs).find(params[:id])
-    @account_changes = @account.versions.map{|v| [v.created_at, v.changeset]}
-    @statuses = Account.statuses
-    @representative = Representative.find(@account.representative_id)
-    @group_rating = GroupRating.find_by(representative_id: @representative.id)
-    @new_payroll_calculation = PayrollCalculation.new
-    @group_rating_rejections = @account.group_rating_rejections.where(program_type: 'group_rating')
-    @group_retro_rejections = @account.group_rating_rejections.where(program_type: 'group_retro')
-    @notes = @account.notes.order(created_at: :desc).first(5)
+    get_details
   end
 
 
@@ -205,6 +197,9 @@ class AccountsController < ApplicationController
 
   end
 
+  def retention
+    get_details
+  end
 
   def risk_report
     @account = Account.find(params[:account][:account_id])
@@ -327,6 +322,18 @@ class AccountsController < ApplicationController
 
 
   private
+
+  def get_details
+    @account = Account.includes(:group_rating_rejections, :group_rating_exceptions, :policy_calculation, :affiliates, :contacts, :quotes, :account_programs).find(params[:id] || params[:account_id])
+    @account_changes = @account.versions.map{|v| [v.created_at, v.changeset]}
+    @statuses = Account.statuses
+    @representative = Representative.find(@account.representative_id)
+    @group_rating = GroupRating.find_by(representative_id: @representative.id)
+    @new_payroll_calculation = PayrollCalculation.new
+    @group_rating_rejections = @account.group_rating_rejections.where(program_type: 'group_rating')
+    @group_retro_rejections = @account.group_rating_rejections.where(program_type: 'group_retro')
+    @notes = @account.notes.order(created_at: :desc).first(5)
+  end
 
   def account_params
     params.require(:account).permit(:representative_id, :name, :policy_number_entered, :street_address, :street_address_2, :city, :state, :zip_code, :business_phone_number, :business_email_address, :website_url, :group_rating_qualification, :group_rating_tier, :group_fees, :user_override, :industry_group, :group_dues, :total_costs, :status, :federal_identification_number, :cycle_date, :request_date, :quarterly_request, :weekly_request, :ac3_approval, :fee_override)
