@@ -1,3 +1,11 @@
+# == Schema Information
+#
+# Table name: mrcls
+#
+#  id         :integer          not null, primary key
+#  single_rec :string
+#
+
 class Mrcl < ActiveRecord::Base
   require 'activerecord-import'
   require 'open-uri'

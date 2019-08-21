@@ -1,3 +1,17 @@
+# == Schema Information
+#
+# Table name: group_rating_rejections
+#
+#  id                :integer          not null, primary key
+#  account_id        :integer
+#  representative_id :integer
+#  reject_reason     :string
+#  created_at        :datetime         not null
+#  updated_at        :datetime         not null
+#  program_type      :string
+#  hide              :boolean
+#
+
 class GroupRatingRejection < ActiveRecord::Base
   belongs_to :account
   belongs_to :representative
