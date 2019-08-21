@@ -1,3 +1,14 @@
+# == Schema Information
+#
+# Table name: bwc_codes_peo_lists
+#
+#  id            :integer          not null, primary key
+#  policy_type   :string
+#  policy_number :integer
+#  created_at    :datetime
+#  updated_at    :datetime
+#
+
 class BwcCodesPeoList < ActiveRecord::Base
   require 'activerecord-import'
   require 'open-uri'
