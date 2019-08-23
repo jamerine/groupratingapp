@@ -1,10 +1,17 @@
 <div class="container">
   <div class="jumbotron">
     <h1 class="text-center">Current Rates In Use</h1>
-    <%= @representatives_list %>
   </div>
 
-  <div>
+  <div class="clearfix">
+    <div class="pull-right">
+      <button class="btn btn-success rate-toggle">
+        Update Rates
+      </button>
+    </div>
+  </div>
+
+  <div id="rates-collapse">
     <!-- Nav tabs -->
     <ul class="nav nav-tabs" role="tablist">
       <li role="presentation" class="active">
@@ -30,23 +37,61 @@
         <%= render 'limited_loss_rates' %>
       </div>
     </div>
+  </div>
 
+  <div id="upload-rates" style="margin-top: 15px; display: none;">
+    <%= form_for :rates do |f| %>
+      <h2>Update Rates</h2>
+      <br>
+      <h4>Both fields are optional and only the field(s) with a file uploaded will have its rates updated.</h4>
+
+      <br>
+      <div class="row">
+        <div class="form-group col-md-6">
+          <%= f.label :base_rates_file, 'Update Base and Expected Loss Rates' %>
+          <%= f.file_field :base_rates_file %>
+        </div>
+
+        <div class="form-group col-md-6">
+          <%= f.label :limited_loss_rates_file, 'Update Limited Loss Rates' %>
+          <%= f.file_field :limited_loss_rates_file %>
+        </div>
+      </div>
+
+      <div class="form-group text-right">
+        <button class="btn btn-danger rate-toggle" type="button">
+          Cancel
+        </button>
+
+        <%= f.submit 'Update', class: 'btn btn-info' %>
+      </div>
+    <% end %>
   </div>
 </div>
 
 <script type="application/javascript">
   $(function () {
     $('.datatable').DataTable({
-      // ajax: ...,
-      // autoWidth: false,
-      // pagingType: 'full_numbers',
-      // processing: true,
-      // serverSide: true,
       order: [[1, 'asc']]
+    });
 
-      // Optional, if you want full pagination controls.
-      // Check dataTables documentation to learn more about available options.
-      // http://datatables.net/reference/option/pagingType
+    $('.rate-toggle').click(function () {
+      var $ratesCollapse  = $('#rates-collapse');
+      var $updateCollapse = $('#upload-rates');
+
+      if ($ratesCollapse.hasClass('hiding')) {
+        $ratesCollapse.removeClass('hiding');
+        $ratesCollapse.show();
+
+        $updateCollapse.addClass('hiding');
+        $updateCollapse.hide();
+      } else {
+        $ratesCollapse.addClass('hiding');
+        $ratesCollapse.hide();
+
+        $updateCollapse.removeClass('hiding');
+        $updateCollapse.show();
+      }
     });
   });
 </script>
