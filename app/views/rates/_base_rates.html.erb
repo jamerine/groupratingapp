@@ -1,0 +1,20 @@
+<table class="table datatable">
+  <thead>
+  <tr>
+    <th>Id</th>
+    <th>Industry Group Number</th>
+    <th>Class Code</th>
+    <th>Rate</th>
+  </tr>
+  </thead>
+  <tbody>
+  <% @base_rates.each do |rate| %>
+    <tr>
+      <td><%= rate.id %> </td>
+      <td><%= rate.try(:industry_group) %> </td>
+      <td><%= rate.class_code %> </td>
+      <td><%= rate.base_rate %> </td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>

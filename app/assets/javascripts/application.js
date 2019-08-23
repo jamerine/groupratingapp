@@ -24,22 +24,23 @@ function validateFiles(inputFile) {
   // var allowedExtension = ["jpg", "jpeg", "gif", "png"];
 
   var extName;
-  var maxFileSize = $(inputFile).data('max-file-size');
+  var maxFileSize  = $(inputFile).data('max-file-size');
   var sizeExceeded = false;
 
-  $.each(inputFile.files, function() {
-    if (this.size && maxFileSize && this.size > parseInt(maxFileSize)) {sizeExceeded=true;};
+  $.each(inputFile.files, function () {
+    if (this.size && maxFileSize && this.size > parseInt(maxFileSize)) {
+      sizeExceeded = true;
+    }
+    ;
     extName = this.name.split('.').pop();
   });
   if (sizeExceeded) {
     window.alert(maxExceededMessage);
     $(inputFile).val('');
-  };
+  }
 }
-
-
 
 // Javascript to check_all boxes
 $('#selectAll').click(function (e) {
-    $(this).closest('table').find('td input:checkbox').prop('checked', this.checked);
+  $(this).closest('table').find('td input:checkbox').prop('checked', this.checked);
 });

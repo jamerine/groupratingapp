@@ -1,0 +1,20 @@
+<table class="table datatable">
+  <thead>
+  <tr>
+    <th>Id</th>
+    <th>Industry Group Number</th>
+    <th>Credibility Group</th>
+    <th>Limited Loss Ratio</th>
+  </tr>
+  </thead>
+  <tbody>
+  <% @limited_rates.each do |rate| %>
+    <tr>
+      <td><%= rate.id %> </td>
+      <td><%= rate.try(:industry_group) %> </td>
+      <td><%= rate.credibility_group %> </td>
+      <td><%= rate.limited_loss_ratio %> </td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
