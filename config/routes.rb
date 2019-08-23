@@ -6,7 +6,6 @@ Rails.application.routes.draw do
   ActiveAdmin.routes(self)
   mount Sidekiq::Web, at: '/sidekiq'
 
-
   resources :accounts do
     get :edit_group_rating
     get :edit_group_retro
@@ -43,8 +42,8 @@ Rails.application.routes.draw do
   end
 
   resources :democ_detail_records do
-     collection { post :parse }
-     collection { delete :destroy}
+    collection { post :parse }
+    collection { delete :destroy }
   end
 
   resources :fees do
@@ -66,38 +65,38 @@ Rails.application.routes.draw do
   end
 
   resources :manual_class_calculations do
-    collection {get 'create_manual_class_objects'}
+    collection { get 'create_manual_class_objects' }
   end
 
   resources :mremp_employer_experience do
-     collection { post :parse }
-     collection { delete :destroy}
+    collection { post :parse }
+    collection { delete :destroy }
   end
 
   resources :mrcl_detail_records do
-     collection { post :parse }
-     collection { delete :destroy}
+    collection { post :parse }
+    collection { delete :destroy }
   end
 
   resources :parse do
-    collection { delete :destroy}
+    collection { delete :destroy }
   end
 
   resources :payroll_calculations
 
   resources :pcomb_detail_records do
-     collection { post :parse }
-     collection { delete :destroy}
+    collection { post :parse }
+    collection { delete :destroy }
   end
 
 
   resources :phmgn_detail_records do
-     collection { post :parse }
-     collection { delete :destroy}
+    collection { post :parse }
+    collection { delete :destroy }
   end
 
   resources :policy_calculations do
-    collection {get 'create_policy_objects'}
+    collection { get 'create_policy_objects' }
   end
 
   resources :policy_coverage_status_histories
@@ -141,20 +140,20 @@ Rails.application.routes.draw do
   resources :representatives_users
 
   resources :sc220_employer_demographics do
-     collection { post :parse }
-     collection { delete :destroy}
+    collection { post :parse }
+    collection { delete :destroy }
   end
 
   resources :sc230_employer_demographics do
-     collection { post :parse }
-     collection { delete :destroy}
+    collection { post :parse }
+    collection { delete :destroy }
   end
 
   devise_for :users, controllers: {
-        sessions: 'users/sessions',
-        confirmations: 'users/confirmations',
-        registrations: 'users/registrations',
-      }
+    sessions:      'users/sessions',
+    confirmations: 'users/confirmations',
+    registrations: 'users/registrations',
+  }
 
   resources :users, except: :create
 
@@ -163,6 +162,8 @@ Rails.application.routes.draw do
   resources :versions
 
   resources :welcome
+
+  resources :rates
 
   root 'welcome#index'
 

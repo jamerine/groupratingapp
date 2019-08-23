@@ -11,9 +11,12 @@
 #
 
 class BwcCodesBaseRatesExpLossRate < ActiveRecord::Base
-
   require 'activerecord-import'
   require 'open-uri'
+
+  has_one :bwc_codes_ncci_manual_class, foreign_key: :ncci_manual_classification, primary_key: :class_code
+
+  delegate :industry_group, to: :bwc_codes_ncci_manual_class, prefix: false, allow_nil: true
 
   def self.import_table(url)
     time1 = Time.new
