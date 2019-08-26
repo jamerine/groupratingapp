@@ -9,12 +9,14 @@
   </thead>
   <tbody>
   <% @base_rates.each do |rate| %>
-    <tr>
-      <td><%= rate.id %> </td>
-      <td><%= rate.try(:industry_group) %> </td>
-      <td><%= rate.class_code %> </td>
-      <td><%= rate.expected_loss_rate %> </td>
-    </tr>
+    <% if rate.industry_group.present? && rate.class_code.present? %>
+      <tr>
+        <td><%= rate.id %> </td>
+        <td><%= rate.try(:industry_group) %> </td>
+        <td><%= rate.class_code %> </td>
+        <td><%= rate.expected_loss_rate %> </td>
+      </tr>
+    <% end %>
   <% end %>
   </tbody>
 </table>
