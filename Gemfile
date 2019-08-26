@@ -79,6 +79,8 @@ gem 'combine_pdf'
 
 gem 'rb-readline'
 
+gem 'rubyXL'
+
 # Use Trix for WYSIWYG rich HTML text editor
 gem 'trix'
 

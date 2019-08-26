@@ -336,6 +336,9 @@ GEM
       rspec-support (~> 3.5.0)
     rspec-support (3.5.0)
     ruby-rc4 (0.1.5)
+    rubyXL (3.4.6)
+      nokogiri (>= 1.4.4)
+      rubyzip (>= 1.1.6)
     ruby_dep (1.5.0)
     rubyzip (1.2.0)
     safe_yaml (1.0.4)
@@ -445,6 +448,7 @@ DEPENDENCIES
   rb-readline
   redis-rails
   rspec-rails (~> 3.5)
+  rubyXL
   rubyzip
   sass-rails (~> 5.0)
   sdoc (~> 0.4.0)
