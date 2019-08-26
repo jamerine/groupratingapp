@@ -1,0 +1,25 @@
+<table class="table datatable">
+  <thead>
+  <tr>
+    <th>Industry Group Number</th>
+    <th>Credibility Group</th>
+    <th>Old Rate</th>
+    <th>New Rate</th>
+    <th>% Change</th>
+  </tr>
+  </thead>
+  <tbody>
+  <% @limited_loss_rates.each do |rate| %>
+    <% if rate[:industry_group].present? && rate[:credibility_number].present? %>
+      <% percent_change = calculate_rate_change(rate[:old_loss_ratio].to_f, rate[:loss_ratio].to_f) %>
+      <tr>
+        <td><%= rate[:industry_group] %> </td>
+        <td><%= rate[:credibility_number] %> </td>
+        <td><%= rate[:old_loss_ratio] %> </td>
+        <td><%= rate[:loss_ratio] %> </td>
+        <td class="<%= calculate_cell_color(percent_change) %>"><%= percent_change %> </td>
+      </tr>
+    <% end %>
+  <% end %>
+  </tbody>
+</table>
