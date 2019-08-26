@@ -19,7 +19,7 @@
       <% end %>
 
       <% if @limited_loss_rates.any? %>
-        <li role="presentation">
+        <li role="presentation" class="<%= 'active' unless @base_rates.any? %>">
           <a href="#limited-loss-rates" aria-controls="limited-loss-rates" role="tab" data-toggle="tab">Limited Loss Rates</a>
         </li>
       <% end %>
@@ -34,8 +34,8 @@
       <% end %>
 
       <% if @limited_loss_rates.any? %>
-        <div role="tabpanel" class="tab-pane fade" id="limited-loss-rates" style="padding-top: 25px;">
-          <%= render 'limited_loss_rates' %>
+        <div role="tabpanel" class="tab-pane fade <%= 'in active' unless @base_rates.any? %>" id="limited-loss-rates" style="padding-top: 25px;">
+          <%= render 'limited_loss_rates_diff' %>
         </div>
       <% end %>
     </div>
