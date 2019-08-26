@@ -1,0 +1,51 @@
+<div class="container">
+  <div class="jumbotron">
+    <h1 class="text-center">Diff Uploaded Rates</h1>
+  </div>
+
+  <div class="clearfix">
+    <div class="pull-right">
+      <%= link_to 'Return to Current Rates', rates_path, class: 'btn btn-info' %>
+    </div>
+  </div>
+
+  <div id="rates-collapse">
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs" role="tablist">
+      <% if @base_rates.any? %>
+        <li role="presentation" class="active">
+          <a href="#base-rates" aria-controls="base-rates" role="tab" data-toggle="tab">NCCI Rates</a>
+        </li>
+      <% end %>
+
+      <% if @limited_loss_rates.any? %>
+        <li role="presentation">
+          <a href="#limited-loss-rates" aria-controls="limited-loss-rates" role="tab" data-toggle="tab">Limited Loss Rates</a>
+        </li>
+      <% end %>
+    </ul>
+
+    <!-- Tab panes -->
+    <div class="tab-content">
+      <% if @base_rates.any? %>
+        <div role="tabpanel" class="tab-pane fade in active" id="base-rates" style="padding-top: 25px;">
+          <%= render 'base_rates_diff' %>
+        </div>
+      <% end %>
+
+      <% if @limited_loss_rates.any? %>
+        <div role="tabpanel" class="tab-pane fade" id="limited-loss-rates" style="padding-top: 25px;">
+          <%= render 'limited_loss_rates' %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<script type="application/javascript">
+  $(function () {
+    $('.datatable').DataTable({
+      order: [[1, 'asc']]
+    });
+  });
+</script>

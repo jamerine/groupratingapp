@@ -10,15 +10,18 @@ class RatesController < ApplicationController
   def create
     base_rates_file    = rates_params[:base_rates_file]
     limited_rates_file = rates_params[:limited_loss_rates_file]
+    @base_rates = []
+    @limited_loss_rates = []
 
     if base_rates_file.present?
-      base_rate_hash = parse_csv(base_rates_file)
+      @base_rates = parse_csv(base_rates_file)
 
-      if base_rate_hash.nil?
+      if @base_rates.nil?
         flash[:error] = 'Something went wrong on import!'
       else
-        update_class_codes(base_rate_hash)
-        update_base_rates(base_rate_hash)
+        # update_class_codes(@base_rates)
+        # update_base_rates(@base_rates)
+
         flash[:notice] = 'Successfully Imported File!'
       end
     end
@@ -27,7 +30,7 @@ class RatesController < ApplicationController
       limited_rates_hash = parse_limited_csv(limited_rates_file)
     end
 
-    redirect_to action: :index
+    render :edit
   end
 
   private
@@ -70,10 +73,14 @@ class RatesController < ApplicationController
   def create_import_hash(file_data)
     file_data.map do |column|
       {
-        industry_group:     column[0],
-        class_code:         column[1],
-        base_rate:          column[2],
-        expected_loss_rate: column[6]
+        industry_group:               column[0],
+        class_code:                   column[1],
+        base_rate:                    column[2],
+        base_rate_old:                column[3],
+        percent_change_base_rate:     column[4],
+        expected_loss_rate:           column[6],
+        expected_loss_rate_old:       column[7],
+        percent_change_expected_rate: column[8]
       }
     end
   end
