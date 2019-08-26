@@ -19,10 +19,10 @@
         <td><%= rate[:class_code] %> </td>
         <td><%= rate[:base_rate_old] %> </td>
         <td><%= rate[:base_rate] %> </td>
-        <td class="table-primary"><%= rate[:percent_change_base_rate] %> </td>
+        <td class="<%= calculate_cell_color(rate[:percent_change_base_rate]) %>"><%= rate[:percent_change_base_rate] %> </td>
         <td><%= rate[:expected_loss_rate_old] %> </td>
         <td><%= rate[:expected_loss_rate] %> </td>
-        <td><%= rate[:percent_change_expected_rate] %> </td>
+        <td class="<%= calculate_cell_color(rate[:percent_change_expected_rate]) %>"><%= rate[:percent_change_expected_rate] %> </td>
       </tr>
     <% end %>
   <% end %>
