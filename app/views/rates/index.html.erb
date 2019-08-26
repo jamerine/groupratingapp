@@ -40,7 +40,7 @@
   </div>
 
   <div id="upload-rates" style="margin-top: 15px; display: none;">
-    <%= form_for :rates do |f| %>
+    <%= form_for :rates, multipart: true do |f| %>
       <h2>Update Rates</h2>
       <br>
       <h4>Both fields are optional and only the field(s) with a file uploaded will have its rates updated.</h4>
