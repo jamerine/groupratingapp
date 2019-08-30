@@ -217,6 +217,8 @@ class PolicyCalculation < ActiveRecord::Base
     #  need policy_individual_experience_modified_rate, administrative_rate for manual_class
       @administrative_rate = (1 + BwcCodesConstantValue.find_by(name: 'administrative_rate', completed_date: nil).rate )
 
+      # TODO: Potentially ADD DWRF Rate Here
+
       self.manual_class_calculations.find_each do |manual_class_calculation|
         manual_class_calculation.calculate_premium(self.policy_individual_experience_modified_rate, @administrative_rate )
       end
