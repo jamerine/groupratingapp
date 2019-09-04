@@ -94,11 +94,11 @@ class RatesController < ApplicationController
   end
 
   def handle_old_base_data_transfer
-    BwcCodesBaseRatesExpLossRate.all.includes(:bwc_codes_ncci_manual_class).each { |rate| BwcCodesBaseRatesHistoricalDatum.find_or_create_by(year: Time.now.year, class_code: rate.class_code, industry_group: rate.industry_group, base_rate: rate.base_rate, expected_loss_rate: rate.expected_loss_rate) }
+    BwcCodesBaseRatesExpLossRate.all.includes(:bwc_codes_ncci_manual_class).each { |rate| BwcCodesBaseRatesHistoricalDatum.find_or_create_by(year: Time.now.year - 1, class_code: rate.class_code, industry_group: rate.industry_group, base_rate: rate.base_rate, expected_loss_rate: rate.expected_loss_rate) }
   end
 
   def handle_old_limited_loss_data_transfer
-    BwcCodesLimitedLossRatio.all.each { |rate| BwcCodesLimitedLossRatesHistoricalDatum.find_or_create_by(year: Time.now.year, industry_group: rate.industry_group, credibility_group: rate.credibility_group, limited_loss_ratio: rate.limited_loss_ratio) }
+    BwcCodesLimitedLossRatio.all.each { |rate| BwcCodesLimitedLossRatesHistoricalDatum.find_or_create_by(year: Time.now.year - 1, industry_group: rate.industry_group, credibility_group: rate.credibility_group, limited_loss_ratio: rate.limited_loss_ratio) }
   end
 
   def parse_csv(csv_file)
