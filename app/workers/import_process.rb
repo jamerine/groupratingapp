@@ -60,6 +60,5 @@ class ImportProcess
       ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/PDEMOFILE", "pdemos", import_id, group_rating_id, all_process)
       ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/PEMHSFILE", "pemhs", import_id, group_rating_id, all_process)
       ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/PCOVGFILE", "pcovgs", import_id, group_rating_id, all_process)
-
     end
 end
