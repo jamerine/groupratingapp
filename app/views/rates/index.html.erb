@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container" style="margin-bottom: 100px;">
   <div class="jumbotron">
     <h1 class="text-center">Current Rates In Use</h1>
   </div>
@@ -11,7 +11,7 @@
     </div>
   </div>
 
-  <div id="rates-collapse">
+  <div id="rates-collapse" style="display: none;">
     <!-- Nav tabs -->
     <ul class="nav nav-tabs" role="tablist">
       <li role="presentation" class="active">
@@ -39,22 +39,81 @@
     </div>
   </div>
 
-  <div id="upload-rates" style="margin-top: 15px; display: none;">
+  <div id="upload-rates" style="margin-top: 15px;">
     <%= form_for :rates, multipart: true do |f| %>
       <h2>Update Rates</h2>
-      <br>
-      <h4>Both fields are optional and only the field(s) with a file uploaded will have its rates updated.</h4>
+      <h5 class="text-bold"><em>*All fields are optional and only the field(s) with data will have its rates updated.</em></h5>
+      <hr>
 
-      <br>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="row">
+            <div class="form-group col-md-6">
+              <dl>
+                <dt>Current Administrative Rate</dt>
+                <dd><%= @administrative_rate.try(:rate) %></dd>
+              </dl>
+
+              <%= f.label :administrative_rate, 'New Administrative Rate', class: 'form-control-label' %>
+              <%= f.number_field :administrative_rate, class: 'form-control', step: 0.001 %>
+            </div>
+            <div class="form-group col-md-6">
+              <dl>
+                <dt>Current Administrative Start Rate</dt>
+                <dd><%= l @administrative_rate.try(:start_date) %></dd>
+              </dl>
+
+              <%= f.label :administrative_rate_start_date, 'New Administrative Rate Start Date', class: 'form-control-label' %>
+              <%= f.text_field :administrative_rate_start_date, class: 'form-control' %>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="row">
+            <div class="form-group col-md-6">
+              <table class="table table-sm table-bordered table-condensed">
+                <thead>
+                <tr>
+                  <th>Industry Group</th>
+                  <th>Retro Discount Tier</th>
+                </tr>
+                </thead>
+                <tbody>
+                <% @retro_tiers.each do |retro_tier| %>
+                  <tr>
+                    <td><%= retro_tier.industry_group %></td>
+                    <td><%= retro_tier.discount_tier %></td>
+                  </tr>
+                <% end %>
+                </tbody>
+              </table>
+
+            </div>
+            <div class="form-group col-md-6">
+              <% @retro_tiers.each do |retro_tier| %>
+                <div class="form-group">
+                  <input type="hidden" name="rates[retro_tiers][][industry_group]" value="<%= retro_tier.industry_group %>" />
+                  <label for="rates_retro_tiers_discount_tier" class="form-control-label"><%= 'New Industry Group ' + retro_tier.industry_group.to_s + ' Discount Rate' %></label>
+                  <input type="number" step="0.01" title="rates_retro_tiers_discount_tier" name="rates[retro_tiers][][discount_tier]" class="form-control"/>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <hr>
+
       <div class="row">
         <div class="form-group col-md-6">
-          <%= f.label :base_rates_file, 'Update Base and Expected Loss Rates' %>
-          <%= f.file_field :base_rates_file %>
+          <%= f.label :base_rates_file, 'Update Base and Expected Loss Rates', class: 'form-control-label' %>
+          <%= f.file_field :base_rates_file, class: 'form-control' %>
         </div>
 
         <div class="form-group col-md-6">
-          <%= f.label :limited_loss_rates_file, 'Update Limited Loss Rates' %>
-          <%= f.file_field :limited_loss_rates_file %>
+          <%= f.label :limited_loss_rates_file, 'Update Limited Loss Rates', class: 'form-control-label' %>
+          <%= f.file_field :limited_loss_rates_file, class: 'form-control' %>
         </div>
       </div>
 
@@ -68,6 +127,12 @@
     <% end %>
   </div>
 </div>
+
+<style>
+  input[type='file'].form-control {
+    height: unset;
+  }
+</style>
 
 <script type="application/javascript">
   $(function () {
@@ -92,6 +157,11 @@
         $updateCollapse.removeClass('hiding');
         $updateCollapse.show();
       }
+    });
+
+    $('#rates_administrative_rate_start_date').datetimepicker({
+      format:     'MM/DD/YYYY',
+      useCurrent: false
     });
   });
 </script>

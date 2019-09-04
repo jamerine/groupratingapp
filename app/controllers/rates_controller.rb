@@ -2,12 +2,57 @@ class RatesController < ApplicationController
   require 'csv'
   require 'open-uri'
 
+  before_action :handle_retro_tiers, :handle_rates_updates, :handle_administrative_rate, only: :create
+
   def index
     @base_rates    = BwcCodesBaseRatesExpLossRate.all.includes(:bwc_codes_ncci_manual_class)
     @limited_rates = BwcCodesLimitedLossRatio.all
+
+    @administrative_rate = BwcCodesConstantValue.current_rate
+    @retro_tiers         = BwcCodesGroupRetroTier.all
   end
 
   def create
+    if @base_rates.any? || @limited_loss_rates.any?
+      render :edit
+    else
+      redirect_to action: :index
+    end
+  end
+
+  private
+
+  def rates_params
+    params.require(:rates).permit(:base_rates_file, :limited_loss_rates_file, :administrative_rate, :administrative_rate_start_date, retro_tiers: [:industry_group, :discount_tier])
+  end
+
+  def handle_retro_tiers
+    if rates_params[:retro_tiers].present? && rates_params[:retro_tiers].any?
+      rates_params[:retro_tiers].each do |tier|
+        return unless tier[:discount_tier].present?
+        if BwcCodesGroupRetroTier.find_by_industry_group(tier[:industry_group].to_i).update_attributes(discount_tier: tier[:discount_tier].to_f)
+          flash[:notice] = 'Successfully Updated the Discount Rates!'
+        else
+          flash[:error] = 'Something went wrong updating the Discount Rates!'
+        end
+      end
+    end
+  end
+
+  def handle_administrative_rate
+    if rates_params[:administrative_rate].present?
+      unless rates_params[:administrative_rate_start_date].present?
+        flash[:error] = 'Administrative Rate Start Date is required if a rate is set!'
+        redirect_to action: :index and return
+      end
+
+      if BwcCodesConstantValue.find_or_create_by(name: :administrative_rate, rate: rates_params[:administrative_rate].try(:to_f), start_date: DateTime.strptime(rates_params[:administrative_rate_start_date], '%m/%d/%Y'))
+        flash[:notice] = 'Successfully Updated Rates!'
+      end
+    end
+  end
+
+  def handle_rates_updates
     base_rates_file     = rates_params[:base_rates_file]
     limited_rates_file  = rates_params[:limited_loss_rates_file]
     @base_rates         = []
@@ -37,14 +82,6 @@ class RatesController < ApplicationController
         flash[:notice] = 'Successfully Imported File!'
       end
     end
-
-    render :edit
-  end
-
-  private
-
-  def rates_params
-    params.require(:rates).permit(:base_rates_file, :limited_loss_rates_file)
   end
 
   def parse_csv(csv_file)
