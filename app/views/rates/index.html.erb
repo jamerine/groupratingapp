@@ -3,7 +3,21 @@
     <h1 class="text-center">Current Rates In Use</h1>
   </div>
 
-  <div class="clearfix">
+  <div class="clearfix" style="margin-bottom: 25px;">
+    <% if @historical_years.any? %>
+      <div class="pull-left">
+        <select class="form-control" id="historical-select" title="Historical Year Selection">
+          <option value="">-- Select Historical Year --</option>
+          <% @historical_years.each do |year| %>
+            <% if @year.present? && @year == year %>
+              <option selected="selected" value="<%= year %>">Historical Year: <%= year %></option>
+            <% else %>
+              <option value="<%= year %>">Historical Year: <%= year %></option>
+            <% end %>
+          <% end %>
+        </select>
+      </div>
+    <% end %>
     <div class="pull-right">
       <button class="btn btn-success rate-toggle">
         Update Rates
@@ -11,7 +25,7 @@
     </div>
   </div>
 
-  <div id="rates-collapse" style="display: none;">
+  <div id="rates-collapse">
     <!-- Nav tabs -->
     <ul class="nav nav-tabs" role="tablist">
       <li role="presentation" class="active">
@@ -39,7 +53,7 @@
     </div>
   </div>
 
-  <div id="upload-rates" style="margin-top: 15px;">
+  <div id="upload-rates" style="margin-top: 15px; display: none;">
     <%= form_for :rates, multipart: true do |f| %>
       <h2>Update Rates</h2>
       <h5 class="text-bold"><em>*All fields are optional and only the field(s) with data will have its rates updated.</em></h5>
@@ -67,6 +81,18 @@
               <%= f.text_field :administrative_rate_start_date, class: 'form-control' %>
             </div>
           </div>
+
+          <hr>
+
+          <div class="form-group">
+            <%= f.label :base_rates_file, 'Update Base and Expected Loss Rates', class: 'form-control-label' %>
+            <%= f.file_field :base_rates_file, class: 'form-control' %>
+          </div>
+
+          <div class="form-group">
+            <%= f.label :limited_loss_rates_file, 'Update Limited Loss Rates', class: 'form-control-label' %>
+            <%= f.file_field :limited_loss_rates_file, class: 'form-control' %>
+          </div>
         </div>
 
         <div class="col-md-6">
@@ -93,7 +119,7 @@
             <div class="form-group col-md-6">
               <% @retro_tiers.each do |retro_tier| %>
                 <div class="form-group">
-                  <input type="hidden" name="rates[retro_tiers][][industry_group]" value="<%= retro_tier.industry_group %>" />
+                  <input type="hidden" name="rates[retro_tiers][][industry_group]" value="<%= retro_tier.industry_group %>"/>
                   <label for="rates_retro_tiers_discount_tier" class="form-control-label"><%= 'New Industry Group ' + retro_tier.industry_group.to_s + ' Discount Rate' %></label>
                   <input type="number" step="0.01" title="rates_retro_tiers_discount_tier" name="rates[retro_tiers][][discount_tier]" class="form-control"/>
                 </div>
@@ -104,18 +130,6 @@
       </div>
 
       <hr>
-
-      <div class="row">
-        <div class="form-group col-md-6">
-          <%= f.label :base_rates_file, 'Update Base and Expected Loss Rates', class: 'form-control-label' %>
-          <%= f.file_field :base_rates_file, class: 'form-control' %>
-        </div>
-
-        <div class="form-group col-md-6">
-          <%= f.label :limited_loss_rates_file, 'Update Limited Loss Rates', class: 'form-control-label' %>
-          <%= f.file_field :limited_loss_rates_file, class: 'form-control' %>
-        </div>
-      </div>
 
       <div class="form-group text-right">
         <button class="btn btn-danger rate-toggle" type="button">
@@ -138,6 +152,10 @@
   $(function () {
     $('.datatable').DataTable({
       order: [[1, 'asc']]
+    });
+
+    $('#historical-select').change(function () {
+      window.location.href = '/rates?year=' + $(this).val();
     });
 
     $('.rate-toggle').click(function () {
