@@ -1,5 +1,5 @@
 development:
-  :concurrency: 5
+  :concurrency: 10
 production:
   :concurrency: 20
 
@@ -40,6 +40,7 @@ production:
   - manual_class_export
   - weekly_request
   - group_rating_mark_complete
+  - handle_manual_policy_calculations
   - generate_quote_process
   - generate_quote
   - generate_all_quote_packet
