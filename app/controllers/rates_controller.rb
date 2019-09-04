@@ -5,11 +5,18 @@ class RatesController < ApplicationController
   before_action :handle_retro_tiers, :handle_rates_updates, :handle_administrative_rate, only: :create
 
   def index
-    @base_rates    = BwcCodesBaseRatesExpLossRate.all.includes(:bwc_codes_ncci_manual_class)
-    @limited_rates = BwcCodesLimitedLossRatio.all
+    if params[:year].present?
+      @year          = params[:year].to_i
+      @base_rates    = BwcCodesBaseRatesHistoricalDatum.by_year(@year)
+      @limited_rates = BwcCodesLimitedLossRatesHistoricalDatum.by_year(@year)
+    else
+      @base_rates    = BwcCodesBaseRatesExpLossRate.all.includes(:bwc_codes_ncci_manual_class)
+      @limited_rates = BwcCodesLimitedLossRatio.all
+    end
 
     @administrative_rate = BwcCodesConstantValue.current_rate
     @retro_tiers         = BwcCodesGroupRetroTier.all
+    @historical_years    = [BwcCodesBaseRatesHistoricalDatum::AVAILABLE_YEARS, BwcCodesLimitedLossRatesHistoricalDatum::AVAILABLE_YEARS].flatten.uniq
   end
 
   def create
@@ -64,6 +71,7 @@ class RatesController < ApplicationController
       if @base_rates.nil?
         flash[:error] = 'Something went wrong on import!'
       else
+        handle_old_base_data_transfer
         update_class_codes(@base_rates)
         update_base_rates(@base_rates)
 
@@ -77,11 +85,20 @@ class RatesController < ApplicationController
       if @limited_loss_rates.nil?
         flash[:error] = 'Something went wrong on import!'
       else
+        handle_old_limited_loss_data_transfer
         update_limited_rates(@limited_loss_rates)
 
         flash[:notice] = 'Successfully Imported File!'
       end
     end
+  end
+
+  def handle_old_base_data_transfer
+    BwcCodesBaseRatesExpLossRate.all.includes(:bwc_codes_ncci_manual_class).each { |rate| BwcCodesBaseRatesHistoricalDatum.find_or_create_by(year: Time.now.year, class_code: rate.class_code, industry_group: rate.industry_group, base_rate: rate.base_rate, expected_loss_rate: rate.expected_loss_rate) }
+  end
+
+  def handle_old_limited_loss_data_transfer
+    BwcCodesLimitedLossRatio.all.each { |rate| BwcCodesLimitedLossRatesHistoricalDatum.find_or_create_by(year: Time.now.year, industry_group: rate.industry_group, credibility_group: rate.credibility_group, limited_loss_ratio: rate.limited_loss_ratio) }
   end
 
   def parse_csv(csv_file)
