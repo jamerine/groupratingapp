@@ -15,6 +15,8 @@ class BwcCodesConstantValue < ActiveRecord::Base
   require 'activerecord-import'
   require 'open-uri'
 
+  scope :current_rate, -> { order(start_date: :desc).where(name: :administrative_rate).first }
+
   def self.import_table(url)
     time1 = Time.new
     puts "Start Time: " + time1.inspect
