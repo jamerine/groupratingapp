@@ -4,20 +4,18 @@
   </div>
 
   <div class="clearfix" style="margin-bottom: 25px;">
-    <% if @historical_years.any? %>
-      <div class="pull-left">
-        <select class="form-control" id="historical-select" title="Historical Year Selection">
-          <option value="">-- Select Historical Year --</option>
-          <% @historical_years.each do |year| %>
-            <% if @year.present? && @year == year %>
-              <option selected="selected" value="<%= year %>">Historical Year: <%= year %></option>
-            <% else %>
-              <option value="<%= year %>">Historical Year: <%= year %></option>
-            <% end %>
+    <div class="pull-left">
+      <select class="form-control" id="historical-select" title="Historical Year Selection">
+        <option value="">-- Select Historical Year --</option>
+        <% @historical_years.each do |year| %>
+          <% if @year.present? && @year == year %>
+            <option selected="selected" value="<%= year %>">Historical Year: <%= year %></option>
+          <% else %>
+            <option value="<%= year %>">Historical Year: <%= year %></option>
           <% end %>
-        </select>
-      </div>
-    <% end %>
+        <% end %>
+      </select>
+    </div>
     <div class="pull-right">
       <button class="btn btn-success rate-toggle">
         Update Rates
