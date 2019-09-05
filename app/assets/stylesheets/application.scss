@@ -12,21 +12,19 @@
  *
  *= require trix
  */
-  @import "normalize";
-  @import "bootstrap-sprockets";
-  @import "bootstrap";
-  @import "font-awesome";
-
-
-
+@import "normalize";
+@import "bootstrap-sprockets";
+@import "bootstrap";
+@import "font-awesome";
+@import 'bootstrap-datetimepicker';
 
 .table td, th {
-     text-align: center;
+  text-align: center;
 }
 
-#programHistoryTable .table tr .header{
-     background-color: blue;
-  }
+#programHistoryTable .table tr .header {
+  background-color: blue;
+}
 
 .dropdown-toggle {
   width: 25%;
@@ -45,8 +43,8 @@
 }
 
 @media (max-width: 767px) {
-nav .account-header {
-        display:none;
+  nav .account-header {
+    display: none;
   }
 }
 
@@ -66,11 +64,11 @@ body {
 
 
 #accountNotesTable .note-description-column {
-    text-align: left;
+  text-align: left;
 }
 
 #accountNotesTable .note-description {
-    text-align: left;
+  text-align: left;
 }
 
 .panel {

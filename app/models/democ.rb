@@ -1,3 +1,11 @@
+# == Schema Information
+#
+# Table name: democs
+#
+#  id         :integer          not null, primary key
+#  single_rec :string
+#
+
 class Democ < ActiveRecord::Base
 require 'activerecord-import'
 require 'open-uri'

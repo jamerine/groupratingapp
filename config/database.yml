@@ -17,10 +17,10 @@
 default: &default
   adapter: postgresql
   encoding: unicode
-  checkout_timeout: 15
+  checkout_timeout: 30
   # For details on connection pooling, see rails configuration guide
   # http://guides.rubyonrails.org/configuring.html#database-pooling
-  pool: <%= ENV['RAILS_MAX_THREADS'] || 10 %>
+  pool: <%= ENV['RAILS_MAX_THREADS'] || 15 %>
 
 
   # The specified database role being used to connect to postgres.

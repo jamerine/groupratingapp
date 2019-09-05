@@ -52,6 +52,9 @@ GEM
       tzinfo (~> 1.1)
     addressable (2.5.0)
       public_suffix (~> 2.0, >= 2.0.2)
+    annotate (2.7.5)
+      activerecord (>= 3.2, < 7.0)
+      rake (>= 10.4, < 13.0)
     arbre (1.1.1)
       activesupport (>= 3.0.0)
     arel (6.0.3)
@@ -74,6 +77,8 @@ GEM
       sass (>= 3.3.4)
     bootstrap-will_paginate (0.0.10)
       will_paginate
+    bootstrap3-datetimepicker-rails (4.17.47)
+      momentjs-rails (>= 2.8.1)
     builder (3.2.2)
     byebug (9.0.6)
     capybara (2.11.0)
@@ -210,6 +215,8 @@ GEM
       subexec (~> 0.2.1)
     mini_portile2 (2.1.0)
     minitest (5.10.1)
+    momentjs-rails (2.20.1)
+      railties (>= 3.1)
     multi_json (1.12.1)
     nenv (0.3.0)
     nokogiri (1.6.8.1)
@@ -236,6 +243,11 @@ GEM
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
       slop (~> 3.4)
+    pry-byebug (3.4.0)
+      byebug (~> 9.0)
+      pry (~> 0.10)
+    pry-rails (0.3.9)
+      pry (>= 0.10.4)
     public_suffix (2.0.4)
     puma (3.6.2)
     pundit (1.1.0)
@@ -328,6 +340,9 @@ GEM
       rspec-support (~> 3.5.0)
     rspec-support (3.5.0)
     ruby-rc4 (0.1.5)
+    rubyXL (3.4.6)
+      nokogiri (>= 1.4.4)
+      rubyzip (>= 1.1.6)
     ruby_dep (1.5.0)
     rubyzip (1.2.0)
     safe_yaml (1.0.4)
@@ -405,8 +420,10 @@ PLATFORMS
 DEPENDENCIES
   activeadmin
   activerecord-import
+  annotate
   bootstrap-sass
   bootstrap-will_paginate (= 0.0.10)
+  bootstrap3-datetimepicker-rails (~> 4.17.47)
   byebug
   capybara
   carrierwave
@@ -422,11 +439,14 @@ DEPENDENCIES
   jbuilder (~> 2.0)
   jquery-rails
   mini_magick
+  momentjs-rails (>= 2.9.0)
   paper_trail
   pg (~> 0.15)
   platform-api
   prawn
   prawn-table
+  pry-byebug
+  pry-rails
   puma
   pundit
   rails (= 4.2.6)
@@ -434,6 +454,7 @@ DEPENDENCIES
   rb-readline
   redis-rails
   rspec-rails (~> 3.5)
+  rubyXL
   rubyzip
   sass-rails (~> 5.0)
   sdoc (~> 0.4.0)
@@ -454,4 +475,4 @@ RUBY VERSION
    ruby 2.3.0p0
 
 BUNDLED WITH
-   1.15.3
+   1.16.6

@@ -1,3 +1,11 @@
+# == Schema Information
+#
+# Table name: phmgns
+#
+#  id         :integer          not null, primary key
+#  single_rec :string
+#
+
 class Phmgn < ActiveRecord::Base
 
   require 'activerecord-import'

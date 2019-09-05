@@ -1,6 +1,21 @@
+# == Schema Information
+#
+# Table name: bwc_codes_constant_values
+#
+#  id             :integer          not null, primary key
+#  name           :string
+#  rate           :float
+#  start_date     :date
+#  completed_date :date
+#  created_at     :datetime
+#  updated_at     :datetime
+#
+
 class BwcCodesConstantValue < ActiveRecord::Base
   require 'activerecord-import'
   require 'open-uri'
+
+  scope :current_rate, -> { order(start_date: :desc).where(name: :administrative_rate).first }
 
   def self.import_table(url)
     time1 = Time.new

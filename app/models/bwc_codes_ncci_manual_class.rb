@@ -1,3 +1,14 @@
+# == Schema Information
+#
+# Table name: bwc_codes_ncci_manual_classes
+#
+#  id                         :integer          not null, primary key
+#  industry_group             :integer
+#  ncci_manual_classification :integer
+#  created_at                 :datetime
+#  updated_at                 :datetime
+#
+
 class BwcCodesNcciManualClass < ActiveRecord::Base
   require 'activerecord-import'
   require 'open-uri'

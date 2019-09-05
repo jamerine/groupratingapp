@@ -1,0 +1,22 @@
+<table class="table datatable">
+  <thead>
+  <tr>
+    <th>Id</th>
+    <th>Industry Group Number</th>
+    <th>Class Code</th>
+    <th>Rate</th>
+  </tr>
+  </thead>
+  <tbody>
+  <% @base_rates.each do |rate| %>
+    <% if rate.industry_group.present? && rate.class_code.present? %>
+      <tr>
+        <td><%= rate.id %> </td>
+        <td><%= rate.try(:industry_group) %> </td>
+        <td><%= rate.class_code %> </td>
+        <td><%= rate.expected_loss_rate %> </td>
+      </tr>
+    <% end %>
+  <% end %>
+  </tbody>
+</table>

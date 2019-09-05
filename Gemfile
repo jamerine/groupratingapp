@@ -31,6 +31,8 @@ gem 'carrierwave'
 gem 'carrierwave-aws'
 gem 'mini_magick'
 
+gem 'momentjs-rails', '>= 2.9.0'
+gem 'bootstrap3-datetimepicker-rails', '~> 4.17.47'
 
 gem 'activerecord-import'
 
@@ -79,6 +81,8 @@ gem 'combine_pdf'
 
 gem 'rb-readline'
 
+gem 'rubyXL'
+
 # Use Trix for WYSIWYG rich HTML text editor
 gem 'trix'
 
@@ -89,7 +93,9 @@ gem 'activeadmin'
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug'
-
+  gem 'pry-byebug'
+  gem 'pry-rails'
+  gem 'annotate'
   gem 'rspec-rails', '~> 3.5'
   gem 'shoulda'
   gem 'factory_girl_rails', '~> 4.0'

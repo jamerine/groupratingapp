@@ -11,10 +11,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180503215141) do
+ActiveRecord::Schema.define(version: 20190904163749) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+  enable_extension "pg_stat_statements"
 
   create_table "account_programs", force: :cascade do |t|
     t.integer  "account_id"
@@ -181,6 +182,16 @@ ActiveRecord::Schema.define(version: 20180503215141) do
     t.datetime "updated_at"
   end
 
+  create_table "bwc_codes_base_rates_historical_data", force: :cascade do |t|
+    t.integer  "year"
+    t.integer  "class_code"
+    t.integer  "industry_group"
+    t.float    "base_rate"
+    t.float    "expected_loss_rate"
+    t.datetime "created_at",         null: false
+    t.datetime "updated_at",         null: false
+  end
+
   create_table "bwc_codes_constant_values", force: :cascade do |t|
     t.string   "name"
     t.float    "rate"
@@ -228,6 +239,15 @@ ActiveRecord::Schema.define(version: 20180503215141) do
     t.string   "ac26_group_level"
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "bwc_codes_limited_loss_rates_historical_data", force: :cascade do |t|
+    t.integer  "year"
+    t.integer  "industry_group"
+    t.integer  "credibility_group"
+    t.float    "limited_loss_ratio"
+    t.datetime "created_at",         null: false
+    t.datetime "updated_at",         null: false
   end
 
   create_table "bwc_codes_limited_loss_ratios", force: :cascade do |t|
