@@ -3,72 +3,76 @@
 <head>
   <title>Group Rating App</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+  <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track' => true %>
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+
+  <link href="//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css">
+  <script charset="utf8" src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js" type="text/javascript"></script>
   <%= csrf_meta_tags %>
 </head>
 <body>
   <div class="container">
-        <div class="flash">
-          <% if flash[:notice] %>
-            <div class="alert alert-success">
-              <button type="button" class="close" data-dismiss="alert">&times;</button>
-              <%= flash[:notice] %>
-            </div>
-          <% elsif flash.now[:error] %>
-            <div class="alert alert-danger">
-              <button type="button" class="close" data-dismiss="alert">&times;</button>
-              <%= flash.now[:error] %>
-            </div>
-          <% elsif flash[:alert] %>
-            <div class="alert alert-warning">
-              <button type="button" class="close" data-dismiss="alert">&times;</button>
-              <%= flash[:alert] %>
-            </div>
-          <% end %>
+    <div class="flash">
+      <% if flash[:notice] %>
+        <div class="alert alert-success">
+          <button type="button" class="close" data-dismiss="alert">&times;</button>
+          <%= flash[:notice] %>
         </div>
+      <% elsif flash.now[:error] %>
+        <div class="alert alert-danger">
+          <button type="button" class="close" data-dismiss="alert">&times;</button>
+          <%= flash.now[:error] %>
+        </div>
+      <% elsif flash[:alert] %>
+        <div class="alert alert-warning">
+          <button type="button" class="close" data-dismiss="alert">&times;</button>
+          <%= flash[:alert] %>
+        </div>
+      <% end %>
     </div>
+  </div>
   <nav class="navbar navbar-default navbar-fixed-top">
-      <div class="container-fluid">
-        <!-- Brand and toggle get grouped for better mobile display -->
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <% if current_user %>
-            <%= link_to '', root_path, class: 'navbar-brand arm-brand-logo'  %>
-          <% end %>
+    <div class="container-fluid">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <% if current_user %>
+          <%= link_to '', root_path, class: 'navbar-brand arm-brand-logo' %>
+        <% end %>
 
-        </div>
+      </div>
 
-        <!-- Collect the nav links, forms, and other content for toggling -->
-        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-          <ul class="nav navbar-nav">
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav">
 
-          </ul>
+        </ul>
 
-          <ul class="nav navbar-nav navbar-right">
-            <% if user_signed_in? %>
-              <li><%= link_to 'Representatives', representatives_path %></li>
-              <li><%= link_to 'Processing', group_ratings_path %></li>
-              <li><%= link_to 'Accounts', accounts_path %></li>
-              <% if current_user.admin? %>
-                <li><%= link_to 'Rejections', program_rejections_path, class: 'navbar-link'  %></li>
-                <li><%= link_to 'Exceptions', group_rating_exceptions_path, class: 'navbar-link'  %></li>
-                <li><%= link_to 'Administration', admin_root_path %></li>
-              <% end %>
-              <li><%= link_to "Sign Out", destroy_user_session_path, method: :delete, :class => 'navbar-link'  %> </li>
-            <% else %>
-              <li><%= link_to "Sign In", new_user_session_path, :class => 'navbar-link'  %></li>
+        <ul class="nav navbar-nav navbar-right">
+          <% if user_signed_in? %>
+            <li><%= link_to 'Representatives', representatives_path %></li>
+            <li><%= link_to 'Processing', group_ratings_path %></li>
+            <li><%= link_to 'Accounts', accounts_path %></li>
+            <% if current_user.admin? %>
+              <li><%= link_to 'Rejections', program_rejections_path, class: 'navbar-link' %></li>
+              <li><%= link_to 'Exceptions', group_rating_exceptions_path, class: 'navbar-link' %></li>
+              <li><%= link_to 'Administration', admin_root_path %></li>
+              <li><%= link_to 'Manage Rates', rates_path %></li>
             <% end %>
-          </ul>
-        </div><!-- /.navbar-collapse -->
-      </div><!-- /.container-fluid -->
-    </nav>
+            <li><%= link_to "Sign Out", destroy_user_session_path, method: :delete, :class => 'navbar-link' %> </li>
+          <% else %>
+            <li><%= link_to "Sign In", new_user_session_path, :class => 'navbar-link' %></li>
+          <% end %>
+        </ul>
+      </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+  </nav>
 
-<%= yield %>
+  <%= yield %>
 </body>
 </html>

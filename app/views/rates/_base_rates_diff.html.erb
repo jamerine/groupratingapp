@@ -1,0 +1,30 @@
+<table class="table datatable">
+  <thead>
+  <tr>
+    <th>Industry Group Number</th>
+    <th>Class Code</th>
+    <th>Old Base Rate</th>
+    <th>New Base Rate</th>
+    <th>% Change</th>
+    <th>Old Expected Loss Rate</th>
+    <th>New Expected Loss Rate</th>
+    <th>% Change</th>
+  </tr>
+  </thead>
+  <tbody>
+  <% @base_rates.each do |rate| %>
+    <% if rate[:industry_group].present? && rate[:class_code].present? %>
+      <tr>
+        <td><%= rate[:industry_group] %> </td>
+        <td><%= rate[:class_code] %> </td>
+        <td><%= rate[:base_rate_old] %> </td>
+        <td><%= rate[:base_rate] %> </td>
+        <td class="<%= calculate_cell_color(rate[:percent_change_base_rate]) %>"><%= rate[:percent_change_base_rate] %> </td>
+        <td><%= rate[:expected_loss_rate_old] %> </td>
+        <td><%= rate[:expected_loss_rate] %> </td>
+        <td class="<%= calculate_cell_color(rate[:percent_change_expected_rate]) %>"><%= rate[:percent_change_expected_rate] %> </td>
+      </tr>
+    <% end %>
+  <% end %>
+  </tbody>
+</table>

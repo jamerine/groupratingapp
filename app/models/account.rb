@@ -1,3 +1,47 @@
+# == Schema Information
+#
+# Table name: accounts
+#
+#  id                            :integer          not null, primary key
+#  representative_id             :integer
+#  name                          :string
+#  policy_number_entered         :integer
+#  street_address                :string
+#  street_address_2              :string
+#  city                          :string
+#  state                         :string
+#  zip_code                      :string
+#  business_phone_number         :bigint
+#  business_email_address        :string
+#  website_url                   :string
+#  group_rating_qualification    :integer
+#  industry_group                :integer
+#  group_rating_tier             :float
+#  group_rating_group_number     :string
+#  group_premium                 :float
+#  group_savings                 :float
+#  group_fees                    :float
+#  group_dues                    :float
+#  total_costs                   :float
+#  status                        :integer          default(0)
+#  federal_identification_number :string
+#  cycle_date                    :date
+#  request_date                  :date
+#  quarterly_request             :boolean
+#  weekly_request                :boolean
+#  ac3_approval                  :boolean
+#  user_override                 :boolean
+#  group_retro_qualification     :string
+#  group_retro_tier              :float
+#  group_retro_group_number      :string
+#  group_retro_premium           :float
+#  group_retro_savings           :float
+#  created_at                    :datetime         not null
+#  updated_at                    :datetime         not null
+#  fee_override                  :float
+#  fee_change                    :float
+#
+
 class Account < ActiveRecord::Base
   has_paper_trail :ignore => [:user_override, :created_at, :updated_at, :weekly_request, :representative_id], :on => [:update]
 

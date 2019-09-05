@@ -1,3 +1,11 @@
+# == Schema Information
+#
+# Table name: mremps
+#
+#  id         :integer          not null, primary key
+#  single_rec :string
+#
+
 class Mremp < ActiveRecord::Base
 
   require 'activerecord-import'

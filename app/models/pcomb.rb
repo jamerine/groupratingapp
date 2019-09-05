@@ -1,3 +1,11 @@
+# == Schema Information
+#
+# Table name: pcombs
+#
+#  id         :integer          not null, primary key
+#  single_rec :string
+#
+
 class Pcomb < ActiveRecord::Base
 
   require 'activerecord-import'

@@ -1,3 +1,11 @@
+# == Schema Information
+#
+# Table name: sc230s
+#
+#  id         :integer          not null, primary key
+#  single_rec :string
+#
+
 class Sc230 < ActiveRecord::Base
 
   require 'activerecord-import'

@@ -1,3 +1,22 @@
+# == Schema Information
+#
+# Table name: bwc_codes_industry_group_savings_ratio_criteria
+#
+#  id               :integer          not null, primary key
+#  industry_group   :integer
+#  ratio_criteria   :float
+#  average_ratio    :float
+#  actual_decimal   :float
+#  percent_value    :float
+#  em               :float
+#  market_rate      :float
+#  market_em_rate   :float
+#  sponsor          :string
+#  ac26_group_level :string
+#  created_at       :datetime
+#  updated_at       :datetime
+#
+
 class BwcCodesIndustryGroupSavingsRatioCriterium < ActiveRecord::Base
   require 'activerecord-import'
   require 'open-uri'
