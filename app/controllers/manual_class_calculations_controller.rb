@@ -15,5 +15,4 @@ class ManualClassCalculationsController < ApplicationController
 
  private
 
-
 end
