@@ -129,6 +129,33 @@
 
       <hr>
 
+      <h5 class="text-bold">Group Max Values</h5>
+      <table class="table table-striped table-bordered">
+        <thead>
+        <tr>
+          <th>Expected Losses</th>
+          <th>Credibility Group</th>
+          <th>Credibility %</th>
+          <th>Max Value</th>
+        </tr>
+        </thead>
+        <tbody>
+        <% @max_losses.each do |max_loss| %>
+          <tr>
+            <td><%= number_to_currency(max_loss.expected_losses) %></td>
+            <td><%= max_loss.credibility_group %></td>
+            <td><%= number_to_percentage(max_loss.credibility_percent * 100, precision: 1) %></td>
+            <td>
+              <input type="hidden" title="loss_id" name="rates[max_values][][id]" value="<%= max_loss.id %>"/>
+              <input type="number" title="max_value" name="rates[max_values][][maximum_value]" style="margin: 0;" value="<%= max_loss.group_maximum_value %>">
+            </td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+
+      <hr>
+
       <div class="form-group text-right">
         <button class="btn btn-danger rate-toggle" type="button">
           Cancel

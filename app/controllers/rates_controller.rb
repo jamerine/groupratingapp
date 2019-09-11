@@ -2,7 +2,7 @@ class RatesController < ApplicationController
   require 'csv'
   require 'open-uri'
 
-  before_action :handle_retro_tiers, :handle_rates_updates, :handle_administrative_rate, only: :create
+  before_action :handle_retro_tiers, :handle_rates_updates, :handle_administrative_rate, :handle_max_losses, only: :create
 
   def index
     if params[:year].present?
@@ -17,6 +17,7 @@ class RatesController < ApplicationController
     @administrative_rate = BwcCodesConstantValue.current_rate
     @retro_tiers         = BwcCodesGroupRetroTier.all
     @historical_years    = [BwcCodesBaseRatesHistoricalDatum::AVAILABLE_YEARS, BwcCodesLimitedLossRatesHistoricalDatum::AVAILABLE_YEARS].flatten.uniq
+    @max_losses          = BwcCodesCredibilityMaxLoss.order(:credibility_group)
   end
 
   def create
@@ -30,7 +31,20 @@ class RatesController < ApplicationController
   private
 
   def rates_params
-    params.require(:rates).permit(:base_rates_file, :limited_loss_rates_file, :administrative_rate, :administrative_rate_start_date, retro_tiers: [:industry_group, :discount_tier])
+    params.require(:rates).permit(:base_rates_file, :limited_loss_rates_file, :administrative_rate, :administrative_rate_start_date, retro_tiers: [:industry_group, :discount_tier], max_values: [:id, :maximum_value])
+  end
+
+  def handle_max_losses
+    rates_params[:max_values].each do |max_value|
+      max_loss = BwcCodesCredibilityMaxLoss.find(max_value[:id].to_i)
+      if max_loss.try(:group_maximum_value) != max_value[:maximum_value].to_i
+        if max_loss.update_attribute(:group_maximum_value, max_value[:maximum_value].to_i)
+          flash[:notice] = 'Successfully Updated Max Values!'
+        else
+          flash[:error] = 'Something went wrong updating the Max Values!'
+        end
+      end
+    end
   end
 
   def handle_retro_tiers
