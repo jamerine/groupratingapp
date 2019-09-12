@@ -16,7 +16,7 @@ class GroupRatingAllCreate
 
           if @account.nil?
             @account = Account.create(policy_number_entered: @policy_demographic.policy_number, representative_id: representative_id, status: 4, name: @policy_demographic.business_name, street_address: @policy_demographic.mailing_address_line_1, street_address_2: @policy_demographic.mailing_address_line_2, city: @policy_demographic.mailing_city, state: @policy_demographic.mailing_state, zip_code: @policy_demographic.mailing_zip_code, weekly_request: true)
-          elsif @account.policy_calculation.policy_creation_date.nil?
+          elsif @account.policy_calculation.present? && @account.policy_calculation.policy_creation_date.nil?
             @account.update_attributes(policy_number_entered: @policy_demographic.policy_number, representative_id: representative_id, name: @policy_demographic.business_name, street_address: @policy_demographic.mailing_address_line_1, street_address_2: @policy_demographic.mailing_address_line_2, city: @policy_demographic.mailing_city, state: @policy_demographic.mailing_state, zip_code: @policy_demographic.mailing_zip_code)
           elsif @account.status == "predecessor"
             @account.update_attributes(policy_number_entered: @policy_demographic.policy_number, representative_id: representative_id, name: @policy_demographic.business_name, street_address: @policy_demographic.mailing_address_line_1, street_address_2: @policy_demographic.mailing_address_line_2, city: @policy_demographic.mailing_city, state: @policy_demographic.mailing_state, zip_code: @policy_demographic.mailing_zip_code)
