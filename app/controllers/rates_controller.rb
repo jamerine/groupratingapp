@@ -67,7 +67,9 @@ class RatesController < ApplicationController
         redirect_to action: :index and return
       end
 
-      if BwcCodesConstantValue.find_or_create_by(name: :administrative_rate, rate: rates_params[:administrative_rate].try(:to_f), start_date: DateTime.strptime(rates_params[:administrative_rate_start_date], '%m/%d/%Y'))
+      BwcCodesConstantValue.all.each { |rate| rate.update_attribute(:completed_date, Date.today) if rate.completed_date.nil? }
+
+      if BwcCodesConstantValue.find_or_create_by(name: :administrative_rate, rate: rates_params[:administrative_rate].try(:to_f), start_date: DateTime.strptime(rates_params[:administrative_rate_start_date], '%m/%d/%Y'), completed_date: nil)
         flash[:notice] = 'Successfully Updated Rates!'
       end
     end
