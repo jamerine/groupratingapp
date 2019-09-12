@@ -31,7 +31,7 @@ class GroupRatingMarkComplete
         end
       end
     else
-      HandleManualPolicyCalculations.perform_async
+      # HandleManualPolicyCalculations.perform_async
     end
   end
 end
