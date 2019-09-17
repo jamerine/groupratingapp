@@ -41,6 +41,7 @@ production:
   - weekly_request
   - group_rating_mark_complete
   - handle_manual_policy_calculations
+  - handle_manual_policy_calculations_process
   - generate_quote_process
   - generate_quote
   - generate_all_quote_packet
