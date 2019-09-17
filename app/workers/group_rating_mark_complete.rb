@@ -29,9 +29,10 @@ class GroupRatingMarkComplete
             ImportProcess.perform_in(2.minutes, @import.process_representative, @import.id, @representative.abbreviated_name, @new_group_rating.id, all_process)
           end
         end
+      else
+        # No other files to process, finish up with the Manual Policy Updates (September 2019)
+        HandleManualPolicyCalculations.perform_async
       end
-    else
-      # HandleManualPolicyCalculations.perform_async
     end
   end
 end
