@@ -234,9 +234,9 @@ class RiskReport < PdfReport
 
 
 
-      @ilr = round(((@policy_calculation.policy_total_modified_losses_group_reduced * @policy_calculation.policy_total_current_payroll) / ( @policy_calculation.policy_total_four_year_payroll * @policy_calculation.policy_total_standard_premium)), 2)
+      @ilr = round(((@policy_calculation.policy_total_modified_losses_group_reduced * @policy_calculation.policy_total_current_payroll) / ( @policy_calculation.policy_total_four_year_payroll * (@policy_calculation.policy_adjusted_standard_premium || @policy_calculation.policy_total_standard_premium))), 2)
 
-      @f_s = round((((3660 * @experience_med_only) + (12500 * @experience_lost_time))/ @policy_calculation.policy_total_four_year_payroll) *  (@policy_calculation.policy_total_current_payroll / @policy_calculation.policy_total_standard_premium), 2)
+      @f_s = round((((3660 * @experience_med_only) + (12500 * @experience_lost_time))/ @policy_calculation.policy_total_four_year_payroll) *  (@policy_calculation.policy_total_current_payroll / (@policy_calculation.policy_adjusted_standard_premium || @policy_calculation.policy_total_standard_premium)), 2)
 
 
       @erc =
@@ -289,10 +289,12 @@ class RiskReport < PdfReport
       @group_rating_levels = BwcCodesIndustryGroupSavingsRatioCriterium.where(industry_group: @account.industry_group)
 
       @em_cap =
-        if  @policy_calculation.policy_individual_experience_modified_rate > (2 * @policy_calculation.policy_program_histories.order(reporting_period_start_date: :desc).first.experience_modifier_rate)
+        policy_em_rate = @policy_calculation.policy_individual_adjusted_experience_modified_rate || @policy_calculation.policy_individual_experience_modified_rate
+
+        if policy_em_rate > (2 * @policy_calculation.policy_program_histories.order(reporting_period_start_date: :desc).first.experience_modifier_rate)
           (2 * @policy_calculation.policy_program_histories.order(reporting_period_start_date: :desc).first.experience_modifier_rate )
         else
-          @policy_calculation.policy_individual_experience_modified_rate
+          policy_em_rate
         end
 
       @sort_code =

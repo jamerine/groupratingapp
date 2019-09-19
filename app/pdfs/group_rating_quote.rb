@@ -68,9 +68,9 @@ class GroupRatingQuote < PdfReport
   end
 
   def table_data
-    @data = [["Manual Class", "Base Rate", "Estimated Payroll", "Ind. Rate", "Ind. Premium", "Group Rate", "Group Premium"]]
-    @data +=  @account.policy_calculation.manual_class_calculations.map { |e| [e.manual_number, e.manual_class_base_rate, price(e.manual_class_current_estimated_payroll), round(e.manual_class_individual_total_rate),  price(e.manual_class_estimated_individual_premium), round(e.manual_class_group_total_rate), price(e.manual_class_estimated_group_premium)] }
-    @data += [["Totals","","#{price(@policy_calculation.policy_total_current_payroll)}","","#{price(@policy_calculation.policy_total_individual_premium)}","","#{price(@account.group_premium)}"]]
+    @data = [["Manual Class", "Base Rate", "Estimated Payroll", "Ind. Rate", "Ind. Premium", "Adj. Premium", "Group Rate", "Group Premium"]]
+    @data +=  @account.policy_calculation.manual_class_calculations.map { |e| [e.manual_number, e.manual_class_base_rate, price(e.manual_class_current_estimated_payroll), round(e.manual_class_individual_total_rate), price(e.manual_class_estimated_individual_premium), "", round(e.manual_class_group_total_rate), price(e.manual_class_estimated_group_premium)] }
+    @data += [["Totals","","#{price(@policy_calculation.policy_total_current_payroll)}","","#{price(@policy_calculation.policy_total_individual_premium)}", "#{price(@policy_calculation.policy_adjusted_standard_premium)}","","#{price(@account.group_premium)}"]]
   end
 
   def price(num)
