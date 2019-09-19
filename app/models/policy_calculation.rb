@@ -81,7 +81,6 @@
 #
 
 class PolicyCalculation < ActiveRecord::Base
-
   has_many :manual_class_calculations, dependent: :destroy
   has_many :claim_calculations, dependent: :destroy
   has_many :policy_coverage_status_histories, dependent: :destroy
@@ -109,8 +108,6 @@ class PolicyCalculation < ActiveRecord::Base
     where("policy_number = ?", "#{search}")
   end
 
-
-
   def self.to_csv
     attributes = self.column_names
 
@@ -118,8 +115,18 @@ class PolicyCalculation < ActiveRecord::Base
       csv << attributes
 
       all.each do |policy|
-        csv << attributes.map{ |attr| policy.send(attr) }
+        csv << attributes.map { |attr| policy.send(attr) }
       end
+    end
+  end
+
+  def adjusted_total_modifier
+    if self.policy_individual_total_modifier > 2.00
+      (self.policy_individual_total_modifier * 1.05).round(2)
+    end
+
+    if self.policy_individual_total_modifier < 0.91
+      (self.policy_individual_total_modifier * 0.95).round(2)
     end
   end
 
@@ -133,13 +140,13 @@ class PolicyCalculation < ActiveRecord::Base
       end
 
       @policy_total_four_year_payroll = self.manual_class_calculations.sum(:manual_class_four_year_period_payroll).round(0)
-      @policy_total_expected_losses = self.manual_class_calculations.sum(:manual_class_expected_losses).round(0)
-      @policy_total_current_payroll = self.manual_class_calculations.sum(:manual_class_current_estimated_payroll).round(0)
+      @policy_total_expected_losses   = self.manual_class_calculations.sum(:manual_class_expected_losses).round(0)
+      @policy_total_current_payroll   = self.manual_class_calculations.sum(:manual_class_current_estimated_payroll).round(0)
 
       if @policy_total_expected_losses <= 2000
-        @credibility_row = BwcCodesCredibilityMaxLoss.where("expected_losses >= :expected_losses", expected_losses: @policy_total_expected_losses).min
-        @credibility_row.credibility_group = 0
-        @credibility_row.expected_losses = 0
+        @credibility_row                     = BwcCodesCredibilityMaxLoss.where("expected_losses >= :expected_losses", expected_losses: @policy_total_expected_losses).min
+        @credibility_row.credibility_group   = 0
+        @credibility_row.expected_losses     = 0
         @credibility_row.credibility_percent = 0
         @credibility_row.group_maximum_value = 250000
 
@@ -161,66 +168,66 @@ class PolicyCalculation < ActiveRecord::Base
         claim.recalculate_experience(@credibility_row.group_maximum_value)
       end
 
-      @claims = self.claim_calculations.where("claim_injury_date >= :experience_period_lower_date and claim_injury_date <= :experience_period_upper_date",  experience_period_lower_date: @group_rating.experience_period_lower_date, experience_period_upper_date: @group_rating.experience_period_upper_date)
+      @claims = self.claim_calculations.where("claim_injury_date >= :experience_period_lower_date and claim_injury_date <= :experience_period_upper_date", experience_period_lower_date: @group_rating.experience_period_lower_date, experience_period_upper_date: @group_rating.experience_period_upper_date)
 
       if @claims.empty?
-        @policy_total_modified_losses_group_reduced = 0
+        @policy_total_modified_losses_group_reduced      = 0
         @policy_total_modified_losses_individual_reduced = 0
-        @policy_group_ratio = 0
-        @policy_total_claims_count = 0
+        @policy_group_ratio                              = 0
+        @policy_total_claims_count                       = 0
       else
-        @policy_total_modified_losses_group_reduced = @claims.sum(:claim_modified_losses_group_reduced).round(2)
+        @policy_total_modified_losses_group_reduced      = @claims.sum(:claim_modified_losses_group_reduced).round(2)
         @policy_total_modified_losses_individual_reduced = @claims.sum(:claim_modified_losses_individual_reduced).round(2)
-        @policy_total_claims_count = @claims.count
-        @policy_group_ratio =
-        if @policy_total_expected_losses == 0.0
-          0
-        else
-          (@policy_total_modified_losses_group_reduced / @policy_total_expected_losses).round(4)
-        end
+        @policy_total_claims_count                       = @claims.count
+        @policy_group_ratio                              =
+          if @policy_total_expected_losses == 0.0
+            0
+          else
+            (@policy_total_modified_losses_group_reduced / @policy_total_expected_losses).round(4)
+          end
       end
 
       @policy_individual_total_modifier =
-          if @policy_total_limited_losses == 0
-            0
-          else
-            (((@policy_total_modified_losses_individual_reduced - @policy_total_limited_losses ) / @policy_total_limited_losses) * @credibility_row.credibility_percent).round(2)
-          end
+        if @policy_total_limited_losses == 0
+          0
+        else
+          (((@policy_total_modified_losses_individual_reduced - @policy_total_limited_losses) / @policy_total_limited_losses) * @credibility_row.credibility_percent).round(2)
+        end
 
-     @policy_individual_experience_modified_rate = (@policy_individual_total_modifier + 1).round(2)
+      @policy_individual_experience_modified_rate = (@policy_individual_total_modifier + 1).round(2)
 
-     @policy_individual_adjusted_experience_modified_rate = adjust_ind_emr(@policy_individual_experience_modified_rate)
+      @policy_individual_adjusted_experience_modified_rate = adjust_ind_emr(@policy_individual_experience_modified_rate)
 
-     self.update_attributes(
-      policy_total_modified_losses_group_reduced: @policy_total_modified_losses_group_reduced,
-      policy_total_modified_losses_individual_reduced: @policy_total_modified_losses_individual_reduced,
-      policy_total_claims_count: @policy_total_claims_count,
-      policy_individual_total_modifier: @policy_individual_total_modifier,
-      policy_individual_experience_modified_rate: @policy_individual_experience_modified_rate,
-      policy_individual_adjusted_experience_modified_rate: @policy_individual_adjusted_experience_modified_rate,
-      policy_group_ratio: @policy_group_ratio,
-      policy_total_expected_losses: @policy_total_expected_losses,
-      policy_total_four_year_payroll: @policy_total_four_year_payroll,
-      policy_total_current_payroll: @policy_total_current_payroll,
-      policy_credibility_percent: @credibility_row.credibility_percent,
-      policy_credibility_group: @credibility_row.credibility_group,
-      policy_total_limited_losses: @policy_total_limited_losses,
-      policy_maximum_claim_value: @credibility_row.group_maximum_value
-    )
+      self.update_attributes(
+        policy_total_modified_losses_group_reduced:          @policy_total_modified_losses_group_reduced,
+        policy_total_modified_losses_individual_reduced:     @policy_total_modified_losses_individual_reduced,
+        policy_total_claims_count:                           @policy_total_claims_count,
+        policy_individual_total_modifier:                    @policy_individual_total_modifier,
+        policy_individual_experience_modified_rate:          @policy_individual_experience_modified_rate,
+        policy_individual_adjusted_experience_modified_rate: @policy_individual_adjusted_experience_modified_rate,
+        policy_group_ratio:                                  @policy_group_ratio,
+        policy_total_expected_losses:                        @policy_total_expected_losses,
+        policy_total_four_year_payroll:                      @policy_total_four_year_payroll,
+        policy_total_current_payroll:                        @policy_total_current_payroll,
+        policy_credibility_percent:                          @credibility_row.credibility_percent,
+        policy_credibility_group:                            @credibility_row.credibility_group,
+        policy_total_limited_losses:                         @policy_total_limited_losses,
+        policy_maximum_claim_value:                          @credibility_row.group_maximum_value
+      )
 
-   end # transaction end
+    end # transaction end
   end
 
   def calculate_premium
     self.transaction do
       @group_rating = GroupRating.find_by(process_representative: self.representative_number)
-    #  need policy_individual_experience_modified_rate, administrative_rate for manual_class
-      @administrative_rate = (1 + BwcCodesConstantValue.find_by(name: 'administrative_rate', completed_date: nil).rate )
+      #  need policy_individual_experience_modified_rate, administrative_rate for manual_class
+      @administrative_rate = (1 + BwcCodesConstantValue.find_by(name: 'administrative_rate', completed_date: nil).rate)
 
       # TODO: Potentially ADD DWRF Rate Here
 
       self.manual_class_calculations.find_each do |manual_class_calculation|
-        manual_class_calculation.calculate_premium(self.policy_individual_experience_modified_rate, @administrative_rate )
+        manual_class_calculation.calculate_premium(self.policy_individual_experience_modified_rate, @administrative_rate)
       end
 
       @policy_total_standard_premium = self.manual_class_calculations.sum(:manual_class_standard_premium).round(0)
@@ -229,73 +236,72 @@ class PolicyCalculation < ActiveRecord::Base
 
       @collection = self.manual_class_calculations.pluck(:manual_class_industry_group).uniq
 
-      @highest_industry_group = {industry_group: @collection.first, standard_premium: self.manual_class_calculations.where(manual_class_industry_group: @collection.first).sum(:manual_class_standard_premium)}
+      @highest_industry_group = { industry_group: @collection.first, standard_premium: self.manual_class_calculations.where(manual_class_industry_group: @collection.first).sum(:manual_class_standard_premium) }
 
 
       @collection.each do |c|
         if self.manual_class_calculations.where(manual_class_industry_group: c).sum(:manual_class_standard_premium) > @highest_industry_group[:standard_premium]
-          @highest_industry_group = {industry_group: c, standard_premium: self.manual_class_calculations.where(manual_class_industry_group: c).sum(:manual_class_standard_premium)}
+          @highest_industry_group = { industry_group: c, standard_premium: self.manual_class_calculations.where(manual_class_industry_group: c).sum(:manual_class_standard_premium) }
         end
       end
       # Added this logic to default to industry_group 7 when a policy is calculated to industry_group 9 and then changed to 8 if there is more premium in 8 than 7
 
       if @highest_industry_group == 9
         if @collection.include? 7
-          @highest_industry_group = {industry_group: 7, standard_premium: self.manual_class_calculations.where(manual_class_industry_group: 7).sum(:manual_class_standard_premium)}
+          @highest_industry_group = { industry_group: 7, standard_premium: self.manual_class_calculations.where(manual_class_industry_group: 7).sum(:manual_class_standard_premium) }
         end
         if @collection.include? 8
           if self.manual_class_calculations.where(manual_class_industry_group: 8).sum(:manual_class_standard_premium) > self.manual_class_calculations.where(manual_class_industry_group: 7).sum(:manual_class_standard_premium)
-            @highest_industry_group = {industry_group: 8, standard_premium: self.manual_class_calculations.where(manual_class_industry_group: 8).sum(:manual_class_standard_premium)}
+            @highest_industry_group = { industry_group: 8, standard_premium: self.manual_class_calculations.where(manual_class_industry_group: 8).sum(:manual_class_standard_premium) }
           end
         end
       end
 
 
+      @policy_total_individual_premium = self.manual_class_calculations.sum(:manual_class_estimated_individual_premium).round(2)
 
-    @policy_total_individual_premium =   self.manual_class_calculations.sum(:manual_class_estimated_individual_premium).round(2)
+      # ADDED NEW LOGIC FOR CURRENT PAYROLL FIX FOR NEW POLICIES
 
-    # ADDED NEW LOGIC FOR CURRENT PAYROLL FIX FOR NEW POLICIES
+      unless self.policy_creation_date.nil?
+        if self.policy_creation_date >= @group_rating.current_payroll_period_lower_date
+          new_policy_individual_premium = 0
+          self.manual_class_calculations.each do |manual|
+            manual_class_current_payroll = manual.payroll_calculations.where("reporting_period_start_date >= :current_payroll_period_lower_date and reporting_period_start_date < :current_payroll_period_upper_date", current_payroll_period_lower_date: (@group_rating.current_payroll_period_lower_date + 1.years), current_payroll_period_upper_date: (@group_rating.current_payroll_period_upper_date + 1.years)).sum(:manual_class_payroll).round(2)
 
-    unless self.policy_creation_date.nil?
-      if self.policy_creation_date >= @group_rating.current_payroll_period_lower_date
-        new_policy_individual_premium = 0
-        self.manual_class_calculations.each do |manual|
-          manual_class_current_payroll = manual.payroll_calculations.where("reporting_period_start_date >= :current_payroll_period_lower_date and reporting_period_start_date < :current_payroll_period_upper_date", current_payroll_period_lower_date: (@group_rating.current_payroll_period_lower_date + 1.years), current_payroll_period_upper_date: (@group_rating.current_payroll_period_upper_date + 1.years)).sum(:manual_class_payroll).round(2)
+            manual_class_standard_premium             = ((manual.manual_class_base_rate * manual_class_current_payroll * self.policy_individual_experience_modified_rate) / 100).round(2)
+            manual_class_modification_rate            = (manual.manual_class_base_rate * self.policy_individual_experience_modified_rate).round(2)
+            manual_class_individual_total_rate        = ((manual_class_modification_rate * @administrative_rate)).round(4) / 100
+            manual_class_estimated_individual_premium = (manual_class_current_payroll * manual_class_individual_total_rate).round(2)
 
-          manual_class_standard_premium = ((manual.manual_class_base_rate * manual_class_current_payroll * self.policy_individual_experience_modified_rate)/100).round(2)
-          manual_class_modification_rate = (manual.manual_class_base_rate * self.policy_individual_experience_modified_rate).round(2)
-          manual_class_individual_total_rate = ((manual_class_modification_rate * @administrative_rate)).round(4)/100
-          manual_class_estimated_individual_premium = (manual_class_current_payroll * manual_class_individual_total_rate).round(2)
-
-          new_policy_individual_premium += manual_class_estimated_individual_premium
-        end
-
-        if new_policy_individual_premium > @policy_total_individual_premium
-          self.manual_class_calculations.find_each do |manual_class|
-            manual_class.calculate_payroll(true)
-            manual_class.calculate_premium(self.policy_individual_experience_modified_rate, @administrative_rate )
+            new_policy_individual_premium += manual_class_estimated_individual_premium
           end
-          # Added logic to update current payroll on 7/24/07
-          @policy_total_current_payroll = self.manual_class_calculations.sum(:manual_class_current_estimated_payroll).round(0)
-          @policy_total_standard_premium = self.manual_class_calculations.sum(:manual_class_standard_premium).round(0)
-          @policy_adjusted_standard_premium = adjust_premium_size_factors(@policy_total_standard_premium)&.round(0)
-          @policy_total_individual_premium = self.manual_class_calculations.sum(:manual_class_estimated_individual_premium).round(2)
-          self.update_attributes(policy_total_current_payroll: @policy_total_current_payroll, policy_total_standard_premium: @policy_total_standard_premium)
+
+          if new_policy_individual_premium > @policy_total_individual_premium
+            self.manual_class_calculations.find_each do |manual_class|
+              manual_class.calculate_payroll(true)
+              manual_class.calculate_premium(self.policy_individual_experience_modified_rate, @administrative_rate)
+            end
+            # Added logic to update current payroll on 7/24/07
+            @policy_total_current_payroll     = self.manual_class_calculations.sum(:manual_class_current_estimated_payroll).round(0)
+            @policy_total_standard_premium    = self.manual_class_calculations.sum(:manual_class_standard_premium).round(0)
+            @policy_adjusted_standard_premium = adjust_premium_size_factors(@policy_total_standard_premium)&.round(0)
+            @policy_total_individual_premium  = self.manual_class_calculations.sum(:manual_class_estimated_individual_premium).round(2)
+            self.update_attributes(policy_total_current_payroll: @policy_total_current_payroll, policy_total_standard_premium: @policy_total_standard_premium)
+          end
         end
       end
-    end
 
-    if @policy_total_individual_premium < 120
-      @policy_total_individual_premium = 120.00
-    end
-
-    self.update_attributes(policy_total_individual_premium: @policy_total_individual_premium, policy_industry_group: @highest_industry_group[:industry_group], policy_total_standard_premium: @policy_total_standard_premium, policy_adjusted_standard_premium: @policy_adjusted_standard_premium)
-
-    self.manual_class_calculations.each do |manual|
-      unless self.policy_total_individual_premium.nil?
-        manual.update_attributes(manual_class_industry_group_premium_percentage: (manual.manual_class_estimated_individual_premium / @policy_total_individual_premium).round(4))
+      if @policy_total_individual_premium < 120
+        @policy_total_individual_premium = 120.00
       end
-    end
+
+      self.update_attributes(policy_total_individual_premium: @policy_total_individual_premium, policy_industry_group: @highest_industry_group[:industry_group], policy_total_standard_premium: @policy_total_standard_premium, policy_adjusted_standard_premium: @policy_adjusted_standard_premium)
+
+      self.manual_class_calculations.each do |manual|
+        unless self.policy_total_individual_premium.nil?
+          manual.update_attributes(manual_class_industry_group_premium_percentage: (manual.manual_class_estimated_individual_premium / @policy_total_individual_premium).round(4))
+        end
+      end
 
     end #transaction
   end
