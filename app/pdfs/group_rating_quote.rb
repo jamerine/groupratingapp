@@ -53,7 +53,7 @@ class GroupRatingQuote < PdfReport
     if table_data.empty?
       text "No Information Found"
     else
-      text "Individual TM%: #{percent(@policy_calculation.policy_individual_total_modifier)}     Group TM%: #{percent(@account.group_rating_tier)}", size: 12, align: :center
+      text "Individual TM%: #{percent(@policy_calculation.adjusted_total_modifier)}     Group TM%: #{percent(@account.group_rating_tier)}", size: 12, align: :center
       move_down 10
       table table_data do
         self.position = :center
@@ -62,15 +62,16 @@ class GroupRatingQuote < PdfReport
         self.row_colors = TABLE_ROW_COLORS
         self.cell_style = {:min_font_size => 9}
         self.header = true
-        row(-1).font_style = :bold
+        row(-2..-1).font_style = :bold
       end
     end
   end
 
   def table_data
-    @data = [["Manual Class", "Base Rate", "Estimated Payroll", "Ind. Rate", "Ind. Premium", "Adj. Premium", "Group Rate", "Group Premium"]]
-    @data +=  @account.policy_calculation.manual_class_calculations.map { |e| [e.manual_number, e.manual_class_base_rate, price(e.manual_class_current_estimated_payroll), round(e.manual_class_individual_total_rate), price(e.manual_class_estimated_individual_premium), "", round(e.manual_class_group_total_rate), price(e.manual_class_estimated_group_premium)] }
-    @data += [["Totals","","#{price(@policy_calculation.policy_total_current_payroll)}","","#{price(@policy_calculation.policy_total_individual_premium)}", "#{price(@policy_calculation.policy_adjusted_standard_premium)}","","#{price(@account.group_premium)}"]]
+    @data = [["Manual Class", "Base Rate", "Estimated Payroll", "Ind. Rate", "Ind. Premium", "Group Rate", "Group Premium"]]
+    @data +=  @account.policy_calculation.manual_class_calculations.map { |e| [e.manual_number, e.manual_class_base_rate, price(e.manual_class_current_estimated_payroll), round(e.manual_class_individual_total_rate), price(e.manual_class_estimated_individual_premium), round(e.manual_class_group_total_rate), price(e.manual_class_estimated_group_premium)] }
+    @data += [["Totals","","#{price(@policy_calculation.policy_total_current_payroll)}","","#{price(@policy_calculation.policy_total_individual_premium)}","","#{price(@account.group_premium)}"]]
+    @data += [[{:content => "Adjusted Premium", :colspan => 2}, "", "","#{price(@policy_calculation.policy_adjusted_individual_premium)}", "", ""]]
   end
 
   def price(num)

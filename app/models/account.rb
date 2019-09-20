@@ -163,7 +163,7 @@ class Account < ActiveRecord::Base
             @group_premium = 120.00
           end
 
-          @group_savings = (policy_calculation.policy_total_individual_premium - @group_premium).round(2)
+          @group_savings = (policy_calculation.policy_adjusted_individual_premium - @group_premium).round(2)
 
         else
           @group_rating_group_number = nil
@@ -227,7 +227,7 @@ class Account < ActiveRecord::Base
             @group_premium = 120.00
           end
 
-          @group_savings = (policy_calculation.policy_total_individual_premium - @group_premium).round(2)
+          @group_savings = (policy_calculation.policy_adjusted_individual_premium - @group_premium).round(2)
 
           # update_attributes(group_rating_tier: group_rating_tier, group_premium: group_premium, group_savings: group_savings, industry_group: industry_group)
         end
@@ -448,9 +448,9 @@ class Account < ActiveRecord::Base
           @group_retro_premium = nil
           @group_retro_savings = nil
         else
-          @group_retro_premium = (policy_calculation.policy_total_standard_premium * (1 + @group_retro_tier)).round(0)
+          @group_retro_premium = (policy_calculation.policy_adjusted_standard_premium * (1 + @group_retro_tier)).round(0)
 
-          @group_retro_savings = (policy_calculation.policy_total_standard_premium - @group_retro_premium).round(0)
+          @group_retro_savings = (policy_calculation.policy_adjusted_standard_premium - @group_retro_premium).round(0)
         end
 
         if user_override
@@ -501,9 +501,9 @@ class Account < ActiveRecord::Base
         @group_retro_savings = nil
         @group_retro_group_number = nil
       else
-        @group_retro_premium = (policy_calculation.policy_total_standard_premium * (1 + @group_retro_tier.to_f)).round(0)
+        @group_retro_premium = (policy_calculation.policy_adjusted_standard_premium * (1 + @group_retro_tier.to_f)).round(0)
         @group_retro_group_number = "#{@industry_group}"
-        @group_retro_savings = (policy_calculation.policy_total_standard_premium - @group_retro_premium).round(0)
+        @group_retro_savings = (policy_calculation.policy_adjusted_standard_premium - @group_retro_premium).round(0)
       end
     else
           @group_retro_group_number = nil

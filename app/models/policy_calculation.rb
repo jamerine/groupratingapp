@@ -77,7 +77,7 @@
 #  representative_id                                   :integer
 #  account_id                                          :integer
 #  policy_individual_adjusted_experience_modified_rate :float
-#  policy_adjusted_standard_premium                    :float
+#                      :float
 #
 
 class PolicyCalculation < ActiveRecord::Base
@@ -121,13 +121,17 @@ class PolicyCalculation < ActiveRecord::Base
   end
 
   def adjusted_total_modifier
-    if self.policy_individual_total_modifier > 2.00
-      (self.policy_individual_total_modifier * 1.05).round(2)
+    experience_modifier = self.policy_individual_total_modifier + 1
+
+    if experience_modifier > 2.00
+      experience_modifier = (experience_modifier * 1.05).round(2)
     end
 
-    if self.policy_individual_total_modifier < 0.91
-      (self.policy_individual_total_modifier * 0.95).round(2)
+    if experience_modifier < 0.91
+      experience_modifier = (experience_modifier * 0.95).round(2)
     end
+
+    experience_modifier - 1
   end
 
   def calculate_experience
@@ -196,7 +200,8 @@ class PolicyCalculation < ActiveRecord::Base
 
       @policy_individual_experience_modified_rate = (@policy_individual_total_modifier + 1).round(2)
 
-      @policy_individual_adjusted_experience_modified_rate = adjust_ind_emr(@policy_individual_experience_modified_rate)
+      # @policy_individual_adjusted_experience_modified_rate = adjust_ind_emr(@policy_individual_experience_modified_rate)
+      @policy_individual_adjusted_experience_modified_rate = adjusted_total_modifier.round(2)
 
       self.update_attributes(
         policy_total_modified_losses_group_reduced:          @policy_total_modified_losses_group_reduced,
@@ -227,12 +232,14 @@ class PolicyCalculation < ActiveRecord::Base
       # TODO: Potentially ADD DWRF Rate Here
 
       self.manual_class_calculations.find_each do |manual_class_calculation|
-        manual_class_calculation.calculate_premium(self.policy_individual_experience_modified_rate, @administrative_rate)
+        manual_class_calculation.calculate_premium(self.policy_individual_adjusted_experience_modified_rate + 1, @administrative_rate)
       end
 
       @policy_total_standard_premium = self.manual_class_calculations.sum(:manual_class_standard_premium).round(0)
 
-      @policy_adjusted_standard_premium = adjust_premium_size_factors(@policy_total_standard_premium)&.round(0)
+      @policy_adjusted_standard_premium   = adjust_premium_size_factors(@policy_total_standard_premium)&.round(0)
+
+      @policy_adjusted_individual_premium = calculate_premium_with_assessments
 
       @collection = self.manual_class_calculations.pluck(:manual_class_industry_group).uniq
 
@@ -279,13 +286,14 @@ class PolicyCalculation < ActiveRecord::Base
           if new_policy_individual_premium > @policy_total_individual_premium
             self.manual_class_calculations.find_each do |manual_class|
               manual_class.calculate_payroll(true)
-              manual_class.calculate_premium(self.policy_individual_experience_modified_rate, @administrative_rate)
+              manual_class.calculate_premium(self.policy_individual_adjusted_experience_modified_rate + 1, @administrative_rate)
             end
             # Added logic to update current payroll on 7/24/07
-            @policy_total_current_payroll     = self.manual_class_calculations.sum(:manual_class_current_estimated_payroll).round(0)
-            @policy_total_standard_premium    = self.manual_class_calculations.sum(:manual_class_standard_premium).round(0)
-            @policy_adjusted_standard_premium = adjust_premium_size_factors(@policy_total_standard_premium)&.round(0)
-            @policy_total_individual_premium  = self.manual_class_calculations.sum(:manual_class_estimated_individual_premium).round(2)
+            @policy_total_current_payroll       = self.manual_class_calculations.sum(:manual_class_current_estimated_payroll).round(0)
+            @policy_total_standard_premium      = self.manual_class_calculations.sum(:manual_class_standard_premium).round(0)
+            @policy_adjusted_standard_premium   = adjust_premium_size_factors(@policy_total_standard_premium)&.round(0)
+            @policy_adjusted_individual_premium = calculate_premium_with_assessments
+            @policy_total_individual_premium    = self.manual_class_calculations.sum(:manual_class_estimated_individual_premium).round(2)
             self.update_attributes(policy_total_current_payroll: @policy_total_current_payroll, policy_total_standard_premium: @policy_total_standard_premium)
           end
         end
@@ -295,7 +303,11 @@ class PolicyCalculation < ActiveRecord::Base
         @policy_total_individual_premium = 120.00
       end
 
-      self.update_attributes(policy_total_individual_premium: @policy_total_individual_premium, policy_industry_group: @highest_industry_group[:industry_group], policy_total_standard_premium: @policy_total_standard_premium, policy_adjusted_standard_premium: @policy_adjusted_standard_premium)
+      self.update_attributes(policy_industry_group: @highest_industry_group[:industry_group],
+                             policy_total_individual_premium: @policy_total_individual_premium,
+                             policy_total_standard_premium: @policy_total_standard_premium,
+                             policy_adjusted_standard_premium: @policy_adjusted_standard_premium,
+                             policy_adjusted_individual_premium: @policy_adjusted_individual_premium)
 
       self.manual_class_calculations.each do |manual|
         unless self.policy_total_individual_premium.nil?
@@ -304,6 +316,11 @@ class PolicyCalculation < ActiveRecord::Base
       end
 
     end #transaction
+  end
+
+  def calculate_premium_with_assessments
+    assessments = self.policy_total_individual_premium - self.policy_total_standard_premium
+    adjust_premium_size_factors(self.policy_total_standard_premium)&.round(0) + assessments
   end
 
   def adjust_ind_emr emr
@@ -319,18 +336,30 @@ class PolicyCalculation < ActiveRecord::Base
     end
   end
 
-  def adjust_premium_size_factors total_standard_premium
+  def adjust_premium_size_factors(total_standard_premium)
     return 0 if total_standard_premium < 0
 
-    case total_standard_premium
-    when (0..5000)
-      total_standard_premium
-    when (5001..100000)
-      5000 + (((total_standard_premium || 0) - 5000) * 0.85)
-    when (100000..500000)
-      85750 + (((total_standard_premium || 0) - 100000) * 0.80)
+    if total_standard_premium > 500000
+      405750 + ((total_standard_premium - 500000) * 0.75).round(0)
+    elsif total_standard_premium > 100000
+      85750 + ((total_standard_premium - 100000) * 0.8).round(0)
+    elsif total_standard_premium > 5000
+      # 5000 + ((Y10 - 5000) * 0.85).round(0) Y10?
+      5000 + ((total_standard_premium - 5000) * 0.85).round(0)
     else
-      405750 + (((total_standard_premium || 0) - 500000) * 0.75)
+      total_standard_premium
     end
+
+
+    # case total_standard_premium
+    # when (0..5000)
+    #   total_standard_premium
+    # when (5001..100000)
+    #   5000 + (((total_standard_premium || 0) - 5000) * 0.85)
+    # when (100000..500000)
+    #   85750 + (((total_standard_premium || 0) - 100000) * 0.80)
+    # else
+    #   405750 + (((total_standard_premium || 0) - 500000) * 0.75)
+    # end
   end
 end

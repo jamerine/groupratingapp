@@ -202,7 +202,7 @@ class RocReport < PdfReport
         @group_retro_costs = @account.group_retro_savings
         @group_retro_maximum_risk = (@policy_calculation.policy_total_standard_premium * 0.15)
         @group_retro_total_cost = @group_retro_projected_premium - @group_retro_costs
-        @group_retro_savings = @policy_calculation.policy_total_individual_premium - @group_retro_total_cost
+        @group_retro_savings = @policy_calculation.policy_adjusted_individual_premium - @group_retro_total_cost
       else
         @group_retro_projected_premium = nil
         @group_retro_costs = nil

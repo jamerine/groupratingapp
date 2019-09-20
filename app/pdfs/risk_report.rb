@@ -481,7 +481,7 @@ class RiskReport < PdfReport
       self.position = :center
       row(0).font_style = :bold
       row(0).borders = [:bottom]
-      row(1).columns(0..14).borders = []
+      row(1).columns(0..15).borders = []
       row(0).align = :center
       row(0..-1).align = :center
       self.cell_style = {:size => 8}
@@ -520,8 +520,8 @@ class RiskReport < PdfReport
   end
 
   def experience_table_data
-    @data = [["ITML", "GTML", "TEL", "Ratio", "IG", "TLL", "C%", "EMR", "CAP", "Max Value", "Stand Prem", "F/S", "ILR", "10YLR", "4YLR" ]]
-    @data += [[round(@policy_calculation.policy_total_modified_losses_individual_reduced,0), round(@policy_calculation.policy_total_modified_losses_group_reduced,0), round(@policy_calculation.policy_total_expected_losses,0), round(@policy_calculation.policy_group_ratio - 1, 4), @policy_calculation.policy_industry_group, round(@policy_calculation.policy_total_limited_losses,0), percent(@policy_calculation.policy_credibility_percent), round(@policy_calculation.policy_individual_experience_modified_rate,2), round(@em_cap,2), round(@policy_calculation.policy_maximum_claim_value,0), round(@policy_calculation.policy_total_standard_premium,0), "#{@f_s}", "#{@ilr}" ]]
+    @data = [["ITML", "GTML", "TEL", "Ratio", "IG", "TLL", "C%", "EMR", "Adj. EMR", "CAP", "Max Value", "Stand Prem", "F/S", "ILR", "10YLR", "4YLR" ]]
+    @data += [[round(@policy_calculation.policy_total_modified_losses_individual_reduced,0), round(@policy_calculation.policy_total_modified_losses_group_reduced,0), round(@policy_calculation.policy_total_expected_losses,0), round(@policy_calculation.policy_group_ratio - 1, 4), @policy_calculation.policy_industry_group, round(@policy_calculation.policy_total_limited_losses,0), percent(@policy_calculation.policy_credibility_percent), round(@policy_calculation.policy_individual_experience_modified_rate,2), round(@policy_calculation.policy_individual_adjusted_experience_modified_rate + 1,2), round(@em_cap,2), round(@policy_calculation.policy_maximum_claim_value,0), round(@policy_calculation.policy_total_standard_premium,0), "#{@f_s}", "#{@ilr}" ]]
   end
 
   def expected_loss_development
@@ -531,12 +531,12 @@ class RiskReport < PdfReport
     table expected_loss_table_data, :column_widths => {0 => 30, 1 => 20, 2 => 60, 3 => 30, 4 => 55, 5 => 30, 6 => 60, 7 => 35, 8 => 50, 9 => 35, 10 => 50, 11 => 35, 12 => 50 } do
       self.position = :center
       row(0).font_style = :bold
-      row(-1).font_style = :bold
+      row(-2..-1).font_style = :bold
       row(0).overflow = :shring_to_fit
       row(0).align = :center
       row(0).borders = [:bottom]
-      row(1..-2).borders = []
-      row(-1).borders = [:top]
+      row(1..-1).borders = []
+      row(-2).borders = [:top]
       # row(1).columns(0..14).borders = []
       row(0..-1).align = :center
       self.cell_style = {:size => 8}
@@ -551,10 +551,12 @@ class RiskReport < PdfReport
       @data = [["Man Num", "IG", "Experience Payroll", "Exp. Loss Rate", "Total Exp Losses", "Base Rate", "Estimated Payroll", "Ind. Rate", "Est Ind Premium", "#{@account.group_rating_tier} Group Rate", "Group Premium", "MMS Rate", "MMS Premium"]]
       @data +=  @account.policy_calculation.manual_class_calculations.order(manual_number: :asc).map { |e| [e.manual_number, e.manual_class_industry_group, round(e.manual_class_four_year_period_payroll,0), rate(e.manual_class_expected_loss_rate/100, 2),  round(e.manual_class_expected_losses,0), rate(e.manual_class_base_rate/100,2), round(e.manual_class_current_estimated_payroll, 0), rate(e.manual_class_individual_total_rate, 4), round(e.manual_class_estimated_individual_premium,0), rate(e.manual_class_group_total_rate,4), round(e.manual_class_estimated_group_premium,0)] }
       @data += [[{:content => " #{ } Totals", :colspan => 4},"#{round(@policy_calculation.policy_total_expected_losses, 0)}","","#{round(@policy_calculation.policy_total_current_payroll, 0)}","","#{round(@policy_calculation.policy_total_individual_premium, 0)}","","#{round(@account.group_premium, 0)}", "", ""]]
+      @data += [[{:content => " #{ } Adjusted Premium", :colspan => 4}, {:content => "", :colspan => 4}, "#{round(@policy_calculation.policy_adjusted_individual_premium, 0)}", {:content => "", :colspan => 4}]]
     else
       @data = [["Man Num", "IG", "Experience Payroll", "Exp. Loss Rate", "Total Exp Losses", "Base Rate", "Estimated Payroll", "Ind. Rate", "Est Ind Premium", "#{@account.group_rating_tier} Group Rate", "Group Premium"]]
       @data +=  @account.policy_calculation.manual_class_calculations.order(manual_number: :asc).map { |e| [e.manual_number, e.manual_class_industry_group, round(e.manual_class_four_year_period_payroll,0), rate(e.manual_class_expected_loss_rate/100, 2),  round(e.manual_class_expected_losses,0), rate(e.manual_class_base_rate/100,2), round(e.manual_class_current_estimated_payroll, 0), rate(e.manual_class_individual_total_rate, 4), round(e.manual_class_estimated_individual_premium,0), rate(e.manual_class_group_total_rate,4), round(e.manual_class_estimated_group_premium,0)] }
       @data += [[{:content => " #{ } Totals", :colspan => 4},"#{round(@policy_calculation.policy_total_expected_losses, 0)}","","#{round(@policy_calculation.policy_total_current_payroll, 0)}","","#{round(@policy_calculation.policy_total_individual_premium, 0)}","","#{round(@account.group_premium, 0)}"]]
+      @data += [[{:content => " #{ } Adjusted Premium", :colspan => 4}, {:content => "", :colspan => 4}, "#{round(@policy_calculation.policy_adjusted_individual_premium, 0)}", {:content => "", :colspan => 2}]]
     end
   end
 
@@ -766,7 +768,7 @@ class RiskReport < PdfReport
         @group_retro_costs = -@account.group_retro_savings
         @group_retro_maximum_risk = (@policy_calculation.policy_total_standard_premium * 0.15)
         @group_retro_total_cost = @group_retro_projected_premium + @group_retro_costs
-        @group_retro_savings = @policy_calculation.policy_total_individual_premium - @group_retro_total_cost
+        @group_retro_savings = @policy_calculation.policy_adjusted_individual_premium - @group_retro_total_cost
       else
         @group_retro_projected_premium = nil
         @group_retro_costs = nil
