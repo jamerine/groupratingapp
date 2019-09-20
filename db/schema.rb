@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190904163749) do
+ActiveRecord::Schema.define(version: 20190920154823) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1183,6 +1183,7 @@ ActiveRecord::Schema.define(version: 20190904163749) do
     t.integer  "account_id"
     t.float    "policy_individual_adjusted_experience_modified_rate"
     t.float    "policy_adjusted_standard_premium"
+    t.float    "policy_adjusted_individual_premium"
   end
 
   add_index "policy_calculations", ["account_id"], name: "index_policy_calculations_on_account_id", using: :btree

@@ -126,7 +126,7 @@ class GroupRetroQuote < PdfReport
 
   def table_data
     @data = [["Illustration", ""]]
-    @data += [[ "Projected Premium w/o Assessments","#{ price(@policy_calculation.policy_total_standard_premium) }"]]
+    @data += [[ "Projected Premium w/o Assessments","#{ price(@policy_calculation.policy_adjusted_standard_premium) }"]]
     @data += [[ "Premium Refund %","#{ percent(@account.group_retro_tier) }"]]
     @data += [[ "Premium Refund Estimation","#{ price(@account.group_retro_savings) }"]]
     @data += [[ "Premium Assessment Cap %","N/A"]]
