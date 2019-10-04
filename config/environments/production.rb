@@ -92,4 +92,21 @@ Rails.application.configure do
   #   authentication:       'plain',
   #   enable_starttls_auto: true
   # }
+
+  Rails.application.config.middleware.use ExceptionNotification::Rack,
+                                          # :email => {
+                                          #   :email_prefix         => "[ARM-PRODUCTION]",
+                                          #   :sender_address       => %{"Error!!" <donotreply@herokuapp.groupratingapp.com>},
+                                          #   :exception_recipients => %w{amoyer@switchboxinc.com}
+                                          # },
+                                          :slack => {
+                                            :webhook_url           => "https://hooks.slack.com/services/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",
+                                            :channel               => "#oh-shit",
+                                            :additional_parameters => {
+                                              :icon_url => "http://img.timeinc.net/time/photoessays/2010/halloween_costumes/sad_keanu.jpg",
+                                              :mrkdwn   => true
+                                            }
+                                          }
+
+
 end
