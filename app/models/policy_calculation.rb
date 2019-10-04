@@ -91,6 +91,10 @@ class PolicyCalculation < ActiveRecord::Base
   # Add Papertrail as history tracking
   has_paper_trail :on => [:update]
 
+  def policy_adjusted_individual_premium
+    @policy_adjusted_individual_premium || calculate_premium_with_assessments
+  end
+
   def self.update_or_create(attributes)
     obj = first || new
     obj.assign_attributes(attributes)
@@ -237,7 +241,7 @@ class PolicyCalculation < ActiveRecord::Base
 
       @policy_total_standard_premium = self.manual_class_calculations.sum(:manual_class_standard_premium).round(0)
 
-      @policy_adjusted_standard_premium   = adjust_premium_size_factors(@policy_total_standard_premium)&.round(0)
+      @policy_adjusted_standard_premium = adjust_premium_size_factors(@policy_total_standard_premium)&.round(0)
 
       @policy_adjusted_individual_premium = calculate_premium_with_assessments
 
@@ -303,10 +307,10 @@ class PolicyCalculation < ActiveRecord::Base
         @policy_total_individual_premium = 120.00
       end
 
-      self.update_attributes(policy_industry_group: @highest_industry_group[:industry_group],
-                             policy_total_individual_premium: @policy_total_individual_premium,
-                             policy_total_standard_premium: @policy_total_standard_premium,
-                             policy_adjusted_standard_premium: @policy_adjusted_standard_premium,
+      self.update_attributes(policy_industry_group:              @highest_industry_group[:industry_group],
+                             policy_total_individual_premium:    @policy_total_individual_premium,
+                             policy_total_standard_premium:      @policy_total_standard_premium,
+                             policy_adjusted_standard_premium:   @policy_adjusted_standard_premium,
                              policy_adjusted_individual_premium: @policy_adjusted_individual_premium)
 
       self.manual_class_calculations.each do |manual|
