@@ -91,10 +91,6 @@ class PolicyCalculation < ActiveRecord::Base
   # Add Papertrail as history tracking
   has_paper_trail :on => [:update]
 
-  def policy_adjusted_individual_premium
-    @policy_adjusted_individual_premium || calculate_premium_with_assessments
-  end
-
   def self.update_or_create(attributes)
     obj = first || new
     obj.assign_attributes(attributes)
@@ -124,8 +120,8 @@ class PolicyCalculation < ActiveRecord::Base
     end
   end
 
-  def adjusted_total_modifier
-    experience_modifier = self.policy_individual_total_modifier + 1
+  def adjusted_total_modifier(policy_individual_total_modifier = self.policy_individual_total_modifier)
+    experience_modifier = policy_individual_total_modifier + 1
 
     if experience_modifier > 2.00
       experience_modifier = (experience_modifier * 1.05).round(2)
@@ -205,7 +201,7 @@ class PolicyCalculation < ActiveRecord::Base
       @policy_individual_experience_modified_rate = (@policy_individual_total_modifier + 1).round(2)
 
       # @policy_individual_adjusted_experience_modified_rate = adjust_ind_emr(@policy_individual_experience_modified_rate)
-      @policy_individual_adjusted_experience_modified_rate = adjusted_total_modifier.round(2)
+      @policy_individual_adjusted_experience_modified_rate = adjusted_total_modifier(@policy_individual_total_modifier).round(2)
 
       self.update_attributes(
         policy_total_modified_losses_group_reduced:          @policy_total_modified_losses_group_reduced,
@@ -239,16 +235,12 @@ class PolicyCalculation < ActiveRecord::Base
         manual_class_calculation.calculate_premium(self.policy_individual_adjusted_experience_modified_rate + 1, @administrative_rate)
       end
 
-      @policy_total_standard_premium = self.manual_class_calculations.sum(:manual_class_standard_premium).round(0)
-
-      @policy_adjusted_standard_premium = adjust_premium_size_factors(@policy_total_standard_premium)&.round(0)
-
-      @policy_adjusted_individual_premium = calculate_premium_with_assessments
-
-      @collection = self.manual_class_calculations.pluck(:manual_class_industry_group).uniq
-
-      @highest_industry_group = { industry_group: @collection.first, standard_premium: self.manual_class_calculations.where(manual_class_industry_group: @collection.first).sum(:manual_class_standard_premium) }
-
+      @policy_total_standard_premium      = self.manual_class_calculations.sum(:manual_class_standard_premium).round(0)
+      @policy_adjusted_standard_premium   = adjust_premium_size_factors(@policy_total_standard_premium)&.round(0)
+      @policy_total_individual_premium    = self.manual_class_calculations.sum(:manual_class_estimated_individual_premium).round(2)
+      @policy_adjusted_individual_premium = calculate_premium_with_assessments(@policy_total_individual_premium, @policy_total_standard_premium)
+      @collection                         = self.manual_class_calculations.pluck(:manual_class_industry_group).uniq
+      @highest_industry_group             = { industry_group: @collection.first, standard_premium: self.manual_class_calculations.where(manual_class_industry_group: @collection.first).sum(:manual_class_standard_premium) }
 
       @collection.each do |c|
         if self.manual_class_calculations.where(manual_class_industry_group: c).sum(:manual_class_standard_premium) > @highest_industry_group[:standard_premium]
@@ -267,9 +259,6 @@ class PolicyCalculation < ActiveRecord::Base
           end
         end
       end
-
-
-      @policy_total_individual_premium = self.manual_class_calculations.sum(:manual_class_estimated_individual_premium).round(2)
 
       # ADDED NEW LOGIC FOR CURRENT PAYROLL FIX FOR NEW POLICIES
 
@@ -296,8 +285,8 @@ class PolicyCalculation < ActiveRecord::Base
             @policy_total_current_payroll       = self.manual_class_calculations.sum(:manual_class_current_estimated_payroll).round(0)
             @policy_total_standard_premium      = self.manual_class_calculations.sum(:manual_class_standard_premium).round(0)
             @policy_adjusted_standard_premium   = adjust_premium_size_factors(@policy_total_standard_premium)&.round(0)
-            @policy_adjusted_individual_premium = calculate_premium_with_assessments
             @policy_total_individual_premium    = self.manual_class_calculations.sum(:manual_class_estimated_individual_premium).round(2)
+            @policy_adjusted_individual_premium = calculate_premium_with_assessments(@policy_total_individual_premium, @policy_total_standard_premium)
             self.update_attributes(policy_total_current_payroll: @policy_total_current_payroll, policy_total_standard_premium: @policy_total_standard_premium)
           end
         end
@@ -322,9 +311,10 @@ class PolicyCalculation < ActiveRecord::Base
     end #transaction
   end
 
-  def calculate_premium_with_assessments
-    assessments = self.policy_total_individual_premium - self.policy_total_standard_premium
-    adjust_premium_size_factors(self.policy_total_standard_premium)&.round(0) + assessments
+  def calculate_premium_with_assessments(policy_total_individual_premium = self.policy_total_individual_premium, policy_total_standard_premium = self.policy_total_standard_premium)
+    # binding.pry
+    assessments = policy_total_individual_premium - policy_total_standard_premium
+    adjust_premium_size_factors(policy_total_standard_premium)&.round(0) + assessments
   end
 
   def adjust_ind_emr emr
