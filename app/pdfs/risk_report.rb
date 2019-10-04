@@ -1,12 +1,12 @@
 class RiskReport < PdfReport
 
-  def initialize(account=[], policy_calculation=[], group_rating=[], report_params={}, view)
+  def initialize(account = [], policy_calculation = [], group_rating = [], report_params = {}, view)
     super()
-    @account = account
-    @policy_calculation = policy_calculation
+    @account                = account
+    @policy_calculation     = policy_calculation
     @policy_program_history = @policy_calculation.policy_program_histories.order(:policy_year).last
-    @group_rating = group_rating
-    @report_params = report_params
+    @group_rating           = group_rating
+    @report_params          = report_params
 
 
     @view = view
@@ -14,41 +14,41 @@ class RiskReport < PdfReport
     @account = Account.includes(policy_calculation: [:claim_calculations, :policy_coverage_status_histories, :policy_program_histories, { manual_class_calculations: :payroll_calculations }]).find(@account.id)
 
     #LAPSE PERIOD FOR GROUP RATING
-      @nov_first = (Date.current.year.to_s + '-11-01').to_date
-      @days_to_add = (4 - @nov_first.wday) % 7
-      @fourth_thursday = @nov_first + @days_to_add + 21
+    @nov_first       = (Date.current.year.to_s + '-11-01').to_date
+    @days_to_add     = (4 - @nov_first.wday) % 7
+    @fourth_thursday = @nov_first + @days_to_add + 21
 
-      @higher_lapse = @fourth_thursday - 3
-      @lower_lapse = @higher_lapse - 12.months
-      @group_lapse_sum = 0
+    @higher_lapse    = @fourth_thursday - 3
+    @lower_lapse     = @higher_lapse - 12.months
+    @group_lapse_sum = 0
 
-      @coverage_lapse_periods = @account.policy_calculation.policy_coverage_status_histories.where("coverage_status = :coverage_status and (coverage_end_date BETWEEN :lower_lapse and :higher_lapse or coverage_end_date is null)", coverage_status: "LAPSE", lower_lapse: @lower_lapse, higher_lapse: @higher_lapse)
+    @coverage_lapse_periods = @account.policy_calculation.policy_coverage_status_histories.where("coverage_status = :coverage_status and (coverage_end_date BETWEEN :lower_lapse and :higher_lapse or coverage_end_date is null)", coverage_status: "LAPSE", lower_lapse: @lower_lapse, higher_lapse: @higher_lapse)
 
-      @coverage_lapse_periods.each do |period|
-        # period starts before and ends out of range
-        if period.coverage_effective_date < @lower_lapse && period.coverage_end_date.nil?
-          @group_lapse_sum += Date.current - @lower_lapse
+    @coverage_lapse_periods.each do |period|
+      # period starts before and ends out of range
+      if period.coverage_effective_date < @lower_lapse && period.coverage_end_date.nil?
+        @group_lapse_sum += Date.current - @lower_lapse
         # period starts after and ends out of range
       elsif period.coverage_effective_date > @lower_lapse && period.coverage_end_date.nil?
-          @group_lapse_sum += Date.current - period.coverage_effective_date
+        @group_lapse_sum += Date.current - period.coverage_effective_date
         # period starts before and ends in range
       elsif period.coverage_effective_date < @lower_lapse && period.coverage_end_date < @higher_lapse
-          @group_lapse_sum += period.coverage_end_date - @lower_lapse
+        @group_lapse_sum += period.coverage_end_date - @lower_lapse
         # period starts after and ends in range
       elsif period.coverage_effective_date > @lower_lapse && period.coverage_end_date < @higher_lapse
-          @group_lapse_sum += period.coverage_end_date - period.coverage_effective_date
-        end
+        @group_lapse_sum += period.coverage_end_date - period.coverage_effective_date
       end
+    end
 
 
     # GROUP RETRO LAPS CONFIG
 
-    nov_first = (Date.current.year.to_s + '-11-01').to_date
-    days_to_add = (4 - nov_first.wday) % 7
+    nov_first       = (Date.current.year.to_s + '-11-01').to_date
+    days_to_add     = (4 - nov_first.wday) % 7
     fourth_thursday = nov_first + days_to_add + 21
 
-    higher_lapse = fourth_thursday - 3
-    lower_lapse = higher_lapse - 9.months
+    higher_lapse           = fourth_thursday - 3
+    lower_lapse            = higher_lapse - 9.months
     @group_retro_lapse_sum = 0
 
     coverage_lapse_periods = @account.policy_calculation.policy_coverage_status_histories.where("coverage_status = :coverage_status and (coverage_end_date BETWEEN :lower_lapse and :higher_lapse or coverage_end_date is null)", coverage_status: "LAPSE", lower_lapse: lower_lapse, higher_lapse: higher_lapse)
@@ -57,189 +57,187 @@ class RiskReport < PdfReport
       # period starts before and ends out of range
       if period.coverage_effective_date < lower_lapse && period.coverage_end_date.nil?
         @group_retro_lapse_sum += Date.current - lower_lapse
-      # period starts after and ends out of range
+        # period starts after and ends out of range
       elsif period.coverage_effective_date > lower_lapse && period.coverage_end_date.nil?
         @group_retro_lapse_sum += Date.current - period.coverage_effective_date
-      # period starts before and ends in range
+        # period starts before and ends in range
       elsif period.coverage_effective_date < lower_lapse && period.coverage_end_date < higher_lapse
         @group_retro_lapse_sum += period.coverage_end_date - lower_lapse
-      # period starts after and ends in range
+        # period starts after and ends in range
       elsif period.coverage_effective_date > lower_lapse && period.coverage_end_date < higher_lapse
         @group_retro_lapse_sum += period.coverage_end_date - period.coverage_effective_date
       end
     end
 
     @current_coverage_status = if @policy_calculation.policy_coverage_status_histories.order(coverage_effective_date: :desc).first.coverage_status == "LAPSE"
-      "Y"
-    else
-      "N"
-    end
+                                 "Y"
+                               else
+                                 "N"
+                               end
 
 
     # Section for calculating parameters for Claim Loss Runs
 
-      # Experience Years Parameters
+    # Experience Years Parameters
 
-      @first_experience_year = @group_rating.experience_period_lower_date.strftime("%Y").to_i
-      @first_experience_year_period = @group_rating.experience_period_lower_date..(@group_rating.experience_period_lower_date.advance(years: 1).advance(days: -1))
-      @first_experience_year_claims = @account.policy_calculation.claim_calculations.where("claim_injury_date BETWEEN ? AND ? ", @first_experience_year_period.first,  @first_experience_year_period.last).order(:claim_injury_date)
+    @first_experience_year        = @group_rating.experience_period_lower_date.strftime("%Y").to_i
+    @first_experience_year_period = @group_rating.experience_period_lower_date..(@group_rating.experience_period_lower_date.advance(years: 1).advance(days: -1))
+    @first_experience_year_claims = @account.policy_calculation.claim_calculations.where("claim_injury_date BETWEEN ? AND ? ", @first_experience_year_period.first, @first_experience_year_period.last).order(:claim_injury_date)
 
-      @second_experience_year = @first_experience_year + 1
-      @second_experience_year_period = @first_experience_year_period.last.advance(days: 1)..@first_experience_year_period.last.advance(years: 1)
-      @second_experience_year_claims = @account.policy_calculation.claim_calculations.where("claim_injury_date BETWEEN ? AND ? ", @second_experience_year_period.first,  @second_experience_year_period.last).order(:claim_injury_date)
+    @second_experience_year        = @first_experience_year + 1
+    @second_experience_year_period = @first_experience_year_period.last.advance(days: 1)..@first_experience_year_period.last.advance(years: 1)
+    @second_experience_year_claims = @account.policy_calculation.claim_calculations.where("claim_injury_date BETWEEN ? AND ? ", @second_experience_year_period.first, @second_experience_year_period.last).order(:claim_injury_date)
 
-      @third_experience_year = @second_experience_year + 1
-      @third_experience_year_period = @second_experience_year_period.first.advance(years: 1)..@second_experience_year_period.last.advance(years: 1)
-      @third_experience_year_claims = @account.policy_calculation.claim_calculations.where("claim_injury_date BETWEEN ? AND ? ", @third_experience_year_period.first,  @third_experience_year_period.last).order(:claim_injury_date)
+    @third_experience_year        = @second_experience_year + 1
+    @third_experience_year_period = @second_experience_year_period.first.advance(years: 1)..@second_experience_year_period.last.advance(years: 1)
+    @third_experience_year_claims = @account.policy_calculation.claim_calculations.where("claim_injury_date BETWEEN ? AND ? ", @third_experience_year_period.first, @third_experience_year_period.last).order(:claim_injury_date)
 
-      @fourth_experience_year = @third_experience_year + 1
-      @fourth_experience_year_period = @third_experience_year_period.first.advance(years: 1)..@third_experience_year_period.last.advance(years: 1)
-      @fourth_experience_year_claims = @account.policy_calculation.claim_calculations.where("claim_injury_date BETWEEN ? AND ? ", @fourth_experience_year_period.first,  @fourth_experience_year_period.last).order(:claim_injury_date)
+    @fourth_experience_year        = @third_experience_year + 1
+    @fourth_experience_year_period = @third_experience_year_period.first.advance(years: 1)..@third_experience_year_period.last.advance(years: 1)
+    @fourth_experience_year_claims = @account.policy_calculation.claim_calculations.where("claim_injury_date BETWEEN ? AND ? ", @fourth_experience_year_period.first, @fourth_experience_year_period.last).order(:claim_injury_date)
 
-      # Experience Totals
+    # Experience Totals
 
-      @experience_year_claims = @account.policy_calculation.claim_calculations.where("claim_injury_date BETWEEN ? AND ? ", @group_rating.experience_period_lower_date,  @group_rating.experience_period_upper_date).order(:claim_injury_date)
-      @experience_med_only = @experience_year_claims.where("left(claim_type, 1) = '1'").count
-      @experience_lost_time = @experience_year_claims.where("left(claim_type, 1) = '2'").count
-
-
-      @experience_comp_total = 0
-      @experience_medical_total = 0
-      @experience_mira_medical_reserve_total = 0
-
-      @experience_year_claims.each do |e|
-        @experience_comp_total += (((e.claim_mira_reducible_indemnity_paid+e.claim_mira_non_reducible_indemnity_paid)*(1 - e.claim_subrogation_percent)-(e.claim_mira_non_reducible_indemnity_paid))*(1 - e.claim_handicap_percent)+(e.claim_mira_non_reducible_indemnity_paid))*e.claim_group_multiplier
-        @experience_medical_total += (((e.claim_medical_paid + e.claim_mira_non_reducible_indemnity_paid_2)*(1 - e.claim_subrogation_percent) - e.claim_mira_non_reducible_indemnity_paid_2)*(1 - e.claim_handicap_percent)+ e.claim_mira_non_reducible_indemnity_paid_2)*e.claim_group_multiplier
-        @experience_mira_medical_reserve_total += (1 - e.claim_handicap_percent)*(e.claim_mira_medical_reserve_amount+(e.claim_mira_indemnity_reserve_amount))* e.claim_group_multiplier* (1 - e.claim_subrogation_percent)
-      end
-
-      @experience_group_modidified_losses_total = @experience_year_claims.sum(:claim_modified_losses_group_reduced)
-      @experience_individual_modidified_losses_total = @experience_year_claims.sum(:claim_modified_losses_individual_reduced)
-      @experience_individual_reduced_total = @experience_year_claims.sum(:claim_individual_reduced_amount)
-      @experience_si_total = @experience_year_claims.sum(:claim_unlimited_limited_loss) - @experience_year_claims.sum(:claim_total_subrogation_collected)
-      @experience_si_avg = (@experience_si_total/4)
-      @experience_si_ratio_avg = (@experience_si_total / @policy_calculation.policy_total_four_year_payroll) * @policy_calculation.policy_total_current_payroll
+    @experience_year_claims = @account.policy_calculation.claim_calculations.where("claim_injury_date BETWEEN ? AND ? ", @group_rating.experience_period_lower_date, @group_rating.experience_period_upper_date).order(:claim_injury_date)
+    @experience_med_only    = @experience_year_claims.where("left(claim_type, 1) = '1'").count
+    @experience_lost_time   = @experience_year_claims.where("left(claim_type, 1) = '2'").count
 
 
-      # Out Of Experience Years Parameters
-      @first_out_of_experience_year = @first_experience_year - 5
-      @first_out_of_experience_year_period = @first_experience_year_period.first.advance(years: -5)..@first_experience_year_period.last.advance(years: -5)
-      @first_out_of_experience_year_claims = @account.policy_calculation.claim_calculations.where("claim_injury_date BETWEEN ? AND ? ", @first_out_of_experience_year_period.first,  @first_out_of_experience_year_period.last).order(:claim_injury_date)
+    @experience_comp_total                 = 0
+    @experience_medical_total              = 0
+    @experience_mira_medical_reserve_total = 0
 
-      @second_out_of_experience_year = @first_experience_year - 4
-      @second_out_of_experience_year_period = @first_experience_year_period.first.advance(years: -4)..@first_experience_year_period.last.advance(years: -4)
-      @second_out_of_experience_year_claims = @account.policy_calculation.claim_calculations.where("claim_injury_date BETWEEN ? AND ? ", @second_out_of_experience_year_period.first,  @second_out_of_experience_year_period.last).order(:claim_injury_date)
+    @experience_year_claims.each do |e|
+      @experience_comp_total                 += (((e.claim_mira_reducible_indemnity_paid + e.claim_mira_non_reducible_indemnity_paid) * (1 - (e.claim_subrogation_percent || 0.00)) - (e.claim_mira_non_reducible_indemnity_paid)) * (1 - e.claim_handicap_percent) + (e.claim_mira_non_reducible_indemnity_paid)) * (e.claim_group_multiplier || 1)
+      @experience_medical_total              += (((e.claim_medical_paid + e.claim_mira_non_reducible_indemnity_paid_2) * (1 - (e.claim_subrogation_percent || 0.00)) - e.claim_mira_non_reducible_indemnity_paid_2) * (1 - e.claim_handicap_percent) + e.claim_mira_non_reducible_indemnity_paid_2) * (e.claim_group_multiplier || 1)
+      @experience_mira_medical_reserve_total += (1 - e.claim_handicap_percent) * (e.claim_mira_medical_reserve_amount + (e.claim_mira_indemnity_reserve_amount)) * (e.claim_group_multiplier || 1) * (1 - (e.claim_subrogation_percent || 0.00))
+    end
 
-      @third_out_of_experience_year = @first_experience_year - 3
-      @third_out_of_experience_year_period = @first_experience_year_period.first.advance(years: -3)..@first_experience_year_period.last.advance(years: -3)
-      @third_out_of_experience_year_claims = @account.policy_calculation.claim_calculations.where("claim_injury_date BETWEEN ? AND ? ", @third_out_of_experience_year_period.first,  @third_out_of_experience_year_period.last).order(:claim_injury_date)
-
-      @fourth_out_of_experience_year = @first_experience_year - 2
-      @fourth_out_of_experience_year_period = @first_experience_year_period.first.advance(years: -2)..@first_experience_year_period.last.advance(years: -2)
-      @fourth_out_of_experience_year_claims = @account.policy_calculation.claim_calculations.where("claim_injury_date BETWEEN ? AND ? ", @fourth_out_of_experience_year_period.first,  @fourth_out_of_experience_year_period.last).order(:claim_injury_date)
-
-      @fifth_out_of_experience_year = @first_experience_year - 1
-      @fifth_out_of_experience_year_period = @first_experience_year_period.first.advance(years: -1)..@first_experience_year_period.last.advance(years: -1)
-      @fifth_out_of_experience_year_claims = @account.policy_calculation.claim_calculations.where("claim_injury_date BETWEEN ? AND ? ", @fifth_out_of_experience_year_period.first,  @fifth_out_of_experience_year_period.last).order(:claim_injury_date)
+    @experience_group_modidified_losses_total      = @experience_year_claims.sum(:claim_modified_losses_group_reduced)
+    @experience_individual_modidified_losses_total = @experience_year_claims.sum(:claim_modified_losses_individual_reduced)
+    @experience_individual_reduced_total           = @experience_year_claims.sum(:claim_individual_reduced_amount)
+    @experience_si_total                           = @experience_year_claims.sum(:claim_unlimited_limited_loss) - @experience_year_claims.sum(:claim_total_subrogation_collected)
+    @experience_si_avg                             = (@experience_si_total / 4)
+    @experience_si_ratio_avg                       = (@experience_si_total / @policy_calculation.policy_total_four_year_payroll) * @policy_calculation.policy_total_current_payroll
 
 
-      # Out Of Experience Totals
+    # Out Of Experience Years Parameters
+    @first_out_of_experience_year        = @first_experience_year - 5
+    @first_out_of_experience_year_period = @first_experience_year_period.first.advance(years: -5)..@first_experience_year_period.last.advance(years: -5)
+    @first_out_of_experience_year_claims = @account.policy_calculation.claim_calculations.where("claim_injury_date BETWEEN ? AND ? ", @first_out_of_experience_year_period.first, @first_out_of_experience_year_period.last).order(:claim_injury_date)
 
-      @out_of_experience_year_claims = @account.policy_calculation.claim_calculations.where("claim_injury_date BETWEEN ? AND ? ", @first_out_of_experience_year_period.first,  @fifth_out_of_experience_year_period.last).order(:claim_injury_date)
-      @out_of_experience_med_only = @out_of_experience_year_claims.where("left(claim_type, 1) = '1'").count
-      @out_of_experience_lost_time = @out_of_experience_year_claims.where("left(claim_type, 1) = '2'").count
+    @second_out_of_experience_year        = @first_experience_year - 4
+    @second_out_of_experience_year_period = @first_experience_year_period.first.advance(years: -4)..@first_experience_year_period.last.advance(years: -4)
+    @second_out_of_experience_year_claims = @account.policy_calculation.claim_calculations.where("claim_injury_date BETWEEN ? AND ? ", @second_out_of_experience_year_period.first, @second_out_of_experience_year_period.last).order(:claim_injury_date)
 
-      @out_of_experience_comp_total = 0
-      @out_of_experience_medical_total = 0
-      @out_of_experience_mira_medical_reserve_total = 0
+    @third_out_of_experience_year        = @first_experience_year - 3
+    @third_out_of_experience_year_period = @first_experience_year_period.first.advance(years: -3)..@first_experience_year_period.last.advance(years: -3)
+    @third_out_of_experience_year_claims = @account.policy_calculation.claim_calculations.where("claim_injury_date BETWEEN ? AND ? ", @third_out_of_experience_year_period.first, @third_out_of_experience_year_period.last).order(:claim_injury_date)
 
-      @out_of_experience_year_claims.each do |e|
-        @out_of_experience_comp_total += (((e.claim_mira_reducible_indemnity_paid+e.claim_mira_non_reducible_indemnity_paid)*(1 - e.claim_subrogation_percent)-(e.claim_mira_non_reducible_indemnity_paid))*(1 - e.claim_handicap_percent)+(e.claim_mira_non_reducible_indemnity_paid))*e.claim_group_multiplier
-        @out_of_experience_medical_total += (((e.claim_medical_paid + e.claim_mira_non_reducible_indemnity_paid_2)*(1 - e.claim_subrogation_percent) - e.claim_mira_non_reducible_indemnity_paid_2)*(1 - e.claim_handicap_percent)+ e.claim_mira_non_reducible_indemnity_paid_2)*e.claim_group_multiplier
-        @out_of_experience_mira_medical_reserve_total += (1 - e.claim_handicap_percent)*(e.claim_mira_medical_reserve_amount+(e.claim_mira_indemnity_reserve_amount))* e.claim_group_multiplier* (1 - e.claim_subrogation_percent)
-      end
-      @out_of_experience_group_modidified_losses_total = @out_of_experience_year_claims.sum(:claim_modified_losses_group_reduced)
-      @out_of_experience_individual_modidified_losses_total = @out_of_experience_year_claims.sum(:claim_modified_losses_individual_reduced)
-      @out_of_experience_individual_reduced_total = @out_of_experience_year_claims.sum(:claim_individual_reduced_amount)
-      @out_of_experience_si_total = @out_of_experience_year_claims.sum(:claim_unlimited_limited_loss) - @out_of_experience_year_claims.sum(:claim_total_subrogation_collected)
+    @fourth_out_of_experience_year        = @first_experience_year - 2
+    @fourth_out_of_experience_year_period = @first_experience_year_period.first.advance(years: -2)..@first_experience_year_period.last.advance(years: -2)
+    @fourth_out_of_experience_year_claims = @account.policy_calculation.claim_calculations.where("claim_injury_date BETWEEN ? AND ? ", @fourth_out_of_experience_year_period.first, @fourth_out_of_experience_year_period.last).order(:claim_injury_date)
 
-      # TEN YEAR EXPERIENCE TOTALS
-
-      @ten_year_claims = @account.policy_calculation.claim_calculations.where("claim_injury_date BETWEEN ? AND ? ", @first_out_of_experience_year_period.first,  @group_rating.experience_period_upper_date).order(:claim_injury_date)
-
-      @ten_year_med_only = @ten_year_claims.where("left(claim_type, 1) = '1'").count
-      @ten_year_lost_time = @ten_year_claims.where("left(claim_type, 1) = '2'").count
-      @ten_year_rc_01 = @ten_year_claims.where("left(claim_mira_ncci_injury_type, 1) = '01'").count
-      @ten_year_rc_02 = @ten_year_claims.where("left(claim_mira_ncci_injury_type, 1) = '02'").count
-
-      @ten_year_comp_total = (@ten_year_claims.sum(:claim_modified_losses_group_reduced) - @ten_year_claims.sum(:claim_medical_paid) - @ten_year_claims.sum(:claim_mira_medical_reserve_amount))
-
-      @ten_year_medical_total = @ten_year_claims.sum(:claim_medical_paid)
-      @ten_year_mira_medical_reserve_total = @ten_year_claims.sum(:claim_mira_medical_reserve_amount)
-      @ten_year_group_modidified_losses_total = @ten_year_claims.sum(:claim_modified_losses_group_reduced)
-      @ten_year_individual_modidified_losses_total = @ten_year_claims.sum(:claim_modified_losses_individual_reduced)
-      @ten_year_individual_reduced_total = @ten_year_claims.sum(:claim_individual_reduced_amount)
-      @ten_year_si_total = @experience_si_total + @out_of_experience_si_total
-      @ten_year_si_avg = (@ten_year_si_total/10)
-      @ten_year_si_ratio_avg = 'N/A'
-
-      @ten_year_si_average = (@ten_year_si_total/10)
-      @ten_year_si_ratio_avg = 'N/A'
+    @fifth_out_of_experience_year        = @first_experience_year - 1
+    @fifth_out_of_experience_year_period = @first_experience_year_period.first.advance(years: -1)..@first_experience_year_period.last.advance(years: -1)
+    @fifth_out_of_experience_year_claims = @account.policy_calculation.claim_calculations.where("claim_injury_date BETWEEN ? AND ? ", @fifth_out_of_experience_year_period.first, @fifth_out_of_experience_year_period.last).order(:claim_injury_date)
 
 
+    # Out Of Experience Totals
 
-      # GREEN YEAR EXPERIENCE
-      @first_green_year = @group_rating.experience_period_upper_date.strftime("%Y").to_i
-      @first_green_year_period = (@group_rating.experience_period_upper_date.advance(days: 1))..(@group_rating.experience_period_upper_date.advance(years: 1))
-      @first_green_year_claims = @account.policy_calculation.claim_calculations.where("claim_injury_date BETWEEN ? AND ? ", @first_green_year_period.first,  @first_green_year_period.last).order(:claim_injury_date)
+    @out_of_experience_year_claims = @account.policy_calculation.claim_calculations.where("claim_injury_date BETWEEN ? AND ? ", @first_out_of_experience_year_period.first, @fifth_out_of_experience_year_period.last).order(:claim_injury_date)
+    @out_of_experience_med_only    = @out_of_experience_year_claims.where("left(claim_type, 1) = '1'").count
+    @out_of_experience_lost_time   = @out_of_experience_year_claims.where("left(claim_type, 1) = '2'").count
 
-      @second_green_year = @first_green_year + 1
-      @second_green_year_period = @first_green_year_period.first.advance(years: 1)..@first_green_year_period.last.advance(years: 1)
-      @second_green_year_claims = @account.policy_calculation.claim_calculations.where("claim_injury_date BETWEEN ? AND ? ", @second_green_year_period.first,  @second_green_year_period.last).order(:claim_injury_date)
+    @out_of_experience_comp_total                 = 0
+    @out_of_experience_medical_total              = 0
+    @out_of_experience_mira_medical_reserve_total = 0
 
-      # GREEN YEAR EXPERIENCE Totals
+    @out_of_experience_year_claims.each do |e|
+      @out_of_experience_comp_total                 += (((e.claim_mira_reducible_indemnity_paid + e.claim_mira_non_reducible_indemnity_paid) * (1 - e.claim_subrogation_percent) - (e.claim_mira_non_reducible_indemnity_paid)) * (1 - e.claim_handicap_percent) + (e.claim_mira_non_reducible_indemnity_paid)) * e.claim_group_multiplier
+      @out_of_experience_medical_total              += (((e.claim_medical_paid + e.claim_mira_non_reducible_indemnity_paid_2) * (1 - e.claim_subrogation_percent) - e.claim_mira_non_reducible_indemnity_paid_2) * (1 - e.claim_handicap_percent) + e.claim_mira_non_reducible_indemnity_paid_2) * e.claim_group_multiplier
+      @out_of_experience_mira_medical_reserve_total += (1 - e.claim_handicap_percent) * (e.claim_mira_medical_reserve_amount + (e.claim_mira_indemnity_reserve_amount)) * e.claim_group_multiplier * (1 - e.claim_subrogation_percent)
+    end
+    @out_of_experience_group_modidified_losses_total      = @out_of_experience_year_claims.sum(:claim_modified_losses_group_reduced)
+    @out_of_experience_individual_modidified_losses_total = @out_of_experience_year_claims.sum(:claim_modified_losses_individual_reduced)
+    @out_of_experience_individual_reduced_total           = @out_of_experience_year_claims.sum(:claim_individual_reduced_amount)
+    @out_of_experience_si_total                           = @out_of_experience_year_claims.sum(:claim_unlimited_limited_loss) - @out_of_experience_year_claims.sum(:claim_total_subrogation_collected)
 
-      @green_year_claims = @account.policy_calculation.claim_calculations.where("claim_injury_date BETWEEN ? AND ? ", @first_green_year_period.first,  @second_green_year_period.last).order(:claim_injury_date)
+    # TEN YEAR EXPERIENCE TOTALS
 
-      @green_year_med_only = @green_year_claims.where("left(claim_type, 1) = '1'").count
-      @green_year_loss_time = @green_year_claims.where("left(claim_type, 1) = '2'").count
+    @ten_year_claims = @account.policy_calculation.claim_calculations.where("claim_injury_date BETWEEN ? AND ? ", @first_out_of_experience_year_period.first, @group_rating.experience_period_upper_date).order(:claim_injury_date)
 
-      @green_year_comp_total = (@green_year_claims.sum(:claim_modified_losses_group_reduced) - @green_year_claims.sum(:claim_medical_paid) - @green_year_claims.sum(:claim_mira_medical_reserve_amount))
+    @ten_year_med_only  = @ten_year_claims.where("left(claim_type, 1) = '1'").count
+    @ten_year_lost_time = @ten_year_claims.where("left(claim_type, 1) = '2'").count
+    @ten_year_rc_01     = @ten_year_claims.where("left(claim_mira_ncci_injury_type, 1) = '01'").count
+    @ten_year_rc_02     = @ten_year_claims.where("left(claim_mira_ncci_injury_type, 1) = '02'").count
 
-      @green_year_comp_total = 0
-      @green_year_medical_total = 0
-      @green_year_mira_medical_reserve_total = 0
+    @ten_year_comp_total = (@ten_year_claims.sum(:claim_modified_losses_group_reduced) - @ten_year_claims.sum(:claim_medical_paid) - @ten_year_claims.sum(:claim_mira_medical_reserve_amount))
 
-      @green_year_claims.each do |e|
-        @green_year_comp_total += (((e.claim_mira_reducible_indemnity_paid+e.claim_mira_non_reducible_indemnity_paid)*(1 - e.claim_subrogation_percent)-(e.claim_mira_non_reducible_indemnity_paid))*(1 - e.claim_handicap_percent)+(e.claim_mira_non_reducible_indemnity_paid))*e.claim_group_multiplier
-        @green_year_medical_total += (((e.claim_medical_paid + e.claim_mira_non_reducible_indemnity_paid_2)*(1 - e.claim_subrogation_percent) - e.claim_mira_non_reducible_indemnity_paid_2)*(1 - e.claim_handicap_percent)+ e.claim_mira_non_reducible_indemnity_paid_2)*e.claim_group_multiplier
-        @green_year_mira_medical_reserve_total += (1 - e.claim_handicap_percent)*(e.claim_mira_medical_reserve_amount+(e.claim_mira_indemnity_reserve_amount))* e.claim_group_multiplier* (1 - e.claim_subrogation_percent)
-      end
+    @ten_year_medical_total                      = @ten_year_claims.sum(:claim_medical_paid)
+    @ten_year_mira_medical_reserve_total         = @ten_year_claims.sum(:claim_mira_medical_reserve_amount)
+    @ten_year_group_modidified_losses_total      = @ten_year_claims.sum(:claim_modified_losses_group_reduced)
+    @ten_year_individual_modidified_losses_total = @ten_year_claims.sum(:claim_modified_losses_individual_reduced)
+    @ten_year_individual_reduced_total           = @ten_year_claims.sum(:claim_individual_reduced_amount)
+    @ten_year_si_total                           = @experience_si_total + @out_of_experience_si_total
+    @ten_year_si_avg                             = (@ten_year_si_total / 10)
+    @ten_year_si_ratio_avg                       = 'N/A'
 
-      @green_year_group_modidified_losses_total = @green_year_claims.sum(:claim_modified_losses_group_reduced)
-      @green_year_individual_modidified_losses_total = @green_year_claims.sum(:claim_modified_losses_individual_reduced)
-      @green_year_individual_reduced_total = @green_year_claims.sum(:claim_individual_reduced_amount)
-
-      @current_expected_losses = 0
-
-      @account.policy_calculation.manual_class_calculations.each do |man|
-        @current_expected_losses += man.manual_class_expected_loss_rate * man.manual_class_current_estimated_payroll
-      end
-
-      @current_expected_losses = @current_expected_losses/100
-
-      @payroll_calculations = @policy_calculation.manual_class_calculations.map{|u| u.payroll_calculations}.flatten
-
-      @payroll_periods = PayrollCalculation.select('reporting_period_start_date').group('payroll_calculations.reporting_period_start_date').where(:policy_number => @policy_calculation.policy_number).order(reporting_period_start_date: :desc).pluck(:reporting_period_start_date)
+    @ten_year_si_average   = (@ten_year_si_total / 10)
+    @ten_year_si_ratio_avg = 'N/A'
 
 
+    # GREEN YEAR EXPERIENCE
+    @first_green_year        = @group_rating.experience_period_upper_date.strftime("%Y").to_i
+    @first_green_year_period = (@group_rating.experience_period_upper_date.advance(days: 1))..(@group_rating.experience_period_upper_date.advance(years: 1))
+    @first_green_year_claims = @account.policy_calculation.claim_calculations.where("claim_injury_date BETWEEN ? AND ? ", @first_green_year_period.first, @first_green_year_period.last).order(:claim_injury_date)
 
-      @ilr = round(((@policy_calculation.policy_total_modified_losses_group_reduced * @policy_calculation.policy_total_current_payroll) / ( @policy_calculation.policy_total_four_year_payroll * (@policy_calculation.policy_adjusted_standard_premium || @policy_calculation.policy_total_standard_premium))), 2)
+    @second_green_year        = @first_green_year + 1
+    @second_green_year_period = @first_green_year_period.first.advance(years: 1)..@first_green_year_period.last.advance(years: 1)
+    @second_green_year_claims = @account.policy_calculation.claim_calculations.where("claim_injury_date BETWEEN ? AND ? ", @second_green_year_period.first, @second_green_year_period.last).order(:claim_injury_date)
 
-      @f_s = round((((3660 * @experience_med_only) + (12500 * @experience_lost_time))/ @policy_calculation.policy_total_four_year_payroll) *  (@policy_calculation.policy_total_current_payroll / (@policy_calculation.policy_adjusted_standard_premium || @policy_calculation.policy_total_standard_premium)), 2)
+    # GREEN YEAR EXPERIENCE Totals
+
+    @green_year_claims = @account.policy_calculation.claim_calculations.where("claim_injury_date BETWEEN ? AND ? ", @first_green_year_period.first, @second_green_year_period.last).order(:claim_injury_date)
+
+    @green_year_med_only  = @green_year_claims.where("left(claim_type, 1) = '1'").count
+    @green_year_loss_time = @green_year_claims.where("left(claim_type, 1) = '2'").count
+
+    @green_year_comp_total = (@green_year_claims.sum(:claim_modified_losses_group_reduced) - @green_year_claims.sum(:claim_medical_paid) - @green_year_claims.sum(:claim_mira_medical_reserve_amount))
+
+    @green_year_comp_total                 = 0
+    @green_year_medical_total              = 0
+    @green_year_mira_medical_reserve_total = 0
+
+    @green_year_claims.each do |e|
+      @green_year_comp_total                 += (((e.claim_mira_reducible_indemnity_paid + e.claim_mira_non_reducible_indemnity_paid) * (1 - e.claim_subrogation_percent) - (e.claim_mira_non_reducible_indemnity_paid)) * (1 - e.claim_handicap_percent) + (e.claim_mira_non_reducible_indemnity_paid)) * e.claim_group_multiplier
+      @green_year_medical_total              += (((e.claim_medical_paid + e.claim_mira_non_reducible_indemnity_paid_2) * (1 - e.claim_subrogation_percent) - e.claim_mira_non_reducible_indemnity_paid_2) * (1 - e.claim_handicap_percent) + e.claim_mira_non_reducible_indemnity_paid_2) * e.claim_group_multiplier
+      @green_year_mira_medical_reserve_total += (1 - e.claim_handicap_percent) * (e.claim_mira_medical_reserve_amount + (e.claim_mira_indemnity_reserve_amount)) * e.claim_group_multiplier * (1 - e.claim_subrogation_percent)
+    end
+
+    @green_year_group_modidified_losses_total      = @green_year_claims.sum(:claim_modified_losses_group_reduced)
+    @green_year_individual_modidified_losses_total = @green_year_claims.sum(:claim_modified_losses_individual_reduced)
+    @green_year_individual_reduced_total           = @green_year_claims.sum(:claim_individual_reduced_amount)
+
+    @current_expected_losses = 0
+
+    @account.policy_calculation.manual_class_calculations.each do |man|
+      @current_expected_losses += man.manual_class_expected_loss_rate * man.manual_class_current_estimated_payroll
+    end
+
+    @current_expected_losses = @current_expected_losses / 100
+
+    @payroll_calculations = @policy_calculation.manual_class_calculations.map { |u| u.payroll_calculations }.flatten
+
+    @payroll_periods = PayrollCalculation.select('reporting_period_start_date').group('payroll_calculations.reporting_period_start_date').where(:policy_number => @policy_calculation.policy_number).order(reporting_period_start_date: :desc).pluck(:reporting_period_start_date)
 
 
-      @erc =
+    @ilr = round(((@policy_calculation.policy_total_modified_losses_group_reduced * @policy_calculation.policy_total_current_payroll) / (@policy_calculation.policy_total_four_year_payroll * (@policy_calculation.policy_adjusted_standard_premium || @policy_calculation.policy_total_standard_premium))), 2)
+
+    @f_s = round((((3660 * @experience_med_only) + (12500 * @experience_lost_time)) / @policy_calculation.policy_total_four_year_payroll) * (@policy_calculation.policy_total_current_payroll / (@policy_calculation.policy_adjusted_standard_premium || @policy_calculation.policy_total_standard_premium)), 2)
+
+
+    @erc =
       if @account.policy_calculation.currently_assigned_erc_representative_number == 0
         "N/A"
       else
@@ -250,7 +248,7 @@ class RiskReport < PdfReport
         end
       end
 
-      @grc =
+    @grc =
       if @account.policy_calculation.currently_assigned_grc_representative_number == 0
         "N/A"
       else
@@ -262,7 +260,7 @@ class RiskReport < PdfReport
 
       end
 
-      @clm =
+    @clm =
       if @account.policy_calculation.currently_assigned_clm_representative_number == 0
         "N/A"
       else
@@ -274,7 +272,7 @@ class RiskReport < PdfReport
 
       end
 
-      @risk =
+    @risk =
       if @account.policy_calculation.currently_assigned_risk_representative_number == 0
         "N/A"
       else
@@ -286,81 +284,80 @@ class RiskReport < PdfReport
 
       end
 
-      @group_rating_levels = BwcCodesIndustryGroupSavingsRatioCriterium.where(industry_group: @account.industry_group)
+    @group_rating_levels = BwcCodesIndustryGroupSavingsRatioCriterium.where(industry_group: @account.industry_group)
 
-      @em_cap =
-        policy_em_rate = @policy_calculation.policy_individual_adjusted_experience_modified_rate || @policy_calculation.policy_individual_experience_modified_rate
+    @em_cap =
+      policy_em_rate = @policy_calculation.policy_individual_adjusted_experience_modified_rate || @policy_calculation.policy_individual_experience_modified_rate
 
-        if policy_em_rate > (2 * @policy_calculation.policy_program_histories.order(reporting_period_start_date: :desc).first.experience_modifier_rate)
-          (2 * @policy_calculation.policy_program_histories.order(reporting_period_start_date: :desc).first.experience_modifier_rate )
-        else
-          policy_em_rate
-        end
+    if policy_em_rate > (2 * @policy_calculation.policy_program_histories.order(reporting_period_start_date: :desc).first.experience_modifier_rate)
+      (2 * @policy_calculation.policy_program_histories.order(reporting_period_start_date: :desc).first.experience_modifier_rate)
+    else
+      policy_em_rate
+    end
 
-      @sort_code =
-        if @account.group_rating_rejections.where("program_type = 'group_rating'").empty? && @account.group_rating_qualification == 'accept'
-          "accept"
-        elsif @account.group_rating_rejections.where("program_type = 'group_rating'").empty? && @account.group_rating_qualification == 'reject'
-          "manual_override"
-        else
-          @account.group_rating_rejections.where("program_type = 'group_rating'").pluck(:reject_reason).map { |i| "'" + i.to_s + "'" }.join(",").to_s.gsub(/\s|"|'/, '')
-        end
-
-      @group_rating_date =
-          if @account.quotes.where("program_type = 0").first.nil?
-            'N/A'
-          else
-            @account.quotes.where("program_type = 0").first.quote_date
-          end
-
-      @group_retro_date =
-          if @account.quotes.where("program_type = 1").first.nil?
-            'N/A'
-          else
-            @account.quotes.where("program_type = 1").first.quote_date
-          end
-
-      if @report_params["at_a_glance"] == "1" || @report_params["experience_statistics"] == "1" || @report_params["expected_loss_and_premium"] == "1"
-        header
-        stroke_horizontal_rule
-      end
-      if @report_params["at_a_glance"] == "1"
-        at_a_glance
-      end
-      if @report_params["experience_statistics"] == "1"
-        experience_statistics
-        stroke_horizontal_rule
-      end
-      if @report_params["expected_loss_and_premium"] == "1"
-        expected_loss_development
+    @sort_code =
+      if @account.group_rating_rejections.where("program_type = 'group_rating'").empty? && @account.group_rating_qualification == 'accept'
+        "accept"
+      elsif @account.group_rating_rejections.where("program_type = 'group_rating'").empty? && @account.group_rating_qualification == 'reject'
+        "manual_override"
+      else
+        @account.group_rating_rejections.where("program_type = 'group_rating'").pluck(:reject_reason).map { |i| "'" + i.to_s + "'" }.join(",").to_s.gsub(/\s|"|'/, '')
       end
 
-      if @report_params["at_a_glance"] == "1" || @report_params["experience_statistics"] == "1" || @report_params["expected_loss_and_premium"] == "1"
-        start_new_page
+    @group_rating_date =
+      if @account.quotes.where("program_type = 0").first.nil?
+        'N/A'
+      else
+        @account.quotes.where("program_type = 0").first.quote_date
       end
-      roc_report
 
-      claim_loss_run
+    @group_retro_date =
+      if @account.quotes.where("program_type = 1").first.nil?
+        'N/A'
+      else
+        @account.quotes.where("program_type = 1").first.quote_date
+      end
 
-      if @report_params["group_discount_levels"] == "1" || @report_params[":coverage_status"] == "1" || @report_params["experience_modifier_info"] == "1" || @report_params["payroll_history"] == "1"
-        start_new_page
-      end
-      if @report_params["group_discount_levels"] == "1"
-        group_discount_level
-      end
-      if @report_params["coverage_status"] == "1"
-        coverage_status_history
-      end
-      if @report_params["experience_modifier_info"] == "1"
-        experience_modifier_history
-      end
-      if @report_params["payroll_history"] == "1"
-        payroll_and_premium_history
-      end
-      # number_pages "<page> in a total of <total>", { :start_count_at => 0, :page_filter => :all, :at => [bounds.right - 50, 0], :align => :right, :size => 14 }
-      footer(@account)
+    if @report_params["at_a_glance"] == "1" || @report_params["experience_statistics"] == "1" || @report_params["expected_loss_and_premium"] == "1"
+      header
+      stroke_horizontal_rule
+    end
+    if @report_params["at_a_glance"] == "1"
+      at_a_glance
+    end
+    if @report_params["experience_statistics"] == "1"
+      experience_statistics
+      stroke_horizontal_rule
+    end
+    if @report_params["expected_loss_and_premium"] == "1"
+      expected_loss_development
+    end
+
+    if @report_params["at_a_glance"] == "1" || @report_params["experience_statistics"] == "1" || @report_params["expected_loss_and_premium"] == "1"
+      start_new_page
+    end
+    roc_report
+
+    claim_loss_run
+
+    if @report_params["group_discount_levels"] == "1" || @report_params[":coverage_status"] == "1" || @report_params["experience_modifier_info"] == "1" || @report_params["payroll_history"] == "1"
+      start_new_page
+    end
+    if @report_params["group_discount_levels"] == "1"
+      group_discount_level
+    end
+    if @report_params["coverage_status"] == "1"
+      coverage_status_history
+    end
+    if @report_params["experience_modifier_info"] == "1"
+      experience_modifier_history
+    end
+    if @report_params["payroll_history"] == "1"
+      payroll_and_premium_history
+    end
+    # number_pages "<page> in a total of <total>", { :start_count_at => 0, :page_filter => :all, :at => [bounds.right - 50, 0], :align => :right, :size => 14 }
+    footer(@account)
   end
-
 
 
   private
@@ -369,7 +366,7 @@ class RiskReport < PdfReport
     current_cursor = cursor
     bounding_box([0, current_cursor], :width => 80, :height => 80) do
       if @account.representative.logo.nil?
-        if [9,10,16].include? @account.representative.id
+        if [9, 10, 16].include? @account.representative.id
           image "#{Rails.root}/app/assets/images/minute men hr.jpeg", height: 75
         elsif [2].include? @account.representative.id
           image "#{Rails.root}/app/assets/images/cose_logo.jpg", height: 75
@@ -379,7 +376,7 @@ class RiskReport < PdfReport
           image "#{Rails.root}/app/assets/images/logo.png", height: 50
         end
       else
-        if [9,10,16,2,17].include? @account.representative.id
+        if [9, 10, 16, 2, 17].include? @account.representative.id
           if Rails.env.production?
             image open(@account.representative.logo.url), height: 75
           else
@@ -440,7 +437,7 @@ class RiskReport < PdfReport
       text "Group Retro Days Lapse: #{ @group_retro_lapse_sum }"
       move_down 2
       text "Currently Lapsed: #{@current_coverage_status}"
-     transparent(0) { stroke_bounds }
+      transparent(0) { stroke_bounds }
     end
 
     bounding_box([285, current_cursor], :width => 275, :height => 125) do
@@ -461,14 +458,14 @@ class RiskReport < PdfReport
       text "Trans Work: #{ @policy_program_history.twbns_participation_indicator }  ISSP: #{@policy_program_history.issp_participation_indicator }"
       move_down 2
       text "Grow Ohio: #{@policy_program_history.drug_free_program_participation_indicator  }"
-     transparent(0) { stroke_bounds }
+      transparent(0) { stroke_bounds }
     end
     post_current_cursor = cursor
     stroke do
-     # just lower the current y position
-    #  horizontal_line 0, 545, :at => current_cursor
-     vertical_line (pre_current_cursor), post_current_cursor, :at => 275
-    #  horizontal_line 0, 545, :at => 385
+      # just lower the current y position
+      #  horizontal_line 0, 545, :at => current_cursor
+      vertical_line (pre_current_cursor), post_current_cursor, :at => 275
+      #  horizontal_line 0, 545, :at => 385
     end
     stroke_horizontal_rule
   end
@@ -478,14 +475,14 @@ class RiskReport < PdfReport
     text "Experience Statistics and EM Calculation:", style: :bold
     move_down 5
     table experience_table_data do
-      self.position = :center
-      row(0).font_style = :bold
-      row(0).borders = [:bottom]
+      self.position                 = :center
+      row(0).font_style             = :bold
+      row(0).borders                = [:bottom]
       row(1).columns(0..15).borders = []
-      row(0).align = :center
-      row(0..-1).align = :center
-      self.cell_style = {:size => 8}
-      self.header = true
+      row(0).align                  = :center
+      row(0..-1).align              = :center
+      self.cell_style               = { :size => 8 }
+      self.header                   = true
     end
 
     move_down 10
@@ -506,7 +503,7 @@ class RiskReport < PdfReport
     end
     current_cursor = cursor
     bounding_box([75, current_cursor], :width => 150, :height => 15) do
-      text   text "Group Date: #{ @group_rating_date }", style: :bold
+      text text "Group Date: #{ @group_rating_date }", style: :bold
       transparent(0) { stroke_bounds }
     end
 
@@ -520,43 +517,43 @@ class RiskReport < PdfReport
   end
 
   def experience_table_data
-    @data = [["ITML", "GTML", "TEL", "Ratio", "IG", "TLL", "C%", "EMR", "Adj. EMR", "CAP", "Max Value", "Stand Prem", "F/S", "ILR", "10YLR", "4YLR" ]]
-    @data += [[round(@policy_calculation.policy_total_modified_losses_individual_reduced,0), round(@policy_calculation.policy_total_modified_losses_group_reduced,0), round(@policy_calculation.policy_total_expected_losses,0), round(@policy_calculation.policy_group_ratio - 1, 4), @policy_calculation.policy_industry_group, round(@policy_calculation.policy_total_limited_losses,0), percent(@policy_calculation.policy_credibility_percent), round(@policy_calculation.policy_individual_experience_modified_rate,2), round(@policy_calculation.policy_individual_adjusted_experience_modified_rate + 1,2), round(@em_cap,2), round(@policy_calculation.policy_maximum_claim_value,0), round(@policy_calculation.policy_total_standard_premium,0), "#{@f_s}", "#{@ilr}" ]]
+    @data = [["ITML", "GTML", "TEL", "Ratio", "IG", "TLL", "C%", "EMR", "Adj. EMR", "CAP", "Max Value", "Stand Prem", "F/S", "ILR", "10YLR", "4YLR"]]
+    @data += [[round(@policy_calculation.policy_total_modified_losses_individual_reduced, 0), round(@policy_calculation.policy_total_modified_losses_group_reduced, 0), round(@policy_calculation.policy_total_expected_losses, 0), round(@policy_calculation.policy_group_ratio - 1, 4), @policy_calculation.policy_industry_group, round(@policy_calculation.policy_total_limited_losses, 0), percent(@policy_calculation.policy_credibility_percent), round(@policy_calculation.policy_individual_experience_modified_rate, 2), round(@policy_calculation.policy_individual_adjusted_experience_modified_rate + 1, 2), round(@em_cap, 2), round(@policy_calculation.policy_maximum_claim_value, 0), round(@policy_calculation.policy_total_standard_premium, 0), "#{@f_s}", "#{@ilr}"]]
   end
 
   def expected_loss_development
     move_down 10
     text "Expected Loss Development and Estimated Premium:", style: :bold
     move_down 5
-    table expected_loss_table_data, :column_widths => {0 => 30, 1 => 20, 2 => 60, 3 => 30, 4 => 55, 5 => 30, 6 => 60, 7 => 35, 8 => 50, 9 => 35, 10 => 50, 11 => 35, 12 => 50 } do
-      self.position = :center
-      row(0).font_style = :bold
+    table expected_loss_table_data, :column_widths => { 0 => 30, 1 => 20, 2 => 60, 3 => 30, 4 => 55, 5 => 30, 6 => 60, 7 => 35, 8 => 50, 9 => 35, 10 => 50, 11 => 35, 12 => 50 } do
+      self.position          = :center
+      row(0).font_style      = :bold
       row(-2..-1).font_style = :bold
-      row(0).overflow = :shring_to_fit
-      row(0).align = :center
-      row(0).borders = [:bottom]
-      row(1..-1).borders = []
-      row(-2).borders = [:top]
+      row(0).overflow        = :shring_to_fit
+      row(0).align           = :center
+      row(0).borders         = [:bottom]
+      row(1..-1).borders     = []
+      row(-2).borders        = [:top]
       # row(1).columns(0..14).borders = []
       row(0..-1).align = :center
-      self.cell_style = {:size => 8}
-      self.header = true
+      self.cell_style  = { :size => 8 }
+      self.header      = true
     end
     move_down 10
-    text "Current Expected Losses: #{ round(@current_expected_losses,0) }", style: :bold
+    text "Current Expected Losses: #{ round(@current_expected_losses, 0) }", style: :bold
   end
 
   def expected_loss_table_data
-    if ['MMHR2','MMHR1','CPM', 'ARM'].include? @account.representative.abbreviated_name
+    if ['MMHR2', 'MMHR1', 'CPM', 'ARM'].include? @account.representative.abbreviated_name
       @data = [["Man Num", "IG", "Experience Payroll", "Exp. Loss Rate", "Total Exp Losses", "Base Rate", "Estimated Payroll", "Ind. Rate", "Est Ind Premium", "#{@account.group_rating_tier} Group Rate", "Group Premium", "MMS Rate", "MMS Premium"]]
-      @data +=  @account.policy_calculation.manual_class_calculations.order(manual_number: :asc).map { |e| [e.manual_number, e.manual_class_industry_group, round(e.manual_class_four_year_period_payroll,0), rate(e.manual_class_expected_loss_rate/100, 2),  round(e.manual_class_expected_losses,0), rate(e.manual_class_base_rate/100,2), round(e.manual_class_current_estimated_payroll, 0), rate(e.manual_class_individual_total_rate, 4), round(e.manual_class_estimated_individual_premium,0), rate(e.manual_class_group_total_rate,4), round(e.manual_class_estimated_group_premium,0)] }
-      @data += [[{:content => " #{ } Totals", :colspan => 4},"#{round(@policy_calculation.policy_total_expected_losses, 0)}","","#{round(@policy_calculation.policy_total_current_payroll, 0)}","","#{round(@policy_calculation.policy_total_individual_premium, 0)}","","#{round(@account.group_premium, 0)}", "", ""]]
-      @data += [[{:content => " #{ } Adjusted Premium", :colspan => 4}, {:content => "", :colspan => 4}, "#{round(@policy_calculation.policy_adjusted_individual_premium, 0)}", {:content => "", :colspan => 4}]]
+      @data += @account.policy_calculation.manual_class_calculations.order(manual_number: :asc).map { |e| [e.manual_number, e.manual_class_industry_group, round(e.manual_class_four_year_period_payroll, 0), rate(e.manual_class_expected_loss_rate / 100, 2), round(e.manual_class_expected_losses, 0), rate(e.manual_class_base_rate / 100, 2), round(e.manual_class_current_estimated_payroll, 0), rate(e.manual_class_individual_total_rate, 4), round(e.manual_class_estimated_individual_premium, 0), rate(e.manual_class_group_total_rate, 4), round(e.manual_class_estimated_group_premium, 0)] }
+      @data += [[{ :content => " #{ } Totals", :colspan => 4 }, "#{round(@policy_calculation.policy_total_expected_losses, 0)}", "", "#{round(@policy_calculation.policy_total_current_payroll, 0)}", "", "#{round(@policy_calculation.policy_total_individual_premium, 0)}", "", "#{round(@account.group_premium, 0)}", "", ""]]
+      @data += [[{ :content => " #{ } Adjusted Premium", :colspan => 4 }, { :content => "", :colspan => 4 }, "#{round(@policy_calculation.policy_adjusted_individual_premium, 0)}", { :content => "", :colspan => 4 }]]
     else
       @data = [["Man Num", "IG", "Experience Payroll", "Exp. Loss Rate", "Total Exp Losses", "Base Rate", "Estimated Payroll", "Ind. Rate", "Est Ind Premium", "#{@account.group_rating_tier} Group Rate", "Group Premium"]]
-      @data +=  @account.policy_calculation.manual_class_calculations.order(manual_number: :asc).map { |e| [e.manual_number, e.manual_class_industry_group, round(e.manual_class_four_year_period_payroll,0), rate(e.manual_class_expected_loss_rate/100, 2),  round(e.manual_class_expected_losses,0), rate(e.manual_class_base_rate/100,2), round(e.manual_class_current_estimated_payroll, 0), rate(e.manual_class_individual_total_rate, 4), round(e.manual_class_estimated_individual_premium,0), rate(e.manual_class_group_total_rate,4), round(e.manual_class_estimated_group_premium,0)] }
-      @data += [[{:content => " #{ } Totals", :colspan => 4},"#{round(@policy_calculation.policy_total_expected_losses, 0)}","","#{round(@policy_calculation.policy_total_current_payroll, 0)}","","#{round(@policy_calculation.policy_total_individual_premium, 0)}","","#{round(@account.group_premium, 0)}"]]
-      @data += [[{:content => " #{ } Adjusted Premium", :colspan => 4}, {:content => "", :colspan => 4}, "#{round(@policy_calculation.policy_adjusted_individual_premium, 0)}", {:content => "", :colspan => 2}]]
+      @data += @account.policy_calculation.manual_class_calculations.order(manual_number: :asc).map { |e| [e.manual_number, e.manual_class_industry_group, round(e.manual_class_four_year_period_payroll, 0), rate(e.manual_class_expected_loss_rate / 100, 2), round(e.manual_class_expected_losses, 0), rate(e.manual_class_base_rate / 100, 2), round(e.manual_class_current_estimated_payroll, 0), rate(e.manual_class_individual_total_rate, 4), round(e.manual_class_estimated_individual_premium, 0), rate(e.manual_class_group_total_rate, 4), round(e.manual_class_estimated_group_premium, 0)] }
+      @data += [[{ :content => " #{ } Totals", :colspan => 4 }, "#{round(@policy_calculation.policy_total_expected_losses, 0)}", "", "#{round(@policy_calculation.policy_total_current_payroll, 0)}", "", "#{round(@policy_calculation.policy_total_individual_premium, 0)}", "", "#{round(@account.group_premium, 0)}"]]
+      @data += [[{ :content => " #{ } Adjusted Premium", :colspan => 4 }, { :content => "", :colspan => 4 }, "#{round(@policy_calculation.policy_adjusted_individual_premium, 0)}", { :content => "", :colspan => 2 }]]
     end
   end
 
@@ -600,7 +597,7 @@ class RiskReport < PdfReport
     current_cursor = cursor
     bounding_box([0, current_cursor], :width => 80, :height => 80) do
       if @account.representative.logo.nil?
-        if [9,10,16].include? @account.representative.id
+        if [9, 10, 16].include? @account.representative.id
           image "#{Rails.root}/app/assets/images/minute men hr.jpeg", height: 75
         elsif [2].include? @account.representative.id
           image "#{Rails.root}/app/assets/images/cose_logo.jpg", height: 75
@@ -610,7 +607,7 @@ class RiskReport < PdfReport
           image "#{Rails.root}/app/assets/images/logo.png", height: 50
         end
       else
-        if [9,10,16,2,17].include? @account.representative.id
+        if [9, 10, 16, 2, 17].include? @account.representative.id
           if Rails.env.production?
             image open(@account.representative.logo.url), height: 75
           else
@@ -649,35 +646,35 @@ class RiskReport < PdfReport
       text "Estimated Current Period Premium", size: 10, style: :bold, align: :center
       horizontal_line 0, 350, :at => cursor
       bounding_box([0, cursor], :width => 350) do
-        table ([[ "Rating Plan: #{@current_policy_program.group_type }" , "Current EM: #{ @current_policy_program.experience_modifier_rate }", "OCP: #{ @current_policy_program.ocp_participation_indicator }", "EM CAP: #{ @current_policy_program.em_cap_participation_indicator }" ], [ "DFSP: #{@current_policy_program.drug_free_program_participation_indicator }" , "Ded Pct: #{ @current_policy_program.deductible_discount_percentage }", "ISSP: #{ @current_policy_program.issp_participation_indicator }", "TWBNS: #{ @current_policy_program.twbns_participation_indicator }" ]]), :column_widths => {0 => 89, 1 => 87, 2 => 87, 3 => 87 } do
-          self.position = :center
+        table ([["Rating Plan: #{@current_policy_program.group_type }", "Current EM: #{ @current_policy_program.experience_modifier_rate }", "OCP: #{ @current_policy_program.ocp_participation_indicator }", "EM CAP: #{ @current_policy_program.em_cap_participation_indicator }"], ["DFSP: #{@current_policy_program.drug_free_program_participation_indicator }", "Ded Pct: #{ @current_policy_program.deductible_discount_percentage }", "ISSP: #{ @current_policy_program.issp_participation_indicator }", "TWBNS: #{ @current_policy_program.twbns_participation_indicator }"]]), :column_widths => { 0 => 89, 1 => 87, 2 => 87, 3 => 87 } do
+          self.position      = :center
           row(0..-1).borders = []
-          self.cell_style = { size: 9 }
-          cells.padding = 3
+          self.cell_style    = { size: 9 }
+          cells.padding      = 3
         end
         stroke_bounds
       end
       bounding_box([0, cursor], :width => 350) do
-        table current_policy_data, :column_widths => {0 => 87, 1 => 87, 2 => 87, 3 => 87 }, :row_colors => ["FFFFFF", "F0F0F0"] do
-          self.position = :center
-          row(0).font_style = :bold
-          row(0).overflow = :shring_to_fit
-          row(0).align = :center
-          row(0).borders = [:bottom]
+        table current_policy_data, :column_widths => { 0 => 87, 1 => 87, 2 => 87, 3 => 87 }, :row_colors => ["FFFFFF", "F0F0F0"] do
+          self.position      = :center
+          row(0).font_style  = :bold
+          row(0).overflow    = :shring_to_fit
+          row(0).align       = :center
+          row(0).borders     = [:bottom]
           row(1..-1).borders = []
-          row(0..-1).align = :center
-          self.cell_style = { size: 9 }
-          cells.padding = 3
+          row(0..-1).align   = :center
+          self.cell_style    = { size: 9 }
+          cells.padding      = 3
         end
-        table current_policy_data_total, :column_widths => {0 => 87, 1 => 87, 2 => 87, 3 => 87 } do
-          self.position = :center
+        table current_policy_data_total, :column_widths => { 0 => 87, 1 => 87, 2 => 87, 3 => 87 } do
+          self.position     = :center
           row(0).font_style = :bold
-          row(0).overflow = :shring_to_fit
-          row(0).align = :center
-          row(0).borders = [:top]
-          row(0..-1).align = :center
-          self.cell_style = { size: 9 }
-          cells.padding = 3
+          row(0).overflow   = :shring_to_fit
+          row(0).align      = :center
+          row(0).borders    = [:top]
+          row(0..-1).align  = :center
+          self.cell_style   = { size: 9 }
+          cells.padding     = 3
         end
         stroke_bounds
       end
@@ -687,12 +684,12 @@ class RiskReport < PdfReport
   end
 
   def current_policy_data
-    @data = [["Manual", "Est Payroll", "Rate", "Est Premium" ]]
-    @data += @policy_calculation.manual_class_calculations.order(manual_number: :asc).map { |e| [e.manual_number, round(e.manual_class_current_estimated_payroll,0), e.payroll_calculations.where("reporting_period_start_date < :current_date and reporting_period_end_date > :current_date", current_date: @current_date).first.nil? ? '0.00' : e.payroll_calculations.where("reporting_period_start_date < :current_date and reporting_period_end_date > :current_date", current_date: @current_date).first.manual_class_rate, "#{ (e.payroll_calculations.where("reporting_period_start_date < :current_date and reporting_period_end_date > :current_date", current_date: @current_date).first.nil? || e.payroll_calculations.where("reporting_period_start_date < :current_date and reporting_period_end_date > :current_date", current_date: @current_date).first.manual_class_rate.nil?) ? "0.00" : round(e.payroll_calculations.where("reporting_period_start_date < :current_date and reporting_period_end_date > :current_date", current_date: @current_date).first.manual_class_rate * e.manual_class_current_estimated_payroll * 0.01,0)}"   ] }
+    @data = [["Manual", "Est Payroll", "Rate", "Est Premium"]]
+    @data += @policy_calculation.manual_class_calculations.order(manual_number: :asc).map { |e| [e.manual_number, round(e.manual_class_current_estimated_payroll, 0), e.payroll_calculations.where("reporting_period_start_date < :current_date and reporting_period_end_date > :current_date", current_date: @current_date).first.nil? ? '0.00' : e.payroll_calculations.where("reporting_period_start_date < :current_date and reporting_period_end_date > :current_date", current_date: @current_date).first.manual_class_rate, "#{ (e.payroll_calculations.where("reporting_period_start_date < :current_date and reporting_period_end_date > :current_date", current_date: @current_date).first.nil? || e.payroll_calculations.where("reporting_period_start_date < :current_date and reporting_period_end_date > :current_date", current_date: @current_date).first.manual_class_rate.nil?) ? "0.00" : round(e.payroll_calculations.where("reporting_period_start_date < :current_date and reporting_period_end_date > :current_date", current_date: @current_date).first.manual_class_rate * e.manual_class_current_estimated_payroll * 0.01, 0)}"] }
   end
 
   def current_policy_data_total
-    @data = [["Totals", "#{ round(@policy_calculation.policy_total_current_payroll,0) }", "", "#{round(@total_est_premium, 0)}" ]]
+    @data = [["Totals", "#{ round(@policy_calculation.policy_total_current_payroll, 0) }", "", "#{round(@total_est_premium, 0)}"]]
   end
 
   def workers_comp_program_options
@@ -700,16 +697,16 @@ class RiskReport < PdfReport
     text "#{@account.representative.quote_year} Workers' Compensation Program Options [1]", size: 10, style: :bold, align: :center
 
     table workers_comp_program_options_data,
-    :column_widths => {0 => 100, 1 => 63, 2 => 62, 3 => 62, 4 => 62, 5 => 62, 6 => 62, 7 => 62 },
-    :row_colors => ["FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "F0F0F0", "F0F0F0" ],
-    :cell_style => {:height => 20} do
-      self.position = :center
-      row(0).font_style = :bold
-      row(0).align = :center
-      row(0).borders = [:bottom]
-      row(0..-1).align = :right
+          :column_widths => { 0 => 100, 1 => 63, 2 => 62, 3 => 62, 4 => 62, 5 => 62, 6 => 62, 7 => 62 },
+          :row_colors    => ["FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "F0F0F0", "F0F0F0"],
+          :cell_style    => { :height => 20 } do
+      self.position          = :center
+      row(0).font_style      = :bold
+      row(0).align           = :center
+      row(0).borders         = [:bottom]
+      row(0..-1).align       = :right
       row(-2..-1).font_style = :bold
-      self.cell_style = { size: 9 }
+      self.cell_style        = { size: 9 }
       self.before_rendering_page do |t|
         t.row(-2).border_top_width = 2
       end
@@ -718,73 +715,73 @@ class RiskReport < PdfReport
 
   def workers_comp_program_options_data
     # Experience Rated
-      @experience_eligibility = 'Yes'
-      @experience_projected_premium = @policy_calculation.policy_total_individual_premium
-      @experience_costs = 0
-      @experience_maximum_risk = 0
-      @experience_total_cost = @experience_projected_premium - @experience_costs
-      @experience_savings = @policy_calculation.policy_total_individual_premium - @experience_total_cost
+    @experience_eligibility       = 'Yes'
+    @experience_projected_premium = @policy_calculation.policy_total_individual_premium
+    @experience_costs             = 0
+    @experience_maximum_risk      = 0
+    @experience_total_cost        = @experience_projected_premium - @experience_costs
+    @experience_savings           = @policy_calculation.policy_total_individual_premium - @experience_total_cost
 
     # EM Cap
-      @em_cap_eligibility =
-        (@policy_calculation.policy_individual_experience_modified_rate > (2 * @policy_calculation.policy_program_histories.order(reporting_period_start_date: :desc).first.experience_modifier_rate) ? 'Yes' : 'No')
-      if @em_cap_eligibility == 'Yes'
-        @em_cap_projected_premium = (2 * @policy_calculation.policy_program_histories.order(reporting_period_start_date: :desc).first.experience_modifier_rate )
-        @em_cap_costs = 0
-        @em_cap_maximum_risk = 0
-        @em_cap_total_cost = @em_cap_projected_premium - @em_cap_costs
-        @em_cap_savings = @policy_calculation.policy_total_individual_premium - @em_cap_total_cost
-      else
-        @em_cap_projected_premium = nil
-        @em_cap_costs = nil
-        @em_cap_maximum_risk = nil
-        @em_cap_total_cost = nil
-        @em_cap_savings = nil
-      end
+    @em_cap_eligibility =
+      (@policy_calculation.policy_individual_experience_modified_rate > (2 * @policy_calculation.policy_program_histories.order(reporting_period_start_date: :desc).first.experience_modifier_rate) ? 'Yes' : 'No')
+    if @em_cap_eligibility == 'Yes'
+      @em_cap_projected_premium = (2 * @policy_calculation.policy_program_histories.order(reporting_period_start_date: :desc).first.experience_modifier_rate)
+      @em_cap_costs             = 0
+      @em_cap_maximum_risk      = 0
+      @em_cap_total_cost        = @em_cap_projected_premium - @em_cap_costs
+      @em_cap_savings           = @policy_calculation.policy_total_individual_premium - @em_cap_total_cost
+    else
+      @em_cap_projected_premium = nil
+      @em_cap_costs             = nil
+      @em_cap_maximum_risk      = nil
+      @em_cap_total_cost        = nil
+      @em_cap_savings           = nil
+    end
 
 
     # OCP
 
     # Group Rating
-      @group_rating_eligibility = (@account.group_rating_qualification == 'accept' ? 'Yes' : 'No')
-      if @group_rating_eligibility == 'Yes'
-        @group_rating_projected_premium = @account.group_premium
-        @group_rating_costs = 0
-        @group_rating_maximum_risk = 0
-        @group_rating_total_cost = @group_rating_projected_premium - @group_rating_costs
-        @group_rating_savings = @policy_calculation.policy_total_individual_premium - @group_rating_total_cost
-      else
-        @group_rating_projected_premium = nil
-        @group_rating_costs = nil
-        @group_rating_maximum_risk = nil
-        @group_rating_total_cost = nil
-        @group_rating_savings = nil
-      end
+    @group_rating_eligibility = (@account.group_rating_qualification == 'accept' ? 'Yes' : 'No')
+    if @group_rating_eligibility == 'Yes'
+      @group_rating_projected_premium = @account.group_premium
+      @group_rating_costs             = 0
+      @group_rating_maximum_risk      = 0
+      @group_rating_total_cost        = @group_rating_projected_premium - @group_rating_costs
+      @group_rating_savings           = @policy_calculation.policy_total_individual_premium - @group_rating_total_cost
+    else
+      @group_rating_projected_premium = nil
+      @group_rating_costs             = nil
+      @group_rating_maximum_risk      = nil
+      @group_rating_total_cost        = nil
+      @group_rating_savings           = nil
+    end
 
     # Group Retro
-      @group_retro_eligibility = (@account.group_retro_qualification == 'accept' ? 'Yes' : 'No')
-      if @group_retro_eligibility == 'Yes'
-        @group_retro_projected_premium = @policy_calculation.policy_total_individual_premium
-        @group_retro_costs = -@account.group_retro_savings
-        @group_retro_maximum_risk = (@policy_calculation.policy_total_standard_premium * 0.15)
-        @group_retro_total_cost = @group_retro_projected_premium + @group_retro_costs
-        @group_retro_savings = @policy_calculation.policy_adjusted_individual_premium - @group_retro_total_cost
-      else
-        @group_retro_projected_premium = nil
-        @group_retro_costs = nil
-        @group_retro_maximum_risk = nil
-        @group_retro_total_cost = nil
-        @group_retro_savings = nil
-      end
+    @group_retro_eligibility = (@account.group_retro_qualification == 'accept' ? 'Yes' : 'No')
+    if @group_retro_eligibility == 'Yes'
+      @group_retro_projected_premium = @policy_calculation.policy_total_individual_premium
+      @group_retro_costs             = -@account.group_retro_savings
+      @group_retro_maximum_risk      = (@policy_calculation.policy_total_standard_premium * 0.15)
+      @group_retro_total_cost        = @group_retro_projected_premium + @group_retro_costs
+      @group_retro_savings           = (@policy_calculation.policy_adjusted_individual_premium || @policy_calculation.calculate_premium_with_assessments) - @group_retro_total_cost
+    else
+      @group_retro_projected_premium = nil
+      @group_retro_costs             = nil
+      @group_retro_maximum_risk      = nil
+      @group_retro_total_cost        = nil
+      @group_retro_savings           = nil
+    end
 
 
-    @data = [[" ","Exp. Rated", "EM Cap", "OCP", " #{ @account.group_rating_tier } Gr.", "Gr. Retro", "Ind. Retro", "#{@account.representative.abbreviated_name}" ]]
-    @data += [[ "Eligibility","#{@experience_eligibility}","#{@em_cap_eligibility}"," ","#{@group_rating_eligibility}","#{@group_retro_eligibility}"," "," "]]
-    @data += [[ "Projected Premium","#{ round(@experience_projected_premium, 0) }","#{ round(@em_cap_projected_premium,0)}"," ","#{round(@group_rating_projected_premium, 0)}","#{round(@group_retro_projected_premium, 0)}"," "," "]]
-    @data += [[ "Est Cost/-Credits","#{ round(@experience_costs,0) }","#{ round(@em_cap_costs,0)}"," ","#{ round(@group_rating_costs,0) }","#{ round(@group_retro_costs, 0)}"," "," "]]
-    @data += [[ "Maximum Risk","#{ round(@experience_maximum_risk,0) }","#{ round(@em_cap_maximum_risk,0) }"," ","#{ round(@group_rating_maximum_risk,0) }","#{ round(@group_retro_maximum_risk, 0)}"," "," "]]
-    @data += [[ "Total Est Cost","#{ round(@experience_total_cost,0) }","#{ round(@em_cap_total_cost,0)}"," ","#{ round(@group_rating_total_cost,0) }","#{ round(@group_retro_total_cost, 0)}"," "," "]]
-    @data += [[ "Est Savings/-Loss","#{ round(@experience_savings,0) }","#{round( @em_cap_savings,0 )}"," ","#{ round(@group_rating_savings,0) }","#{ round(@group_retro_savings, 0)}"," "," "]]
+    @data = [[" ", "Exp. Rated", "EM Cap", "OCP", " #{ @account.group_rating_tier } Gr.", "Gr. Retro", "Ind. Retro", "#{@account.representative.abbreviated_name}"]]
+    @data += [["Eligibility", "#{@experience_eligibility}", "#{@em_cap_eligibility}", " ", "#{@group_rating_eligibility}", "#{@group_retro_eligibility}", " ", " "]]
+    @data += [["Projected Premium", "#{ round(@experience_projected_premium, 0) }", "#{ round(@em_cap_projected_premium, 0)}", " ", "#{round(@group_rating_projected_premium, 0)}", "#{round(@group_retro_projected_premium, 0)}", " ", " "]]
+    @data += [["Est Cost/-Credits", "#{ round(@experience_costs, 0) }", "#{ round(@em_cap_costs, 0)}", " ", "#{ round(@group_rating_costs, 0) }", "#{ round(@group_retro_costs, 0)}", " ", " "]]
+    @data += [["Maximum Risk", "#{ round(@experience_maximum_risk, 0) }", "#{ round(@em_cap_maximum_risk, 0) }", " ", "#{ round(@group_rating_maximum_risk, 0) }", "#{ round(@group_retro_maximum_risk, 0)}", " ", " "]]
+    @data += [["Total Est Cost", "#{ round(@experience_total_cost, 0) }", "#{ round(@em_cap_total_cost, 0)}", " ", "#{ round(@group_rating_total_cost, 0) }", "#{ round(@group_retro_total_cost, 0)}", " ", " "]]
+    @data += [["Est Savings/-Loss", "#{ round(@experience_savings, 0) }", "#{round(@em_cap_savings, 0)}", " ", "#{ round(@group_rating_savings, 0) }", "#{ round(@group_retro_savings, 0)}", " ", " "]]
   end
 
 
@@ -793,14 +790,14 @@ class RiskReport < PdfReport
     text "Additional BWC Discounts, Rebates and Bonuses [2]", size: 10, style: :bold, align: :center
     move_down 5
     table workers_comp_program_additional_options_data,
-      :column_widths => {0 => 100, 1 => 63, 2 => 62, 3 => 62, 4 => 62, 5 => 62, 6 => 62, 7 => 62 },
-      :row_colors => ["FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "F0F0F0", "F0F0F0"],
-      :cell_style => {:height => 20} do
-      self.position = :center
-      row(0).align = :center
-      row(0..-1).align = :center
+          :column_widths => { 0 => 100, 1 => 63, 2 => 62, 3 => 62, 4 => 62, 5 => 62, 6 => 62, 7 => 62 },
+          :row_colors    => ["FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "F0F0F0", "F0F0F0"],
+          :cell_style    => { :height => 20 } do
+      self.position          = :center
+      row(0).align           = :center
+      row(0..-1).align       = :center
       row(-3..-1).font_style = :bold
-      self.cell_style = { size: 9 }
+      self.cell_style        = { size: 9 }
       self.before_rendering_page do |t|
         t.row(-3).border_top_width = 2
         t.row(-2).border_top_width = 2
@@ -827,90 +824,88 @@ class RiskReport < PdfReport
   def workers_comp_program_additional_options_data
 
     ###### Drug-Free Safety
-      @drug_free_experience = @policy_calculation.policy_total_standard_premium * 0.07
-      @drug_free_group_rating = (@group_rating_eligibility == 'Yes' ? (@account.group_premium * 0.07) : nil)
+    @drug_free_experience   = @policy_calculation.policy_total_standard_premium * 0.07
+    @drug_free_group_rating = (@group_rating_eligibility == 'Yes' ? (@account.group_premium * 0.07) : nil)
 
     ###### Safety Council
-      @safety_council_experience = (@policy_calculation.policy_total_standard_premium * 0.04)
-      @safety_council_em_cap = (@em_cap_eligibility == 'Yes' ? (@em_cap_projected_premium * 0.04) : nil)
-      # @safety_council_ocp = (@policy_calculation.policy_total_standard_premium * 0.04)
-      @safety_council_group_rating = (@group_rating_eligibility == 'Yes' ? (@account.group_premium * 0.02) : nil)
-      @safety_council_group_retro = (@group_retro_eligibility == 'Yes' ? (@policy_calculation.policy_total_standard_premium * 0.02) : '')
-      # @safety_council_individual_retro = (@account.group_retro_premium * 0.04)
-      # @safety_council_mm_select = (@policy_calculation.policy_total_standard_premium * 0.04)
+    @safety_council_experience = (@policy_calculation.policy_total_standard_premium * 0.04)
+    @safety_council_em_cap     = (@em_cap_eligibility == 'Yes' ? (@em_cap_projected_premium * 0.04) : nil)
+    # @safety_council_ocp = (@policy_calculation.policy_total_standard_premium * 0.04)
+    @safety_council_group_rating = (@group_rating_eligibility == 'Yes' ? (@account.group_premium * 0.02) : nil)
+    @safety_council_group_retro  = (@group_retro_eligibility == 'Yes' ? (@policy_calculation.policy_total_standard_premium * 0.02) : '')
+    # @safety_council_individual_retro = (@account.group_retro_premium * 0.04)
+    # @safety_council_mm_select = (@policy_calculation.policy_total_standard_premium * 0.04)
 
     ###### Industry Specific
-      @industry_specific_experience = (@policy_calculation.policy_total_standard_premium * 0.03)
-      @industry_specific_em_cap = (@em_cap_eligibility == 'Yes' ? (@em_cap_projected_premium * 0.03) : nil)
-      # @industry_specific_ocp = (@policy_calculation.policy_total_standard_premium * 0.03)
-      @industry_specific_group_rating = (@group_rating_eligibility == 'Yes' ? (@account.group_premium * 0.03) : nil)
-      # @industry_specific_individual_retro = (@account.group_premium * 0.03)
-      # @industry_specific_mm_select
+    @industry_specific_experience = (@policy_calculation.policy_total_standard_premium * 0.03)
+    @industry_specific_em_cap     = (@em_cap_eligibility == 'Yes' ? (@em_cap_projected_premium * 0.03) : nil)
+    # @industry_specific_ocp = (@policy_calculation.policy_total_standard_premium * 0.03)
+    @industry_specific_group_rating = (@group_rating_eligibility == 'Yes' ? (@account.group_premium * 0.03) : nil)
+    # @industry_specific_individual_retro = (@account.group_premium * 0.03)
+    # @industry_specific_mm_select
 
     ###### Transitional Work
-      @transitional_work_experience = (@policy_calculation.policy_total_standard_premium * 0.1)
-      @transitional_work_em_cap = (@em_cap_eligibility == 'Yes' ? (@em_cap_projected_premium * 0.01) : nil)
-      # @transitional_work_ocp = (@policy_calculation.policy_total_standard_premium * 0.03)
-      @transitional_work_group_rating = ( @group_rating_eligibility == 'Yes' ? (@account.group_premium * 0.10) : nil)
-      # @transitional_individual_retro_rating = (@account.group_premium * 0.1)
-      # @transitional_mm_select
+    @transitional_work_experience = (@policy_calculation.policy_total_standard_premium * 0.1)
+    @transitional_work_em_cap     = (@em_cap_eligibility == 'Yes' ? (@em_cap_projected_premium * 0.01) : nil)
+    # @transitional_work_ocp = (@policy_calculation.policy_total_standard_premium * 0.03)
+    @transitional_work_group_rating = (@group_rating_eligibility == 'Yes' ? (@account.group_premium * 0.10) : nil)
+    # @transitional_individual_retro_rating = (@account.group_premium * 0.1)
+    # @transitional_mm_select
 
     ###### Go Green
-      @go_green_experience = (@policy_calculation.policy_total_individual_premium * 0.01 > 2000 ? 2000 : @policy_calculation.policy_total_individual_premium * 0.01 )
-      @go_green_em_cap = (@em_cap_eligibility == 'Yes' ? (@em_cap_projected_premium * 0.01 > 2000 ? 2000 : @em_cap_projected_premium * 0.01 ) : nil)
-      # @go_green_ocp = (@policy_calculation.policy_total_standard_premium * 0.03)
-      @go_green_group_rating = (@group_rating_eligibility == 'Yes' ? (@account.group_premium * 0.01 > 2000 ? 2000 : @account.group_premium * 0.01 ) : nil)
-      @go_green_group_retro = ((@group_retro_eligibility == 'Yes') ? (@policy_calculation.policy_total_individual_premium * 0.01 > 2000) ? 2000 : (@policy_calculation.policy_total_individual_premium * 0.01) : nil)
-      # @go_green_individual_retro = (@account.group_premium * 0.1)
-      # @go_green_mm_select = (@account.group_premium * 0.1)
+    @go_green_experience = (@policy_calculation.policy_total_individual_premium * 0.01 > 2000 ? 2000 : @policy_calculation.policy_total_individual_premium * 0.01)
+    @go_green_em_cap     = (@em_cap_eligibility == 'Yes' ? (@em_cap_projected_premium * 0.01 > 2000 ? 2000 : @em_cap_projected_premium * 0.01) : nil)
+    # @go_green_ocp = (@policy_calculation.policy_total_standard_premium * 0.03)
+    @go_green_group_rating = (@group_rating_eligibility == 'Yes' ? (@account.group_premium * 0.01 > 2000 ? 2000 : @account.group_premium * 0.01) : nil)
+    @go_green_group_retro  = ((@group_retro_eligibility == 'Yes') ? (@policy_calculation.policy_total_individual_premium * 0.01 > 2000) ? 2000 : (@policy_calculation.policy_total_individual_premium * 0.01) : nil)
+    # @go_green_individual_retro = (@account.group_premium * 0.1)
+    # @go_green_mm_select = (@account.group_premium * 0.1)
 
     ###### Lapse Free
-      @lapse_free_experience = (@policy_calculation.policy_total_individual_premium * 0.01 > 2000 ? 2000 : @policy_calculation.policy_total_individual_premium * 0.01 )
-      @lapse_free_em_cap = (@em_cap_eligibility == 'Yes' ? (@em_cap_projected_premium * 0.01 > 2000 ? 2000 : @em_cap_projected_premium * 0.01 ) : nil)
-      # @lapse_free_ocp = (@policy_calculation.policy_total_standard_premium * 0.03)
-      @lapse_free_group_rating = ( @group_rating_eligibility == 'Yes' ? (@account.group_premium * 0.01 > 2000 ? 2000 : @account.group_premium * 0.01 ) : nil)
-      @lapse_free_group_retro = ( @group_retro_eligibility == 'Yes' ? (@policy_calculation.policy_total_individual_premium * 0.01 > 2000) ? 2000 : (@policy_calculation.policy_total_individual_premium * 0.01) : nil)
-      # @lapse_free_individual_retro = (@account.group_premium * 0.01 > 2000 ? 2000 : @account.group_premium * 0.01)
-      # @lapse_free_mm_select = (@account.group_premium * 0.01 > 2000 ? 2000 : @account.group_premium * 0.01 )
+    @lapse_free_experience = (@policy_calculation.policy_total_individual_premium * 0.01 > 2000 ? 2000 : @policy_calculation.policy_total_individual_premium * 0.01)
+    @lapse_free_em_cap     = (@em_cap_eligibility == 'Yes' ? (@em_cap_projected_premium * 0.01 > 2000 ? 2000 : @em_cap_projected_premium * 0.01) : nil)
+    # @lapse_free_ocp = (@policy_calculation.policy_total_standard_premium * 0.03)
+    @lapse_free_group_rating = (@group_rating_eligibility == 'Yes' ? (@account.group_premium * 0.01 > 2000 ? 2000 : @account.group_premium * 0.01) : nil)
+    @lapse_free_group_retro  = (@group_retro_eligibility == 'Yes' ? (@policy_calculation.policy_total_individual_premium * 0.01 > 2000) ? 2000 : (@policy_calculation.policy_total_individual_premium * 0.01) : nil)
+    # @lapse_free_individual_retro = (@account.group_premium * 0.01 > 2000 ? 2000 : @account.group_premium * 0.01)
+    # @lapse_free_mm_select = (@account.group_premium * 0.01 > 2000 ? 2000 : @account.group_premium * 0.01 )
 
     ###### Max Add'l Savings
-      @max_savings_experience = ( @drug_free_experience + @safety_council_experience + @industry_specific_experience + @transitional_work_experience + @go_green_experience + @lapse_free_experience)
-      @max_savings_em_cap = @em_cap_eligibility == 'Yes' ? (@safety_council_em_cap + @industry_specific_em_cap + @transitional_work_em_cap + @go_green_em_cap + @lapse_free_em_cap) : nil
-      # @max_savings_ocp = (@safety_council_ocp + @industry_specific_ocp + @transitional_work_ocp + @go_green_ocp + @lapse_free_ocp)
-      @max_savings_group_rating = (@group_rating_eligibility == 'Yes' ? ( @drug_free_group_rating + @safety_council_group_rating + @industry_specific_group_rating + @transitional_work_group_rating + @go_green_group_rating + @lapse_free_group_rating ) : nil)
-      @max_savings_group_retro = (@group_retro_eligibility == 'Yes' ? ( @safety_council_group_retro + @go_green_group_retro + @lapse_free_group_retro) : nil)
-      # @max_savings_individual_retro = (  @safety_council_individual_retro + @go_green_individual_retro)
-      # @max_savings_mm_select =
+    @max_savings_experience = (@drug_free_experience + @safety_council_experience + @industry_specific_experience + @transitional_work_experience + @go_green_experience + @lapse_free_experience)
+    @max_savings_em_cap     = @em_cap_eligibility == 'Yes' ? (@safety_council_em_cap + @industry_specific_em_cap + @transitional_work_em_cap + @go_green_em_cap + @lapse_free_em_cap) : nil
+    # @max_savings_ocp = (@safety_council_ocp + @industry_specific_ocp + @transitional_work_ocp + @go_green_ocp + @lapse_free_ocp)
+    @max_savings_group_rating = (@group_rating_eligibility == 'Yes' ? (@drug_free_group_rating + @safety_council_group_rating + @industry_specific_group_rating + @transitional_work_group_rating + @go_green_group_rating + @lapse_free_group_rating) : nil)
+    @max_savings_group_retro  = (@group_retro_eligibility == 'Yes' ? (@safety_council_group_retro + @go_green_group_retro + @lapse_free_group_retro) : nil)
+    # @max_savings_individual_retro = (  @safety_council_individual_retro + @go_green_individual_retro)
+    # @max_savings_mm_select =
 
     ###### Lowest Possible Costs
-      @lowest_costs_experience = @experience_total_cost -  @max_savings_experience
-      @lowest_costs_em_cap = @em_cap_eligibility == 'Yes' ? (@em_cap_total_cost -  @max_savings_em_cap) : nil
-      @lowest_costs_group_rating = @group_rating_eligibility == 'Yes' ? (@group_rating_total_cost -  @max_savings_group_rating) : nil
-      @lowest_costs_group_retro = @group_retro_eligibility == 'Yes' ? (@group_retro_total_cost -  @max_savings_group_retro) : nil
-      # @lowest_costs_individual_retro =
-      # @lowest_costs_mm_select =
-
+    @lowest_costs_experience   = @experience_total_cost - @max_savings_experience
+    @lowest_costs_em_cap       = @em_cap_eligibility == 'Yes' ? (@em_cap_total_cost - @max_savings_em_cap) : nil
+    @lowest_costs_group_rating = @group_rating_eligibility == 'Yes' ? (@group_rating_total_cost - @max_savings_group_rating) : nil
+    @lowest_costs_group_retro  = @group_retro_eligibility == 'Yes' ? (@group_retro_total_cost - @max_savings_group_retro) : nil
+    # @lowest_costs_individual_retro =
+    # @lowest_costs_mm_select =
 
 
     # Max Save vs Exp
-      @max_save_experience = @experience_projected_premium - @lowest_costs_experience
-      @max_save_em_cap = (@em_cap_eligibility == 'Yes' ? (@em_cap_projected_premium -  @lowest_costs_em_cap) : nil)
-      @max_save_group_rating = (@group_rating_eligibility == 'Yes' ? (@group_rating_projected_premium -  @lowest_costs_group_rating) : nil)
-      @max_save_group_retro = (@group_retro_eligibility == 'Yes' ? (@group_retro_projected_premium -  @lowest_costs_group_retro) : nil)
-      # @lowest_costs_individual_retro =
-      # @lowest_costs_mm_select =
+    @max_save_experience   = @experience_projected_premium - @lowest_costs_experience
+    @max_save_em_cap       = (@em_cap_eligibility == 'Yes' ? (@em_cap_projected_premium - @lowest_costs_em_cap) : nil)
+    @max_save_group_rating = (@group_rating_eligibility == 'Yes' ? (@group_rating_projected_premium - @lowest_costs_group_rating) : nil)
+    @max_save_group_retro  = (@group_retro_eligibility == 'Yes' ? (@group_retro_projected_premium - @lowest_costs_group_retro) : nil)
+    # @lowest_costs_individual_retro =
+    # @lowest_costs_mm_select =
 
 
-
-    @data = [[ "Drug Free Safety","#{ round(@drug_free_experience,0) }","","","#{round(@drug_free_group_rating, 0)}","","",""]]
-    @data += [[ "Safety Council","#{round(@safety_council_experience,0)}","#{ round(@safety_council_em_cap, 0)}","","#{ round(@safety_council_group_rating, 0)}","#{ round(@safety_council_group_retro,0)}"," ",""]]
-    @data += [[ "Industry Specific","#{ round(@industry_specific_experience, 0) }","#{ round(@industry_specific_em_cap, 0)}","","#{ round(@industry_specific_group_rating, 0)}","","",""]]
-    @data += [[ "Transitional Work","#{ round(@transitional_work_experience, 0)}","#{ round(@transitional_work_em_cap, 0)}","","#{ round(@transitional_work_group_rating, 0)}","","",""]]
-    @data += [[ "Go Green","#{ round(@go_green_experience, 0)}","#{ round(@go_green_em_cap, 0)}","","#{ round(@go_green_group_rating, 0) }","#{ round(@go_green_group_retro, 0) }","",""]]
-    @data += [[ "Lapse Free","#{ round(@lapse_free_experience, 0)}","#{ round(@lapse_free_em_cap, 0)}","","#{round(@lapse_free_group_rating, 0)}","#{round(@lapse_free_group_retro, 0)}","",""]]
-    @data += [[ "Max Add'l Savings","#{round(@max_savings_experience, 0)}","#{round(@max_savings_em_cap, 0)}","","#{round(@max_savings_group_rating, 0)}","#{ round(@max_savings_group_retro, 0)}","",""]]
-    @data += [[ "Low Poss. Costs","#{ round(@lowest_costs_experience, 0)}","#{ round(@lowest_costs_em_cap, 0)}","","#{ round(@lowest_costs_group_rating, 0)}","#{round(@lowest_costs_group_retro, 0)}","",""]]
-    @data += [[ "Max Save vs Exp","#{ round(@max_save_experience, 0)}","#{round(@max_save_em_cap,0)}","","#{round(@max_save_group_rating, 0)}","#{round(@max_save_group_retro, 0)}","",""]]
+    @data = [["Drug Free Safety", "#{ round(@drug_free_experience, 0) }", "", "", "#{round(@drug_free_group_rating, 0)}", "", "", ""]]
+    @data += [["Safety Council", "#{round(@safety_council_experience, 0)}", "#{ round(@safety_council_em_cap, 0)}", "", "#{ round(@safety_council_group_rating, 0)}", "#{ round(@safety_council_group_retro, 0)}", " ", ""]]
+    @data += [["Industry Specific", "#{ round(@industry_specific_experience, 0) }", "#{ round(@industry_specific_em_cap, 0)}", "", "#{ round(@industry_specific_group_rating, 0)}", "", "", ""]]
+    @data += [["Transitional Work", "#{ round(@transitional_work_experience, 0)}", "#{ round(@transitional_work_em_cap, 0)}", "", "#{ round(@transitional_work_group_rating, 0)}", "", "", ""]]
+    @data += [["Go Green", "#{ round(@go_green_experience, 0)}", "#{ round(@go_green_em_cap, 0)}", "", "#{ round(@go_green_group_rating, 0) }", "#{ round(@go_green_group_retro, 0) }", "", ""]]
+    @data += [["Lapse Free", "#{ round(@lapse_free_experience, 0)}", "#{ round(@lapse_free_em_cap, 0)}", "", "#{round(@lapse_free_group_rating, 0)}", "#{round(@lapse_free_group_retro, 0)}", "", ""]]
+    @data += [["Max Add'l Savings", "#{round(@max_savings_experience, 0)}", "#{round(@max_savings_em_cap, 0)}", "", "#{round(@max_savings_group_rating, 0)}", "#{ round(@max_savings_group_retro, 0)}", "", ""]]
+    @data += [["Low Poss. Costs", "#{ round(@lowest_costs_experience, 0)}", "#{ round(@lowest_costs_em_cap, 0)}", "", "#{ round(@lowest_costs_group_rating, 0)}", "#{round(@lowest_costs_group_retro, 0)}", "", ""]]
+    @data += [["Max Save vs Exp", "#{ round(@max_save_experience, 0)}", "#{round(@max_save_em_cap, 0)}", "", "#{round(@max_save_group_rating, 0)}", "#{round(@max_save_group_retro, 0)}", "", ""]]
 
 
   end
@@ -1030,58 +1025,56 @@ class RiskReport < PdfReport
   end
 
 
-
   def green_year_total_table
-    table totals_green_year_data, :column_widths => {0 => 49, 1 => 55, 2 => 47, 3 => 32, 4 => 50, 5 => 50, 6 => 48, 7 => 48, 8 => 50, 9 => 50, 10 => 26, 11 => 35 }  do
-      self.position = :center
+    table totals_green_year_data, :column_widths => { 0 => 49, 1 => 55, 2 => 47, 3 => 32, 4 => 50, 5 => 50, 6 => 48, 7 => 48, 8 => 50, 9 => 50, 10 => 26, 11 => 35 } do
+      self.position     = :center
       row(0).font_style = :bold
       row(1).font_style = :bold
-      row(0).overflow = :shring_to_fit
-      row(0).align = :center
-      row(0).borders = [:bottom]
-      row(-1).borders = [:top]
-      self.cell_style = { size: 10 }
-      self.header = true
+      row(0).overflow   = :shring_to_fit
+      row(0).align      = :center
+      row(0).borders    = [:bottom]
+      row(-1).borders   = [:top]
+      self.cell_style   = { size: 10 }
+      self.header       = true
     end
   end
 
 
   def totals_green_year_data
-    @data = [[{:content => "Green Year Totals", :colspan => 4},"#{ round(@green_year_comp_total,0) }","#{round(@green_year_medical_total,0)}","#{round(@green_year_mira_medical_reserve_total,0)}","#{round(@green_year_group_modidified_losses_total,0)}","#{round(@green_year_individual_modidified_losses_total,0)}","#{round(@green_year_individual_reduced_total,0)}","","" ]]
+    @data = [[{ :content => "Green Year Totals", :colspan => 4 }, "#{ round(@green_year_comp_total, 0) }", "#{round(@green_year_medical_total, 0)}", "#{round(@green_year_mira_medical_reserve_total, 0)}", "#{round(@green_year_group_modidified_losses_total, 0)}", "#{round(@green_year_individual_modidified_losses_total, 0)}", "#{round(@green_year_individual_reduced_total, 0)}", "", ""]]
   end
 
 
-
   def out_of_experience_year_total_table
-    table totals_out_of_experience_year_data, :column_widths => {0 => 49, 1 => 55, 2 => 47, 3 => 32, 4 => 50, 5 => 50, 6 => 48, 7 => 48, 8 => 50, 9 => 50, 10 => 26, 11 => 35 }  do
-      self.position = :center
+    table totals_out_of_experience_year_data, :column_widths => { 0 => 49, 1 => 55, 2 => 47, 3 => 32, 4 => 50, 5 => 50, 6 => 48, 7 => 48, 8 => 50, 9 => 50, 10 => 26, 11 => 35 } do
+      self.position     = :center
       row(0).font_style = :bold
       row(1).font_style = :bold
-      row(0).overflow = :shring_to_fit
-      row(0).align = :center
-      row(0).borders = [:bottom]
-      row(-1).borders = [:top]
-      self.cell_style = { size: 9 }
-      self.header = true
+      row(0).overflow   = :shring_to_fit
+      row(0).align      = :center
+      row(0).borders    = [:bottom]
+      row(-1).borders   = [:top]
+      self.cell_style   = { size: 9 }
+      self.header       = true
     end
   end
 
 
   def totals_out_of_experience_year_data
-    @data = [[{:content => "Out Of Experience Year Totals", :colspan => 4},"#{ round(@out_of_experience_comp_total,0) }","#{round(@out_of_experience_medical_total,0)}","#{round(@out_of_experience_mira_medical_reserve_total,0)}","#{round(@out_of_experience_group_modidified_losses_total,0)}","#{round(@out_of_experience_individual_modidified_losses_total,0)}","#{round(@out_of_experience_si_total,0)}","","" ]]
+    @data = [[{ :content => "Out Of Experience Year Totals", :colspan => 4 }, "#{ round(@out_of_experience_comp_total, 0) }", "#{round(@out_of_experience_medical_total, 0)}", "#{round(@out_of_experience_mira_medical_reserve_total, 0)}", "#{round(@out_of_experience_group_modidified_losses_total, 0)}", "#{round(@out_of_experience_individual_modidified_losses_total, 0)}", "#{round(@out_of_experience_si_total, 0)}", "", ""]]
   end
 
   def experience_year_total_table
-    table totals_experience_year_data, :column_widths => {0 => 49, 1 => 55, 2 => 47, 3 => 32, 4 => 50, 5 => 50, 6 => 48, 7 => 48, 8 => 50, 9 => 50, 10 => 26, 11 => 35 }  do
-      self.position = :center
+    table totals_experience_year_data, :column_widths => { 0 => 49, 1 => 55, 2 => 47, 3 => 32, 4 => 50, 5 => 50, 6 => 48, 7 => 48, 8 => 50, 9 => 50, 10 => 26, 11 => 35 } do
+      self.position     = :center
       row(0).font_style = :bold
       row(1).font_style = :bold
-      row(0).overflow = :shring_to_fit
-      row(0).align = :center
-      row(0).borders = [:bottom]
-      row(-1).borders = [:top]
-      self.cell_style = { size: 9 }
-      self.header = true
+      row(0).overflow   = :shring_to_fit
+      row(0).align      = :center
+      row(0).borders    = [:bottom]
+      row(-1).borders   = [:top]
+      self.cell_style   = { size: 9 }
+      self.header       = true
     end
     first_cursor = cursor
     bounding_box([0, first_cursor], :width => 275, :height => 25) do
@@ -1096,20 +1089,20 @@ class RiskReport < PdfReport
 
 
   def totals_experience_year_data
-    @data = [[{:content => "Experience Year Totals", :colspan => 4},"#{ round(@experience_comp_total,0) }","#{round(@experience_medical_total,0)}","#{round(@experience_mira_medical_reserve_total,0)}","#{round(@experience_group_modidified_losses_total,0)}","#{round(@experience_individual_modidified_losses_total,0)}","#{round(@experience_si_total,0)}","","" ]]
+    @data = [[{ :content => "Experience Year Totals", :colspan => 4 }, "#{ round(@experience_comp_total, 0) }", "#{round(@experience_medical_total, 0)}", "#{round(@experience_mira_medical_reserve_total, 0)}", "#{round(@experience_group_modidified_losses_total, 0)}", "#{round(@experience_individual_modidified_losses_total, 0)}", "#{round(@experience_si_total, 0)}", "", ""]]
   end
 
   def ten_year_total_table
-    table ten_year_total_data, :column_widths => {0 => 49, 1 => 55, 2 => 47, 3 => 32, 4 => 50, 5 => 50, 6 => 48, 7 => 48, 8 => 50, 9 => 50, 10 => 26, 11 => 35 }  do
-      self.position = :center
+    table ten_year_total_data, :column_widths => { 0 => 49, 1 => 55, 2 => 47, 3 => 32, 4 => 50, 5 => 50, 6 => 48, 7 => 48, 8 => 50, 9 => 50, 10 => 26, 11 => 35 } do
+      self.position     = :center
       row(0).font_style = :bold
       row(1).font_style = :bold
-      row(0).overflow = :shring_to_fit
-      row(0).align = :center
-      row(0).borders = [:bottom]
-      row(-1).borders = [:top]
-      self.cell_style = { size: 9 }
-      self.header = true
+      row(0).overflow   = :shring_to_fit
+      row(0).align      = :center
+      row(0).borders    = [:bottom]
+      row(-1).borders   = [:top]
+      self.cell_style   = { size: 9 }
+      self.header       = true
     end
     first_cursor = cursor
     bounding_box([0, first_cursor], :width => 275, :height => 25) do
@@ -1125,45 +1118,43 @@ class RiskReport < PdfReport
 
 
   def ten_year_total_data
-    @data = [[{:content => "10 Year Totals", :colspan => 4},"#{ round(@ten_year_comp_total,0) }","#{round(@ten_year_medical_total,0)}","#{round(@ten_year_mira_medical_reserve_total,0)}","#{round(@ten_year_group_modidified_losses_total,0)}","#{round(@ten_year_individual_modidified_losses_total,0)}","#{round(@ten_year_si_total,0)}","","" ]]
+    @data = [[{ :content => "10 Year Totals", :colspan => 4 }, "#{ round(@ten_year_comp_total, 0) }", "#{round(@ten_year_medical_total, 0)}", "#{round(@ten_year_mira_medical_reserve_total, 0)}", "#{round(@ten_year_group_modidified_losses_total, 0)}", "#{round(@ten_year_individual_modidified_losses_total, 0)}", "#{round(@ten_year_si_total, 0)}", "", ""]]
   end
-
 
 
   def year_claim_table(claim_year_data)
     table claim_year_data, :column_widths => { 0 => 45, 1 => 80, 2 => 40, 3 => 25, 4 => 45, 5 => 45, 6 => 45, 7 => 45, 8 => 45, 9 => 45, 10 => 25, 11 => 55 } do
-      self.position = :center
-      row(0).font_style = :bold
-      row(0).overflow = :shring_to_fit
-      row(0).align = :center
-      row(0).borders = [:bottom]
-      row(1..-2).borders = []
-      row(-1).borders = [:top]
-      row(-1).font_style = :bold
-      row(0..-1).align = :center
+      self.position               = :center
+      row(0).font_style           = :bold
+      row(0).overflow             = :shring_to_fit
+      row(0).align                = :center
+      row(0).borders              = [:bottom]
+      row(1..-2).borders          = []
+      row(-1).borders             = [:top]
+      row(-1).font_style          = :bold
+      row(0..-1).align            = :center
       row(0..-1).columns(1).align = :left
-      self.cell_style = { size: 7 }
-      self.header = true
+      self.cell_style             = { size: 7 }
+      self.header                 = true
     end
   end
 
   def claim_data(claims_array)
-    comp_total = 0
+    comp_total     = 0
     med_paid_total = 0
     mira_res_total = 0
 
 
     claims_array.each do |e|
-      comp_total += (((e.claim_mira_reducible_indemnity_paid+e.claim_mira_non_reducible_indemnity_paid)*(1 - e.claim_subrogation_percent)-(e.claim_mira_non_reducible_indemnity_paid))*(1 - e.claim_handicap_percent)+(e.claim_mira_non_reducible_indemnity_paid))*e.claim_group_multiplier
-      med_paid_total += (((e.claim_medical_paid + e.claim_mira_non_reducible_indemnity_paid_2)*(1 - e.claim_subrogation_percent) - e.claim_mira_non_reducible_indemnity_paid_2)*(1 - e.claim_handicap_percent)+ e.claim_mira_non_reducible_indemnity_paid_2)*e.claim_group_multiplier
-      mira_res_total += (1 - e.claim_handicap_percent)*(e.claim_mira_medical_reserve_amount+(e.claim_mira_indemnity_reserve_amount))* e.claim_group_multiplier* (1 - e.claim_subrogation_percent)
+      comp_total     += (((e.claim_mira_reducible_indemnity_paid + e.claim_mira_non_reducible_indemnity_paid) * (1 - e.claim_subrogation_percent) - (e.claim_mira_non_reducible_indemnity_paid)) * (1 - e.claim_handicap_percent) + (e.claim_mira_non_reducible_indemnity_paid)) * e.claim_group_multiplier
+      med_paid_total += (((e.claim_medical_paid + e.claim_mira_non_reducible_indemnity_paid_2) * (1 - e.claim_subrogation_percent) - e.claim_mira_non_reducible_indemnity_paid_2) * (1 - e.claim_handicap_percent) + e.claim_mira_non_reducible_indemnity_paid_2) * e.claim_group_multiplier
+      mira_res_total += (1 - e.claim_handicap_percent) * (e.claim_mira_medical_reserve_amount + (e.claim_mira_indemnity_reserve_amount)) * e.claim_group_multiplier * (1 - e.claim_subrogation_percent)
     end
 
 
-
-    @data = [["Claim #", "Claimant", "DOI", "Man Num", "Comp Award", "Med. Paid", "MIRA Res.", "GTML", "ITML", "SI Total", "HC", "Code" ]]
-    @data +=  claims_array.map { |e| [e.claim_number, e.claimant_name.titleize, e.claim_injury_date.in_time_zone("America/New_York").strftime("%m/%d/%y"), e.claim_manual_number, "#{round((((e.claim_mira_reducible_indemnity_paid+e.claim_mira_non_reducible_indemnity_paid)*(1 - e.claim_subrogation_percent)-(e.claim_mira_non_reducible_indemnity_paid))*(1 - e.claim_handicap_percent)+(e.claim_mira_non_reducible_indemnity_paid))*e.claim_group_multiplier,0)}", "#{round((((e.claim_medical_paid + e.claim_mira_non_reducible_indemnity_paid_2)*(1 - e.claim_subrogation_percent) - e.claim_mira_non_reducible_indemnity_paid_2)*(1 - e.claim_handicap_percent)+ e.claim_mira_non_reducible_indemnity_paid_2)*e.claim_group_multiplier,0)}", "#{round((1 - e.claim_handicap_percent)*(e.claim_mira_medical_reserve_amount+(e.claim_mira_indemnity_reserve_amount))* e.claim_group_multiplier* (1 - e.claim_subrogation_percent) ,0)}", round(e.claim_modified_losses_group_reduced,0), round(e.claim_modified_losses_individual_reduced, 0), "#{round(e.claim_unlimited_limited_loss - e.claim_total_subrogation_collected,0)}", percent(e.claim_handicap_percent), "#{claim_code_calc(e)}" ] }
-    @data += [[{:content => "Totals", :colspan => 4},"#{round(comp_total, 0)}", "#{round(med_paid_total, 0)}" , "#{round(mira_res_total, 0)}", "#{round(claims_array.sum(:claim_modified_losses_group_reduced), 0)}", "#{round(claims_array.sum(:claim_modified_losses_individual_reduced), 0)}", "#{round(claims_array.sum(:claim_unlimited_limited_loss) - claims_array.sum(:claim_total_subrogation_collected), 0)}", "", "" ]]
+    @data = [["Claim #", "Claimant", "DOI", "Man Num", "Comp Award", "Med. Paid", "MIRA Res.", "GTML", "ITML", "SI Total", "HC", "Code"]]
+    @data += claims_array.map { |e| [e.claim_number, e.claimant_name.titleize, e.claim_injury_date.in_time_zone("America/New_York").strftime("%m/%d/%y"), e.claim_manual_number, "#{round((((e.claim_mira_reducible_indemnity_paid + e.claim_mira_non_reducible_indemnity_paid) * (1 - e.claim_subrogation_percent) - (e.claim_mira_non_reducible_indemnity_paid)) * (1 - e.claim_handicap_percent) + (e.claim_mira_non_reducible_indemnity_paid)) * e.claim_group_multiplier, 0)}", "#{round((((e.claim_medical_paid + e.claim_mira_non_reducible_indemnity_paid_2) * (1 - e.claim_subrogation_percent) - e.claim_mira_non_reducible_indemnity_paid_2) * (1 - e.claim_handicap_percent) + e.claim_mira_non_reducible_indemnity_paid_2) * e.claim_group_multiplier, 0)}", "#{round((1 - e.claim_handicap_percent) * (e.claim_mira_medical_reserve_amount + (e.claim_mira_indemnity_reserve_amount)) * e.claim_group_multiplier * (1 - e.claim_subrogation_percent), 0)}", round(e.claim_modified_losses_group_reduced, 0), round(e.claim_modified_losses_individual_reduced, 0), "#{round(e.claim_unlimited_limited_loss - e.claim_total_subrogation_collected, 0)}", percent(e.claim_handicap_percent), "#{claim_code_calc(e)}"] }
+    @data += [[{ :content => "Totals", :colspan => 4 }, "#{round(comp_total, 0)}", "#{round(med_paid_total, 0)}", "#{round(mira_res_total, 0)}", "#{round(claims_array.sum(:claim_modified_losses_group_reduced), 0)}", "#{round(claims_array.sum(:claim_modified_losses_individual_reduced), 0)}", "#{round(claims_array.sum(:claim_unlimited_limited_loss) - claims_array.sum(:claim_total_subrogation_collected), 0)}", "", ""]]
   end
 
   def group_discount_level
@@ -1175,29 +1166,28 @@ class RiskReport < PdfReport
 
   def group_discount_level_table
     table group_discount_level_data do
-      self.position = :center
-      row(0).font_style = :bold
-      row(0).overflow = :shring_to_fit
-      row(0).align = :center
-      row(0).borders = [:bottom]
+      self.position      = :center
+      row(0).font_style  = :bold
+      row(0).overflow    = :shring_to_fit
+      row(0).align       = :center
+      row(0).borders     = [:bottom]
       row(1..-1).borders = []
-      row(0..-1).align = :center
-      self.cell_style = { size: 8 }
-      self.header = true
+      row(0..-1).align   = :center
+      self.cell_style    = { size: 8 }
+      self.header        = true
     end
   end
 
   def group_discount_level_data
-    @data = [["Market TM%", "Cut Point", "Cut Losses", "Level" ]]
-    @data +=  @group_rating_levels.map do |e|
+    @data = [["Market TM%", "Cut Point", "Cut Losses", "Level"]]
+    @data += @group_rating_levels.map do |e|
       if e.ac26_group_level == @account.group_rating_group_number
-        [ e.market_rate, round((e.ratio_criteria - 1),4), round((((e.ratio_criteria - 1) * @policy_calculation.policy_total_expected_losses) + @policy_calculation.policy_total_expected_losses), 0), "Qualified" ]
+        [e.market_rate, round((e.ratio_criteria - 1), 4), round((((e.ratio_criteria - 1) * @policy_calculation.policy_total_expected_losses) + @policy_calculation.policy_total_expected_losses), 0), "Qualified"]
       else
-        [ e.market_rate, round((e.ratio_criteria - 1),4), round((((e.ratio_criteria - 1) * @policy_calculation.policy_total_expected_losses) + @policy_calculation.policy_total_expected_losses), 0), "" ]
+        [e.market_rate, round((e.ratio_criteria - 1), 4), round((((e.ratio_criteria - 1) * @policy_calculation.policy_total_expected_losses) + @policy_calculation.policy_total_expected_losses), 0), ""]
       end
     end
   end
-
 
 
   def coverage_status_history
@@ -1209,20 +1199,20 @@ class RiskReport < PdfReport
 
   def coverage_status_history_table
     table coverage_status_history_data do
-      self.position = :center
-      row(0).font_style = :bold
-      row(0).overflow = :shring_to_fit
-      row(0).align = :center
-      row(0).borders = [:bottom]
+      self.position      = :center
+      row(0).font_style  = :bold
+      row(0).overflow    = :shring_to_fit
+      row(0).align       = :center
+      row(0).borders     = [:bottom]
       row(1..-1).borders = []
-      row(0..-1).align = :center
-      self.header = true
+      row(0..-1).align   = :center
+      self.header        = true
     end
   end
 
   def coverage_status_history_data
-    @data = [["Effective Date", "End Date", "Status" ]]
-    @data +=  @account.policy_calculation.policy_coverage_status_histories.order(coverage_effective_date: :desc).map { |e| [ e.coverage_effective_date, e.coverage_end_date, e.coverage_status ] }
+    @data = [["Effective Date", "End Date", "Status"]]
+    @data += @account.policy_calculation.policy_coverage_status_histories.order(coverage_effective_date: :desc).map { |e| [e.coverage_effective_date, e.coverage_end_date, e.coverage_status] }
   end
 
   def experience_modifier_history
@@ -1233,20 +1223,20 @@ class RiskReport < PdfReport
 
   def experience_modifier_history_table
     table experience_modifier_history_data do
-      self.position = :center
-      row(0).font_style = :bold
-      row(0).overflow = :shring_to_fit
-      row(0).align = :center
-      row(0).borders = [:bottom]
+      self.position      = :center
+      row(0).font_style  = :bold
+      row(0).overflow    = :shring_to_fit
+      row(0).align       = :center
+      row(0).borders     = [:bottom]
       row(1..-1).borders = []
-      row(0..-1).align = :center
-      self.header = true
+      row(0..-1).align   = :center
+      self.header        = true
     end
   end
 
   def experience_modifier_history_data
-    @data = [["Period", "EM", "Group Plan", "Retro%", "Ded%", "OCP Year", "GROH", "DF/Level", "EMCap", "TWBNS", "ISSP" ]]
-    @data +=  @account.policy_calculation.policy_program_histories.where("reporting_period_start_date >= ?", @first_out_of_experience_year_period.first).order(reporting_period_start_date: :desc).map { |e| [ e.reporting_period_start_date, e.experience_modifier_rate, e.group_type, e.rrr_minimum_premium_percentage, e.deductible_discount_percentage, e.ocp_first_year_of_participation, e.grow_ohio_participation_indicator, "#{e.drug_free_program_participation_indicator}/#{e.drug_free_program_participation_level}", e.em_cap_participation_indicator, e.twbns_participation_indicator, e.issp_participation_indicator ] }
+    @data = [["Period", "EM", "Group Plan", "Retro%", "Ded%", "OCP Year", "GROH", "DF/Level", "EMCap", "TWBNS", "ISSP"]]
+    @data += @account.policy_calculation.policy_program_histories.where("reporting_period_start_date >= ?", @first_out_of_experience_year_period.first).order(reporting_period_start_date: :desc).map { |e| [e.reporting_period_start_date, e.experience_modifier_rate, e.group_type, e.rrr_minimum_premium_percentage, e.deductible_discount_percentage, e.ocp_first_year_of_participation, e.grow_ohio_participation_indicator, "#{e.drug_free_program_participation_indicator}/#{e.drug_free_program_participation_level}", e.em_cap_participation_indicator, e.twbns_participation_indicator, e.issp_participation_indicator] }
   end
 
   def payroll_and_premium_history
@@ -1260,7 +1250,7 @@ class RiskReport < PdfReport
           if PayrollCalculation.find_by(reporting_period_start_date: period, policy_number: @policy_calculation.policy_number, manual_number: man.manual_number, representative_number: @account.representative.representative_number).manual_class_rate.nil?
             @premium_total = 0.0
           else
-            @premium_total += ((PayrollCalculation.find_by(reporting_period_start_date: period, policy_number: @policy_calculation.policy_number, manual_number: man.manual_number, representative_number: @account.representative.representative_number).manual_class_payroll)  * (PayrollCalculation.find_by(reporting_period_start_date: period, policy_number: @policy_calculation.policy_number, manual_number: man.manual_number, representative_number: @account.representative.representative_number).manual_class_rate * 0.01))
+            @premium_total += ((PayrollCalculation.find_by(reporting_period_start_date: period, policy_number: @policy_calculation.policy_number, manual_number: man.manual_number, representative_number: @account.representative.representative_number).manual_class_payroll) * (PayrollCalculation.find_by(reporting_period_start_date: period, policy_number: @policy_calculation.policy_number, manual_number: man.manual_number, representative_number: @account.representative.representative_number).manual_class_rate * 0.01))
           end
         end
       end
@@ -1270,18 +1260,16 @@ class RiskReport < PdfReport
   end
 
 
-
-
   def payroll_and_premium_history_table(payroll_and_premium_history_data)
-    table payroll_and_premium_history_data, :column_widths => {0 => 100, 1 => 75, 2 => 75, 3 => 75, 4 => 75, 5 => 75 } do
-      self.position = :center
-      row(0).font_style = :bold
-      row(0).overflow = :shring_to_fit
-      row(0).align = :center
-      row(0).borders = [:bottom]
+    table payroll_and_premium_history_data, :column_widths => { 0 => 100, 1 => 75, 2 => 75, 3 => 75, 4 => 75, 5 => 75 } do
+      self.position      = :center
+      row(0).font_style  = :bold
+      row(0).overflow    = :shring_to_fit
+      row(0).align       = :center
+      row(0).borders     = [:bottom]
       row(1..-1).borders = []
-      row(0..-1).align = :center
-      row(-1).borders = [:top]
+      row(0..-1).align   = :center
+      row(-1).borders    = [:top]
       row(-1).font_style = :bold
       # self.cell_style = { size: 8 }
       self.header = true
@@ -1290,22 +1278,22 @@ class RiskReport < PdfReport
 
   def payroll_and_premium_history_data(payroll_array, premium_total)
     @data = [["Period", "Manual", "Payroll", "Adjusted", "Rate", "Premium"]]
-    @data +=  payroll_array.order(manual_number: :asc).map { |e| ["#{e.reporting_period_start_date.strftime("%-m/%-d/%y")} - #{e.reporting_period_end_date.strftime("%-m/%-d/%y")}", e.manual_number, round(e.manual_class_payroll,0), e.data_source, "#{ e.manual_class_rate.nil? ? "N/A" : e.manual_class_rate }", "#{ e.manual_class_rate.nil? ? "0.00" : round((e.manual_class_rate * 0.01) * e.manual_class_payroll, 0)}" ] }
-    @data += [[{:content => "Period Totals", :colspan => 2}, "#{round(payroll_array.sum(:manual_class_payroll), 0)}", "", "", "#{ round(premium_total,0) }" ]]
+    @data += payroll_array.order(manual_number: :asc).map { |e| ["#{e.reporting_period_start_date.strftime("%-m/%-d/%y")} - #{e.reporting_period_end_date.strftime("%-m/%-d/%y")}", e.manual_number, round(e.manual_class_payroll, 0), e.data_source, "#{ e.manual_class_rate.nil? ? "N/A" : e.manual_class_rate }", "#{ e.manual_class_rate.nil? ? "0.00" : round((e.manual_class_rate * 0.01) * e.manual_class_payroll, 0)}"] }
+    @data += [[{ :content => "Period Totals", :colspan => 2 }, "#{round(payroll_array.sum(:manual_class_payroll), 0)}", "", "", "#{ round(premium_total, 0) }"]]
   end
 
   def claim_code_calc(claim)
     claim_code = ''
     if claim.claim_type[0] == "1"
-      claim_code  << "MO/"
+      claim_code << "MO/"
     else
-      claim_code  << "LT/"
+      claim_code << "LT/"
     end
     claim_code << claim.claim_status
     claim_code << "/"
     claim_code << claim.claim_mira_ncci_injury_type
     if claim.claim_type[-1] == "1"
-      claim_code  << "/NO COV"
+      claim_code << "/NO COV"
     end
     return claim_code
   end
