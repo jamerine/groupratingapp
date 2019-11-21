@@ -20,6 +20,7 @@
       <button class="btn btn-success rate-toggle">
         Update Rates
       </button>
+      <%= link_to 'Annual Manual Class Updates', manual_classes_rates_path, class: 'btn btn-info' %>
     </div>
   </div>
 
@@ -184,17 +185,24 @@
     });
 
     $('.rate-toggle').click(function () {
-      var $ratesCollapse  = $('#rates-collapse');
-      var $updateCollapse = $('#upload-rates');
+      var $ratesCollapse  = $('#rates-collapse'),
+          $updateCollapse = $('#upload-rates'),
+          $yearSelect     = $('#historical-select');
 
       if ($ratesCollapse.hasClass('hiding')) {
+        $(this).text('Update Rates');
         $ratesCollapse.removeClass('hiding');
+        $yearSelect.removeClass('hiding');
+        $yearSelect.show();
         $ratesCollapse.show();
 
         $updateCollapse.addClass('hiding');
         $updateCollapse.hide();
       } else {
+        $(this).text('Show Rates');
         $ratesCollapse.addClass('hiding');
+        $yearSelect.addClass('hiding');
+        $yearSelect.hide();
         $ratesCollapse.hide();
 
         $updateCollapse.removeClass('hiding');

@@ -11,5 +11,5 @@
 #
 
 class BwcAnnualManualClassChange < ActiveRecord::Base
-  
+  belongs_to :manual_class_change
 end
