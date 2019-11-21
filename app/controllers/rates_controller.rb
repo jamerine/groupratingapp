@@ -28,6 +28,10 @@ class RatesController < ApplicationController
     end
   end
 
+  def manual_classes
+    @class_change = ManualClassChange.new(bwc_annual_manual_class_changes: BwcAnnualManualClassChange.all)
+  end
+
   private
 
   def rates_params

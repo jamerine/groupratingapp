@@ -1,0 +1,14 @@
+<%= form_for :class_change, class: 'form-horizontal' do |f| %>
+  <h3>Annual Manual Class Changes</h3>
+  <hr>
+
+  <div id="bwc_annual_manual_class_changes">
+    <%= f.fields_for :bwc_annual_manual_class_changes do |manual_class| %>
+      <%= render 'manual_class_fields', f: manual_class %>
+
+      <div class="links">
+        <%= link_to_add_association 'Add Manual Class Change', f, :bwc_annual_manual_class_changes %>
+      </div>
+    <% end %>
+  </div>
+<% end %>

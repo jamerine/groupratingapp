@@ -163,7 +163,11 @@ Rails.application.routes.draw do
 
   resources :welcome
 
-  resources :rates
+  resources :rates do
+    collection do
+      get :manual_classes, path: 'manual-classes'
+    end
+  end
 
   root 'welcome#index'
 
