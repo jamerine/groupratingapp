@@ -85,6 +85,8 @@ gem 'rb-readline'
 
 gem 'rubyXL'
 
+gem 'simple_form'
+
 # Use Trix for WYSIWYG rich HTML text editor
 gem 'trix'
 

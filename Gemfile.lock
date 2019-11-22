@@ -372,6 +372,9 @@ GEM
       connection_pool (~> 2.2, >= 2.2.0)
       rack-protection (>= 1.5.0)
       redis (~> 3.2, >= 3.2.1)
+    simple_form (4.0.0)
+      actionpack (> 4)
+      activemodel (> 4)
     sinatra (1.4.7)
       rack (~> 1.5)
       rack-protection (~> 1.4)
@@ -467,6 +470,7 @@ DEPENDENCIES
   sdoc (~> 0.4.0)
   shoulda
   sidekiq
+  simple_form
   sinatra
   slack-notifier
   spring

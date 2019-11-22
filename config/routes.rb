@@ -163,11 +163,9 @@ Rails.application.routes.draw do
 
   resources :welcome
 
-  resources :rates do
-    collection do
-      get :manual_classes, path: 'manual-classes'
-    end
-  end
+  resources :rates
+
+  resources :bwc_annual_manual_class_changes, path: 'manual-classes', as: :manual_classes
 
   root 'welcome#index'
 
