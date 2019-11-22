@@ -716,7 +716,7 @@ class RiskReport < PdfReport
   def workers_comp_program_options_data
     # Experience Rated
     @experience_eligibility       = 'Yes'
-    @experience_projected_premium = @policy_calculation.policy_total_individual_premium
+    @experience_projected_premium = @policy_calculation.policy_adjusted_individual_premium
     @experience_costs             = 0
     @experience_maximum_risk      = 0
     @experience_total_cost        = @experience_projected_premium - @experience_costs
@@ -1161,8 +1161,8 @@ class RiskReport < PdfReport
     move_down 30
     text "Group Discount Levels", style: :bold, size: 14, align: :center
     group_discount_level_table
+    group_discount_level_footer
   end
-
 
   def group_discount_level_table
     table group_discount_level_data do
@@ -1179,16 +1179,34 @@ class RiskReport < PdfReport
   end
 
   def group_discount_level_data
-    @data = [["Market TM%", "Cut Point", "Cut Losses", "Level"]]
+    @data = [["Market TM%", "Cut Point", "Cut Losses", "Level", "Premium"]]
     @data += @group_rating_levels.map do |e|
       if e.ac26_group_level == @account.group_rating_group_number
-        [e.market_rate, round((e.ratio_criteria - 1), 4), round((((e.ratio_criteria - 1) * @policy_calculation.policy_total_expected_losses) + @policy_calculation.policy_total_expected_losses), 0), "Qualified"]
+        [e.market_rate, round((e.ratio_criteria - 1), 4), round((((e.ratio_criteria - 1) * @policy_calculation.policy_total_expected_losses) + @policy_calculation.policy_total_expected_losses), 0), "Qualified", round(@group_rating_projected_premium, 0)]
       else
-        [e.market_rate, round((e.ratio_criteria - 1), 4), round((((e.ratio_criteria - 1) * @policy_calculation.policy_total_expected_losses) + @policy_calculation.policy_total_expected_losses), 0), ""]
+        [e.market_rate, round((e.ratio_criteria - 1), 4), round((((e.ratio_criteria - 1) * @policy_calculation.policy_total_expected_losses) + @policy_calculation.policy_total_expected_losses), 0), "", "-"]
       end
     end
   end
 
+  def group_discount_footer_data
+    @data = [["Ind TM%", "", "Losses", "", "Premium"]]
+    @data += [[round(@policy_calculation.adjusted_total_modifier, 2), "", round(@experience_group_modidified_losses_total, 0), "", round(@policy_calculation.policy_adjusted_individual_premium, 0)]]
+  end
+
+  def group_discount_level_footer
+    table group_discount_footer_data do
+      self.position      = :center
+      row(0).font_style  = :bold
+      row(0).align       = :center
+      row(0).borders     = [:bottom]
+      row(1..-1).borders = []
+      row(0..-1).align   = :center
+      self.cell_style    = { size: 8 }
+      self.header        = true
+    end
+
+  end
 
   def coverage_status_history
     move_down 30
