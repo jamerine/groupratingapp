@@ -17,6 +17,7 @@
 @import "bootstrap";
 @import "font-awesome";
 @import 'bootstrap-datetimepicker';
+@import 'animate';
 
 .table td, th {
   text-align: center;
@@ -90,4 +91,18 @@ body {
 
 trix-editor {
   background-color: white;
+}
+
+.invalid-feedback {
+  color: $brand-danger;
+  font-size: 85%;
+  font-style: italic;
+}
+
+.form-control.is-invalid {
+  border-color: $brand-danger;
+}
+
+.form-group-invalid label {
+  color: $brand-danger;
 }
