@@ -62,7 +62,7 @@ gem 'rubyzip'
 gem 'paper_trail'
 
 # For filtering views
-gem 'filterrific'
+gem 'filterrific', '~> 2.1.2'
 
 # Use Unicorn as the app server
 # gem 'unicorn'

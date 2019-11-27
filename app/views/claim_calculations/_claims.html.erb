@@ -39,7 +39,7 @@
     <div class="row text-center list-group-item">
       <div class="col-md-2 col-sm-12 col-xs-12 ">
         <h5 class="hidden-md hidden-lg">Claim Number</h5>
-        <p><%= claim.claim_number %></p>
+        <p><%= link_to "#{claim.claim_number}", claim_calculation_path(claim) %></p>
       </div>
       <div class="col-md-2 col-sm-12 col-xs-12 ">
         <h5 class="hidden-md hidden-lg">Claimant Name</h5>
@@ -78,5 +78,6 @@
           <p><%= number_to_currency(claim.claim_modified_losses_individual_reduced, precision: 0) %></p>
         </div>
       </div>
-        <% end %>
+  <% end %>
+  </ul>
 </div>
