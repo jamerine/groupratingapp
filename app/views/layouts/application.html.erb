@@ -25,26 +25,33 @@
         <% if current_user %>
           <%= link_to '', root_path, class: 'navbar-brand arm-brand-logo' %>
         <% end %>
-
       </div>
 
       <!-- Collect the nav links, forms, and other content for toggling -->
       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-        <ul class="nav navbar-nav">
-
+        <ul class="nav navbar-nav navbar-left">
+          <% if user_signed_in? %>
+            <li>
+              <div id='search' class="input-group">
+                <input type="text" class="form-control"> <!-- placeholder="Search for..." -->
+                <span class="input-group-btn">
+                  <button class="btn btn-primary" type="button">Search</button>
+                </span>
+              </div>
+            </li>
+          <% end %>
         </ul>
-
         <ul class="nav navbar-nav navbar-right">
           <% if user_signed_in? %>
             <li><%= link_to 'Representatives', representatives_path %></li>
             <li><%= link_to 'Processing', group_ratings_path %></li>
             <li><%= link_to 'Accounts', accounts_path %></li>
-            <% if current_user.admin? %>
-              <li><%= link_to 'Rejections', program_rejections_path, class: 'navbar-link' %></li>
-              <li><%= link_to 'Exceptions', group_rating_exceptions_path, class: 'navbar-link' %></li>
-              <li><%= link_to 'Administration', admin_root_path %></li>
-              <li><%= link_to 'Manage Rates', rates_path %></li>
-            <% end %>
+            <%# if current_user.admin? %>
+<!--              <li><%#= link_to 'Rejections', program_rejections_path, class: 'navbar-link' %></li>-->
+<!--              <li><%#= link_to 'Exceptions', group_rating_exceptions_path, class: 'navbar-link' %></li>-->
+<!--              <li><%#= link_to 'Administration', admin_root_path %></li>-->
+<!--              <li><%#= link_to 'Manage Rates', rates_path %></li>-->
+            <%# end %>
             <li><%= link_to "Sign Out", destroy_user_session_path, method: :delete, :class => 'navbar-link' %> </li>
           <% else %>
             <li><%= link_to "Sign In", new_user_session_path, :class => 'navbar-link' %></li>
