@@ -108,6 +108,49 @@ trix-editor {
 }
 
 #search {
-  margin: 8px 0 0 0;
+  margin: 3px 0 0 0;
   width: 275px;
+
+//  .twitter-typeahead {
+//    margin: 5px 0 0 0;
+//    width: 100%;
+//
+//    .typeahead {
+//      border-radius: 4px 0 0 4px;
+//    }
+//
+//    .tt-suggestion {
+//      background-color: white;
+//      border: solid rgb(204, 204, 204) 1px;
+//      border-radius: 4px;
+//      margin: -1px 0 0 0;
+//      min-width: 206px;
+//      padding: 4px 8px;
+//      position: relative;
+//      white-space: nowrap;
+//      z-index: 1031;
+//    }
+//
+//    .typeahead-wrapper {
+//      display: block;
+//      margin: 50px 0;
+//    }
+//    .tt-dropdown-menu {
+//      background-color: #fff;
+//      border: 1px solid #000;
+//    }
+//    .tt-suggestion.tt-cursor {
+//      background-color: #ccc;
+//    }
+//    .triggered-events {
+//      float: right;
+//      width: 500px;
+//      height: 300px;
+//    }
+//  }
+}
+
+.navbar-master {
+  height: 49px;
+  z-index: 1031;
 }

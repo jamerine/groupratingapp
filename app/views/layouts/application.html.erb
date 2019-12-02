@@ -12,7 +12,7 @@
 </head>
 <body>
   <%= render 'flash' %>
-  <nav class="navbar navbar-default navbar-fixed-top">
+  <nav class="navbar navbar-default navbar-fixed-top navbar-master">
     <div class="container-fluid">
       <!-- Brand and toggle get grouped for better mobile display -->
       <div class="navbar-header">
@@ -33,7 +33,7 @@
           <% if user_signed_in? %>
             <li>
               <div id='search' class="input-group">
-                <input type="text" class="form-control"> <!-- placeholder="Search for..." -->
+                <input type="text" class="form-control">
                 <span class="input-group-btn">
                   <button class="btn btn-primary" type="button">Search</button>
                 </span>
@@ -62,5 +62,40 @@
   </nav>
 
   <%= yield %>
+  <script>
+    // // $(document).ready(function() {
+    //   var numbers = new Bloodhound({
+    //     datumTokenizer: Bloodhound.tokenizers.whitespace,
+    //     // datumTokenizer: Bloodhound.tokenizers.obj.whitespace('num'),
+    //     queryTokenizer: Bloodhound.tokenizers.whitespace,
+    //     local: [ 'one',
+    //       { num: 'two' },
+    //       { num: 'three' },
+    //       { num: 'four' },
+    //       { num: 'five' },
+    //       { num: 'six' },
+    //       { num: 'seven' },
+    //       { num: 'eight' },
+    //       { num: 'nine' },
+    //       { num: 'ten' },
+    //       'Claim #: 09-309466, Name: Fail, Marcella J',
+    //       'Claim #: 09-331836, Name: STERLING, KENNETH E'
+    //     ]
+    //   });
+    //
+    //   // initialize the bloodhound suggestion engine
+    //   numbers.initialize();
+    //
+    //   // instantiate the typeahead UI
+    //   $('#search .typeahead').typeahead({
+    //     hint: true,
+    //     highlight: true,
+    //     // minLength: 1
+    //   }, {
+    //     name: 'numbers',
+    //     source: numbers
+    //   });
+    // // });
+  </script>
 </body>
 </html>
