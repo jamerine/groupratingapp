@@ -20,8 +20,8 @@
            <h2><%= @claim_calculation.claimant_name.titleize %></h2>
            <p>Injury Type: <%= @claim_calculation.claim_mira_ncci_injury_type %></p>
            <p>Location: <%= @claim_calculation.try(:location_address_line_1).try(:titleize) || 'N/A' %></p><!-- , <%#=  @policy_calculation.location_address_line_2.try(:titleize) %><%#=  @policy_calculation.location_city.try(:titleize) %>, <%#= @policy_calculation.location_state.try(:upcase) %> <%#= @policy_calculation.location_zip_code %></p>-->
+           <p>Representative: <%= @claim_calculation.representative_name_and_abbreviation %></p>
          </div>
-
          <div class="col-md-3">
            <h5>Date of Birth:</h5>
            <h4><%= @claim_calculation.claimant_date_of_birth.try(:strftime, "%b %d, %Y") %></h4>
@@ -57,17 +57,14 @@
 
     <div class="row text-center">
       <h2>Medical</h2>
-<!--      <div class="col-md-3 col-sm-4 col-xs-6 ">-->
       <div class="col-md-4 col-sm-4 col-xs-6 ">
         <h5>Amount</h5>
         <p><%= number_to_currency(@claim_calculation.claim_medical_paid, precision: 0) %></p>
       </div>
-<!--      <div class="col-md-3 col-sm-4 col-xs-6 ">-->
       <div class="col-md-4 col-sm-4 col-xs-6 ">
         <h5>Last Paid Date</h5>
         <p><%= @claim_calculation.try(:medical_last_paid_date).try(:strftime, "%b %d, %Y") || 'N/A' %></p>
       </div>
-<!--      <div class="col-md-3 col-sm-4 col-xs-6 ">-->
       <div class="col-md-4 col-sm-4 col-xs-6 ">
         <h5>Reserve</h5>
         <p><%= number_to_currency(@claim_calculation.claim_mira_medical_reserve_amount, precision: 0) %></p>
@@ -76,7 +73,6 @@
 
     <div class="row text-center">
       <h2>Indemnity</h2>
-      <!--      <div class="col-md-3 col-sm-4 col-xs-6 ">-->
       <div class="col-md-4 col-sm-4 col-xs-6 ">
         <h5>Reducible Amount</h5>
         <p><%= number_to_currency(@claim_calculation.claim_mira_reducible_indemnity_paid, precision: 0) %></p>
@@ -85,12 +81,10 @@
         <h5>Non Reducible Amount 2</h5>
         <p><%= number_to_currency(@claim_calculation.claim_mira_non_reducible_indemnity_paid_2, precision: 0) %></p>
       </div>
-      <!--      <div class="col-md-3 col-sm-4 col-xs-6 ">-->
       <div class="col-md-4 col-sm-4 col-xs-6 ">
         <h5>Last Paid Date</h5>
         <p><%= @claim_calculation.try(:indemnity_last_paid_date).try(:strftime, "%b %d, %Y") || 'N/A' %></p>
       </div>
-      <!--      <div class="col-md-3 col-sm-4 col-xs-6 ">-->
       <div class="col-md-4 col-sm-4 col-xs-6 ">
         <h5>Reserve</h5>
         <p><%= number_to_currency(@claim_calculation.claim_mira_indemnity_reserve_amount, precision: 0) %></p>

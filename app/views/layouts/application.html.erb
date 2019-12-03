@@ -31,14 +31,7 @@
       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
         <ul class="nav navbar-nav navbar-left">
           <% if user_signed_in? %>
-            <li>
-              <div id='search' class="input-group">
-                <input type="text" class="form-control">
-                <span class="input-group-btn">
-                  <button class="btn btn-primary" type="button">Search</button>
-                </span>
-              </div>
-            </li>
+            <%= render 'layouts/claim_search'  %>
           <% end %>
         </ul>
         <ul class="nav navbar-nav navbar-right">
@@ -46,12 +39,12 @@
             <li><%= link_to 'Representatives', representatives_path %></li>
             <li><%= link_to 'Processing', group_ratings_path %></li>
             <li><%= link_to 'Accounts', accounts_path %></li>
-            <%# if current_user.admin? %>
-<!--              <li><%#= link_to 'Rejections', program_rejections_path, class: 'navbar-link' %></li>-->
-<!--              <li><%#= link_to 'Exceptions', group_rating_exceptions_path, class: 'navbar-link' %></li>-->
-<!--              <li><%#= link_to 'Administration', admin_root_path %></li>-->
-<!--              <li><%#= link_to 'Manage Rates', rates_path %></li>-->
-            <%# end %>
+            <% if current_user.admin? %>
+              <li><%= link_to 'Rejections', program_rejections_path, class: 'navbar-link' %></li>
+              <li><%= link_to 'Exceptions', group_rating_exceptions_path, class: 'navbar-link' %></li>
+              <li><%= link_to 'Administration', admin_root_path %></li>
+              <li><%= link_to 'Manage Rates', rates_path %></li>
+            <% end %>
             <li><%= link_to "Sign Out", destroy_user_session_path, method: :delete, :class => 'navbar-link' %> </li>
           <% else %>
             <li><%= link_to "Sign In", new_user_session_path, :class => 'navbar-link' %></li>
@@ -63,39 +56,9 @@
 
   <%= yield %>
   <script>
-    // // $(document).ready(function() {
-    //   var numbers = new Bloodhound({
-    //     datumTokenizer: Bloodhound.tokenizers.whitespace,
-    //     // datumTokenizer: Bloodhound.tokenizers.obj.whitespace('num'),
-    //     queryTokenizer: Bloodhound.tokenizers.whitespace,
-    //     local: [ 'one',
-    //       { num: 'two' },
-    //       { num: 'three' },
-    //       { num: 'four' },
-    //       { num: 'five' },
-    //       { num: 'six' },
-    //       { num: 'seven' },
-    //       { num: 'eight' },
-    //       { num: 'nine' },
-    //       { num: 'ten' },
-    //       'Claim #: 09-309466, Name: Fail, Marcella J',
-    //       'Claim #: 09-331836, Name: STERLING, KENNETH E'
-    //     ]
-    //   });
-    //
-    //   // initialize the bloodhound suggestion engine
-    //   numbers.initialize();
-    //
-    //   // instantiate the typeahead UI
-    //   $('#search .typeahead').typeahead({
-    //     hint: true,
-    //     highlight: true,
-    //     // minLength: 1
-    //   }, {
-    //     name: 'numbers',
-    //     source: numbers
-    //   });
-    // // });
+    $(document).ready(function() {
+      claimSearchListenerAndResults();
+    });
   </script>
 </body>
 </html>

@@ -75,6 +75,11 @@ class ClaimCalculation < ActiveRecord::Base
     ((1 - claim_handicap_percent) * ( claim_mira_medical_reserve_amount + (claim_mira_indemnity_reserve_amount)) * claim_group_multiplier * (1 - claim_subrogation_percent))
   end
 
+  def representative_name_and_abbreviation
+    representative = Representative.find_by(representative_number: self.representative_number)
+
+    "#{representative.company_name} (#{representative.abbreviated_name})"
+  end
 
   def recalculate_experience(group_maximum_value)
 
@@ -97,7 +102,7 @@ class ClaimCalculation < ActiveRecord::Base
         group_maximum_value / self.claim_unlimited_limited_loss
       end
 
-     @claim_group_reduced_amount =
+    @claim_group_reduced_amount =
       (((self.claim_mira_non_reducible_indemnity_paid + self.claim_mira_non_reducible_indemnity_paid_2 ) * @claim_group_multiplier ) + ((self.claim_medical_paid + self.claim_mira_medical_reserve_amount + self.claim_mira_reducible_indemnity_paid + self.claim_mira_indemnity_reserve_amount) * @claim_group_multiplier * (1 - self.claim_handicap_percent)))
 
     @claim_individual_reduced_amount =
@@ -120,10 +125,8 @@ class ClaimCalculation < ActiveRecord::Base
 
     @claim_modified_losses_group_reduced = @claim_group_reduced_amount * (1 - @claim_subrogation_percent)
 
-
     @claim_modified_losses_individual_reduced = (@claim_individual_reduced_amount * (1 - @claim_subrogation_percent))
 
     update_attributes(policy_individual_maximum_claim_value: group_maximum_value, claim_individual_multiplier: @claim_individual_multiplier, claim_group_reduced_amount: @claim_group_reduced_amount, claim_individual_reduced_amount: @claim_individual_reduced_amount, claim_modified_losses_individual_reduced: @claim_modified_losses_individual_reduced, claim_group_multiplier: @claim_group_multiplier, claim_subrogation_percent: @claim_subrogation_percent, claim_modified_losses_group_reduced: @claim_modified_losses_group_reduced)
-
   end
 end
