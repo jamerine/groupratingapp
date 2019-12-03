@@ -87,14 +87,13 @@ class ImportFile
       @import.pcovgs_count               = Pcovg.count
       @import.pcovg_detail_records_count = PcovgDetailRecord.count
       @import.import_status              = "#{table_name} Completed"
-    elsif table_name == "mira"
-      @import.mira_count               = Mira.count
+    elsif table_name == "miras"
+      @import.miras_count               = Mira.count
       @import.mira_detail_records_count = MiraDetailRecord.count
-      @import.import_status              = "#{table_name} Completed"
+      @import.import_status             = "#{table_name} Completed"
     end
 
     @import.save
-
 
     @import = Import.find_by(id: import_id)
     if (!@import.sc230s_count.nil? || !@import.sc230_employer_demographics_count.nil? || !@import.sc230_claim_medical_payments_count.nil? || !@import.sc230_claim_indemnity_awards_count.nil?) &&
@@ -108,12 +107,13 @@ class ImportFile
       (!@import.rates_count.nil? || !@import.rate_detail_records_count.nil?) &&
       (!@import.pdemos_count.nil? || !@import.pdemo_detail_records_count.nil?) &&
       (!@import.pemhs_count.nil? || !@import.pemh_detail_records_count.nil?) &&
-      (!@import.pcovgs_count.nil? || !@import.pcovg_detail_records_count.nil?)
+      (!@import.pcovgs_count.nil? || !@import.pcovg_detail_records_count.nil?) &&
+      (!@import.miras_count.nil? || !@import.mira_detail_records_count.nil?)
 
       @import.import_status = "Completed"
       @import.save
       @group_rating = GroupRating.find(group_rating_id)
-      GroupRatingStepOne.perform_async("1", @group_rating.process_representative, @group_rating.experience_period_lower_date, @group_rating.experience_period_upper_date, @group_rating.current_payroll_period_lower_date, @group_rating.current_payroll_period_upper_date, @group_rating.id, all_process)
+      #GroupRatingStepOne.perform_async("1", @group_rating.process_representative, @group_rating.experience_period_lower_date, @group_rating.experience_period_upper_date, @group_rating.current_payroll_period_lower_date, @group_rating.current_payroll_period_upper_date, @group_rating.id, all_process)
     end
 
 
