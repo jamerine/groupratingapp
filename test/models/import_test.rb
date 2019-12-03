@@ -40,7 +40,7 @@
 #  updated_at                                          :datetime         not null
 #  representative_id                                   :integer
 #  miras_count                                         :integer
-#  mira_details_record_count                           :integer
+#  mira_detail_records_count                           :integer
 #
 
 require 'test_helper'
