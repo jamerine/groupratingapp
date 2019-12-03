@@ -18,7 +18,7 @@ class ImportFile
       # Add row to copy data
       line = file.readline
       if line[40, 4] == "0000"
-        puts "incorrect characters"
+        #puts "incorrect characters"
       else
         rc.put_copy_data(line)
       end
