@@ -77,7 +77,8 @@
 #  representative_id                                   :integer
 #  account_id                                          :integer
 #  policy_individual_adjusted_experience_modified_rate :float
-#                      :float
+#  policy_adjusted_standard_premium                    :float
+#  policy_adjusted_individual_premium                  :float
 #
 
 class PolicyCalculation < ActiveRecord::Base

@@ -87,6 +87,10 @@ class ImportFile
       @import.pcovgs_count               = Pcovg.count
       @import.pcovg_detail_records_count = PcovgDetailRecord.count
       @import.import_status              = "#{table_name} Completed"
+    elsif table_name == "mira"
+      @import.mira_count               = Mira.count
+      @import.mira_detail_records_count = MiraDetailRecord.count
+      @import.import_status              = "#{table_name} Completed"
     end
 
     @import.save

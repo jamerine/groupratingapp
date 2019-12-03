@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190920154823) do
+ActiveRecord::Schema.define(version: 20191203120857) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -733,6 +733,8 @@ ActiveRecord::Schema.define(version: 20190920154823) do
     t.datetime "created_at",                                          null: false
     t.datetime "updated_at",                                          null: false
     t.integer  "representative_id"
+    t.integer  "miras_count"
+    t.integer  "mira_details_record_count"
   end
 
   add_index "imports", ["group_rating_id"], name: "index_imports_on_group_rating_id", using: :btree
@@ -767,6 +769,23 @@ ActiveRecord::Schema.define(version: 20190920154823) do
 
   add_index "manual_class_calculations", ["policy_calculation_id"], name: "index_manual_class_calculations_on_policy_calculation_id", using: :btree
   add_index "manual_class_calculations", ["policy_number", "manual_number"], name: "index_man_class_calc_pol_num_and_man_num", using: :btree
+
+  create_table "mira_detail_records", force: :cascade do |t|
+    t.integer  "representative_number"
+    t.integer  "record_type"
+    t.integer  "requestor_number"
+    t.integer  "policy_number"
+    t.integer  "business_sequence_number"
+    t.string   "valid_policy_number"
+    t.datetime "created_at",               null: false
+    t.datetime "updated_at",               null: false
+  end
+
+  create_table "miras", force: :cascade do |t|
+    t.string   "single_rec"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "mrcl_detail_records", force: :cascade do |t|
     t.integer  "representative_number"
