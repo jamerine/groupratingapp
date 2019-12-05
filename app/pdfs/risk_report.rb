@@ -1182,9 +1182,9 @@ class RiskReport < PdfReport
     @data = [["Market TM%", "Cut Point", "Cut Losses", "Level", "Premium"]]
     @data += @group_rating_levels.map do |e|
       if e.ac26_group_level == @account.group_rating_group_number
-        [e.market_rate, round((e.ratio_criteria - 1), 4), round((((e.ratio_criteria - 1) * @policy_calculation.policy_total_expected_losses) + @policy_calculation.policy_total_expected_losses), 0), "Qualified", round(@group_rating_projected_premium, 0)]
+        [e.market_rate, round((e.ratio_criteria - 1), 4), round((((e.ratio_criteria - 1) * @policy_calculation.policy_total_expected_losses) + @policy_calculation.policy_total_expected_losses), 0), "Qualified", round(@account.group_premium, 0)]
       else
-        [e.market_rate, round((e.ratio_criteria - 1), 4), round((((e.ratio_criteria - 1) * @policy_calculation.policy_total_expected_losses) + @policy_calculation.policy_total_expected_losses), 0), "", "-"]
+        [e.market_rate, round((e.ratio_criteria - 1), 4), round((((e.ratio_criteria - 1) * @policy_calculation.policy_total_expected_losses) + @policy_calculation.policy_total_expected_losses), 0), "-", round(@account.estimated_premium(e.market_rate), 0)]
       end
     end
   end
