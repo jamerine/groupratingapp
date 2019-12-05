@@ -11,11 +11,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190920154823) do
+ActiveRecord::Schema.define(version: 20191203161813) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-  enable_extension "pg_stat_statements"
 
   create_table "account_programs", force: :cascade do |t|
     t.integer  "account_id"
@@ -733,6 +732,8 @@ ActiveRecord::Schema.define(version: 20190920154823) do
     t.datetime "created_at",                                          null: false
     t.datetime "updated_at",                                          null: false
     t.integer  "representative_id"
+    t.integer  "miras_count"
+    t.integer  "mira_detail_records_count"
   end
 
   add_index "imports", ["group_rating_id"], name: "index_imports_on_group_rating_id", using: :btree
@@ -767,6 +768,116 @@ ActiveRecord::Schema.define(version: 20190920154823) do
 
   add_index "manual_class_calculations", ["policy_calculation_id"], name: "index_manual_class_calculations_on_policy_calculation_id", using: :btree
   add_index "manual_class_calculations", ["policy_number", "manual_number"], name: "index_man_class_calc_pol_num_and_man_num", using: :btree
+
+  create_table "mira_detail_records", force: :cascade do |t|
+    t.integer  "representative_number"
+    t.integer  "record_type"
+    t.integer  "requestor_number"
+    t.integer  "policy_number"
+    t.integer  "business_sequence_number"
+    t.string   "valid_policy_number"
+    t.datetime "created_at",                                                           null: false
+    t.datetime "updated_at",                                                           null: false
+    t.string   "claim_indicator"
+    t.string   "claim_number"
+    t.date     "claim_injury_date"
+    t.date     "claim_filing_date"
+    t.date     "claim_hire_date"
+    t.string   "gender"
+    t.string   "marital_status"
+    t.string   "injured_worked_represented"
+    t.string   "claim_status"
+    t.date     "claim_status_effective_date"
+    t.string   "claimant_name"
+    t.integer  "claim_manual_number"
+    t.integer  "claim_sub_manual_number"
+    t.integer  "industry_code"
+    t.integer  "claim_type"
+    t.date     "claimant_date_of_birth"
+    t.string   "claimant_age_at_injury"
+    t.date     "claimant_date_of_death"
+    t.string   "claim_activity_status"
+    t.date     "claim_activity_status_effective_date"
+    t.string   "prediction_status"
+    t.date     "prediction_close_status_effective_date"
+    t.string   "claimant_zip_code"
+    t.string   "catastrophic_claim"
+    t.float    "icd1_code"
+    t.string   "icd1_code_type",                                         default: "P"
+    t.float    "icd2_code"
+    t.string   "icd2_code_type",                                         default: "S"
+    t.float    "icd3_code"
+    t.string   "icd3_code_type",                                         default: "T"
+    t.float    "average_weekly_wage"
+    t.float    "claim_handicap_percent"
+    t.date     "claim_handicap_percent_effective_date"
+    t.string   "chiropractor"
+    t.string   "physical_therapy"
+    t.string   "salary_continuation"
+    t.date     "last_date_worked"
+    t.date     "estimated_return_to_work_date"
+    t.date     "return_to_work_date"
+    t.date     "mmi_date"
+    t.date     "last_medical_date_of_service"
+    t.date     "last_indemnity_period_end_date"
+    t.string   "injury_or_litigation_type"
+    t.float    "medical_ambulance_payments"
+    t.float    "medical_clinic_or_nursing_home_payments"
+    t.float    "medical_court_cost_payments"
+    t.float    "medical_doctors_payments"
+    t.float    "medical_drug_and_pharmacy_payments"
+    t.float    "medical_emergency_room_payments"
+    t.float    "medical_funeral_payments"
+    t.float    "medical_hospital_payments"
+    t.float    "medical_medical_device_payments"
+    t.float    "medical_misc_payments"
+    t.float    "medical_nursing_services_payments"
+    t.float    "medical_prostheses_device_payments"
+    t.float    "medical_prostheses_exam_payments"
+    t.float    "medical_travel_payments"
+    t.float    "medical_x_rays_and_radiology_payments"
+    t.float    "total_medical_paid"
+    t.string   "medical_reserve_prediction"
+    t.float    "total_medical_reserve_amount"
+    t.float    "indemnity_change_of_occupation_payments"
+    t.string   "indemnity_change_of_occupation_reserve_prediction"
+    t.float    "indemnity_change_of_occupation_reserve_amount"
+    t.float    "indemnity_death_benefit_payments"
+    t.string   "indemnity_death_benefit_reserve_prediction"
+    t.float    "indemnity_death_benefit_reserve_amount"
+    t.float    "indemnity_facial_disfigurement_payments"
+    t.string   "indemnity_facial_disfigurement_reserve_prediction"
+    t.float    "indemnity_facial_disfigurement_reserve_amount"
+    t.float    "indemnity_living_maintenance_payments"
+    t.float    "indemnity_living_maintenance_wage_loss_payments"
+    t.string   "indemnity_living_maintenance_reserve_prediction"
+    t.float    "indemnity_living_maintenance_reserve_amount"
+    t.float    "indemnity_permanent_partial_payments"
+    t.float    "indemnity_percent_permanent_partial_payments"
+    t.string   "indemnity_percent_permanent_partial_reserve_prediction"
+    t.float    "indemnity_percent_permanent_partial_reserve_amount"
+    t.float    "indemnity_ptd_payments"
+    t.string   "indemnity_ptd_reserve_prediction"
+    t.float    "indemnity_ptd_reserve_amount"
+    t.float    "temporary_total_payments"
+    t.float    "temporary_partial_payments"
+    t.float    "wage_loss_payments"
+    t.string   "indemnity_temporary_total_reserve_prediction"
+    t.float    "indemnity_temporary_total_reserve_amount"
+    t.float    "indemnity_lump_sum_settlement_payments"
+    t.float    "indemnity_attorney_fee_payments"
+    t.float    "indemnity_other_benefit_payments"
+    t.float    "total_indemnity_paid_amount"
+    t.float    "total_original_reserve_amount"
+    t.float    "reduction_amount"
+    t.float    "total_reserve_amount_for_rates"
+    t.string   "reduction_reason"
+    t.float    "total_indemnity_reserve_amount"
+  end
+
+  create_table "miras", force: :cascade do |t|
+    t.string "single_rec"
+  end
 
   create_table "mrcl_detail_records", force: :cascade do |t|
     t.integer  "representative_number"
