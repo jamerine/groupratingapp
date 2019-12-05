@@ -30,7 +30,6 @@ class ClaimCalculationsController < ApplicationController
   end
 
   def matching_claim_calculations
-    # binding.pry
     ClaimCalculation.where("claim_number ILIKE :search_value OR REPLACE(claim_number, '-', '') ILIKE :search_value OR claimant_name ILIKE :search_value", search_value: "%#{search_value}%")
   end
 

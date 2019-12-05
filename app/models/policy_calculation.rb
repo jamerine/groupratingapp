@@ -312,7 +312,6 @@ class PolicyCalculation < ActiveRecord::Base
   end
 
   def calculate_premium_with_assessments(policy_total_individual_premium = self.policy_total_individual_premium, policy_total_standard_premium = self.policy_total_standard_premium)
-    # binding.pry
     assessments = policy_total_individual_premium - policy_total_standard_premium
     adjust_premium_size_factors(policy_total_standard_premium)&.round(0) + assessments
   end
