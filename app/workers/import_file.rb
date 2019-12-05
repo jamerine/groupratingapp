@@ -18,7 +18,7 @@ class ImportFile
       # Add row to copy data
       line = file.readline
       if line[40, 4] == "0000"
-        puts "incorrect characters"
+        #puts "incorrect characters"
       else
         rc.put_copy_data(line)
       end
@@ -87,10 +87,13 @@ class ImportFile
       @import.pcovgs_count               = Pcovg.count
       @import.pcovg_detail_records_count = PcovgDetailRecord.count
       @import.import_status              = "#{table_name} Completed"
+    elsif table_name == "miras"
+      @import.miras_count               = Mira.count
+      @import.mira_detail_records_count = MiraDetailRecord.count
+      @import.import_status             = "#{table_name} Completed"
     end
 
     @import.save
-
 
     @import = Import.find_by(id: import_id)
     if (!@import.sc230s_count.nil? || !@import.sc230_employer_demographics_count.nil? || !@import.sc230_claim_medical_payments_count.nil? || !@import.sc230_claim_indemnity_awards_count.nil?) &&
@@ -104,7 +107,8 @@ class ImportFile
       (!@import.rates_count.nil? || !@import.rate_detail_records_count.nil?) &&
       (!@import.pdemos_count.nil? || !@import.pdemo_detail_records_count.nil?) &&
       (!@import.pemhs_count.nil? || !@import.pemh_detail_records_count.nil?) &&
-      (!@import.pcovgs_count.nil? || !@import.pcovg_detail_records_count.nil?)
+      (!@import.pcovgs_count.nil? || !@import.pcovg_detail_records_count.nil?) &&
+      (!@import.miras_count.nil? || !@import.mira_detail_records_count.nil?)
 
       @import.import_status = "Completed"
       @import.save

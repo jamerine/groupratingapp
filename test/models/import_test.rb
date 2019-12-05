@@ -39,6 +39,8 @@
 #  created_at                                          :datetime         not null
 #  updated_at                                          :datetime         not null
 #  representative_id                                   :integer
+#  miras_count                                         :integer
+#  mira_detail_records_count                           :integer
 #
 
 require 'test_helper'
