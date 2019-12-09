@@ -11,10 +11,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20191203161813) do
+ActiveRecord::Schema.define(version: 20191209182019) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+  enable_extension "pg_stat_statements"
 
   create_table "account_programs", force: :cascade do |t|
     t.integer  "account_id"
@@ -422,6 +423,7 @@ ActiveRecord::Schema.define(version: 20191203161813) do
     t.integer  "claim_total_subrogation_collected"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "non_at_fault"
   end
 
   create_table "democs", force: :cascade do |t|
