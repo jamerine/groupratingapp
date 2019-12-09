@@ -147,4 +147,12 @@ class ClaimCalculation < ActiveRecord::Base
   def non_at_fault
     democ_detail_record.try(:non_at_fault)
   end
+
+  def total_loss_of_claim
+    self.policy_calculation.manual_class_calculations.sum(:manual_class_expected_losses).round(0)
+  end
+
+  def max_value
+    self.policy_calculation.policy_maximum_claim_value.round(0)
+  end
 end
