@@ -1211,7 +1211,7 @@ class RiskReport < PdfReport
       new_mod      = modifier - original_modifier_as_percent
       new_modifier = (modifier.to_f / 100.00).to_f
       mod_amount   = new_mod * ntm
-      rows << [round(new_modifier, 2), round(@experience_group_modidified_losses_total, 0), round(@policy_calculation.policy_adjusted_individual_premium + mod_amount, 0)]
+      rows << [round(new_modifier, 2), round(@experience_group_modidified_losses_total + mod_amount, 0), round(@policy_calculation.policy_adjusted_individual_premium + mod_amount, 0)]
     end
 
     @data += rows
