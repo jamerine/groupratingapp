@@ -313,9 +313,18 @@ class PolicyCalculation < ActiveRecord::Base
   end
 
   def calculate_premium_with_assessments(policy_total_individual_premium = self.policy_total_individual_premium, policy_total_standard_premium = self.policy_total_standard_premium)
-    # binding.pry
     assessments = policy_total_individual_premium - policy_total_standard_premium
     adjust_premium_size_factors(policy_total_standard_premium)&.round(0) + assessments
+  end
+
+  def calculate_premium_for_risk(new_mod_rate)
+    administrative_rate = BwcCodesConstantValue.find_by(name: 'administrative_rate', completed_date: nil).rate
+
+    total_individual_premium = self.manual_class_calculations.map do |manual|
+      manual.calculate_potential_premium(new_mod_rate, administrative_rate)
+    end.sum
+
+    calculate_premium_with_assessments(total_individual_premium)
   end
 
   def adjust_ind_emr emr
