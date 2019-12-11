@@ -146,15 +146,31 @@
     </div>
 
     <div class="row text-center">
-      <h2>ICD 10</h2>
-<!--      <div class="col-md-6 col-sm-6 col-xs-12">-->
-<!--        <h5>Is Combined</h5>-->
-<!--        <p><%#= @claim_calculation.claim_combined %></p>-->
-<!--      </div>-->
-<!--      <div class="col-md-6 col-sm-6 col-xs-12">-->
-<!--        <h5>Combined into Claim Number</h5>-->
-<!--        <p><%#= @claim_calculation.combined_into_claim_number.blank? ? 'N/A' : @claim_calculation.combined_into_claim_number %></p>-->
-<!--      </div>-->
+      <h2>ICDs</h2>
+      <div class="col-md-3"></div>
+      <div class="col-md-6">
+        <table class="table table-striped">
+          <thead>
+          <tr>
+            <th class="col-md-3">Primary ICD</th>
+            <th class="col-md-3">Status</th>
+            <th class="col-md-3">Code</th>
+            <th class="col-md-3">Injury Location</th>
+          </tr>
+          </thead>
+          <tbody>
+          <% @claim_calculation.clicd_detail_records.each do |clicd_detail| %>
+            <tr>
+              <td><%= clicd_detail.primary_icd %></td>
+              <td><%= clicd_detail.icd_status_display %></td>
+              <td><%= clicd_detail.icd_code %></td>
+              <td><%= clicd_detail.icd_injury_location_code.strip == "" ? "N/A" : clicd_detail.icd_injury_location_code %></td>
+            </tr>
+          <% end %>
+          </tbody>
+        </table>
+      </div>
+      <div class="col-md-3"></div>
     </div>
   </div>
 <% end %>
