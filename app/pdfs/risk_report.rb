@@ -120,7 +120,6 @@ class RiskReport < PdfReport
     @experience_si_avg                             = (@experience_si_total / 4)
     @experience_si_ratio_avg                       = (@experience_si_total / @policy_calculation.policy_total_four_year_payroll) * @policy_calculation.policy_total_current_payroll
 
-
     # Out Of Experience Years Parameters
     @first_out_of_experience_year        = @first_experience_year - 5
     @first_out_of_experience_year_period = @first_experience_year_period.first.advance(years: -5)..@first_experience_year_period.last.advance(years: -5)
@@ -345,6 +344,7 @@ class RiskReport < PdfReport
     end
     if @report_params["group_discount_levels"] == "1"
       group_discount_level
+      individual_discount_level
     end
     if @report_params["coverage_status"] == "1"
       coverage_status_history
@@ -358,7 +358,6 @@ class RiskReport < PdfReport
     # number_pages "<page> in a total of <total>", { :start_count_at => 0, :page_filter => :all, :at => [bounds.right - 50, 0], :align => :right, :size => 14 }
     footer(@account)
   end
-
 
   private
 
@@ -592,7 +591,6 @@ class RiskReport < PdfReport
 
   end
 
-
   def header_two
     current_cursor = cursor
     bounding_box([0, current_cursor], :width => 80, :height => 80) do
@@ -784,7 +782,6 @@ class RiskReport < PdfReport
     @data += [["Est Savings/-Loss", "#{ round(@experience_savings, 0) }", "#{round(@em_cap_savings, 0)}", " ", "#{ round(@group_rating_savings, 0) }", "#{ round(@group_retro_savings, 0)}", " ", " "]]
   end
 
-
   def workers_comp_program_additional_options
     move_down 10
     text "Additional BWC Discounts, Rebates and Bonuses [2]", size: 10, style: :bold, align: :center
@@ -917,7 +914,6 @@ class RiskReport < PdfReport
     text "[2] Additional BWC Discounts often include costs of setting up the program and full savings on certain programs will be difficult to acheive.", size: 6
   end
 
-
   def claim_loss_run
     if @report_params["out_of_experience_claims"] == "1" || @report_params["in_experience_claims"] == "1" || @report_params["green_year_claims"] == "1"
       start_new_page
@@ -1024,7 +1020,6 @@ class RiskReport < PdfReport
     end
   end
 
-
   def green_year_total_table
     table totals_green_year_data, :column_widths => { 0 => 49, 1 => 55, 2 => 47, 3 => 32, 4 => 50, 5 => 50, 6 => 48, 7 => 48, 8 => 50, 9 => 50, 10 => 26, 11 => 35 } do
       self.position     = :center
@@ -1039,11 +1034,9 @@ class RiskReport < PdfReport
     end
   end
 
-
   def totals_green_year_data
     @data = [[{ :content => "Green Year Totals", :colspan => 4 }, "#{ round(@green_year_comp_total, 0) }", "#{round(@green_year_medical_total, 0)}", "#{round(@green_year_mira_medical_reserve_total, 0)}", "#{round(@green_year_group_modidified_losses_total, 0)}", "#{round(@green_year_individual_modidified_losses_total, 0)}", "#{round(@green_year_individual_reduced_total, 0)}", "", ""]]
   end
-
 
   def out_of_experience_year_total_table
     table totals_out_of_experience_year_data, :column_widths => { 0 => 49, 1 => 55, 2 => 47, 3 => 32, 4 => 50, 5 => 50, 6 => 48, 7 => 48, 8 => 50, 9 => 50, 10 => 26, 11 => 35 } do
@@ -1058,7 +1051,6 @@ class RiskReport < PdfReport
       self.header       = true
     end
   end
-
 
   def totals_out_of_experience_year_data
     @data = [[{ :content => "Out Of Experience Year Totals", :colspan => 4 }, "#{ round(@out_of_experience_comp_total, 0) }", "#{round(@out_of_experience_medical_total, 0)}", "#{round(@out_of_experience_mira_medical_reserve_total, 0)}", "#{round(@out_of_experience_group_modidified_losses_total, 0)}", "#{round(@out_of_experience_individual_modidified_losses_total, 0)}", "#{round(@out_of_experience_si_total, 0)}", "", ""]]
@@ -1086,7 +1078,6 @@ class RiskReport < PdfReport
       text "SI Ratio Avg: #{round(@experience_si_ratio_avg, 0)}", style: :bold
     end
   end
-
 
   def totals_experience_year_data
     @data = [[{ :content => "Experience Year Totals", :colspan => 4 }, "#{ round(@experience_comp_total, 0) }", "#{round(@experience_medical_total, 0)}", "#{round(@experience_mira_medical_reserve_total, 0)}", "#{round(@experience_group_modidified_losses_total, 0)}", "#{round(@experience_individual_modidified_losses_total, 0)}", "#{round(@experience_si_total, 0)}", "", ""]]
@@ -1116,11 +1107,9 @@ class RiskReport < PdfReport
 
   end
 
-
   def ten_year_total_data
     @data = [[{ :content => "10 Year Totals", :colspan => 4 }, "#{ round(@ten_year_comp_total, 0) }", "#{round(@ten_year_medical_total, 0)}", "#{round(@ten_year_mira_medical_reserve_total, 0)}", "#{round(@ten_year_group_modidified_losses_total, 0)}", "#{round(@ten_year_individual_modidified_losses_total, 0)}", "#{round(@ten_year_si_total, 0)}", "", ""]]
   end
-
 
   def year_claim_table(claim_year_data)
     table claim_year_data, :column_widths => { 0 => 45, 1 => 80, 2 => 40, 3 => 25, 4 => 45, 5 => 45, 6 => 45, 7 => 45, 8 => 45, 9 => 45, 10 => 25, 11 => 55 } do
@@ -1161,7 +1150,6 @@ class RiskReport < PdfReport
     move_down 30
     text "Group Discount Levels", style: :bold, size: 14, align: :center
     group_discount_level_table
-    group_discount_level_footer
   end
 
   def group_discount_level_table
@@ -1182,22 +1170,25 @@ class RiskReport < PdfReport
     @data = [["Market TM%", "Cut Point", "Cut Losses", "Level", "Premium"]]
     @data += @group_rating_levels.map do |e|
       if e.ac26_group_level == @account.group_rating_group_number
-        [e.market_rate, round((e.ratio_criteria - 1), 4), round((((e.ratio_criteria - 1) * @policy_calculation.policy_total_expected_losses) + @policy_calculation.policy_total_expected_losses), 0), "Qualified", round(@group_rating_projected_premium, 0)]
+        [e.market_rate, round((e.ratio_criteria - 1), 4), round((((e.ratio_criteria - 1) * @policy_calculation.policy_total_expected_losses) + @policy_calculation.policy_total_expected_losses), 0), "Qualified", round(@account.group_premium, 0)]
       else
-        [e.market_rate, round((e.ratio_criteria - 1), 4), round((((e.ratio_criteria - 1) * @policy_calculation.policy_total_expected_losses) + @policy_calculation.policy_total_expected_losses), 0), "", "-"]
+        [e.market_rate, round((e.ratio_criteria - 1), 4), round((((e.ratio_criteria - 1) * @policy_calculation.policy_total_expected_losses) + @policy_calculation.policy_total_expected_losses), 0), "-", round(@account.estimated_premium(e.market_rate), 0)]
       end
     end
   end
 
-  def group_discount_footer_data
-    @data = [["Ind TM%", "", "Losses", "", "Premium"]]
-    @data += [[round(@policy_calculation.adjusted_total_modifier, 2), "", round(@experience_group_modidified_losses_total, 0), "", round(@policy_calculation.policy_adjusted_individual_premium, 0)]]
+  def individual_discount_level
+    move_down 30
+    text "Individual Discount Levels", style: :bold, size: 14, align: :center
+    individual_discount_level_table
   end
 
-  def group_discount_level_footer
-    table group_discount_footer_data do
+  def individual_discount_level_table
+    table individual_discount_level_data do
       self.position      = :center
       row(0).font_style  = :bold
+      row(5).font_style  = :bold
+      row(0).overflow    = :shring_to_fit
       row(0).align       = :center
       row(0).borders     = [:bottom]
       row(1..-1).borders = []
@@ -1205,7 +1196,25 @@ class RiskReport < PdfReport
       self.cell_style    = { size: 8 }
       self.header        = true
     end
+  end
 
+  def individual_discount_level_data
+    @data                        = [["Ind TM%", "Losses", "Premium"]]
+    original_modifier            = round(@policy_calculation.adjusted_total_modifier, 2)
+    original_modifier_as_percent = (original_modifier.to_f * 100.00).to_f
+    min_modifier                 = original_modifier_as_percent.to_i - 4
+    max_modifier                 = original_modifier_as_percent.to_i + 4
+    rows                         = []
+    ntm                          = ((0.01 / @policy_calculation.policy_credibility_percent) * @policy_calculation.policy_total_limited_losses).round(0)
+
+    [*min_modifier..max_modifier].each do |modifier|
+      new_mod      = modifier - original_modifier_as_percent
+      new_modifier = (modifier.to_f / 100.00).to_f
+      mod_amount   = new_mod * ntm
+      rows << [round(new_modifier, 2), round(@experience_group_modidified_losses_total + mod_amount, 0), round(@policy_calculation.calculate_premium_for_risk(new_modifier), 0)]
+    end
+
+    @data += rows
   end
 
   def coverage_status_history
@@ -1276,7 +1285,6 @@ class RiskReport < PdfReport
 
     end
   end
-
 
   def payroll_and_premium_history_table(payroll_and_premium_history_data)
     table payroll_and_premium_history_data, :column_widths => { 0 => 100, 1 => 75, 2 => 75, 3 => 75, 4 => 75, 5 => 75 } do
