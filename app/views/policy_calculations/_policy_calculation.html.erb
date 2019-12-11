@@ -10,8 +10,12 @@
     </div>
     <div class="col-md-6">
       <h2><%= @policy_calculation.business_name.titleize %></h2>
-      <p>Mailing: <%=  @policy_calculation.mailing_address_line_1.try(:titleize) %>, <%=  @policy_calculation.mailing_address_line_2.try(:titleize) %><%=  @policy_calculation.mailing_city.try(:titleize) %>, <%= @policy_calculation.mailing_state.try(:upcase) %> <%= @policy_calculation.mailing_zip_code %></p>
-      <p>Location: <%=  @policy_calculation.location_address_line_1.try(:titleize) %>, <%=  @policy_calculation.location_address_line_2.try(:titleize) %><%=  @policy_calculation.location_city.try(:titleize) %>, <%= @policy_calculation.location_state.try(:upcase) %> <%= @policy_calculation.location_zip_code %></p>
+      <p>Mailing: <%= @policy_calculation.mailing_address_line_1.try(:titleize) %>
+        , <%= @policy_calculation.mailing_address_line_2.try(:titleize) %><%= @policy_calculation.mailing_city.try(:titleize) %>
+        , <%= @policy_calculation.mailing_state.try(:upcase) %> <%= @policy_calculation.mailing_zip_code %></p>
+      <p>Location: <%= @policy_calculation.location_address_line_1.try(:titleize) %>
+        , <%= @policy_calculation.location_address_line_2.try(:titleize) %><%= @policy_calculation.location_city.try(:titleize) %>
+        , <%= @policy_calculation.location_state.try(:upcase) %> <%= @policy_calculation.location_zip_code %></p>
     </div>
 
     <div class="col-md-3">
@@ -50,7 +54,7 @@
 </div>
 
 <div class="container text-center">
-    <h2>Policy Experience History</h2>
+  <h2>Policy Experience History</h2>
   <div class="row text-center">
     <div class="col-md-3 col-sm-4 col-xs-6">
       <h5>Total Payroll</h5>
@@ -104,6 +108,46 @@
     <div class="col-md-3 col-sm-4 col-xs-6">
       <h5>Group Ratio</h5>
       <p><%= @policy_calculation.policy_group_ratio %></p>
+    </div>
+  </div>
+</div>
+
+
+<div class="container text-center">
+  <% original_modifier = number_with_precision(@policy_calculation.adjusted_total_modifier, precision: 2, delimiter: ',') %>
+  <% original_modifier_as_percent = (original_modifier.to_f * 100.00).to_f %>
+  <% min_modifier = original_modifier_as_percent.to_i - 4 %>
+  <% max_modifier = original_modifier_as_percent.to_i + 4 %>
+  <% ntm = ((0.01 / @policy_calculation.policy_credibility_percent) * @policy_calculation.policy_total_limited_losses).round(0) %>
+  <% group_rating = GroupRating.find_by(process_representative: @policy_calculation.representative_number) %>
+  <% experience_year_claims = @policy_calculation.claim_calculations.where("claim_injury_date BETWEEN ? AND ? ", group_rating.experience_period_lower_date, group_rating.experience_period_upper_date).order(:claim_injury_date) %>
+  <% experience_group_modidified_losses_total = experience_year_claims.sum(:claim_modified_losses_group_reduced) %>
+
+  <h2>Individual Policy Discount Levels</h2>
+  <div class="row text-center">
+    <div class="col-md-9 col-xs-6 col-md-offset-1">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Individual TM%</th>
+            <th>Losses</th>
+            <th>Premium</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% [*min_modifier..max_modifier].each_with_index do |modifier, index| %>
+            <% new_mod = modifier - original_modifier_as_percent %>
+            <% new_modifier = (modifier.to_f / 100.00).to_f %>
+            <% mod_amount = new_mod * ntm %>
+
+            <tr style="<%= 'font-weight: 700;' if index == 4 %>">
+              <td><%= number_with_precision(new_modifier, precision: 2, delimiter: ',') %>
+              <td><%= number_with_precision(experience_group_modidified_losses_total + mod_amount, precision: 0, delimiter: ',') %></td>
+              <td><%= number_with_precision(@policy_calculation.calculate_premium_for_risk(new_modifier), precision: 0, delimiter: ',') %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
     </div>
   </div>
 </div>
