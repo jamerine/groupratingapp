@@ -27,4 +27,5 @@
 #
 
 class ClicdDetailRecord < ActiveRecord::Base
+  #"AG"=ALLEGED or "AL"=ALLOWED or "AA"=ALLOW/APPEAL or "DA"=DISALLOWED or "DP"=DISALLOW/APPL or "HR"=HEARING or "HD"=HEARING-DHO or "DS"=DISMISSED.
 end
