@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20191209182019) do
+ActiveRecord::Schema.define(version: 20191211125553) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -340,6 +340,34 @@ ActiveRecord::Schema.define(version: 20191209182019) do
 
   add_index "claim_calculations", ["policy_calculation_id"], name: "index_claim_calculations_on_policy_calculation_id", using: :btree
   add_index "claim_calculations", ["policy_number", "claim_number"], name: "index_claim_calc_on_pol_num_and_claim_num", using: :btree
+
+  create_table "clicd_detail_records", force: :cascade do |t|
+    t.integer  "representative_number"
+    t.integer  "record_type"
+    t.integer  "requestor_number"
+    t.integer  "policy_number"
+    t.integer  "business_sequence_number"
+    t.string   "valid_policy_number"
+    t.string   "current_policy_status"
+    t.date     "current_policy_status_effective_date"
+    t.integer  "policy_year"
+    t.string   "policy_year_rating_plan"
+    t.string   "claim_indicator"
+    t.string   "claim_number"
+    t.string   "icd_codes_assigned"
+    t.string   "icd_code"
+    t.string   "icd_status"
+    t.date     "icd_status_effective_date"
+    t.string   "icd_injury_location_code"
+    t.string   "icd_digit_tooth_number"
+    t.string   "primary_icd"
+    t.datetime "created_at",                           null: false
+    t.datetime "updated_at",                           null: false
+  end
+
+  create_table "clicds", force: :cascade do |t|
+    t.string "single_rec"
+  end
 
   create_table "contact_types", force: :cascade do |t|
     t.string   "name"
@@ -736,6 +764,8 @@ ActiveRecord::Schema.define(version: 20191209182019) do
     t.integer  "representative_id"
     t.integer  "miras_count"
     t.integer  "mira_detail_records_count"
+    t.integer  "clicds_count"
+    t.integer  "clicd_detail_records_count"
   end
 
   add_index "imports", ["group_rating_id"], name: "index_imports_on_group_rating_id", using: :btree

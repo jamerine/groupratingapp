@@ -56,12 +56,12 @@ class ManualClassCalculation < ActiveRecord::Base
       csv << attributes
 
       all.each do |manual_class|
-        csv << attributes.map{ |attr| manual_class.send(attr) }
+        csv << attributes.map { |attr| manual_class.send(attr) }
       end
     end
   end
 
-  def calculate_payroll(plus_one_year=nil)
+  def calculate_payroll(plus_one_year = nil)
     self.transaction do
       @group_rating = GroupRating.find_by(process_representative: self.representative_number)
 
@@ -74,11 +74,10 @@ class ManualClassCalculation < ActiveRecord::Base
       @policy_creation_dip = self.policy_calculation.policy_coverage_status_histories.find_by(coverage_status: 'DIP  ')
 
       if @policy_creation_dip && @policy_creation
-          if @policy_creation_dip.coverage_effective_date < @policy_creation.coverage_effective_date
-            @policy_creation = @policy_creation_dip
-          end
+        if @policy_creation_dip.coverage_effective_date < @policy_creation.coverage_effective_date
+          @policy_creation = @policy_creation_dip
+        end
       end
-
 
 
       if @policy_creation.nil?
@@ -110,7 +109,7 @@ class ManualClassCalculation < ActiveRecord::Base
         if current_payroll.nil?
           @manual_class_current_payroll = 0
         elsif current_payroll.reporting_period_start_date > @group_rating.current_payroll_period_lower_date
-          diff_ratio = 1 / ((@group_rating.current_payroll_period_upper_date - self.policy_calculation.policy_creation_date)/(@group_rating.current_payroll_period_upper_date - @group_rating.current_payroll_period_lower_date))
+          diff_ratio = 1 / ((@group_rating.current_payroll_period_upper_date - self.policy_calculation.policy_creation_date) / (@group_rating.current_payroll_period_upper_date - @group_rating.current_payroll_period_lower_date))
 
           @manual_class_current_payroll = @manual_class_current_payroll * diff_ratio
         end
@@ -121,22 +120,22 @@ class ManualClassCalculation < ActiveRecord::Base
       @bwc_base_rate = BwcCodesBaseRatesExpLossRate.find_by(class_code: self.manual_number)
 
       if @bwc_base_rate.nil?
-        @manual_class_expected_losses = 0
+        @manual_class_expected_losses    = 0
         @manual_class_expected_loss_rate = 0
-        @manual_class_base_rate = 0
+        @manual_class_base_rate          = 0
       else
-        expected_loss_rate = @bwc_base_rate.expected_loss_rate || 0
-        @manual_class_expected_losses = ((expected_loss_rate * @manual_class_four_year_sum)/100).round(0)
+        expected_loss_rate               = @bwc_base_rate.expected_loss_rate || 0
+        @manual_class_expected_losses    = ((expected_loss_rate * @manual_class_four_year_sum) / 100).round(0)
         @manual_class_expected_loss_rate = expected_loss_rate
-        @manual_class_base_rate = @bwc_base_rate.base_rate || 0
+        @manual_class_base_rate          = @bwc_base_rate.base_rate || 0
       end
 
 
       self.update_attributes(manual_class_current_estimated_payroll: @manual_class_current_payroll,
-      manual_class_four_year_period_payroll: @manual_class_four_year_sum,
-      manual_class_expected_losses: @manual_class_expected_losses,
-      manual_class_expected_loss_rate: @manual_class_expected_loss_rate,
-      manual_class_base_rate: @manual_class_base_rate
+                             manual_class_four_year_period_payroll:  @manual_class_four_year_sum,
+                             manual_class_expected_losses:           @manual_class_expected_losses,
+                             manual_class_expected_loss_rate:        @manual_class_expected_loss_rate,
+                             manual_class_base_rate:                 @manual_class_base_rate
       )
     end #end transaction
   end
@@ -148,34 +147,49 @@ class ManualClassCalculation < ActiveRecord::Base
 
       if @limited_loss_rate_row.nil?
         @limited_loss_rate = 0
-        @limited_losses = 0
+        @limited_losses    = 0
       else
         @limited_loss_rate = (@limited_loss_rate_row.limited_loss_ratio)
-        @limited_losses = (self.manual_class_expected_losses * @limited_loss_rate).round(0)
+        @limited_losses    = (self.manual_class_expected_losses * @limited_loss_rate).round(0)
       end
 
       self.update_attributes(
-      manual_class_limited_losses: @limited_losses,
-      manual_class_limited_loss_rate: @limited_loss_rate
+        manual_class_limited_losses:    @limited_losses,
+        manual_class_limited_loss_rate: @limited_loss_rate
       )
 
-   end # transaction end
+    end # transaction end
   end
 
   def calculate_premium(policy_individual_experience_modified_rate, administrative_rate)
     self.transaction do
+      @manual_class_modification_rate = (self.manual_class_base_rate * policy_individual_experience_modified_rate).round(2)
+      @manual_class_standard_premium  = ((@manual_class_modification_rate * self.manual_class_current_estimated_payroll) / 100).round(2)
 
-        @manual_class_modification_rate = (self.manual_class_base_rate * policy_individual_experience_modified_rate).round(2)
-        @manual_class_standard_premium = ((@manual_class_modification_rate * self.manual_class_current_estimated_payroll)/100).round(2)
+      @manual_class_individual_total_rate        = ((@manual_class_modification_rate * administrative_rate)).round(4) / 100
+      @manual_class_estimated_individual_premium = (self.manual_class_current_estimated_payroll * @manual_class_individual_total_rate).round(2)
 
-        @manual_class_individual_total_rate = ((@manual_class_modification_rate * administrative_rate)).round(4)/100
-        @manual_class_estimated_individual_premium = (self.manual_class_current_estimated_payroll * @manual_class_individual_total_rate).round(2)
-
-        self.update_attributes(manual_class_individual_total_rate: @manual_class_individual_total_rate,
-        manual_class_standard_premium: @manual_class_standard_premium, manual_class_modification_rate: @manual_class_modification_rate, manual_class_estimated_individual_premium: @manual_class_estimated_individual_premium)
-
-   end #transaction
+      self.update_attributes(manual_class_individual_total_rate: @manual_class_individual_total_rate,
+                             manual_class_standard_premium:      @manual_class_standard_premium, manual_class_modification_rate: @manual_class_modification_rate, manual_class_estimated_individual_premium: @manual_class_estimated_individual_premium)
+    end #transaction
   end
 
+  def calculate_estimated_premium(market_rate)
+    administrative_rate = BwcCodesConstantValue.find_by(name: 'administrative_rate', completed_date: nil).rate
+    payroll_amount      = self.manual_class_estimated_group_premium / self.manual_class_group_total_rate
+    rate                = (((1 + market_rate) * self.manual_class_base_rate).round(2) * (1 + administrative_rate)).round(4) / 100
 
+    (payroll_amount * rate).round(2)
+  end
+
+  def calculate_potential_premium(new_mod_rate, administrative_rate)
+    payroll_amount = self.manual_class_estimated_individual_premium / self.manual_class_individual_total_rate
+    rate           = (((1 + new_mod_rate) * self.manual_class_base_rate).round(2) * (1 + administrative_rate)).round(4) / 100
+
+    (payroll_amount * rate).round(2)
+
+    #manual_class_modification_rate     = (self.manual_class_base_rate * new_mod_rate).round(2)
+    #manual_class_individual_total_rate = ((manual_class_modification_rate * administrative_rate)).round(4) / 100
+    #(self.manual_class_current_estimated_payroll * manual_class_individual_total_rate).round(2)
+  end
 end
