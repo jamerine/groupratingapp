@@ -21,7 +21,7 @@
          <div class="col-md-6">
            <h2><%= @claim_calculation.claimant_name.titleize %></h2>
            <p>Injury Type: <%= @claim_calculation.claim_mira_ncci_injury_type %></p>
-           <p>Location: <%= @claim_calculation.try(:location_address_line_1).try(:titleize) || 'N/A' %></p><!-- , <%#=  @policy_calculation.location_address_line_2.try(:titleize) %><%#=  @policy_calculation.location_city.try(:titleize) %>, <%#= @policy_calculation.location_state.try(:upcase) %> <%#= @policy_calculation.location_zip_code %></p>-->
+           <br>
            <p>Representative: <%= @claim_calculation.representative_name_and_abbreviation %></p>
          </div>
          <div class="col-md-3">
@@ -143,6 +143,18 @@
         <h5>Combined into Claim Number</h5>
         <p><%= @claim_calculation.combined_into_claim_number.blank? ? 'N/A' : @claim_calculation.combined_into_claim_number %></p>
       </div>
+    </div>
+
+    <div class="row text-center">
+      <h2>ICD 10</h2>
+<!--      <div class="col-md-6 col-sm-6 col-xs-12">-->
+<!--        <h5>Is Combined</h5>-->
+<!--        <p><%#= @claim_calculation.claim_combined %></p>-->
+<!--      </div>-->
+<!--      <div class="col-md-6 col-sm-6 col-xs-12">-->
+<!--        <h5>Combined into Claim Number</h5>-->
+<!--        <p><%#= @claim_calculation.combined_into_claim_number.blank? ? 'N/A' : @claim_calculation.combined_into_claim_number %></p>-->
+<!--      </div>-->
     </div>
   </div>
 <% end %>
