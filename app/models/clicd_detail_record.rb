@@ -27,5 +27,24 @@
 #
 
 class ClicdDetailRecord < ActiveRecord::Base
-  #"AG"=ALLEGED or "AL"=ALLOWED or "AA"=ALLOW/APPEAL or "DA"=DISALLOWED or "DP"=DISALLOW/APPL or "HR"=HEARING or "HD"=HEARING-DHO or "DS"=DISMISSED.
+  def icd_status_display
+    case self.icd_status
+    when "AG"
+      "Alleged"
+    when "AL"
+      "Allowed"
+    when "AA"
+      "Allow/Appeal"
+    when "DA"
+      "Disallowed"
+    when "DP"
+      "Disallow/APPL"
+    when "HR"
+      "Hearing:"
+    when "HD"
+      "Hearing-DHO"
+    when "DS"
+      "Dismissed"
+    end
+  end
 end

@@ -121,7 +121,6 @@ class ImportFile
       #GroupRatingStepOne.perform_async("1", @group_rating.process_representative, @group_rating.experience_period_lower_date, @group_rating.experience_period_upper_date, @group_rating.current_payroll_period_lower_date, @group_rating.current_payroll_period_upper_date, @group_rating.id, all_process)
     end
 
-
     time2 = Time.new
     puts "End Time: " + time2.inspect
   end
