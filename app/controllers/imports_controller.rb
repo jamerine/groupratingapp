@@ -57,6 +57,7 @@ class ImportsController < ApplicationController
         Sc220.delete_all
         Sc230.delete_all
         Mira.delete_all
+        Clicd.delete_all
         DemocDetailRecord.delete_all
         MrclDetailRecord.delete_all
         MrempEmployeeExperiencePolicyLevel.delete_all
@@ -65,6 +66,7 @@ class ImportsController < ApplicationController
         PcombDetailRecord.delete_all
         PhmgnDetailRecord.delete_all
         MiraDetailRecord.delete_all
+        ClicdDetailRecord.delete_all
         Sc220Rec1EmployerDemographic.delete_all
         Sc220Rec2EmployerManualLevelPayroll.delete_all
         Sc220Rec3EmployerArTransaction.delete_all

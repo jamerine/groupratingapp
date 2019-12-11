@@ -91,6 +91,10 @@ class ImportFile
       @import.miras_count               = Mira.count
       @import.mira_detail_records_count = MiraDetailRecord.count
       @import.import_status             = "#{table_name} Completed"
+    elsif table_name == "clicds"
+      @import.clicds_count               = Clicd.count
+      @import.clicd_detail_records_count = ClicdDetailRecord.count
+      @import.import_status             = "#{table_name} Completed"
     end
 
     @import.save
@@ -108,12 +112,13 @@ class ImportFile
       (!@import.pdemos_count.nil? || !@import.pdemo_detail_records_count.nil?) &&
       (!@import.pemhs_count.nil? || !@import.pemh_detail_records_count.nil?) &&
       (!@import.pcovgs_count.nil? || !@import.pcovg_detail_records_count.nil?) &&
-      (!@import.miras_count.nil? || !@import.mira_detail_records_count.nil?)
+      (!@import.miras_count.nil? || !@import.mira_detail_records_count.nil?) &&
+      (!@import.clicds_count.nil? || !@import.clicd_detail_records_count.nil?)
 
       @import.import_status = "Completed"
       @import.save
       @group_rating = GroupRating.find(group_rating_id)
-      GroupRatingStepOne.perform_async("1", @group_rating.process_representative, @group_rating.experience_period_lower_date, @group_rating.experience_period_upper_date, @group_rating.current_payroll_period_lower_date, @group_rating.current_payroll_period_upper_date, @group_rating.id, all_process)
+      #GroupRatingStepOne.perform_async("1", @group_rating.process_representative, @group_rating.experience_period_lower_date, @group_rating.experience_period_upper_date, @group_rating.current_payroll_period_lower_date, @group_rating.current_payroll_period_upper_date, @group_rating.id, all_process)
     end
 
 
