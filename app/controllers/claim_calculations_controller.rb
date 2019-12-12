@@ -12,7 +12,8 @@ class ClaimCalculationsController < ApplicationController
   end
 
   def search
-    render json: { matchingClaimsLis: @claim_search_results }
+    #binding.pry
+    render json: { matchingClaimsList: @claim_search_results }
   end
 
   private
@@ -34,7 +35,7 @@ class ClaimCalculationsController < ApplicationController
   end
 
   def no_matching_results_for_search_value
-    "<li>No matching results for: #{search_value}</li>"
+    "<li style='text-align: center;'>No matching results for: <b>#{search_value}</b></li>"
   end
 
   def does_result_value_ends_with_search_value(result_value)

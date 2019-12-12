@@ -110,22 +110,27 @@ trix-editor {
 $search-results-boarder: 1px solid rgb(204, 204, 204);
 $radius: 4px;
 
-#search {
+#search-claim {
   margin: 8px 0 0 0;
   width: 275px;
 
-  #claim-search-results {
+  #claim-search-wrapper {
+    position: absolute;
+    top: 36px;
+    left: 0;
     background-color: #FFF;
+    min-height: 50px;
+    width: 275px;
     border: $search-results-boarder;
     border-radius: $radius;
+  }
+
+  #claim-search-results {
     list-style-type: none;
     max-height: 500px;
-    min-width: 206px;
     overflow-y: auto;
     padding: 0;
     margin: 0;
-    position: absolute;
-    top: 36px;
 
     a {
       width: 100%;
@@ -147,9 +152,15 @@ $radius: 4px;
         width: 100%;
       }
     }
+  }
 
-    #search-spinner {
-      margin: 0 80px;
+  #search-spinner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    i {
       color: rgb(204, 204, 204);
       font-size: 36px;
     }

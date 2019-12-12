@@ -35,24 +35,24 @@
       </div>
     </div>
 
-  <% claims.each do |claim| %>
-    <div class="row text-center list-group-item">
-      <div class="col-md-2 col-sm-12 col-xs-12 ">
-        <h5 class="hidden-md hidden-lg">Claim Number</h5>
-        <p><%= link_to "#{claim.claim_number}", claim_calculation_path(claim) %></p>
-      </div>
-      <div class="col-md-2 col-sm-12 col-xs-12 ">
-        <h5 class="hidden-md hidden-lg">Claimant Name</h5>
-        <p><%= claim.claimant_name&.slice(0..20) %></p>
-      </div>
-      <div class="col-md-1 col-sm-4 col-xs-6 ">
-        <h5 class="hidden-md hidden-lg">Injury Date</h5>
+    <% claims.each do |claim| %>
+      <div class="row text-center list-group-item">
+        <div class="col-md-2 col-sm-12 col-xs-12 ">
+          <h5 class="hidden-md hidden-lg">Claim Number</h5>
+          <p><%= link_to "#{claim.claim_number}", claim_calculation_path(claim) %></p>
+        </div>
+        <div class="col-md-2 col-sm-12 col-xs-12 ">
+          <h5 class="hidden-md hidden-lg">Claimant Name</h5>
+          <p><%= claim.claimant_name&.slice(0..20) %></p>
+        </div>
+        <div class="col-md-1 col-sm-4 col-xs-6 ">
+          <h5 class="hidden-md hidden-lg">Injury Date</h5>
           <p><%= claim.claim_injury_date&.strftime("%m/%d/%y") %></p>
         </div>
-      <div class="col-md-1 col-sm-4 col-xs-6 ">
-        <h5 class="hidden-md hidden-lg">Handicap Percent</h5>
-          <p><%=  number_to_percentage(claim.claim_handicap_percent * 100, precision: 0) %></p>
-      </div>
+        <div class="col-md-1 col-sm-4 col-xs-6 ">
+          <h5 class="hidden-md hidden-lg">Handicap Percent</h5>
+          <p><%= number_to_percentage(claim.claim_handicap_percent * 100, precision: 0) %></p>
+        </div>
         <div class="col-md-1 col-sm-4 col-xs-6 ">
           <h5 class="hidden-md hidden-lg">Comp Awarded</h5>
           <p><%= number_to_currency(claim.comp_awarded, precision: 0) %></p>
@@ -78,6 +78,6 @@
           <p><%= number_to_currency(claim.claim_modified_losses_individual_reduced, precision: 0) %></p>
         </div>
       </div>
-  <% end %>
+    <% end %>
   </ul>
 </div>

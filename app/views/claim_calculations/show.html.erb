@@ -113,7 +113,7 @@
       <h2>Subrogation</h2>
       <div class="col-md-6 col-sm-6 col-xs-12">
         <h5>Percentage</h5>
-        <p><%= number_to_percentage(@claim_calculation.claim_subrogation_percent * 100, precision: 0) %></p>
+        <p><%= number_to_percentage(@claim_calculation.claim_subrogation_percent || 0 * 100, precision: 0) %></p>
       </div>
       <div class="col-md-6 col-sm-6 col-xs-12">
         <h5>Amount</h5>
