@@ -1,4 +1,4 @@
-let minCharsBeforeSearch = 3,
+var minCharsBeforeSearch = 3,
     previousSearchValue  = null,
     suggestionResults    = null,
     claimSearchRequest   = null,
