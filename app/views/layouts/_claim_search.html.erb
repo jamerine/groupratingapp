@@ -1,0 +1,20 @@
+<li>
+  <div id='search-claim' class="input-group">
+    <input type="text" class="form-control" title="Claim Search" placeholder="Search Name or Claim Number..." value="<%= @claim_calculation&.claim_number&.strip %>">
+    <div id="claim-search-wrapper" style="display:none;">
+      <ul id="claim-search-results" class="hidden"></ul>
+      <div id="search-spinner" style="display:none;">
+        <i class="fa fa-cog fa-spin"></i>
+      </div>
+    </div>
+    <!--    <span class="input-group-btn">-->
+    <!--      <button class="btn btn-primary" type="button">Search</button>-->
+    <!--    </span>-->
+  </div>
+
+  <script>
+    $(function () {
+      claimSearchListenerAndResults();
+    });
+  </script>
+</li>

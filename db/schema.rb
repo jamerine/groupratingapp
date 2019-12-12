@@ -451,6 +451,7 @@ ActiveRecord::Schema.define(version: 20191211125553) do
     t.integer  "claim_total_subrogation_collected"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "non_at_fault"
   end
 
   create_table "democs", force: :cascade do |t|

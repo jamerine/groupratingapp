@@ -35,7 +35,9 @@ Rails.application.routes.draw do
     collection { post :import_affiliate_process }
   end
 
-  resources :claim_calculations
+  resources :claim_calculations do
+    collection { get :search }
+  end
 
   resources :contacts do
     collection { post :import_contact_process }
