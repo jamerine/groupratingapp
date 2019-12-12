@@ -1205,7 +1205,12 @@ class RiskReport < PdfReport
     min_modifier                 = original_modifier_as_percent.to_i - 4
     max_modifier                 = original_modifier_as_percent.to_i + 4
     rows                         = []
-    ntm                          = ((0.01 / @policy_calculation.policy_credibility_percent) * @policy_calculation.policy_total_limited_losses).round(0)
+
+    if @policy_calculation.policy_credibility_percent.zero? || @policy_calculation.policy_total_limited_losses.zero?
+      ntm = 0.0
+    else
+      ntm = ((0.01 / @policy_calculation.policy_credibility_percent) * @policy_calculation.policy_total_limited_losses).round(0)
+    end
 
     [*min_modifier..max_modifier].each do |modifier|
       new_mod      = modifier - original_modifier_as_percent
