@@ -1,10 +1,11 @@
-let previousSearchValue  = null;
-let suggestionResults    = null;
-let claimSearchRequest   = null;
-let minCharsBeforeSearch = 1;
-
-let $claimSearchResults  = null;
-let $searchGroup         = null;
+let minCharsBeforeSearch = 3,
+    previousSearchValue  = null,
+    suggestionResults    = null,
+    claimSearchRequest   = null,
+    $claimSearchResults  = null,
+    $searchGroup         = null,
+    $searchSpinner       = null,
+    $searchWrapper       = null;
 
 function claimSearchListenerAndResults() {
   setClaimSearchElements();
@@ -18,17 +19,19 @@ function claimSearchListenerAndResults() {
     }
   });
 
-  $searchGroup.click(function(event) {
+  $searchGroup.click(function (event) {
     if (event.target.parentNode.id === '') {
       // console.log('previousSearchValue == null, now');
       previousSearchValue = null;
     }
-  })
+  });
 }
 
 function setClaimSearchElements() {
   $claimSearchResults = $('#claim-search-results');
-  $searchGroup        = $('#search');
+  $searchWrapper      = $('#claim-search-wrapper');
+  $searchGroup        = $('#search-claim');
+  $searchSpinner      = $('#search-spinner');
 }
 
 function showSearchResultsAsTypeaheadSuggestions() {
@@ -36,13 +39,20 @@ function showSearchResultsAsTypeaheadSuggestions() {
 
   if (searchValue === '') {
     abortPendingAjaxCall();
+    $searchWrapper.fadeOut();
     $claimSearchResults.addClass('hidden');
   } else {
-    if (searchValue !== previousSearchValue && searchValue.length >= minCharsBeforeSearch) {
-      suggestionResults = searchMatchingClaims(searchValue);
+    if (searchValue.length < minCharsBeforeSearch) {
+      $searchWrapper.fadeOut();
+      $claimSearchResults.addClass('hidden');
     }
 
-    $claimSearchResults.removeClass('hidden');
+    if (searchValue !== previousSearchValue && searchValue.length >= minCharsBeforeSearch) {
+      $claimSearchResults.html('');
+
+      suggestionResults = searchMatchingClaims(searchValue);
+      $claimSearchResults.removeClass('hidden');
+    }
   }
 }
 
@@ -55,33 +65,32 @@ function searchMatchingClaims(searchValue) {
 function loadMatchingClaimsAsSuggestedResults(searchValue) {
   prepareForSearch();
 
-  claimSearchRequest = $.get('http://localhost:3000/claim_calculations/search', { search_value: searchValue }, function(response) {
-    loadSuggestedResults(response.matchingClaimsLis);
-  })
-  .done(function() { claimSearchRequest = null })
-  .fail(function(response) {
-    if (response.statusText !== "abort") {
-      console.log(response);
-    }
-  });
+  claimSearchRequest = $.get('/claim_calculations/search', { search_value: searchValue }, function (response) {
+                          loadSuggestedResults(response.matchingClaimsList);
+                        })
+                        .done(function () { claimSearchRequest = null })
+                        .fail(function (response) {
+                          if (response.statusText !== "abort") {
+                            console.log(response);
+                            $searchWrapper.fadeOut();
+                          }
+                        });
 }
 
 function prepareForSearch() {
-  loadSuggestedResults(searchSpinnerLi());
+  $searchSpinner.fadeIn();
+  $searchWrapper.fadeIn();
   abortPendingAjaxCall();
 }
 
 function loadSuggestedResults(suggestedResults) {
+  $searchSpinner.fadeOut();
   $claimSearchResults.html(suggestedResults);
 }
 
 function abortPendingAjaxCall() {
   if (claimSearchRequest != null) {
     // console.log('aborted previous AJAX request');
-    claimSearchRequest.abort()
+    claimSearchRequest.abort();
   }
-}
-
-function searchSpinnerLi() {
-  return '<li><div id="search-spinner" class="fa fa-cog fa-spin"></div></li>'
 }

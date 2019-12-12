@@ -154,6 +154,6 @@ class ClaimCalculation < ActiveRecord::Base
   end
 
   def max_value
-    self.policy_calculation.policy_maximum_claim_value.round(0)
+    self.policy_calculation.policy_maximum_claim_value&.round(0)
   end
 end
