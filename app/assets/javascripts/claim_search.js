@@ -35,7 +35,7 @@ function setClaimSearchElements() {
 }
 
 function showSearchResultsAsTypeaheadSuggestions() {
-  let searchValue = $searchGroup.find('input').val();
+  var searchValue = $searchGroup.find('input').val();
 
   if (searchValue === '') {
     abortPendingAjaxCall();
