@@ -11,5 +11,8 @@
 #
 
 class BwcAnnualManualClassChange < ActiveRecord::Base
-  
+  validates_presence_of :manual_class_from, :manual_class_to, :policy_year
+  validates_numericality_of :manual_class_from, :manual_class_to, :policy_year
+  validates :policy_year, length: { maximum: 4 }
+  validates_uniqueness_of :manual_class_from, message: 'can only be changed once!'
 end

@@ -1,0 +1,20 @@
+<div class="container" style="margin-bottom: 100px;">
+  <div class="jumbotron">
+    <h1 class="text-center">Annual Manual Class Changes</h1>
+  </div>
+
+  <div class="text-right" style="margin-bottom: 15px;">
+    <%= link_to 'Back to Rates', rates_path, class: 'btn btn-info' %>
+  </div>
+
+  <h3>New Annual Manual Class Change</h3>
+  <hr style="margin-top: 0;">
+
+  <div class="row">
+    <div class="col-sm-12">
+      <%= simple_form_for @manual_class, as: :manual_class, url: manual_classes_path do |f| %>
+        <%= render 'form', f: f %>
+      <% end %>
+    </div>
+  </div>
+</div>

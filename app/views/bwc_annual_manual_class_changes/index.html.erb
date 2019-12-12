@@ -1,0 +1,53 @@
+<div class="container" style="margin-bottom: 100px;">
+  <div class="jumbotron">
+    <h1 class="text-center">Annual Manual Class Changes</h1>
+  </div>
+
+  <div class="text-right" style="margin-bottom: 15px;">
+    <%= link_to 'Back to Rates', rates_path, class: 'btn btn-danger' %>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-12">
+      <table class="table table-striped datatable">
+        <thead>
+        <tr>
+          <th>Manual Class From</th>
+          <th>Manual Class To</th>
+          <th>Policy Year</th>
+          <th>Last Updated</th>
+          <th>
+            <%= link_to 'Add New', new_manual_class_path, class: 'btn btn-success' %>
+          </th>
+        </tr>
+        </thead>
+        <tbody>
+        <% @manual_classes.each do |manual_class| %>
+          <tr>
+            <td><%= manual_class.manual_class_from %></td>
+            <td><%= manual_class.manual_class_to %></td>
+            <td><%= manual_class.policy_year %></td>
+            <td><%= l manual_class.updated_at&.to_date %></td>
+            <td>
+              <%= link_to edit_manual_class_path(manual_class), class: 'btn btn-primary' do %>
+                <i class="fa fa-edit"></i>
+              <% end %>
+              <%= link_to manual_class_path(manual_class), method: :delete, class: 'btn btn-danger', data: { confirm: 'Are you sure you want to delete this manual class? Existing data will not be updated until the next batch!' } do %>
+                <i class="fa fa-trash"></i>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script type="application/javascript">
+  $(function () {
+    $('.datatable').DataTable({
+      order: [[2, 'desc']]
+    });
+  });
+</script>

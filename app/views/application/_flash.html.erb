@@ -1,0 +1,28 @@
+<div style="position: absolute; top: 60px; left: 0; width: 100%;">
+  <div class="container">
+    <% flash.each do |key, message| %>
+      <div class="alert alert-dismissible main-alert <%= flash_alert_class(key) %>" role='alert'>
+        <%= button_tag type: :button, class: 'pull-right text-danger btn btn-danger btn-xs', data: { dismiss: :alert }, aria: { label: :close } do %>
+          <i class="fa fa-times" aria-hidden='true'></i>
+        <% end %>
+        <div class="container" style="text-align: center;">
+          <h4 style="margin: 0;"><%= message %></h4>
+        </div>
+      </div>
+    <% end %>
+
+    <script>
+      $(function () {
+        var $alert = $('.alert.alert-dismissible.main-alert');
+
+        setTimeout(function () {
+          $alert.addClass('animated fadeOutUp');
+
+          setTimeout(function () {
+            $alert.css('z-index', '-1');
+          }, 250);
+        }, 2500);
+      });
+    </script>
+  </div>
+</div>
