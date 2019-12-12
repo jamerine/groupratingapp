@@ -19,6 +19,7 @@
 //= require filterrific/filterrific-jquery
 //= require moment
 //= require bootstrap-datetimepicker
+//= require cocoon
 
 function validateFiles(inputFile) {
   var maxExceededMessage = "This file exceeds the maximum allowed file size (1 MB)";

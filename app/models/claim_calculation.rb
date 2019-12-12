@@ -52,6 +52,7 @@
 
 class ClaimCalculation < ActiveRecord::Base
   belongs_to :policy_calculation
+  has_many :clicd_detail_records, foreign_key: :claim_number, primary_key: :claim_number
 
   attr_accessor :comp_awarded, :medical_paid, :mira_reserve
 
@@ -75,6 +76,11 @@ class ClaimCalculation < ActiveRecord::Base
     ((1 - claim_handicap_percent) * ( claim_mira_medical_reserve_amount + (claim_mira_indemnity_reserve_amount)) * claim_group_multiplier * (1 - claim_subrogation_percent))
   end
 
+  def representative_name_and_abbreviation
+    representative = Representative.find_by(representative_number: self.representative_number)
+
+    "#{representative.company_name} (#{representative.abbreviated_name})"
+  end
 
   def recalculate_experience(group_maximum_value)
 
@@ -97,7 +103,7 @@ class ClaimCalculation < ActiveRecord::Base
         group_maximum_value / self.claim_unlimited_limited_loss
       end
 
-     @claim_group_reduced_amount =
+    @claim_group_reduced_amount =
       (((self.claim_mira_non_reducible_indemnity_paid + self.claim_mira_non_reducible_indemnity_paid_2 ) * @claim_group_multiplier ) + ((self.claim_medical_paid + self.claim_mira_medical_reserve_amount + self.claim_mira_reducible_indemnity_paid + self.claim_mira_indemnity_reserve_amount) * @claim_group_multiplier * (1 - self.claim_handicap_percent)))
 
     @claim_individual_reduced_amount =
@@ -120,10 +126,34 @@ class ClaimCalculation < ActiveRecord::Base
 
     @claim_modified_losses_group_reduced = @claim_group_reduced_amount * (1 - @claim_subrogation_percent)
 
-
     @claim_modified_losses_individual_reduced = (@claim_individual_reduced_amount * (1 - @claim_subrogation_percent))
 
     update_attributes(policy_individual_maximum_claim_value: group_maximum_value, claim_individual_multiplier: @claim_individual_multiplier, claim_group_reduced_amount: @claim_group_reduced_amount, claim_individual_reduced_amount: @claim_individual_reduced_amount, claim_modified_losses_individual_reduced: @claim_modified_losses_individual_reduced, claim_group_multiplier: @claim_group_multiplier, claim_subrogation_percent: @claim_subrogation_percent, claim_modified_losses_group_reduced: @claim_modified_losses_group_reduced)
+  end
 
+  def democ_detail_record
+    return @democ_detail_record if @democ_detail_record.present?
+
+    @democ_detail_record = DemocDetailRecord.find_by(claim_number: claim_number, representative_number: representative_number)
+  end
+
+  def medical_last_paid_date
+    democ_detail_record.try(:last_paid_medical_date)
+  end
+
+  def indemnity_last_paid_date
+    democ_detail_record.try(:last_paid_indemnity_date)
+  end
+
+  def non_at_fault
+    democ_detail_record.try(:non_at_fault)
+  end
+
+  def total_loss_of_claim
+    self.policy_calculation.manual_class_calculations.sum(:manual_class_expected_losses).round(0)
+  end
+
+  def max_value
+    self.policy_calculation.policy_maximum_claim_value&.round(0)
   end
 end

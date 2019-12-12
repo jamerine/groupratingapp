@@ -14,12 +14,16 @@ class ImportProcess
       Pdemo.delete_all
       Pemh.delete_all
       Pcovg.delete_all
+      Mira.delete_all
+      Clicd.delete_all
       DemocDetailRecord.delete_all
       MrclDetailRecord.delete_all
       MrempEmployeeExperiencePolicyLevel.delete_all
       MrempEmployeeExperienceManualClassLevel.delete_all
       MrempEmployeeExperienceClaimLevel.delete_all
       PcombDetailRecord.delete_all
+      MiraDetailRecord.delete_all
+      ClicdDetailRecord.delete_all
       PhmgnDetailRecord.delete_all
       Sc220Rec1EmployerDemographic.delete_all
       Sc220Rec2EmployerManualLevelPayroll.delete_all
@@ -60,5 +64,7 @@ class ImportProcess
       ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/PDEMOFILE", "pdemos", import_id, group_rating_id, all_process)
       ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/PEMHSFILE", "pemhs", import_id, group_rating_id, all_process)
       ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/PCOVGFILE", "pcovgs", import_id, group_rating_id, all_process)
+      ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/MIRA2FILE", "miras", import_id, group_rating_id, all_process)
+      ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/CLICDFILE", "clicds", import_id, group_rating_id, all_process)
     end
 end
