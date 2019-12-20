@@ -89,6 +89,6 @@ production:
   encoding: unicode
   database: groupratingapp_production
   username: groupratingapp
-  checkout_timeout: 15
-  pool: <%= ENV['RAILS_MAX_THREADS'] || 10 %>
+  checkout_timeout: 30
+  pool: <%= ENV['RAILS_MAX_THREADS'] || 15 %>
   password: <%= ENV['GROUPRATINGAPP_DATABASE_PASSWORD'] %>
