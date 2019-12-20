@@ -22,8 +22,8 @@
       <tbody>
         <% @group_ratings.order("id desc").each do |group_rating| %>
         <tr>
-          <td><%= group_rating.representative.abbreviated_name %> </td>
-          <td><%= group_rating.import.import_status %> </td></td>
+          <td><%= group_rating.representative&.abbreviated_name %> </td>
+          <td><%= group_rating.import&.import_status %> </td>
           <td><%= group_rating.status %> </td>
           <td><%= group_rating.created_at.in_time_zone("America/New_York").strftime("%m/%d/%y @ %I:%M %p") %> </td>
           <td><%= group_rating.updated_at.in_time_zone("America/New_York").strftime("%m/%d/%y @ %I:%M %p") %> </td>
