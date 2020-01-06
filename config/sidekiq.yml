@@ -1,3 +1,4 @@
+:verbose: true
 development:
   :concurrency: 20
 production:
