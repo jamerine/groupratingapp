@@ -100,12 +100,8 @@ class ImportsController < ApplicationController
       # ImportFile.perform_async("https://s3.amazonaws.com/grouprating/ARM/PHMGNFILE", "phmgns", @import.id)
       # ImportFile.perform_async("https://s3.amazonaws.com/grouprating/ARM/SC220FILE", "sc220s", @import.id)
       # ImportFile.perform_async("https://s3.amazonaws.com/grouprating/ARM/SC230FILE", "sc230s", @import.id)
-      @new_group_rating                        = GroupRating.new(experience_period_lower_date: @representative.experience_period_lower_date, experience_period_upper_date: @representative.experience_period_upper_date, current_payroll_period_lower_date: @representative.current_payroll_period_lower_date, current_payroll_period_upper_date: @representative.current_payroll_period_upper_date, current_payroll_year: @representative.current_payroll_year, program_year_lower_date: @representative.program_year_lower_date, program_year_upper_date: @representative.program_year_upper_date, program_year: @representative.program_year, quote_year_lower_date: @representative.quote_year_lower_date, quote_year_upper_date: @representative.quote_year_upper_date, quote_year: @representative.quote_year, representative_id: @representative.id)
-      @new_group_rating.status                 = 'Queuing'
-      @new_group_rating.process_representative = @representative.representative_number
-      if @new_group_rating.save
-        ImportProcess.perform_async(@import.process_representative, @import.id, @representative.abbreviated_name, @new_group_rating.id)
-      end
+      ImportProcess.perform_async(@import.process_representative, @import.id, @representative.abbreviated_name)
+      # Resque.enqueue(ParseProcess, @import.process_representative, @import.id)
       # Resque.enqueue(ParseProcess, @import.process_representative, @import.id)
 
       redirect_to imports_path, notice: "Files to be imported and parse have been queued."
@@ -134,8 +130,6 @@ class ImportsController < ApplicationController
     # puts "Process End Time: " + time2.inspect
 
   end
-
-  #
 
   private
 
