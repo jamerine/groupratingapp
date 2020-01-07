@@ -12,16 +12,22 @@ class ImportFile
     else
       rc.exec("COPY " + table_name + " (single_rec) FROM STDIN WITH DELIMITER AS '|'")
     end
-    file = open(url)
 
-    while !file.eof?
-      # Add row to copy data
-      line = file.readline
-      if line[40, 4] == "0000"
-        #puts "incorrect characters"
-      else
-        rc.put_copy_data(line)
+    begin
+      file = open(url)
+
+      while !file.eof?
+        # Add row to copy data
+        line = file.readline
+        if line[40, 4] == "0000"
+          #puts "incorrect characters"
+        else
+          rc.put_copy_data(line)
+        end
       end
+    rescue OpenURI::HTTPError => e
+      # The CLICD File doesn't exist
+      puts e
     end
 
     # We are done adding copy data
@@ -94,7 +100,7 @@ class ImportFile
     elsif table_name == "clicds"
       @import.clicds_count               = Clicd.count
       @import.clicd_detail_records_count = ClicdDetailRecord.count
-      @import.import_status             = "#{table_name} Completed"
+      @import.import_status              = "#{table_name} Completed"
     end
 
     @import.save
