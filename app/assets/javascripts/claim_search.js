@@ -11,12 +11,9 @@ function claimSearchListenerAndResults() {
   setClaimSearchElements();
 
   $searchGroup.keyup(function (e) {
-    if (e.key === 'Enter') {
-      // TODO: build logic for this state that matches pressing the search button
-      console.log('submit search due to manual search, only exact match returns result to navigate to claim')
-    } else {
-      showSearchResultsAsTypeaheadSuggestions();
-    }
+    if (e.key === 'Enter') e.preventDefault();
+
+    showSearchResultsAsTypeaheadSuggestions();
   });
 
   $searchGroup.click(function (event) {
