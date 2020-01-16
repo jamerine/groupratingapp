@@ -24,7 +24,7 @@ class ClaimCalculationsController < ApplicationController
 
   def claim_search_results
     claim_search_results = matching_claim_calculations.each.with_object([]) do |matching_claim_calculation, matching_li_collection|
-      matching_li_collection << "<a href='#{claim_calculation_path(matching_claim_calculation)}'><li><div class='claim-number'>#{matching_claim_calculation.claim_number.strip}</div><span class='claimant-name'>#{matching_claim_calculation.claimant_name.strip}</span></li></a>"
+      matching_li_collection << "<a target='_blank' href='#{claim_calculation_path(matching_claim_calculation)}'><li><div class='claim-number'>#{matching_claim_calculation.claim_number.strip}</div><span class='claimant-name'>#{matching_claim_calculation.claimant_name.strip}</span></li></a>"
     end
 
     @claim_search_results =  claim_search_results.length.zero? ? no_matching_results_for_search_value : claim_search_results.join('')

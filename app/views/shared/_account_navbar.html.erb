@@ -1,13 +1,13 @@
 <nav class="navbar account-header navbar-inverse navbar-fixed-top ">
   <div class="row text-center">
     <div class="col-md-4 col-sm-6 col-xs-6">
-      <p class="navbar-text">Account: <%= link_to "#{@account.name.slice(0..25).try(:titleize) }", account_path(@account) %></p>
+      <p class="navbar-text">Account: <%= link_to "#{@account.name.slice(0..25).try(:titleize) }", account_path(@account), target: '_blank' %></p>
     </div>
     <div class="col-md-2 col-sm-6 col-xs-6">
       <% if @account.predecessor? || @account.invalid_policy_number? %>
         <p class="navbar-text">Policy: <%= @account.policy_calculation.policy_number %></p>
       <% else %>
-        <p class="navbar-text">Policy: <%= link_to "#{@account.policy_calculation.policy_number}", policy_calculation_path(@account.policy_calculation) %></p>
+        <p class="navbar-text">Policy: <%= link_to "#{@account.policy_calculation.policy_number}", policy_calculation_path(@account.policy_calculation), target: '_blank' %></p>
       <% end %>
     </div>
     <!-- <div class="col-md-3">
@@ -20,7 +20,7 @@
       <p class="navbar-text">Policy: <%= @account.policy_calculation.current_coverage_status.try(:humanize) %></p>
     </div>
     <div class="col-md-2 col-sm-2 col-xs-6 ret-nav-div">
-      <%= link_to "Retention", account_retention_path(:account_id => @account.id), class: "retention-nav" %>
+      <%= link_to "Retention", account_retention_path(:account_id => @account.id), class: "retention-nav", target: '_blank' %>
     </div>
   </div>
   <!-- </ul> -->
