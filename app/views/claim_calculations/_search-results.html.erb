@@ -1,0 +1,27 @@
+<ul>
+  <% if @claim_search_results.any? %>
+    <% @claim_search_results.each do |matching_claim_calculation| %>
+      <li>
+        <%= link_to claim_calculation_path(matching_claim_calculation), target: '_blank', class: 'calc-link' do %>
+          <div class='claim-number'><%= matching_claim_calculation.claim_number.strip %></div>
+          <span class='claimant-name'><%= matching_claim_calculation.claimant_name.strip %></span>
+        <% end %>
+      </li>
+    <% end %>
+  <% else %>
+    <li style='text-align: center;'>
+      No matching results for: <b><%= @search_value %></b>
+    </li>
+  <% end %>
+</ul>
+
+<script>
+  $(function () {
+    $('.calc-link').click(function () {
+      $searchSpinner.fadeOut();
+      $searchWrapper.fadeOut();
+      $claimSearchResults.html('');
+      $claimSearchResults.addClass('hidden');
+    });
+  });
+</script>

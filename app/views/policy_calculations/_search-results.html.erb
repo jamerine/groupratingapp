@@ -1,0 +1,27 @@
+<ul>
+  <% if @policy_search_results.any? %>
+    <% @policy_search_results.each do |matching_policy_calculation| %>
+      <li>
+        <%= link_to policy_calculation_path(matching_policy_calculation), target: '_blank', class: 'policy-link' do %>
+          <div class='policy-number'><%= matching_policy_calculation.policy_number %></div>
+          <span class='account-name'><%= matching_policy_calculation.account_name.strip %></span>
+        <% end %>
+      </li>
+    <% end %>
+  <% else %>
+    <li style='text-align: center;'>
+      No matching results for: <b><%= @search_value %></b>
+    </li>
+  <% end %>
+</ul>
+
+<script>
+  $(function () {
+    $('.policy-link').click(function () {
+      $policySearchSpinner.fadeOut();
+      $policySearchWrapper.fadeOut();
+      $policySearchResults.html('');
+      $policySearchResults.addClass('hidden');
+    });
+  });
+</script>
