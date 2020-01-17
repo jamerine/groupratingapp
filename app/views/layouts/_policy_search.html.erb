@@ -1,0 +1,20 @@
+<li>
+  <div id='search-policy' class="input-group">
+    <input type="text" class="form-control" title="Policy Search" placeholder="Search Policies..." value="<%= @policy_calculation&.policy_number %>">
+    <div id="policy-search-wrapper" style="display:none;">
+      <ul id="policy-search-results" class="hidden"></ul>
+      <div id="policy-search-spinner" style="display:none;">
+        <i class="fa fa-cog fa-spin"></i>
+      </div>
+    </div>
+    <!--    <span class="input-group-btn">-->
+    <!--      <button class="btn btn-primary" type="button">Search</button>-->
+    <!--    </span>-->
+  </div>
+
+  <script>
+    $(function () {
+      policySearchListenerAndResults();
+    });
+  </script>
+</li>

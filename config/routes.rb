@@ -98,7 +98,10 @@ Rails.application.routes.draw do
   end
 
   resources :policy_calculations do
-    collection { get 'create_policy_objects' }
+    collection do
+      get 'create_policy_objects'
+      get :search
+    end
   end
 
   resources :policy_coverage_status_histories
