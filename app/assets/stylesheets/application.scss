@@ -135,13 +135,13 @@ $radius: 4px;
     margin: 0;
     z-index: 999;
 
-    a {
+    ul {
       width: 100%;
+      list-style: none;
+      padding-left: 0;
 
-      &:nth-of-type(even) {
-        li {
-          background-color: rgb(245, 245, 245);
-        }
+      li:nth-of-type(even) {
+        background-color: rgb(245, 245, 245);
       }
 
       .claimant-name, .account-name {
@@ -151,9 +151,13 @@ $radius: 4px;
       }
 
       li {
-        padding: 4px 8px;
-        white-space: nowrap;
-        width: 100%;
+        padding: 0 8px;
+
+        a {
+          padding: 4px 0;
+          white-space: nowrap;
+          width: 100%;
+        }
       }
     }
   }
