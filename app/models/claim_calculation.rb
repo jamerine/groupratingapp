@@ -134,7 +134,7 @@ class ClaimCalculation < ActiveRecord::Base
   def democ_detail_record
     return @democ_detail_record if @democ_detail_record.present?
 
-    @democ_detail_record = DemocDetailRecord.find_by(claim_number: claim_number, representative_number: representative_number)
+    @democ_detail_record = DemocDetailRecord.find_by(claim_number: "#{claim_number} ", representative_number: representative_number)
   end
 
   def medical_last_paid_date
@@ -146,6 +146,7 @@ class ClaimCalculation < ActiveRecord::Base
   end
 
   def non_at_fault
+    #binding.pry
     democ_detail_record.try(:non_at_fault)
   end
 

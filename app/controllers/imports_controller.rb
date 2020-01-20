@@ -104,7 +104,7 @@ class ImportsController < ApplicationController
       @new_group_rating.status                 = 'Queuing'
       @new_group_rating.process_representative = @representative.representative_number
       if @new_group_rating.save
-        ImportProcess.perform_async(@import.process_representative, @import.id, @representative.abbreviated_name, @new_group_rating.id)
+        ImportProcess.perform_async(@import.process_representative, @import.id, @representative.abbreviated_name, @new_group_rating.id, nil, true)
       end
       # Resque.enqueue(ParseProcess, @import.process_representative, @import.id)
 
