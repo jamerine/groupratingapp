@@ -8,169 +8,206 @@
   <div class="container">
     <div class="jumbotron text-center">
       <div class="row">
-         <div class="col-md-3">
-           <h5>Claim Number:</h5>
-           <h4><%= @claim_calculation&.claim_number %></h4>
-           <br>
-           <h5>Policy Number:</h5>
-           <h4><%= @claim_calculation&.policy_number %></h4>
-           <br>
-           <h5>Program:</h5>
-           <h4><%= @claim_calculation&.policy_calculation&.account&.account_programs&.first&.program_type&.titleize %>&nbsp;</h4>
-         </div>
-         <div class="col-md-6">
-           <h2><%= @claim_calculation&.claimant_name&.titleize %></h2>
-           <p>Injury Type: <%= @claim_calculation&.claim_mira_ncci_injury_type %></p>
-           <br>
-           <p>Representative: <%= @claim_calculation&.representative_name_and_abbreviation %></p>
-         </div>
-         <div class="col-md-3">
-           <h5>Date of Birth:</h5>
-           <h4><%= @claim_calculation&.claimant_date_of_birth.try(:strftime, "%b %d, %Y") %></h4>
-           <br>
-           <h5>Date of Injury:</h5>
-           <h4><%= @claim_calculation&.claim_injury_date.try(:strftime, "%b %d, %Y") %></h4>
-         </div>
+        <div class="col-md-3">
+          <h5>Claim Number:</h5>
+          <h4><%= @claim_calculation&.claim_number %></h4>
+          <br>
+          <h5>Policy Number:</h5>
+          <h4><%= @claim_calculation&.policy_number %></h4>
+          <br>
+          <h5>Program:</h5>
+          <h4><%= @claim_calculation&.policy_calculation&.account&.account_programs&.first&.program_type&.titleize %>&nbsp;</h4>
+        </div>
+        <div class="col-md-6">
+          <h2><%= @claim_calculation&.claimant_name&.titleize %></h2>
+          <p>Injury Type: <%= @claim_calculation&.claim_mira_ncci_injury_type %></p>
+          <br>
+          <p>Representative: <%= @claim_calculation&.representative_name_and_abbreviation %></p>
+        </div>
+        <div class="col-md-3">
+          <h5>Date of Birth:</h5>
+          <h4><%= @claim_calculation&.claimant_date_of_birth.try(:strftime, "%b %d, %Y") %></h4>
+          <br>
+          <h5>Date of Injury:</h5>
+          <h4><%= @claim_calculation&.claim_injury_date.try(:strftime, "%b %d, %Y") %></h4>
+        </div>
       </div>
     </div>
   </div>
 
-  <div class="container text-center">
-    <div class="row text-center">
-      <div class="col-md-4 col-sm-4 col-xs-6">
-        <h5>Non At Fault</h5>
-        <p><%= @claim_calculation&.non_at_fault %></p>
+  <div class="container claim-container">
+    <div class="row">
+      <div class="col-md-3">
+        <div class="panel panel-primary">
+          <div class="panel-heading">Claim Information</div>
+          <div class="panel-body">
+            <div class="form-group">
+              <h5>Non At Fault</h5>
+              <div><%= @claim_calculation&.non_at_fault %></div>
+            </div>
+            <div class="form-group">
+              <h5>Total Loss of Claim</h5>
+              <div><%= number_to_currency(@claim_calculation&.total_loss_of_claim, precision: 0) %></div>
+            </div>
+            <div class="form-group">
+              <h5>Max Value</h5>
+              <div><%= number_to_currency(@claim_calculation&.max_value, precision: 0) %></div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="col-md-4 col-sm-4 col-xs-6">
-        <h5>Total Loss of Claim</h5>
-        <p><%= number_to_currency(@claim_calculation&.total_loss_of_claim, precision: 0) %></p>
+      <div class="col-md-3">
+        <div class="panel panel-primary">
+          <div class="panel-heading">Settlement</div>
+          <div class="panel-body">
+            <div class="form-group">
+              <h5>Is Settled</h5>
+              <div><%= @claim_calculation&.settled_claim %></div>
+            </div>
+            <div class="form-group">
+              <h5>Type</h5>
+              <div><%= @claim_calculation&.settlement_type %></div>
+            </div>
+            <div class="form-group">
+              <h5>Medical Settlement Date</h5>
+              <div><%= @claim_calculation&.medical_settlement_date&.strftime("%b %d, %Y") %></div>
+            </div>
+            <div class="form-group">
+              <h5>Indemnity Settlement Date</h5>
+              <div><%= @claim_calculation&.indemnity_settlement_date&.strftime("%b %d, %Y") %></div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="col-md-4 col-sm-4 col-xs-6">
-        <h5>Max Value</h5>
-        <p><%= number_to_currency(@claim_calculation&.max_value, precision: 0) %></p>
+      <div class="col-md-3">
+        <div class="panel panel-primary">
+          <div class="panel-heading">Medical</div>
+          <div class="panel-body">
+            <div class="form-group">
+              <h5>Amount</h5>
+              <div><%= number_to_currency(@claim_calculation&.claim_medical_paid, precision: 0) %></div>
+            </div>
+            <div class="form-group">
+              <h5>Last Paid Date</h5>
+              <div><%= @claim_calculation&.medical_last_paid_date&.strftime("%b %d, %Y") %></div>
+            </div>
+            <div class="form-group">
+              <h5>Reserve</h5>
+              <div><%= number_to_currency(@claim_calculation&.claim_mira_medical_reserve_amount, precision: 0) %></div>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-
-  <div class="container text-center">
-    <div class="row text-center">
-      <h2>Settlement</h2>
-      <div class="col-md-3 col-sm-4 col-xs-6">
-        <h5>Is Settled</h5>
-        <p><%= @claim_calculation&.settled_claim %></p>
-      </div>
-      <div class="col-md-3 col-sm-4 col-xs-6">
-        <h5>Type</h5>
-        <p><%= @claim_calculation&.settlement_type %></p>
-      </div>
-      <div class="col-md-3 col-sm-4 col-xs-6">
-        <h5>Medical Settlement Date</h5>
-        <p><%= @claim_calculation&.medical_settlement_date&.strftime("%b %d, %Y") %></p>
-      </div>
-      <div class="col-md-3 col-sm-4 col-xs-6">
-        <h5>Indemnity Settlement Date</h5>
-        <p><%= @claim_calculation&.indemnity_settlement_date&.strftime("%b %d, %Y") %></p>
-      </div>
-    </div>
-
-    <div class="row text-center">
-      <h2>Medical</h2>
-      <div class="col-md-4 col-sm-4 col-xs-6">
-        <h5>Amount</h5>
-        <p><%= number_to_currency(@claim_calculation&.claim_medical_paid, precision: 0) %></p>
-      </div>
-      <div class="col-md-4 col-sm-4 col-xs-6">
-        <h5>Last Paid Date</h5>
-        <p><%= @claim_calculation&.medical_last_paid_date&.strftime("%b %d, %Y") %></p>
-      </div>
-      <div class="col-md-4 col-sm-4 col-xs-6">
-        <h5>Reserve</h5>
-        <p><%= number_to_currency(@claim_calculation&.claim_mira_medical_reserve_amount, precision: 0) %></p>
-      </div>
-    </div>
-
-    <div class="row text-center">
-      <h2>Indemnity</h2>
-      <div class="col-md-4 col-sm-4 col-xs-6">
-        <h5>Reducible Amount</h5>
-        <p><%= number_to_currency(@claim_calculation&.claim_mira_reducible_indemnity_paid, precision: 0) %></p>
-        <h5>Non Reducible Amount 1</h5>
-        <p><%= number_to_currency(@claim_calculation&.claim_mira_non_reducible_indemnity_paid, precision: 0) %></p>
-        <h5>Non Reducible Amount 2</h5>
-        <p><%= number_to_currency(@claim_calculation&.claim_mira_non_reducible_indemnity_paid_2, precision: 0) %></p>
-      </div>
-      <div class="col-md-4 col-sm-4 col-xs-6">
-        <h5>Last Paid Date</h5>
-        <p><%= @claim_calculation&.indemnity_last_paid_date&.strftime("%b %d, %Y") %></p>
-      </div>
-      <div class="col-md-4 col-sm-4 col-xs-6">
-        <h5>Reserve</h5>
-        <p><%= number_to_currency(@claim_calculation&.claim_mira_indemnity_reserve_amount, precision: 0) %></p>
-      </div>
-    </div>
-
-    <div class="row text-center">
-      <h2>Subrogation</h2>
-      <div class="col-md-6 col-sm-6 col-xs-12">
-        <h5>Percentage</h5>
-        <p><%= number_to_percentage(@claim_calculation&.claim_subrogation_percent * 100, precision: 0) %></p>
-      </div>
-      <div class="col-md-6 col-sm-6 col-xs-12">
-        <h5>Amount</h5>
-        <p><%= number_to_currency(@claim_calculation&.claim_total_subrogation_collected, precision: 0) %></p>
-      </div>
-    </div>
-
-    <div class="row text-center">
-      <h2>Handicap</h2>
-      <div class="col-md-6 col-sm-6 col-xs-12">
-        <h5>Percentage</h5>
-        <p><%= number_to_percentage(@claim_calculation&.claim_handicap_percent * 100, precision: 0) %></p>
-      </div>
-      <div class="col-md-6 col-sm-6 col-xs-12">
-        <h5>Effective Date</h5>
-        <p><%= @claim_calculation&.claim_handicap_percent_effective_date&.strftime("%b %d, %Y") %></p>
+      <div class="col-md-3">
+        <div class="panel panel-primary">
+          <div class="panel-heading">Indemnity</div>
+          <div class="panel-body">
+            <div class="form-group">
+              <h5>Reducible Amount</h5>
+              <div><%= number_to_currency(@claim_calculation&.claim_mira_reducible_indemnity_paid, precision: 0) %></div>
+            </div>
+            <% unless @claim_calculation&.claim_mira_non_reducible_indemnity_paid.zero? %>
+              <div class="form-group">
+                <h5>Non Reducible Amount 1</h5>
+                <div><%= number_to_currency(@claim_calculation&.claim_mira_non_reducible_indemnity_paid, precision: 0) %></div>
+              </div>
+            <% end %>
+            <% unless @claim_calculation&.claim_mira_non_reducible_indemnity_paid_2.zero? %>
+              <div class="form-group">
+                <h5>Non Reducible Amount 2</h5>
+                <div><%= number_to_currency(@claim_calculation&.claim_mira_non_reducible_indemnity_paid_2, precision: 0) %></div>
+              </div>
+            <% end %>
+            <div class="form-group">
+              <h5>Last Paid Date</h5>
+              <div><%= @claim_calculation&.indemnity_last_paid_date&.strftime("%b %d, %Y") %></div>
+            </div>
+            <div class="form-group">
+              <h5>Reserve</h5>
+              <div><%= number_to_currency(@claim_calculation&.claim_mira_indemnity_reserve_amount, precision: 0) %></div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-
-    <div class="row text-center">
-      <h2>Combined</h2>
-      <div class="col-md-6 col-sm-6 col-xs-12">
-        <h5>Is Combined</h5>
-        <p><%= @claim_calculation&.claim_combined %></p>
+    <br>
+    <div class="row">
+      <div class="col-md-3">
+        <div class="panel panel-primary">
+          <div class="panel-heading">Subrogation</div>
+          <div class="panel-body">
+            <div class="form-group">
+              <h5>Percentage</h5>
+              <div><%= number_to_percentage(@claim_calculation&.claim_subrogation_percent * 100, precision: 0) %></div>
+            </div>
+            <div class="form-group">
+              <h5>Amount</h5>
+              <div><%= number_to_currency(@claim_calculation&.claim_total_subrogation_collected, precision: 0) %></div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="col-md-6 col-sm-6 col-xs-12">
-        <h5>Combined into Claim Number</h5>
-        <p><%= @claim_calculation&.combined_into_claim_number %></p>
+      <div class="col-md-3">
+        <div class="panel panel-primary">
+          <div class="panel-heading">Handicap</div>
+          <div class="panel-body">
+            <div class="form-group">
+              <h5>Percentage</h5>
+              <div><%= number_to_percentage(@claim_calculation&.claim_handicap_percent * 100, precision: 0) %></div>
+            </div>
+            <div class="form-group">
+              <h5>Effective Date</h5>
+              <div><%= @claim_calculation&.claim_handicap_percent_effective_date&.strftime("%b %d, %Y") %></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="panel panel-primary">
+          <div class="panel-heading">Combined</div>
+          <div class="panel-body">
+            <div class="form-group">
+              <h5>Is Combined</h5>
+              <div><%= @claim_calculation&.claim_combined %></div>
+            </div>
+            <div class="form-group">
+              <h5>Combined into Claim Number</h5>
+              <div><%= @claim_calculation&.combined_into_claim_number %></div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-
-    <div class="row text-center">
-      <h2>ICDs</h2>
-      <div class="col-md-3"></div>
-      <div class="col-md-6">
-        <table class="table table-striped">
-          <thead>
-          <tr>
-            <th class="col-md-3">Primary ICD</th>
-            <th class="col-md-3">Status</th>
-            <th class="col-md-3">Code</th>
-            <th class="col-md-3">Injury Location</th>
-          </tr>
-          </thead>
-          <tbody>
-          <% @claim_calculation.clicd_detail_records.each do |clicd_detail| %>
-            <tr>
-              <td><%= clicd_detail&.primary_icd %></td>
-              <td><%= clicd_detail&.icd_status_display %></td>
-              <td><%= clicd_detail&.icd_code %></td>
-              <td><%= clicd_detail&.icd_injury_location_code&.strip %></td>
-            </tr>
-          <% end %>
-          </tbody>
-        </table>
+    <% if @claim_calculation.clicd_detail_records.any? %>
+      <div class="row text-center">
+        <div class="col-md-6 col-md-offset-3">
+          <div class="panel panel-primary">
+            <div class="panel-heading">ICDs</div>
+            <div class="panel-body no-padding">
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th width="25%">Primary ICD</th>
+                    <th width="25%">Status</th>
+                    <th width="25%">Code</th>
+                    <th width="25%">Injury Location</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% @claim_calculation.clicd_detail_records.each do |clicd_detail| %>
+                    <tr>
+                      <td><%= clicd_detail&.primary_icd %></td>
+                      <td><%= clicd_detail&.icd_status_display %></td>
+                      <td><%= clicd_detail&.icd_code %></td>
+                      <td><%= clicd_detail&.icd_injury_location_code&.strip %></td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="col-md-3"></div>
-    </div>
+    <% end %>
   </div>
 <% end %>

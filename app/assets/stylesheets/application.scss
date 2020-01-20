@@ -179,3 +179,11 @@ $radius: 4px;
   height: 49px;
   z-index: 1031;
 }
+
+.claim-container {
+  .form-group {
+    div {
+      text-align: right;
+    }
+  }
+}
