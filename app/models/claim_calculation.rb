@@ -52,7 +52,6 @@
 
 class ClaimCalculation < ActiveRecord::Base
   belongs_to :policy_calculation
-  has_many :clicd_detail_records, foreign_key: :claim_number, primary_key: :claim_number
 
   attr_accessor :comp_awarded, :medical_paid, :mira_reserve
 
@@ -63,17 +62,25 @@ class ClaimCalculation < ActiveRecord::Base
     obj
   end
 
+  def clicd_detail_records
+    ClicdDetailRecord.where(claim_number: claim_number, representative_number: representative_number, policy_number: policy_number)
+  end
+
+  def mira_detail_record
+    MiraDetailRecord.find_by(claim_number: claim_number, representative_number: representative_number, policy_number: policy_number)
+  end
+
   def comp_awarded
-   (((claim_mira_reducible_indemnity_paid + claim_mira_non_reducible_indemnity_paid )*( 1 - claim_subrogation_percent )-(claim_mira_non_reducible_indemnity_paid))*(1 - claim_handicap_percent)+( claim_mira_non_reducible_indemnity_paid)
+    (((claim_mira_reducible_indemnity_paid + claim_mira_non_reducible_indemnity_paid) * (1 - claim_subrogation_percent) - (claim_mira_non_reducible_indemnity_paid)) * (1 - claim_handicap_percent) + (claim_mira_non_reducible_indemnity_paid)
     ) * claim_group_multiplier
   end
 
   def medical_paid
-    (((claim_medical_paid + claim_mira_non_reducible_indemnity_paid_2)*(1 - claim_subrogation_percent) - claim_mira_non_reducible_indemnity_paid_2) *( 1 - claim_handicap_percent) + claim_mira_non_reducible_indemnity_paid_2) * claim_group_multiplier
+    (((claim_medical_paid + claim_mira_non_reducible_indemnity_paid_2) * (1 - claim_subrogation_percent) - claim_mira_non_reducible_indemnity_paid_2) * (1 - claim_handicap_percent) + claim_mira_non_reducible_indemnity_paid_2) * claim_group_multiplier
   end
 
   def mira_reserve
-    ((1 - claim_handicap_percent) * ( claim_mira_medical_reserve_amount + (claim_mira_indemnity_reserve_amount)) * claim_group_multiplier * (1 - claim_subrogation_percent))
+    ((1 - claim_handicap_percent) * (claim_mira_medical_reserve_amount + (claim_mira_indemnity_reserve_amount)) * claim_group_multiplier * (1 - claim_subrogation_percent))
   end
 
   def representative_name_and_abbreviation
@@ -90,11 +97,11 @@ class ClaimCalculation < ActiveRecord::Base
     @policy_calculation = self.policy_calculation
 
     @claim_group_multiplier =
-        if self.claim_unlimited_limited_loss < 250000
-          1
-        else
-          (250000 / self.claim_unlimited_limited_loss)
-        end
+      if self.claim_unlimited_limited_loss < 250000
+        1
+      else
+        (250000 / self.claim_unlimited_limited_loss)
+      end
 
     @claim_individual_multiplier =
       if (group_maximum_value.nil? || self.claim_unlimited_limited_loss.nil? || group_maximum_value > self.claim_unlimited_limited_loss || group_maximum_value == 0 || self.claim_unlimited_limited_loss == 0)
@@ -104,16 +111,16 @@ class ClaimCalculation < ActiveRecord::Base
       end
 
     @claim_group_reduced_amount =
-      (((self.claim_mira_non_reducible_indemnity_paid + self.claim_mira_non_reducible_indemnity_paid_2 ) * @claim_group_multiplier ) + ((self.claim_medical_paid + self.claim_mira_medical_reserve_amount + self.claim_mira_reducible_indemnity_paid + self.claim_mira_indemnity_reserve_amount) * @claim_group_multiplier * (1 - self.claim_handicap_percent)))
+      (((self.claim_mira_non_reducible_indemnity_paid + self.claim_mira_non_reducible_indemnity_paid_2) * @claim_group_multiplier) + ((self.claim_medical_paid + self.claim_mira_medical_reserve_amount + self.claim_mira_reducible_indemnity_paid + self.claim_mira_indemnity_reserve_amount) * @claim_group_multiplier * (1 - self.claim_handicap_percent)))
 
     @claim_individual_reduced_amount =
-    (((self.claim_mira_non_reducible_indemnity_paid +
-      self.claim_mira_non_reducible_indemnity_paid_2) * @claim_individual_multiplier) +
-    (
-    (self.claim_medical_paid +
-    self.claim_mira_medical_reserve_amount +
-    self.claim_mira_reducible_indemnity_paid +
-    self.claim_mira_indemnity_reserve_amount) * @claim_individual_multiplier * ( 1 - self.claim_handicap_percent )))
+      (((self.claim_mira_non_reducible_indemnity_paid +
+        self.claim_mira_non_reducible_indemnity_paid_2) * @claim_individual_multiplier) +
+        (
+        (self.claim_medical_paid +
+          self.claim_mira_medical_reserve_amount +
+          self.claim_mira_reducible_indemnity_paid +
+          self.claim_mira_indemnity_reserve_amount) * @claim_individual_multiplier * (1 - self.claim_handicap_percent)))
 
     @claim_subrogation_percent =
       if self.claim_total_subrogation_collected == 0.0
