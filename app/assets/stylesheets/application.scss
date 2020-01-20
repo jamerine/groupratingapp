@@ -181,6 +181,70 @@ $radius: 4px;
 }
 
 .claim-container {
+  .panel {
+    min-height: 160px;
+  }
+
+  .mira-tab-panel {
+    border-color: $brand-primary;
+
+    .panel-heading {
+      padding: 10px 0 0;
+      border-bottom: none;
+      background-color: rgb(204, 204, 204);
+
+
+      ul.nav-tabs {
+        padding: 0 10px;
+        border-bottom-color: $brand-primary;
+
+        li {
+          a {
+            border-color: $brand-primary;
+            border-bottom: none;
+          }
+        }
+
+        li:not(.active) {
+          a {
+            background-color: $brand-primary;
+            color: white;
+          }
+        }
+      }
+    }
+
+    .panel-body {
+      padding: 0 10px;
+
+      table.table-bordered{
+        margin-bottom: 10px;
+
+        th, td {
+          padding-left: 15px;
+          text-align: left;
+        }
+      }
+    }
+  }
+
+
+  dl {
+    width: 100%;
+    margin: 0 0 3px;
+
+    dt {
+      width: 65%;
+      text-align: left;
+    }
+
+    dd {
+      margin-left: calc(65% + 20px);
+      width: auto;
+      text-align: right;
+    }
+  }
+
   .form-group {
     div {
       text-align: right;

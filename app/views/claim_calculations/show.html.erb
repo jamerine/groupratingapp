@@ -28,8 +28,8 @@
           <h5>Date of Birth:</h5>
           <h4><%= @claim_calculation&.claimant_date_of_birth.try(:strftime, "%b %d, %Y") %></h4>
           <br>
-          <h5>Date of Injury:</h5>
-          <h4><%= @claim_calculation&.claim_injury_date.try(:strftime, "%b %d, %Y") %></h4>
+          <h5>Date of Injury | Age at Injury:</h5>
+          <h4><%= @claim_calculation&.claim_injury_date.try(:strftime, "%b %d, %Y") %> | <%= @mira&.claimant_age_at_injury %></h4>
         </div>
       </div>
     </div>
@@ -37,45 +37,85 @@
 
   <div class="container claim-container">
     <div class="row">
-      <div class="col-md-3">
+      <div class="col-md-4">
         <div class="panel panel-primary">
           <div class="panel-heading">Claim Information</div>
           <div class="panel-body">
-            <div class="form-group">
-              <h5>Non At Fault</h5>
-              <div><%= @claim_calculation&.non_at_fault %></div>
-            </div>
-            <div class="form-group">
-              <h5>Total Loss of Claim</h5>
-              <div><%= number_to_currency(@claim_calculation&.total_loss_of_claim, precision: 0) %></div>
-            </div>
-            <div class="form-group">
-              <h5>Max Value</h5>
-              <div><%= number_to_currency(@claim_calculation&.max_value, precision: 0) %></div>
-            </div>
+            <dl class="dl-horizontal">
+              <dt>Non At Fault:</dt>
+              <dd><%= @claim_calculation&.non_at_fault %></dd>
+
+              <dt>Total Loss of Claim:</dt>
+              <dd><%= number_to_currency(@claim_calculation&.total_loss_of_claim, precision: 0) %></dd>
+
+              <dt>Max Value:</dt>
+              <dd><%= number_to_currency(@claim_calculation&.max_value, precision: 0) %></dd>
+            </dl>
           </div>
         </div>
       </div>
-      <div class="col-md-3">
+      <div class="col-md-4">
         <div class="panel panel-primary">
           <div class="panel-heading">Settlement</div>
           <div class="panel-body">
-            <div class="form-group">
-              <h5>Is Settled</h5>
-              <div><%= @claim_calculation&.settled_claim %></div>
-            </div>
-            <div class="form-group">
-              <h5>Type</h5>
-              <div><%= @claim_calculation&.settlement_type %></div>
-            </div>
-            <div class="form-group">
-              <h5>Medical Settlement Date</h5>
-              <div><%= @claim_calculation&.medical_settlement_date&.strftime("%b %d, %Y") %></div>
-            </div>
-            <div class="form-group">
-              <h5>Indemnity Settlement Date</h5>
-              <div><%= @claim_calculation&.indemnity_settlement_date&.strftime("%b %d, %Y") %></div>
-            </div>
+            <dl class="dl-horizontal">
+              <dt>Is Settled:</dt>
+              <dd><%= @claim_calculation&.settled_claim %></dd>
+
+              <dt>Type:</dt>
+              <dd><%= @claim_calculation&.settlement_type %></dd>
+
+              <dt>Medical Settlement Date:</dt>
+              <dd><%= @claim_calculation&.medical_settlement_date&.strftime("%b %d, %Y") %></dd>
+
+              <dt>Indemnity Settlement Date:</dt>
+              <dd><%= @claim_calculation&.indemnity_settlement_date&.strftime("%b %d, %Y") %></dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="panel panel-primary">
+          <div class="panel-heading">Indemnity</div>
+          <div class="panel-body">
+            <dl class="dl-horizontal">
+              <dt>Reducible Amount:</dt>
+              <dd><%= number_to_currency(@claim_calculation&.claim_mira_reducible_indemnity_paid, precision: 0) %></dd>
+
+              <% unless @claim_calculation&.claim_mira_non_reducible_indemnity_paid.zero? %>
+                <dt>Non Reducible Amount 1:</dt>
+                <dd><%= number_to_currency(@claim_calculation&.claim_mira_non_reducible_indemnity_paid, precision: 0) %></dd>
+              <% end %>
+
+              <% unless @claim_calculation&.claim_mira_non_reducible_indemnity_paid_2.zero? %>
+                <dt>Non Reducible Amount 2:</dt>
+                <dd><%= number_to_currency(@claim_calculation&.claim_mira_non_reducible_indemnity_paid_2, precision: 0) %></dd>
+              <% end %>
+
+              <dt>Last Paid Date:</dt>
+              <dd><%= @claim_calculation&.indemnity_last_paid_date&.strftime("%b %d, %Y") %></dd>
+
+              <dt>Reserve:</dt>
+              <dd><%= number_to_currency(@claim_calculation&.claim_mira_indemnity_reserve_amount, precision: 0) %></dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br>
+    <div class="row">
+      <div class="col-md-2">
+        <div class="panel panel-primary">
+          <div class="panel-heading">Subrogation</div>
+          <div class="panel-body">
+            <dl class="dl-horizontal">
+              <dt>Percentage:</dt>
+              <dd><%= number_to_percentage(@claim_calculation&.claim_subrogation_percent * 100, precision: 0) %></dd>
+
+              <dt>Amount:</dt>
+              <dd><%= number_to_currency(@claim_calculation&.claim_total_subrogation_collected, precision: 0) %></dd>
+            </dl>
           </div>
         </div>
       </div>
@@ -83,67 +123,16 @@
         <div class="panel panel-primary">
           <div class="panel-heading">Medical</div>
           <div class="panel-body">
-            <div class="form-group">
-              <h5>Amount</h5>
-              <div><%= number_to_currency(@claim_calculation&.claim_medical_paid, precision: 0) %></div>
-            </div>
-            <div class="form-group">
-              <h5>Last Paid Date</h5>
-              <div><%= @claim_calculation&.medical_last_paid_date&.strftime("%b %d, %Y") %></div>
-            </div>
-            <div class="form-group">
-              <h5>Reserve</h5>
-              <div><%= number_to_currency(@claim_calculation&.claim_mira_medical_reserve_amount, precision: 0) %></div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-3">
-        <div class="panel panel-primary">
-          <div class="panel-heading">Indemnity</div>
-          <div class="panel-body">
-            <div class="form-group">
-              <h5>Reducible Amount</h5>
-              <div><%= number_to_currency(@claim_calculation&.claim_mira_reducible_indemnity_paid, precision: 0) %></div>
-            </div>
-            <% unless @claim_calculation&.claim_mira_non_reducible_indemnity_paid.zero? %>
-              <div class="form-group">
-                <h5>Non Reducible Amount 1</h5>
-                <div><%= number_to_currency(@claim_calculation&.claim_mira_non_reducible_indemnity_paid, precision: 0) %></div>
-              </div>
-            <% end %>
-            <% unless @claim_calculation&.claim_mira_non_reducible_indemnity_paid_2.zero? %>
-              <div class="form-group">
-                <h5>Non Reducible Amount 2</h5>
-                <div><%= number_to_currency(@claim_calculation&.claim_mira_non_reducible_indemnity_paid_2, precision: 0) %></div>
-              </div>
-            <% end %>
-            <div class="form-group">
-              <h5>Last Paid Date</h5>
-              <div><%= @claim_calculation&.indemnity_last_paid_date&.strftime("%b %d, %Y") %></div>
-            </div>
-            <div class="form-group">
-              <h5>Reserve</h5>
-              <div><%= number_to_currency(@claim_calculation&.claim_mira_indemnity_reserve_amount, precision: 0) %></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <br>
-    <div class="row">
-      <div class="col-md-3">
-        <div class="panel panel-primary">
-          <div class="panel-heading">Subrogation</div>
-          <div class="panel-body">
-            <div class="form-group">
-              <h5>Percentage</h5>
-              <div><%= number_to_percentage(@claim_calculation&.claim_subrogation_percent * 100, precision: 0) %></div>
-            </div>
-            <div class="form-group">
-              <h5>Amount</h5>
-              <div><%= number_to_currency(@claim_calculation&.claim_total_subrogation_collected, precision: 0) %></div>
-            </div>
+            <dl class="dl-horizontal">
+              <dt>Amount:</dt>
+              <dd><%= number_to_currency(@claim_calculation&.claim_medical_paid, precision: 0) %></dd>
+
+              <dt>Last Paid Date:</dt>
+              <dd><%= @claim_calculation&.medical_last_paid_date&.strftime("%b %d, %Y") %></dd>
+
+              <dt>Reserve:</dt>
+              <dd><%= number_to_currency(@claim_calculation&.claim_mira_medical_reserve_amount, precision: 0) %></dd>
+            </dl>
           </div>
         </div>
       </div>
@@ -151,63 +140,323 @@
         <div class="panel panel-primary">
           <div class="panel-heading">Handicap</div>
           <div class="panel-body">
-            <div class="form-group">
-              <h5>Percentage</h5>
-              <div><%= number_to_percentage(@claim_calculation&.claim_handicap_percent * 100, precision: 0) %></div>
-            </div>
-            <div class="form-group">
-              <h5>Effective Date</h5>
-              <div><%= @claim_calculation&.claim_handicap_percent_effective_date&.strftime("%b %d, %Y") %></div>
-            </div>
+            <dl class="dl-horizontal">
+              <dt>Percentage:</dt>
+              <dd><%= number_to_percentage(@claim_calculation&.claim_handicap_percent * 100, precision: 0) %></dd>
+
+              <dt>Effective Date:</dt>
+              <dd><%= @claim_calculation&.claim_handicap_percent_effective_date&.strftime("%b %d, %Y") %></dd>
+            </dl>
           </div>
         </div>
       </div>
-      <div class="col-md-3">
+      <div class="col-md-4">
         <div class="panel panel-primary">
           <div class="panel-heading">Combined</div>
           <div class="panel-body">
-            <div class="form-group">
-              <h5>Is Combined</h5>
-              <div><%= @claim_calculation&.claim_combined %></div>
-            </div>
-            <div class="form-group">
-              <h5>Combined into Claim Number</h5>
-              <div><%= @claim_calculation&.combined_into_claim_number %></div>
-            </div>
+            <dl class="dl-horizontal">
+              <dt>Is Combined:</dt>
+              <dd><%= @claim_calculation&.claim_combined %></dd>
+
+              <dt>Combined into Claim Number:</dt>
+              <dd><%= @claim_calculation&.combined_into_claim_number %></dd>
+            </dl>
           </div>
         </div>
       </div>
     </div>
-    <% if @claim_calculation.clicd_detail_records.any? %>
-      <div class="row text-center">
-        <div class="col-md-6 col-md-offset-3">
-          <div class="panel panel-primary">
-            <div class="panel-heading">ICDs</div>
-            <div class="panel-body no-padding">
-              <table class="table table-striped">
-                <thead>
-                  <tr>
-                    <th width="25%">Primary ICD</th>
-                    <th width="25%">Status</th>
-                    <th width="25%">Code</th>
-                    <th width="25%">Injury Location</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <% @claim_calculation.clicd_detail_records.each do |clicd_detail| %>
+    <br>
+    <% if @mira.present? %>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="panel panel-default mira-tab-panel">
+            <div class="panel-heading">
+              <ul class="nav nav-tabs" role="tablist">
+                <li role="presentation" class="active">
+                  <a href="#overview" aria-controls="overview" role="tab" data-toggle="tab">Overview and Status</a>
+                </li>
+                <li role="presentation">
+                  <a href="#icds" aria-controls="icds" role="tab" data-toggle="tab">ICDs</a>
+                </li>
+                <li role="presentation">
+                  <a href="#employment" aria-controls="employment" role="tab" data-toggle="tab">Employment</a>
+                </li>
+                <li role="presentation">
+                  <a href="#medical" aria-controls="medical" role="tab" data-toggle="tab">Medical</a>
+                </li>
+                <li role="presentation">
+                  <a href="#indemnity" aria-controls="indemnity" role="tab" data-toggle="tab">Indemnity</a>
+                </li>
+              </ul>
+            </div>
+            <div class="panel-body tab-content">
+              <div role="tabpanel" class="tab-pane fade in active" id="overview">
+                <div class="row">
+                  <div class="col-md-6">
+                    <table class="table table-striped table-bordered">
+                      <tbody>
+                        <tr>
+                          <td>Claim Filing Date</td>
+                          <td><%= @mira.claim_filing_date&.strftime("%b %d, %Y") %></td>
+                        </tr>
+                        <tr>
+                          <td>Gender</td>
+                          <td><%= @mira.gender %></td>
+                        </tr>
+                        <tr>
+                          <td>Marital Status</td>
+                          <td><%= @mira.marital_status %></td>
+                        </tr>
+                        <tr>
+                          <td>Injured Worker Represented</td>
+                          <td><%= @mira.injured_worked_represented %></td>
+                        </tr>
+                        <tr>
+                          <td>Claim Status</td>
+                          <td><%= @mira.claim_status %></td>
+                        </tr>
+                        <tr>
+                          <td>Claim Status Effective Date</td>
+                          <td><%= @mira.claim_status_effective_date&.strftime("%b %d, %Y") %></td>
+                        </tr>
+                        <tr>
+                          <td>Claim Activity Status</td>
+                          <td><%= @mira.claim_status_effective_date&.strftime("%b %d, %Y") %></td>
+                        </tr>
+                        <tr>
+                          <td>Claim Activity Status Effective Date</td>
+                          <td><%= @mira.claim_activity_status_effective_date&.strftime("%b %d, %Y") %></td>
+                        </tr>
+                        <tr>
+                          <td>Claimant Zip Code</td>
+                          <td><%= @mira.claimant_zip_code %></td>
+                        </tr>
+                        <tr>
+                          <td>Catastrophic Claim</td>
+                          <td><%= @mira.catastrophic_claim %></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div class="col-md-6">
+                    <table class="table table-striped table-bordered">
+                      <tbody>
+                        <tr>
+                          <td>Claimant Name</td>
+                          <td><%= @mira.claimant_name %></td>
+                        </tr>
+                        <tr>
+                          <td>Claim Manual Number</td>
+                          <td><%= @mira.claim_manual_number %></td>
+                        </tr>
+                        <tr>
+                          <td>Claim Sub Manual Number</td>
+                          <td><%= @mira.claim_sub_manual_number %></td>
+                        </tr>
+                        <tr>
+                          <td>Industry Code</td>
+                          <td><%= @mira.industry_code %></td>
+                        </tr>
+                        <tr>
+                          <td>Claim Type</td>
+                          <td><%= @mira.claim_type %></td>
+                        </tr>
+                        <tr>
+                          <td>Claimant Date of Death</td>
+                          <td><%= @mira.claimant_date_of_death&.strftime("%b %d, %Y") %></td>
+                        </tr>
+                        <tr>
+                          <td>Prediction Status</td>
+                          <td><%= @mira.prediction_status %></td>
+                        </tr>
+                        <tr>
+                          <td>Prediction Close status Effective Date</td>
+                          <td><%= @mira.prediction_close_status_effective_date&.strftime("%b %d, %Y") %></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+              </div>
+              <div role="tabpanel" class="tab-pane fade" id="icds">
+                <table class="table datatable table-striped">
+                  <thead>
                     <tr>
-                      <td><%= clicd_detail&.primary_icd %></td>
-                      <td><%= clicd_detail&.icd_status_display %></td>
-                      <td><%= clicd_detail&.icd_code %></td>
-                      <td><%= clicd_detail&.icd_injury_location_code&.strip %></td>
+                      <th width="25%">Primary ICD</th>
+                      <th width="25%">Status</th>
+                      <th width="25%">Code</th>
+                      <th width="25%">Injury Location</th>
                     </tr>
-                  <% end %>
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    <% @claim_calculation.clicd_detail_records.each do |clicd_detail| %>
+                      <tr>
+                        <td><%= clicd_detail&.primary_icd %></td>
+                        <td><%= clicd_detail&.icd_status_display %></td>
+                        <td><%= clicd_detail&.icd_code %></td>
+                        <td><%= clicd_detail&.icd_injury_location_code&.strip %></td>
+                      </tr>
+                    <% end %>
+                  </tbody>
+                </table>
+              </div>
+              <div role="tabpanel" class="tab-pane fade" id="employment">
+                <table class="table table-striped table-bordered">
+                  <tbody>
+                    <tr>
+                      <td>Average Weekly Wage</td>
+                      <td><%= @mira.average_weekly_wage %></td>
+                    </tr>
+                    <tr>
+                      <td>Claimant Hire Date</td>
+                      <td><%= @mira.claim_hire_date&.strftime("%b %d, %Y") %></td>
+                    </tr>
+                    <tr>
+                      <td>Salary Continuation</td>
+                      <td><%= @mira.salary_continuation %></td>
+                    </tr>
+                    <tr>
+                      <td>Last Date Worked</td>
+                      <td><%= @mira.last_date_worked&.strftime("%b %d, %Y") %></td>
+                    </tr>
+                    <tr>
+                      <td>Estimated Return To Work Date</td>
+                      <td><%= @mira.estimated_return_to_work_date&.strftime("%b %d, %Y") %></td>
+                    </tr>
+                    <tr>
+                      <td>Return To Work Date</td>
+                      <td><%= @mira.return_to_work_date&.strftime("%b %d, %Y") %></td>
+                    </tr>
+                    <tr>
+                      <td>Injury Or Litigation Type</td>
+                      <td><%= @mira.injury_or_litigation_type %></td>
+                    </tr>
+                    <tr>
+                      <td>Wage Loss Payments</td>
+                      <td><%= @mira.wage_loss_payments %></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div role="tabpanel" class="tab-pane fade" id="medical">
+                <table class="table table-striped table-bordered">
+                  <tbody>
+                    <tr>
+                      <td>Chiropractor</td>
+                      <td><%= @mira.chiropractor %></td>
+                    </tr>
+                    <tr>
+                      <td>Physical Therapy</td>
+                      <td><%= @mira.physical_therapy %></td>
+                    </tr>
+                    <tr>
+                      <td>MMI Date</td>
+                      <td><%= @mira.mmi_date&.strftime("%b %d, %Y") %></td>
+                    </tr>
+                    <tr>
+                      <td>Last Medical Date of Service</td>
+                      <td><%= @mira.mmi_date&.strftime("%b %d, %Y") %></td>
+                    </tr>
+
+                    <tr>
+                      <td>Medical Ambulance Payments</td>
+                      <td><%= @mira.medical_ambulance_payments %></td>
+                    </tr>
+                    <tr>
+                      <td>Medical Clinic or Nursing Home Payments</td>
+                      <td><%= @mira.medical_clinic_or_nursing_home_payments %></td>
+                    </tr>
+                    <tr>
+                      <td>Medical Court Cost Payments</td>
+                      <td><%= @mira.medical_court_cost_payments %></td>
+                    </tr>
+                    <tr>
+                      <td>Medical Doctors Payments</td>
+                      <td><%= @mira.medical_doctors_payments %></td>
+                    </tr>
+                    <tr>
+                      <td>Medical Drug and Pharmacy Payments</td>
+                      <td><%= @mira.medical_drug_and_pharmacy_payments %></td>
+                    </tr>
+                    <tr>
+                      <td>Medical Emergency Room Payments</td>
+                      <td><%= @mira.medical_emergency_room_payments %></td>
+                    </tr>
+                    <tr>
+                      <td>Medical Funeral Payments</td>
+                      <td><%= @mira.medical_funeral_payments %></td>
+                    </tr>
+                    <tr>
+                      <td>Medical Hospital Payments</td>
+                      <td><%= @mira.medical_hospital_payments %></td>
+                    </tr>
+                    <tr>
+                      <td>Medical Device Payments</td>
+                      <td><%= @mira.medical_medical_device_payments %></td>
+                    </tr>
+                    <tr>
+                      <td>Medical Misc. Payments</td>
+                      <td><%= @mira.medical_misc_payments %></td>
+                    </tr>
+                    <tr>
+                      <td>Medical Nursing Services Payments</td>
+                      <td><%= @mira.medical_nursing_services_payments %></td>
+                    </tr>
+                    <tr>
+                      <td>Medical Prostheses Device Payments</td>
+                      <td><%= @mira.medical_prostheses_device_payments %></td>
+                    </tr>
+                    <tr>
+                      <td>Medical Prostheses Exam Payments</td>
+                      <td><%= @mira.medical_prostheses_exam_payments %></td>
+                    </tr>
+                    <tr>
+                      <td>Medical Travel Payments</td>
+                      <td><%= @mira.medical_travel_payments %></td>
+                    </tr>
+                    <tr>
+                      <td>Medical Prostheses Exam Payments</td>
+                      <td><%= @mira.medical_prostheses_exam_payments %></td>
+                    </tr>
+                    <tr>
+                      <td>Medical X-Rays And Radiology Payments</td>
+                      <td><%= @mira.medical_x_rays_and_radiology_payments %></td>
+                    </tr>
+                    <tr>
+                      <td>Total Medical Paid</td>
+                      <td><%= @mira.total_medical_paid %></td>
+                    </tr>
+                    <tr>
+                      <td>Medical Reserve Prediction</td>
+                      <td><%= @mira.medical_reserve_prediction %></td>
+                    </tr>
+                    <tr>
+                      <td>Total Medical Reserve Amount</td>
+                      <td><%= @mira.total_medical_reserve_amount %></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div role="tabpanel" class="tab-pane fade" id="indemnity">
+                <tr>
+                  <td>Last Indemnity Period End Date</td>
+                  <td><%= @mira.mmi_date&.strftime("%b %d, %Y") %></td>
+                </tr>
+              </div>
             </div>
           </div>
         </div>
       </div>
     <% end %>
   </div>
+  <div style="margin-bottom: 50px;"></div>
+
+  <script>
+    $(function () {
+      $('.datatable').DataTable({
+        order: [[0, 'desc']]
+      });
+    });
+  </script>
 <% end %>
