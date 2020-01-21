@@ -10,4 +10,7 @@
 #
 
 class ClaimNoteCategory < ActiveRecord::Base
+  has_many :claim_notes
+
+  validates_presence_of :title
 end

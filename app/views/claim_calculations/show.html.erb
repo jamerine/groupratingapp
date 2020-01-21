@@ -1,6 +1,6 @@
 <%= content_tag_for :div, @claim_calculation do %>
   <div class="container">
-    <%= render partial: "shared/account_navbar", locals: { object: @account } %>
+    <%= render 'shared/account_navbar', object: @account %>
   </div>
 
   <%#= link_to 'Return to Policy', policy_calculation_path(@claim_calculation.policy_calculation), class: 'btn btn-default' %>
@@ -29,7 +29,7 @@
           <h4><%= @claim_calculation&.claimant_date_of_birth.try(:strftime, "%b %d, %Y") %></h4>
           <br>
           <h5>Date of Injury | Age at Injury:</h5>
-          <h4><%= @claim_calculation&.claim_injury_date.try(:strftime, "%b %d, %Y") %> | <%= @mira&.claimant_age_at_injury %></h4>
+          <h4><%= @claim_calculation&.claim_injury_date.try(:strftime, "%b %d, %Y") %> | <%= @mira&.age_at_injury %></h4>
         </div>
       </div>
     </div>
@@ -299,8 +299,8 @@
                 </div>
 
               </div>
-              <div role="tabpanel" class="tab-pane fade" id="icds">
-                <table class="table datatable table-striped" style="margin-top: 15px;">
+              <div role="tabpanel" class="tab-pane fade" id="icds" style="padding-top: 10px; padding-bottom: 10px;">
+                <table class="table datatable table-striped">
                   <thead>
                     <tr>
                       <th width="25%">Primary ICD</th>
@@ -612,6 +612,11 @@
     $(function () {
       $('.datatable').DataTable({
         order: [[0, 'desc']]
+      });
+
+      $('.note-datatable').DataTable({
+        order:      [[0, 'asc']],
+        columnDefs: [{ targets: -1, orderable: false }]
       });
     });
   </script>

@@ -109,4 +109,7 @@
 #
 
 class MiraDetailRecord < ActiveRecord::Base
+  def age_at_injury
+    self.claimant_age_at_injury || (claim_injury_date - claimant_date_of_birth)
+  end
 end

@@ -6,7 +6,7 @@ class ClaimCalculationsController < ApplicationController
 
   def show
     @claim_calculation = ClaimCalculation.find_by(id: params[:id])
-    @account           = Account.find(@claim_calculation.policy_calculation.account_id)
+    @account           = Account.find(@claim_calculation.policy_calculation&.account_id)
     @group_rating      = GroupRating.where(process_representative: @claim_calculation.representative_number).last
     @mira              = @claim_calculation.mira_detail_record
   end

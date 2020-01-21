@@ -1,0 +1,13 @@
+<%= simple_form_for [@claim_calculation, @note] do |f| %>
+  <%= f.input :claim_calculation_id, as: :hidden %>
+
+  <%= f.input :title %>
+  <%= f.association :claim_note_category, label: 'Category', collection: ClaimNoteCategory.all, value_method: :id, label_method: :title, prompt: 'Choose One' %>
+  <%= f.input :body, as: :trix_editor %>
+
+
+  <div class="form-group text-right">
+    <%= link_to 'Cancel', claim_calculation_path(@claim_calculation), class: 'btn btn-danger' %>
+    <%= f.submit 'Save', class: 'btn btn-success' %>
+  </div>
+<% end %>
