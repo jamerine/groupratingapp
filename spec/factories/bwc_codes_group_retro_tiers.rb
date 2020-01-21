@@ -9,7 +9,7 @@
 #  updated_at     :datetime         not null
 #
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :bwc_codes_group_retro_tier do
     
   end

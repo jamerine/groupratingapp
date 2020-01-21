@@ -11,7 +11,7 @@
 #  updated_at            :datetime
 #
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :bwc_codes_employer_representative do
     
   end

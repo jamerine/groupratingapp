@@ -10,7 +10,7 @@
 #  updated_at        :datetime         not null
 #
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :bwc_annual_manual_class_change do
     
   end

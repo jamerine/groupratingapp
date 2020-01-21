@@ -3,13 +3,23 @@
 # Table name: group_rating_rejections
 #
 #  id                :integer          not null, primary key
-#  account_id        :integer
-#  representative_id :integer
+#  hide              :boolean
+#  program_type      :string
 #  reject_reason     :string
 #  created_at        :datetime         not null
 #  updated_at        :datetime         not null
-#  program_type      :string
-#  hide              :boolean
+#  account_id        :integer
+#  representative_id :integer
+#
+# Indexes
+#
+#  index_group_rating_rejections_on_account_id         (account_id)
+#  index_group_rating_rejections_on_representative_id  (representative_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (account_id => accounts.id)
+#  fk_rails_...  (representative_id => representatives.id)
 #
 
 class GroupRatingRejection < ActiveRecord::Base

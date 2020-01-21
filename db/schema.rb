@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20191211125553) do
+ActiveRecord::Schema.define(version: 20200121135550) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -340,6 +340,22 @@ ActiveRecord::Schema.define(version: 20191211125553) do
 
   add_index "claim_calculations", ["policy_calculation_id"], name: "index_claim_calculations_on_policy_calculation_id", using: :btree
   add_index "claim_calculations", ["policy_number", "claim_number"], name: "index_claim_calc_on_pol_num_and_claim_num", using: :btree
+
+  create_table "claim_note_categories", force: :cascade do |t|
+    t.string   "title"
+    t.text     "note"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "claim_notes", force: :cascade do |t|
+    t.string   "title"
+    t.integer  "claim_note_category_id"
+    t.text     "body"
+    t.integer  "claim_id"
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
+  end
 
   create_table "clicd_detail_records", force: :cascade do |t|
     t.integer  "representative_number"

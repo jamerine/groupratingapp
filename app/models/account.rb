@@ -3,43 +3,51 @@
 # Table name: accounts
 #
 #  id                            :integer          not null, primary key
-#  representative_id             :integer
-#  name                          :string
-#  policy_number_entered         :integer
-#  street_address                :string
-#  street_address_2              :string
-#  city                          :string
-#  state                         :string
-#  zip_code                      :string
-#  business_phone_number         :bigint
-#  business_email_address        :string
-#  website_url                   :string
-#  group_rating_qualification    :integer
-#  industry_group                :integer
-#  group_rating_tier             :float
-#  group_rating_group_number     :string
-#  group_premium                 :float
-#  group_savings                 :float
-#  group_fees                    :float
-#  group_dues                    :float
-#  total_costs                   :float
-#  status                        :integer          default(0)
-#  federal_identification_number :string
-#  cycle_date                    :date
-#  request_date                  :date
-#  quarterly_request             :boolean
-#  weekly_request                :boolean
 #  ac3_approval                  :boolean
-#  user_override                 :boolean
-#  group_retro_qualification     :string
-#  group_retro_tier              :float
+#  business_email_address        :string
+#  business_phone_number         :bigint(8)
+#  city                          :string
+#  cycle_date                    :date
+#  federal_identification_number :string
+#  fee_change                    :float
+#  fee_override                  :float
+#  group_dues                    :float
+#  group_fees                    :float
+#  group_premium                 :float
+#  group_rating_group_number     :string
+#  group_rating_qualification    :integer
+#  group_rating_tier             :float
 #  group_retro_group_number      :string
 #  group_retro_premium           :float
+#  group_retro_qualification     :string
 #  group_retro_savings           :float
+#  group_retro_tier              :float
+#  group_savings                 :float
+#  industry_group                :integer
+#  name                          :string
+#  policy_number_entered         :integer
+#  quarterly_request             :boolean
+#  request_date                  :date
+#  state                         :string
+#  status                        :integer          default(0)
+#  street_address                :string
+#  street_address_2              :string
+#  total_costs                   :float
+#  user_override                 :boolean
+#  website_url                   :string
+#  weekly_request                :boolean
+#  zip_code                      :string
 #  created_at                    :datetime         not null
 #  updated_at                    :datetime         not null
-#  fee_override                  :float
-#  fee_change                    :float
+#  representative_id             :integer
+#
+# Indexes
+#
+#  index_accounts_on_representative_id  (representative_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (representative_id => representatives.id)
 #
 
 class Account < ActiveRecord::Base

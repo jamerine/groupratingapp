@@ -3,18 +3,28 @@
 # Table name: policy_coverage_status_histories
 #
 #  id                      :integer          not null, primary key
-#  policy_calculation_id   :integer
-#  representative_id       :integer
-#  representative_number   :integer
-#  policy_type             :string
-#  policy_number           :integer
 #  coverage_effective_date :date
 #  coverage_end_date       :date
 #  coverage_status         :string
-#  lapse_days              :integer
 #  data_source             :string
+#  lapse_days              :integer
+#  policy_number           :integer
+#  policy_type             :string
+#  representative_number   :integer
 #  created_at              :datetime         not null
 #  updated_at              :datetime         not null
+#  policy_calculation_id   :integer
+#  representative_id       :integer
+#
+# Indexes
+#
+#  index_policy_coverage_status_histories_on_policy_calculation_id  (policy_calculation_id)
+#  index_policy_coverage_status_histories_on_representative_id      (representative_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (policy_calculation_id => policy_calculations.id)
+#  fk_rails_...  (representative_id => representatives.id)
 #
 
 class PolicyCoverageStatusHistory < ActiveRecord::Base
