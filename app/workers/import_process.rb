@@ -1,6 +1,6 @@
 class ImportProcess
   include Sidekiq::Worker
-  sidekiq_options queue: :import_process, retry: 1
+  sidekiq_options queue: :import_process, retry: 5
 
   def perform(process_representative_id, import_id, representative_abbreviated_name, group_rating_id, all_process = nil, import_only = false)
     Democ.delete_all
