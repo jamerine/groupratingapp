@@ -61,6 +61,7 @@
 
 class ClaimCalculation < ActiveRecord::Base
   belongs_to :policy_calculation
+  has_many :claim_notes
 
   attr_accessor :comp_awarded, :medical_paid, :mira_reserve
 

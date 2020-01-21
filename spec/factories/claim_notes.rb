@@ -7,7 +7,7 @@
 #  title                  :string
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
-#  claim_id               :integer
+#  claim_calculation_id   :integer
 #  claim_note_category_id :integer
 #
 
