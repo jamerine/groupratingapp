@@ -11,7 +11,7 @@
 #  updated_at    :datetime
 #
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :bwc_group_accept_reject_list do
     
   end

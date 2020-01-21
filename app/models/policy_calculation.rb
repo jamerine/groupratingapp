@@ -3,82 +3,93 @@
 # Table name: policy_calculations
 #
 #  id                                                  :integer          not null, primary key
-#  representative_number                               :integer
-#  policy_number                                       :integer
-#  policy_group_number                                 :string
-#  policy_total_four_year_payroll                      :float
-#  policy_credibility_group                            :integer
-#  policy_maximum_claim_value                          :integer
-#  policy_credibility_percent                          :float
-#  policy_total_expected_losses                        :float
-#  policy_total_limited_losses                         :float
-#  policy_total_claims_count                           :integer
-#  policy_total_modified_losses_group_reduced          :float
-#  policy_total_modified_losses_individual_reduced     :float
-#  policy_group_ratio                                  :float
-#  policy_individual_total_modifier                    :float
-#  policy_individual_experience_modified_rate          :float
-#  policy_industry_group                               :integer
-#  policy_total_current_payroll                        :float
-#  policy_total_standard_premium                       :float
-#  policy_total_individual_premium                     :float
-#  currently_assigned_representative_number            :integer
-#  valid_policy_number                                 :string
-#  current_coverage_status                             :string
-#  coverage_status_effective_date                      :date
-#  policy_creation_date                                :date
-#  federal_identification_number                       :string
+#  advance_deposit_amount                              :float
+#  appealed_balance_amount                             :float
+#  attorney_general_balance_amount                     :float
 #  business_name                                       :string
-#  trading_as_name                                     :string
+#  coverage_status_effective_date                      :date
+#  coverage_type                                       :string
+#  current_coverage_status                             :string
+#  currently_assigned_clm_representative_number        :integer
+#  currently_assigned_erc_representative_number        :integer
+#  currently_assigned_grc_representative_number        :integer
+#  currently_assigned_representative_number            :integer
+#  currently_assigned_risk_representative_number       :integer
+#  data_source                                         :string
+#  em_effective_date                                   :date
+#  employer_type                                       :string
+#  federal_identification_number                       :string
+#  group_code                                          :string
+#  immediate_successor_business_sequence_number        :integer
+#  immediate_successor_policy_number                   :integer
 #  in_care_name_contact_name                           :string
-#  valid_mailing_address                               :string
-#  mailing_address_line_1                              :string
-#  mailing_address_line_2                              :string
-#  mailing_city                                        :string
-#  mailing_state                                       :string
-#  mailing_zip_code                                    :integer
-#  mailing_zip_code_plus_4                             :integer
-#  mailing_country_code                                :integer
-#  mailing_county                                      :integer
-#  valid_location_address                              :string
 #  location_address_line_1                             :string
 #  location_address_line_2                             :string
 #  location_city                                       :string
+#  location_country_code                               :integer
+#  location_county                                     :integer
 #  location_state                                      :string
 #  location_zip_code                                   :integer
 #  location_zip_code_plus_4                            :integer
-#  location_country_code                               :integer
-#  location_county                                     :integer
-#  currently_assigned_clm_representative_number        :integer
-#  currently_assigned_risk_representative_number       :integer
-#  currently_assigned_erc_representative_number        :integer
-#  currently_assigned_grc_representative_number        :integer
-#  immediate_successor_policy_number                   :integer
-#  immediate_successor_business_sequence_number        :integer
-#  ultimate_successor_policy_number                    :integer
-#  ultimate_successor_business_sequence_number         :integer
-#  employer_type                                       :string
-#  coverage_type                                       :string
-#  policy_coverage_type                                :string
-#  policy_employer_type                                :string
+#  mailing_address_line_1                              :string
+#  mailing_address_line_2                              :string
+#  mailing_city                                        :string
+#  mailing_country_code                                :integer
+#  mailing_county                                      :integer
+#  mailing_state                                       :string
+#  mailing_zip_code                                    :integer
+#  mailing_zip_code_plus_4                             :integer
 #  merit_rate                                          :float
-#  group_code                                          :string
 #  minimum_premium_percentage                          :string
-#  rate_adjust_factor                                  :string
-#  em_effective_date                                   :date
-#  regular_balance_amount                              :float
-#  attorney_general_balance_amount                     :float
-#  appealed_balance_amount                             :float
 #  pending_balance_amount                              :float
-#  advance_deposit_amount                              :float
-#  data_source                                         :string
+#  policy_adjusted_individual_premium                  :float
+#  policy_adjusted_standard_premium                    :float
+#  policy_coverage_type                                :string
+#  policy_creation_date                                :date
+#  policy_credibility_group                            :integer
+#  policy_credibility_percent                          :float
+#  policy_employer_type                                :string
+#  policy_group_number                                 :string
+#  policy_group_ratio                                  :float
+#  policy_individual_adjusted_experience_modified_rate :float
+#  policy_individual_experience_modified_rate          :float
+#  policy_individual_total_modifier                    :float
+#  policy_industry_group                               :integer
+#  policy_maximum_claim_value                          :integer
+#  policy_number                                       :integer
+#  policy_total_claims_count                           :integer
+#  policy_total_current_payroll                        :float
+#  policy_total_expected_losses                        :float
+#  policy_total_four_year_payroll                      :float
+#  policy_total_individual_premium                     :float
+#  policy_total_limited_losses                         :float
+#  policy_total_modified_losses_group_reduced          :float
+#  policy_total_modified_losses_individual_reduced     :float
+#  policy_total_standard_premium                       :float
+#  rate_adjust_factor                                  :string
+#  regular_balance_amount                              :float
+#  representative_number                               :integer
+#  trading_as_name                                     :string
+#  ultimate_successor_business_sequence_number         :integer
+#  ultimate_successor_policy_number                    :integer
+#  valid_location_address                              :string
+#  valid_mailing_address                               :string
+#  valid_policy_number                                 :string
 #  created_at                                          :datetime         not null
 #  updated_at                                          :datetime         not null
-#  representative_id                                   :integer
 #  account_id                                          :integer
-#  policy_individual_adjusted_experience_modified_rate :float
-#  policy_adjusted_standard_premium                    :float
-#  policy_adjusted_individual_premium                  :float
+#  representative_id                                   :integer
+#
+# Indexes
+#
+#  index_policy_calculations_on_account_id         (account_id)
+#  index_policy_calculations_on_pol_num            (policy_number)
+#  index_policy_calculations_on_representative_id  (representative_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (account_id => accounts.id)
+#  fk_rails_...  (representative_id => representatives.id)
 #
 
 class PolicyCalculation < ActiveRecord::Base

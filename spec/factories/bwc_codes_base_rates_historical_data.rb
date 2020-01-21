@@ -12,11 +12,7 @@
 #  updated_at         :datetime         not null
 #
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :bwc_codes_base_rates_historical_datum do
-    year 1
-    class_code 1
-    base_rate ""
-    expected_loss_rate ""
   end
 end

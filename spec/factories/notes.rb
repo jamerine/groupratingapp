@@ -3,17 +3,27 @@
 # Table name: notes
 #
 #  id          :integer          not null, primary key
-#  description :text
-#  category    :integer
-#  title       :string
 #  attachment  :string
-#  account_id  :integer
-#  user_id     :integer
+#  category    :integer
+#  description :text
+#  title       :string
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
+#  account_id  :integer
+#  user_id     :integer
+#
+# Indexes
+#
+#  index_notes_on_account_id  (account_id)
+#  index_notes_on_user_id     (user_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (account_id => accounts.id)
+#  fk_rails_...  (user_id => users.id)
 #
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :note do
     
   end

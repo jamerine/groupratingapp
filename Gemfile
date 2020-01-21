@@ -104,7 +104,7 @@ group :development, :test do
   gem 'annotate'
   gem 'rspec-rails', '~> 3.5'
   gem 'shoulda'
-  gem 'factory_girl_rails', '~> 4.0'
+  gem 'factory_bot_rails'
   gem 'capybara'
   gem 'guard-rspec'
   gem 'spring-commands-rspec'

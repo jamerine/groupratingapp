@@ -1,0 +1,31 @@
+<div class="container notes-container">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="panel panel-primary">
+        <div class="panel-heading">Notes</div>
+        <div class="panel-body">
+          <table class="table table-stripe datatable">
+            <thead>
+              <tr>
+                <th>Category</th>
+                <th>Title</th>
+                <th>Note</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @claim_calculation.claim_notes.each do |note| %>
+                <tr>
+                  <td><%= note.claim_note_category.title %></td>
+                  <td><%= note.title %></td>
+                  <td><%= note.note %></td>
+                  <td></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

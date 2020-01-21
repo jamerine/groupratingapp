@@ -44,7 +44,7 @@
 #  updated_at                                      :datetime         not null
 #
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :pemh_detail_record do
     
   end
