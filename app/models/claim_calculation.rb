@@ -163,7 +163,6 @@ class ClaimCalculation < ActiveRecord::Base
   end
 
   def non_at_fault
-    #binding.pry
     democ_detail_record.try(:non_at_fault)
   end
 
