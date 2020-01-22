@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200121154729) do
+ActiveRecord::Schema.define(version: 20200122122105) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -355,6 +355,9 @@ ActiveRecord::Schema.define(version: 20200121154729) do
     t.integer  "claim_calculation_id"
     t.datetime "created_at",             null: false
     t.datetime "updated_at",             null: false
+    t.string   "claim_number"
+    t.integer  "representative_number"
+    t.integer  "policy_number"
   end
 
   create_table "clicd_detail_records", force: :cascade do |t|

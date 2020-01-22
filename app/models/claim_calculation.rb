@@ -61,7 +61,6 @@
 
 class ClaimCalculation < ActiveRecord::Base
   belongs_to :policy_calculation
-  has_many :claim_notes
 
   attr_accessor :comp_awarded, :medical_paid, :mira_reserve
 
@@ -78,6 +77,10 @@ class ClaimCalculation < ActiveRecord::Base
 
   def mira_detail_record
     MiraDetailRecord.find_by(claim_number: claim_number, representative_number: representative_number, policy_number: policy_number)
+  end
+
+  def claim_notes
+    ClaimNote.where(claim_number: claim_number, representative_number: representative_number, policy_number: policy_number)
   end
 
   def comp_awarded
