@@ -3,17 +3,19 @@ class ImportFile
   sidekiq_options queue: :import_file, retry: 5
 
   def perform(url, table_name, import_id, group_rating_id, all_process = nil, import_only = false)
-    time1 = Time.new
-    puts "Start Time: " + time1.inspect
-    conn = ActiveRecord::Base.connection
-    rc   = conn.raw_connection
-    if table_name == 'rates'
-      rc.exec("COPY " + table_name + " (single_rec) FROM STDIN WITH DELIMITER AS '~'")
-    else
-      rc.exec("COPY " + table_name + " (single_rec) FROM STDIN WITH DELIMITER AS '|'")
-    end
+    require 'open-uri'
 
     begin
+      time1 = Time.new
+      puts "Start Time: " + time1.inspect
+      conn = ActiveRecord::Base.connection
+      rc   = conn.raw_connection
+      if table_name == 'rates'
+        rc.exec("COPY " + table_name + " (single_rec) FROM STDIN WITH DELIMITER AS '~'")
+      else
+        rc.exec("COPY " + table_name + " (single_rec) FROM STDIN WITH DELIMITER AS '|'")
+      end
+
       file = open(url)
 
       while !file.eof?
@@ -25,23 +27,29 @@ class ImportFile
           rc.put_copy_data(line)
         end
       end
-    rescue OpenURI::HTTPError => e
-      # The CLICD File doesn't exist
-      puts e
-    end
 
-    # We are done adding copy data
-    rc.put_copy_end
-    # Display any error messages
-    while res = rc.get_result
-      if e_message = res.error_message
-        p e_message
+
+      # We are done adding copy data
+      rc.put_copy_end
+      # Display any error messages
+      while res = rc.get_result
+        if e_message = res.error_message
+          p e_message
+        end
       end
+
+    rescue OpenURI::HTTPError => e
+      rc.put_copy_end unless rc.nil?
+      # The CLICD File doesn't exist
+      puts "Skipped File..."
     end
 
     result = ActiveRecord::Base.connection.execute("SELECT public.proc_process_flat_" + table_name + "()")
     result.clear
-    @import = Import.find_by(id: import_id)
+
+    @import               = Import.find_by(id: import_id)
+    representative_number = @import.representative&.representative_number
+
     if table_name == "sc230s"
       @import.sc230s_count                       = Sc230.count
       @import.sc230_employer_demographics_count  = Sc230EmployerDemographic.count
@@ -57,7 +65,7 @@ class ImportFile
       #   @import.import_status = "#{table_name} Completed"
     elsif table_name == "democs"
       @import.democs_count               = Democ.count
-      @import.democ_detail_records_count = DemocDetailRecord.count
+      @import.democ_detail_records_count = DemocDetailRecord.filter_by(representative_number).count
       @import.import_status              = "#{table_name} Completed"
     elsif table_name == "mrcls"
       @import.mrcls_count               = Mrcl.count
@@ -95,11 +103,11 @@ class ImportFile
       @import.import_status              = "#{table_name} Completed"
     elsif table_name == "miras"
       @import.miras_count               = Mira.count
-      @import.mira_detail_records_count = MiraDetailRecord.count
+      @import.mira_detail_records_count = MiraDetailRecord.filter_by(representative_number).count
       @import.import_status             = "#{table_name} Completed"
     elsif table_name == "clicds"
       @import.clicds_count               = Clicd.count
-      @import.clicd_detail_records_count = ClicdDetailRecord.count
+      @import.clicd_detail_records_count = ClicdDetailRecord.filter_by(representative_number).count
       @import.import_status              = "#{table_name} Completed"
     end
 

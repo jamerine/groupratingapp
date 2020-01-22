@@ -109,6 +109,8 @@
 #
 
 class MiraDetailRecord < ActiveRecord::Base
+  scope :filter_by, -> (representative_number) { where(representative_number: representative_number) }
+
   def age_at_injury
     self.claimant_age_at_injury || (claim_injury_date - claimant_date_of_birth)
   end

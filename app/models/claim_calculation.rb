@@ -72,11 +72,17 @@ class ClaimCalculation < ActiveRecord::Base
   end
 
   def clicd_detail_records
-    ClicdDetailRecord.where(claim_number: claim_number, representative_number: representative_number, policy_number: policy_number)
+    ClicdDetailRecord.where(claim_number: "#{claim_number} ", representative_number: representative_number, policy_number: policy_number)
   end
 
   def mira_detail_record
-    MiraDetailRecord.find_by(claim_number: claim_number, representative_number: representative_number, policy_number: policy_number)
+    MiraDetailRecord.find_by(claim_number: "#{claim_number} ", representative_number: representative_number, policy_number: policy_number)
+  end
+
+  def democ_detail_record
+    return @democ_detail_record if @democ_detail_record.present?
+
+    @democ_detail_record = DemocDetailRecord.find_by(claim_number: "#{claim_number} ", representative_number: representative_number)
   end
 
   def claim_notes
@@ -149,12 +155,6 @@ class ClaimCalculation < ActiveRecord::Base
     @claim_modified_losses_individual_reduced = (@claim_individual_reduced_amount * (1 - @claim_subrogation_percent))
 
     update_attributes(policy_individual_maximum_claim_value: group_maximum_value, claim_individual_multiplier: @claim_individual_multiplier, claim_group_reduced_amount: @claim_group_reduced_amount, claim_individual_reduced_amount: @claim_individual_reduced_amount, claim_modified_losses_individual_reduced: @claim_modified_losses_individual_reduced, claim_group_multiplier: @claim_group_multiplier, claim_subrogation_percent: @claim_subrogation_percent, claim_modified_losses_group_reduced: @claim_modified_losses_group_reduced)
-  end
-
-  def democ_detail_record
-    return @democ_detail_record if @democ_detail_record.present?
-
-    @democ_detail_record = DemocDetailRecord.find_by(claim_number: "#{claim_number} ", representative_number: representative_number)
   end
 
   def medical_last_paid_date

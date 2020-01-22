@@ -1,8 +1,8 @@
 class ImportProcess
   include Sidekiq::Worker
-  sidekiq_options queue: :import_process, retry: 1
+  sidekiq_options queue: :import_process, retry: 3
 
-  def perform(process_representative_id, import_id, representative_abbreviated_name, group_rating_id, all_process = nil, import_only = false)
+  def perform(representative_number, import_id, representative_abbreviated_name, group_rating_id, import_only, all_process = nil)
     Democ.delete_all
     Mrcl.delete_all
     Mremp.delete_all
@@ -16,14 +16,14 @@ class ImportProcess
     Pcovg.delete_all
     Mira.delete_all
     Clicd.delete_all
-    DemocDetailRecord.delete_all
+    DemocDetailRecord.filter_by(representative_number).delete_all
     MrclDetailRecord.delete_all
     MrempEmployeeExperiencePolicyLevel.delete_all
     MrempEmployeeExperienceManualClassLevel.delete_all
     MrempEmployeeExperienceClaimLevel.delete_all
     PcombDetailRecord.delete_all
-    MiraDetailRecord.delete_all
-    ClicdDetailRecord.delete_all
+    MiraDetailRecord.filter_by(representative_number).delete_all
+    ClicdDetailRecord.filter_by(representative_number).delete_all
     PhmgnDetailRecord.delete_all
     Sc220Rec1EmployerDemographic.delete_all
     Sc220Rec2EmployerManualLevelPayroll.delete_all
