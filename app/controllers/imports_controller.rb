@@ -59,15 +59,15 @@ class ImportsController < ApplicationController
       Sc230.delete_all
       Mira.delete_all
       Clicd.delete_all
-      DemocDetailRecord.delete_all
+      DemocDetailRecord.filter_by(@representative.representative_number).delete_all
       MrclDetailRecord.delete_all
       MrempEmployeeExperiencePolicyLevel.delete_all
       MrempEmployeeExperienceManualClassLevel.delete_all
       MrempEmployeeExperienceClaimLevel.delete_all
       PcombDetailRecord.delete_all
       PhmgnDetailRecord.delete_all
-      MiraDetailRecord.delete_all
-      ClicdDetailRecord.delete_all
+      MiraDetailRecord.filter_by(@representative.representative_number).delete_all
+      ClicdDetailRecord.filter_by(@representative.representative_number).delete_all
       Sc220Rec1EmployerDemographic.delete_all
       Sc220Rec2EmployerManualLevelPayroll.delete_all
       Sc220Rec3EmployerArTransaction.delete_all
@@ -104,7 +104,7 @@ class ImportsController < ApplicationController
       @new_group_rating.status                 = 'Queuing'
       @new_group_rating.process_representative = @representative.representative_number
       if @new_group_rating.save
-        ImportProcess.perform_async(@import.process_representative, @import.id, @representative.abbreviated_name, @new_group_rating.id, nil, true)
+        ImportProcess.perform_async(@import.process_representative, @import.id, @representative.abbreviated_name, @new_group_rating.id, true)
       end
       # Resque.enqueue(ParseProcess, @import.process_representative, @import.id)
 

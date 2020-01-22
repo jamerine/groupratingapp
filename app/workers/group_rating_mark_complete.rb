@@ -26,7 +26,7 @@ class GroupRatingMarkComplete
           @import = Import.new(process_representative: @new_group_rating.process_representative, representative_id: @new_group_rating.representative_id, group_rating_id: @new_group_rating.id, import_status: 'Queuing', parse_status: 'Queuing')
           # Flat files
           if @import.save
-            ImportProcess.perform_in(2.minutes, @import.process_representative, @import.id, @representative.abbreviated_name, @new_group_rating.id, all_process)
+            ImportProcess.perform_in(2.minutes, @import.process_representative, @import.id, @representative.abbreviated_name, @new_group_rating.id, false, all_process)
           end
         end
       else

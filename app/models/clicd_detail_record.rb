@@ -27,6 +27,8 @@
 #
 
 class ClicdDetailRecord < ActiveRecord::Base
+  scope :filter_by, -> (representative_number) { where(representative_number: representative_number) }
+
   def icd_status_display
     case self.icd_status
     when "AG"
