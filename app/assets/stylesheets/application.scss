@@ -182,7 +182,11 @@ $radius: 4px;
 
 .claim-container {
   .panel {
-    min-height: 160px;
+    min-height: 100px;
+
+    .panel-body {
+      padding: 5px 10px;
+    }
   }
 
   .mira-tab-panel {

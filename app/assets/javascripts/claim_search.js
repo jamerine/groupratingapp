@@ -11,7 +11,15 @@ function claimSearchListenerAndResults() {
   setClaimSearchElements();
 
   $searchGroup.keyup(function (e) {
+    console.log(e.key);
+
     if (e.key === 'Enter') e.preventDefault();
+    if (e.key === 'Escape') {
+      $searchSpinner.fadeOut();
+      $searchWrapper.fadeOut();
+      $claimSearchResults.html('');
+      $claimSearchResults.addClass('hidden');
+    }
 
     showSearchResultsAsTypeaheadSuggestions();
   });

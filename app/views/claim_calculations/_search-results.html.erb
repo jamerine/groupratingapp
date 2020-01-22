@@ -4,7 +4,7 @@
       <li>
         <%= link_to claim_calculation_path(matching_claim_calculation), target: '_blank', class: 'calc-link' do %>
           <div class='claim-number'><%= matching_claim_calculation.claim_number.strip %></div>
-          <span class='claimant-name'><%= matching_claim_calculation.claimant_name.strip %></span>
+          <span class='claimant-name'><%= matching_claim_calculation.claimant_name.strip %> - <%= matching_claim_calculation.representative_name %></span>
         <% end %>
       </li>
     <% end %>
@@ -17,7 +17,7 @@
 
 <script>
   $(function () {
-    $('.calc-link').click(function () {
+    $('.calc-link').click(function (e) {
       $searchSpinner.fadeOut();
       $searchWrapper.fadeOut();
       $claimSearchResults.html('');

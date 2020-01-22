@@ -1,7 +1,10 @@
 <nav class="navbar account-header navbar-inverse navbar-fixed-top ">
   <div class="row text-center">
     <div class="col-md-4 col-sm-6 col-xs-6">
-      <p class="navbar-text">Account: <%= link_to "#{@account.name.slice(0..25).try(:titleize) }", account_path(@account), target: '_blank' %></p>
+      <p class="navbar-text">
+        <span>Account: <%= link_to "#{@account.name.slice(0..25).try(:titleize) }", account_path(@account), target: '_blank' %></span>
+        <span style="margin-left: 30px;">Representative: <%= @account.representative&.abbreviated_name %></span>
+      </p>
     </div>
     <div class="col-md-2 col-sm-6 col-xs-6">
       <% if @account.predecessor? || @account.invalid_policy_number? %>
@@ -10,9 +13,6 @@
         <p class="navbar-text">Policy: <%= link_to "#{@account.policy_calculation.policy_number}", policy_calculation_path(@account.policy_calculation), target: '_blank' %></p>
       <% end %>
     </div>
-    <!-- <div class="col-md-3">
-              <p class="navbar-text">Representative: <%= @account.representative.abbreviated_name %></p>
-            </div> -->
     <div class="col-md-2 col-sm-4 col-xs-6">
       <p class="navbar-text">Account: <%= @account.status.slice(0..9).try(:humanize) %></p>
     </div>
