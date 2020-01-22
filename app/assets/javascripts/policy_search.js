@@ -12,11 +12,17 @@ function policySearchListenerAndResults() {
 
   $policySearchGroup.keyup(function (e) {
     if (e.key === 'Enter') e.preventDefault();
+    if (e.key === 'Escape') {
+      $policySearchSpinner.fadeOut();
+      $policySearchWrapper.fadeOut();
+      $policySearchResults.html('');
+      $policySearchResults.addClass('hidden');
+    }
 
     showPolicySearchResultsAsTypeaheadSuggestions();
   });
 
-  $searchGroup.click(function (event) {
+  $policySearchGroup.click(function (event) {
     if (event.target.parentNode.id === '') {
       // console.log('previousSearchValue == null, now');
       previousPolicySearchValue = null;

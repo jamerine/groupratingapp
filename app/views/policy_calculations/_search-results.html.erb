@@ -4,7 +4,7 @@
       <li>
         <%= link_to policy_calculation_path(matching_policy_calculation), target: '_blank', class: 'policy-link' do %>
           <div class='policy-number'><%= matching_policy_calculation.policy_number %></div>
-          <span class='account-name'><%= matching_policy_calculation.account_name.strip %></span>
+          <span class='account-name'><%= matching_policy_calculation.account_name.strip %> - <%= matching_policy_calculation.representative_name %></span>
         <% end %>
       </li>
     <% end %>

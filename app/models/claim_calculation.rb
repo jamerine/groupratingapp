@@ -71,12 +71,16 @@ class ClaimCalculation < ActiveRecord::Base
     obj
   end
 
+  def representative_name
+    Representative.find_by_representative_number(representative_number)&.abbreviated_name
+  end
+
   def clicd_detail_records
-    ClicdDetailRecord.where(claim_number: "#{claim_number} ", representative_number: representative_number, policy_number: policy_number)
+    ClicdDetailRecord.where(claim_number: claim_number, representative_number: representative_number, policy_number: policy_number)
   end
 
   def mira_detail_record
-    MiraDetailRecord.find_by(claim_number: "#{claim_number} ", representative_number: representative_number, policy_number: policy_number)
+    MiraDetailRecord.find_by(claim_number: claim_number, representative_number: representative_number, policy_number: policy_number)
   end
 
   def democ_detail_record
@@ -87,6 +91,10 @@ class ClaimCalculation < ActiveRecord::Base
 
   def claim_notes
     ClaimNote.where(claim_number: claim_number, representative_number: representative_number, policy_number: policy_number)
+  end
+
+  def program_type
+    @claim_calculation&.policy_calculation&.account&.account_programs&.first&.program_type
   end
 
   def comp_awarded

@@ -102,6 +102,10 @@ class PolicyCalculation < ActiveRecord::Base
 
   delegate :name, to: :account, prefix: true, allow_nil: false
 
+  def representative_name
+    representative.abbreviated_name
+  end
+
   # Add Papertrail as history tracking
   has_paper_trail :on => [:update]
 
