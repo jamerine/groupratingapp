@@ -4,6 +4,9 @@
 #
 #  id                     :integer          not null, primary key
 #  body                   :text
+#  claim_number           :string
+#  policy_number          :integer
+#  representative_number  :integer
 #  title                  :string
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
