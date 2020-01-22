@@ -2,7 +2,7 @@ class GroupRatingMarkComplete
   require 'sidekiq/api'
   include Sidekiq::Worker
 
-  sidekiq_options queue: :group_rating_mark_complete, retry: 1
+  sidekiq_options queue: :group_rating_mark_complete, retry: 3
 
   def perform(group_rating_id, all_process = nil)
     @representatives_count = Representative.last.id
