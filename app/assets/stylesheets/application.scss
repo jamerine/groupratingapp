@@ -195,8 +195,17 @@ $radius: 4px;
     .panel-heading {
       padding: 10px 0 0;
       border-bottom: none;
-      background-color: rgb(204, 204, 204);
+      background-color: #222;
+      position: relative;
 
+      .claim-number {
+        position: absolute;
+        color: white;
+        font-weight: 700;
+        top: 10px;
+        right: 15px;
+        font-size: 18px;
+      }
 
       ul.nav-tabs {
         padding: 0 10px;
