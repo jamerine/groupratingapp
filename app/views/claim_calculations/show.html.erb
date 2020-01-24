@@ -167,6 +167,10 @@
                     <table class="table table-striped table-bordered">
                       <tbody>
                         <tr>
+                          <td>Claim Number</td>
+                          <td><%= @claim_calculation.claim_number&.strip %></td>
+                        </tr>
+                        <tr>
                           <td>Claim Filing Date</td>
                           <td><%= @mira.claim_filing_date&.strftime("%b %d, %Y") %></td>
                         </tr>
