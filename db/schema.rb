@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200122122105) do
+ActiveRecord::Schema.define(version: 20200127160417) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -994,7 +994,7 @@ ActiveRecord::Schema.define(version: 20200122122105) do
     t.string   "sub_manual_number"
     t.string   "claim_reserve_code"
     t.string   "claim_number"
-    t.integer  "experience_period_payroll"
+    t.integer  "experience_period_payroll",       limit: 8
     t.float    "manual_class_base_rate"
     t.float    "manual_class_expected_loss_rate"
     t.integer  "manual_class_expected_losses"
@@ -1002,8 +1002,8 @@ ActiveRecord::Schema.define(version: 20200122122105) do
     t.string   "policy_manual_status"
     t.float    "limited_loss_ratio"
     t.integer  "limited_losses"
-    t.datetime "created_at",                      null: false
-    t.datetime "updated_at",                      null: false
+    t.datetime "created_at",                                null: false
+    t.datetime "updated_at",                                null: false
   end
 
   create_table "mremp_employee_experience_policy_levels", force: :cascade do |t|
