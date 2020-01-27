@@ -1,5 +1,8 @@
 # == Route Map
 #
+# **************************************************
+# ⛔️ WARNING: Sidekiq testing API enabled, but this is not the test environment.  Your jobs will not go to Redis.
+# **************************************************
 #                                                Prefix Verb       URI Pattern                                                                    Controller#Action
 #                                new_admin_user_session GET        /admin/login(.:format)                                                         active_admin/devise/sessions#new
 #                                    admin_user_session POST       /admin/login(.:format)                                                         active_admin/devise/sessions#create
