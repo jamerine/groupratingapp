@@ -9,9 +9,31 @@
   </div>
 
   <%= render partial: 'manual_class_calculations/manual_classes', locals: { manual_class_calculations: @manual_class_calculations, policy_calculation: @policy_calculation } %>
-  <%= render partial: 'claim_calculations/claims', locals: { claims: @claim_calculations } %>
+
+  <div class="container-fluid text-center">
+    <div class="row">
+      <div class="col-sm-10 col-sm-offset-1">
+        <h2><%= pluralize_without_count(@claim_calculations.count, 'BWC Claim') %></h2>
+        <div id="claim-calculations">
+          <%= render partial: 'claim_calculations/claims', locals: { claims: @claim_calculations } %>
+        </div>
+        <%= will_paginate @claim_calculations %>
+      </div>
+    </div>
+  </div>
+
   <%= render partial: 'policy_coverage_status_histories/policy_coverage_status_histories', locals: { status_histories: @policy_calculation.policy_coverage_status_histories } %>
   <div class="container">
     <%= render partial: 'policy_program_histories/policy_program_histories', locals: { program_histories: @policy_calculation.policy_program_histories } %>
   </div>
 <% end %>
+
+<script>
+  $(function () {
+    if (parseInt("<%= @page || 0 %>") > 0) {
+      $('html, body').animate({
+        scrollTop: $("#claim-calculations").offset().top - 150
+      }, 500);
+    }
+  });
+</script>

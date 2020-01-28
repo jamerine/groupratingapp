@@ -2,7 +2,7 @@ class GroupRatingCalculation
   def initialize account, options={}
     @account = account
     @policy_calculation = account.policy_calculation
-    @manual_class_calculations = @policy_calculation.manual_class_calculations
+    @manual_class_calculations = @policy_calculation&.manual_class_calculations
   end
 
   def calculate
