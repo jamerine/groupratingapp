@@ -143,11 +143,12 @@
             <% new_mod = modifier - original_modifier_as_percent %>
             <% new_modifier = (modifier.to_f / 100.00).to_f %>
             <% mod_amount = new_mod * ntm %>
+            <% new_premium = @policy_calculation.calculate_premium_for_risk(new_modifier) %>
 
             <tr style="<%= 'font-weight: 700;' if index == 4 %>">
               <td><%= number_with_precision(new_modifier, precision: 2, delimiter: ',') %>
               <td><%= number_with_precision(experience_group_modidified_losses_total + mod_amount, precision: 2, delimiter: ',') %></td>
-              <td><%= number_with_precision(@policy_calculation.calculate_premium_for_risk(new_modifier), precision: 2, delimiter: ',') %></td>
+              <td><%= number_with_precision(new_premium.nan? ? 0.00 : new_premium, precision: 2, delimiter: ',') %></td>
             </tr>
           <% end %>
         </tbody>
