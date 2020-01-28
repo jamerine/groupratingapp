@@ -186,13 +186,15 @@ class ManualClassCalculation < ActiveRecord::Base
   def calculate_estimated_premium(market_rate)
     administrative_rate = BwcCodesConstantValue.find_by(name: 'administrative_rate', completed_date: nil).rate
     payroll_amount      = self.manual_class_estimated_group_premium / self.manual_class_group_total_rate
+    payroll_amount      = payroll_amount.nan? ? 0.0 : payroll_amount
     rate                = (((1 + market_rate) * self.manual_class_base_rate).round(2) * (1 + administrative_rate)).round(4) / 100
 
     (payroll_amount * rate).round(2)
   end
 
   def calculate_potential_premium(new_mod_rate, administrative_rate)
-    payroll_amount = self.manual_class_estimated_individual_premium / self.manual_class_individual_total_rate
+    payroll_amount = (self.manual_class_estimated_individual_premium / self.manual_class_individual_total_rate)
+    payroll_amount = payroll_amount.nan? ? 0.0 : payroll_amount
     rate           = (((1 + new_mod_rate) * self.manual_class_base_rate).round(2) * (1 + administrative_rate)).round(4) / 100
 
     (payroll_amount * rate).round(2)

@@ -1,40 +1,32 @@
-
-      <table class="table table-striped table-bordered">
-        <thead class="bg-primary">
-          <tr>
-            <th>Claim Number</th>
-            <th>Claimant Name</th>
-            <th>Injury Date</th>
-            <th>Handicap Percent</th>
-            <th>Comp Awarded</th>
-            <th>Medical Paid</th>
-            <th>Mira Reserve</th>
-            <th>Unlimited Limited Loss</th>
-            <th>Mod. Losses Group</th>
-            <th>Mod. Losses Individual</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% claims.each do |claim| %>
-            <tr>
-              <td><%= link_to "#{claim.claim_number}", claim_calculation_path(claim), target: '_blank' %></td>
-              <td><%= claim.claimant_name&.slice(0..20) %></td>
-              <td><%= claim.claim_injury_date&.strftime("%m/%d/%y") %></td>
-              <td><%= number_to_percentage(claim.claim_handicap_percent * 100, precision: 0) %></td>
-              <td><%= number_to_currency(claim.comp_awarded, precision: 0) %></td>
-              <td><%= number_to_currency(claim.medical_paid, precision: 0) %></td>
-              <td><%= number_to_currency(claim.mira_reserve, precision: 0) %></td>
-              <td><%= number_to_currency(claim.claim_unlimited_limited_loss, precision: 0) %></td>
-              <td><%= number_to_currency(claim.claim_modified_losses_group_reduced, precision: 0) %></td>
-              <td><%= number_to_currency(claim.claim_modified_losses_individual_reduced, precision: 0) %></td>
-            </tr>
-          <% end %>
-        </tbody>
-      </table>
-
-<script>
-  // $('.datatable').DataTable({
-  //   order: [[0, 'asc']],
-  //   lengthMenu: [[25, 50, 75, 100, -1], [25, 50, 75, 100, "All"]]
-  // });
-</script>
+<table class="table table-striped table-bordered">
+  <thead class="bg-primary">
+    <tr>
+      <th>Claim Number</th>
+      <th>Claimant Name</th>
+      <th>Injury Date</th>
+      <th>Handicap Percent</th>
+      <th>Comp Awarded</th>
+      <th>Medical Paid</th>
+      <th>Mira Reserve</th>
+      <th>Unlimited Limited Loss</th>
+      <th>Mod. Losses Group</th>
+      <th>Mod. Losses Individual</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% claims.each do |claim| %>
+      <tr>
+        <td><%= link_to "#{claim.claim_number}", claim_calculation_path(claim), target: '_blank' %></td>
+        <td><%= claim.claimant_name&.slice(0..20) %></td>
+        <td><%= claim.claim_injury_date&.strftime("%m/%d/%y") %></td>
+        <td><%= number_to_percentage(claim.claim_handicap_percent * 100, precision: 0) %></td>
+        <td><%= number_to_currency(claim.comp_awarded, precision: 0) %></td>
+        <td><%= number_to_currency(claim.medical_paid, precision: 0) %></td>
+        <td><%= number_to_currency(claim.mira_reserve, precision: 0) %></td>
+        <td><%= number_to_currency(claim.claim_unlimited_limited_loss, precision: 0) %></td>
+        <td><%= number_to_currency(claim.claim_modified_losses_group_reduced, precision: 0) %></td>
+        <td><%= number_to_currency(claim.claim_modified_losses_individual_reduced, precision: 0) %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
