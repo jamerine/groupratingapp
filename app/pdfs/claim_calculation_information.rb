@@ -203,8 +203,7 @@ class ClaimCalculationInformation < PdfReport
 
     move_down 15
     stroke_horizontal_rule
-
-    start_new_page
+    move_down 10
 
     text "Medical:", style: :bold
     move_down 5
