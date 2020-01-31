@@ -16,8 +16,10 @@
               <dt>Injury Type</dt>
               <dd><%= @claim_calculation&.claim_mira_ncci_injury_type %></dd>
 
-              <dt>Total Loss of Claim:</dt>
-              <dd><%= number_to_currency(@claim_calculation&.total_loss_of_claim, precision: 0) %></dd>
+              <dt>Individual Total Modified Losses:</dt>
+              <dd><%= number_to_currency(@claim_calculation&.claim_modified_losses_individual_reduced, precision: 0) %></dd>
+<!--              <dt>Policy Ind. TML:</dt>-->
+<!--              <dd><%#= number_to_currency(@claim_calculation&.policy_calculation&.policy_total_modified_losses_individual_reduced, precision: 0) %></dd>-->
 
               <dt>Max Value:</dt>
               <dd><%= number_to_currency(@claim_calculation&.max_value, precision: 0) %></dd>

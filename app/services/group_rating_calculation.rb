@@ -6,10 +6,10 @@ class GroupRatingCalculation
   end
 
   def calculate
-    @policy_calculation.calculate_experience
-    @policy_calculation.calculate_premium
-    @account.group_rating
-    @account.group_retro
+    @policy_calculation&.calculate_experience
+    @policy_calculation&.calculate_premium
+    @account&.group_rating
+    @account&.group_retro
   end
 
 end
