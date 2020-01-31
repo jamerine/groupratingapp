@@ -10,7 +10,11 @@ var minCharsBeforeSearch      = 3,
 function policySearchListenerAndResults() {
   setPolicySearchElements();
 
+  var timeout = null;
+
   $policySearchGroup.keyup(function (e) {
+    clearTimeout(timeout);
+
     if (e.key === 'Enter') e.preventDefault();
     if (e.key === 'Escape') {
       $policySearchSpinner.fadeOut();
@@ -19,7 +23,9 @@ function policySearchListenerAndResults() {
       $policySearchResults.addClass('hidden');
     }
 
-    showPolicySearchResultsAsTypeaheadSuggestions();
+    timeout = setTimeout(function () {
+      showPolicySearchResultsAsTypeaheadSuggestions();
+    }, 1000);
   });
 
   $policySearchGroup.click(function (event) {

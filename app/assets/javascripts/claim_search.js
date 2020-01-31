@@ -10,8 +10,10 @@ var minCharsBeforeSearch = 3,
 function claimSearchListenerAndResults() {
   setClaimSearchElements();
 
+  var timeout = null;
+
   $searchGroup.keyup(function (e) {
-    console.log(e.key);
+    clearTimeout(timeout);
 
     if (e.key === 'Enter') e.preventDefault();
     if (e.key === 'Escape') {
@@ -21,7 +23,9 @@ function claimSearchListenerAndResults() {
       $claimSearchResults.addClass('hidden');
     }
 
-    showSearchResultsAsTypeaheadSuggestions();
+    timeout = setTimeout(function () {
+      showSearchResultsAsTypeaheadSuggestions();
+    }, 1000);
   });
 
   $searchGroup.click(function (event) {
