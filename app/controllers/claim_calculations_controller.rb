@@ -17,4 +17,19 @@ class ClaimCalculationsController < ApplicationController
 
     render json: { matchingClaimsList: render_to_string('claim_calculations/_search-results', layout: false) }
   end
+
+  def export
+    @claim_calculation = ClaimCalculation.find(params[:claim_calculation_id])
+
+    respond_to do |format|
+      format.html
+      format.pdf do
+        pdf = ClaimCalculationInformation.new(@claim_calculation, view_context)
+
+        send_data pdf.render, filename: "#{Date.current.to_s}_#{ @claim_calculation.claim_number }_claim_information.pdf",
+                  type:                 "application/pdf",
+                  disposition:          "inline"
+      end
+    end
+  end
 end
