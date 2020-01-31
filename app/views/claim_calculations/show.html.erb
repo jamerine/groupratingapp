@@ -48,7 +48,10 @@
 
       <div class="col-md-4">
         <div class="panel panel-primary">
-          <div class="panel-heading">Indemnity</div>
+          <div class="panel-heading">
+            Indemnity
+            <%= link_to 'Export', claim_calculation_export_path(@claim_calculation, format: :pdf), class: 'btn btn-sm btn-success pull-right', target: '_blank', style: 'margin-top: -5px;' %>
+          </div>
           <div class="panel-body">
             <dl class="dl-horizontal">
               <dt>Reducible Amount:</dt>
@@ -161,7 +164,6 @@
               </ul>
               <div class="claim-number">
                 Claim Number: <%= @claim_calculation.claim_number&.strip %>
-                <%= link_to 'Export', claim_calculation_export_path(@claim_calculation, format: :pdf), class: 'btn btn-sm btn-info', target: '_blank', style: 'margin-left: 5px;' %>
               </div>
             </div>
             <div class="panel-body tab-content">
