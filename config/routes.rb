@@ -436,11 +436,13 @@ Rails.application.routes.draw do
   end
 
   resources :claim_calculations do
-    resources :claim_notes
+    get :export
 
     collection do
       get :search
     end
+
+    resources :claim_notes
   end
 
   resources :claim_note_categories

@@ -161,6 +161,7 @@
               </ul>
               <div class="claim-number">
                 Claim Number: <%= @claim_calculation.claim_number&.strip %>
+                <%= link_to 'Export', claim_calculation_export_path(@claim_calculation, format: :pdf), class: 'btn btn-sm btn-info', target: '_blank', style: 'margin-left: 5px;' %>
               </div>
             </div>
             <div class="panel-body tab-content">
@@ -439,10 +440,6 @@
                         <tr>
                           <td>Medical Travel Payments</td>
                           <td><%= @mira.medical_travel_payments %></td>
-                        </tr>
-                        <tr>
-                          <td>Medical Prostheses Exam Payments</td>
-                          <td><%= @mira.medical_prostheses_exam_payments %></td>
                         </tr>
                         <tr>
                           <td>Medical X-Rays And Radiology Payments</td>
