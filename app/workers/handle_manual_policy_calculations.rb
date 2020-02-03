@@ -4,9 +4,10 @@ class HandleManualPolicyCalculations
 
   sidekiq_options queue: :handle_manual_policy_calculations, retry: 1
 
-  def perform
+  def perform(representative_number)
+    return unless representative_number.present?
     # Post Task Execution fix to set all Estimates to 0.00. Per client request: September, 2019
-    PayrollCalculation.where(reporting_type: 'E').where('manual_class_payroll > 0.00').each do |payroll_calculation|
+    PayrollCalculation.where(reporting_type: 'E', representative_number: representative_number).where('manual_class_payroll > 0.00').each do |payroll_calculation|
       HandleManualPolicyCalculationsProcess.perform_async(payroll_calculation.id)
     end
 
