@@ -20,7 +20,7 @@ class PolicyCalculationsController < ApplicationController
     @policy_demographics       = FinalEmployerDemographicsInformation.find_by(policy_number: @policy_calculation.policy_number)
     @manual_class_calculations = ManualClassCalculation.where(policy_calculation_id: @policy_calculation.id)
     @page                      = params[:page]
-    @claim_calculations        = @policy_calculation.claim_calculations.order(:claim_injury_date).page(@page)
+    @claim_calculations        = @policy_calculation.claim_calculations.order(claim_injury_date: :desc).page(@page)
     @representative            = Representative.find(@policy_calculation.representative_id)
     @new_payroll_calculation   = PayrollCalculation.new
   end
