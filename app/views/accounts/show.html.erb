@@ -4,44 +4,62 @@
     <div class="jumbotron text-center">
       <div class="row">
         <div class="col-md-3">
-          <h3><small>Policy Number:</small></h3>
+          <h3>
+            <small>Policy Number:</small>
+          </h3>
           <h3><%= @account.policy_calculation.policy_number %></h3>
         </div>
         <div class="col-md-6">
-          <h3><small>Acccount:</small></h3>
+          <h3>
+            <small>Acccount:</small>
+          </h3>
           <h3><%= @account.name.try(:titleize) %></h3>
         </div>
         <div class="col-md-3">
-          <h3><small>Account Status:</small></h3>
+          <h3>
+            <small>Account Status:</small>
+          </h3>
           <h3><%= @account.status %></h3>
         </div>
       </div>
       <div class="row">
         <div class="col-md-3">
-          <h3><small>Representative:</small></h3>
+          <h3>
+            <small>Representative:</small>
+          </h3>
           <h4><%= @account.representative.company_name %></h4>
         </div>
         <div class="col-md-6">
-          <h3><small>Address:</small></h3>
-          <h4><%=  @account.try(:street_address).try(:titleize) %>, <%=  @account.try(:street_address_2).try(:titleize) %></h4>
-          <h4> <%=  @account.try(:city).try(:titleize) %>, <%= @account.try(:state) %> <%= @account.zip_code %></h4>
+          <h3>
+            <small>Address:</small>
+          </h3>
+          <h4><%= @account.try(:street_address).try(:titleize) %>, <%= @account.try(:street_address_2).try(:titleize) %></h4>
+          <h4> <%= @account.try(:city).try(:titleize) %>, <%= @account.try(:state) %> <%= @account.zip_code %></h4>
         </div>
         <div class="col-md-3">
-          <h3><small>Updated On:</small></h3>
+          <h3>
+            <small>Updated On:</small>
+          </h3>
           <h4><%= @account.updated_at.in_time_zone("America/New_York").strftime("%m/%d/%y %I:%M %p") %></h4>
         </div>
       </div>
       <div class="row">
         <div class="col-md-3">
-          <h3><small>Business Phone Number:</small></h3>
+          <h3>
+            <small>Business Phone Number:</small>
+          </h3>
           <h4><%= @account&.business_phone_number %></h4>
         </div>
         <div class="col-md-6">
-          <h3><small>Business Email:</small></h3>
+          <h3>
+            <small>Business Email:</small>
+          </h3>
           <h4><%= @account&.business_email_address %></h4>
         </div>
         <div class="col-md-3">
-          <h3><small>Business Website:</small></h3>
+          <h3>
+            <small>Business Website:</small>
+          </h3>
           <h4><%= @account&.website_url %></h4>
         </div>
       </div>
@@ -59,262 +77,263 @@
     </div>
   </div>
 
-<div class="container">
+  <div class="container">
     <div class="row">
       <h3>Account Current Program Qualification</h3>
       <% if @account.user_override %>
-      <p>USER OVERRIDE <input type="checkbox" checked="checked" disabled></p>
+        <p>USER OVERRIDE <input type="checkbox" checked="checked" disabled></p>
       <% end %>
-        <div class="row">
-          <% unless @account.group_rating_exceptions.empty? %>
-            <h4>Group Rating Exceptions:</h4>
-            <% @account.group_rating_exceptions.each do |exception| %>
-              <div class="col-md-4">
-                <h5><%= exception.exception_reason.humanize %></h5>
-              </div>
-            <% end %>
+      <div class="row">
+        <% unless @account.group_rating_exceptions.empty? %>
+          <h4>Group Rating Exceptions:</h4>
+          <% @account.group_rating_exceptions.each do |exception| %>
+            <div class="col-md-4">
+              <h5><%= exception.exception_reason.humanize %></h5>
+            </div>
           <% end %>
-        </div>
+        <% end %>
+      </div>
 
-
-    <table class="table table-hover table-striped table-condensed">
-      <thead>
-        <tr>
-          <th></th>
-          <th>Program</th>
-          <th>Qualification</th>
-          <th>Group Code</th>
-          <th>Discount</th>
-          <th>Premium</th>
-          <th>Savings</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <% if  @account.group_rating_qualification == 'accept'  %>
-            <td><%= link_to 'Quote',new_quote_path(account_id: params[:id], program_type: 'group_rating', fees: (@account.fee_override.nil? ? @account.group_fees : @account.fee_override), group_code: @account.group_rating_group_number, quote_tier: @account.group_rating_tier), class:'btn btn-sm btn-info' %></td>
-          <% else %>
-            <td><%= link_to 'Quote',new_quote_path(account_id: params[:id], program_type: 'group_rating', fees: (@account.fee_override.nil? ? @account.group_fees : @account.fee_override), group_code: @account.group_rating_group_number, quote_tier: @account.group_rating_tier), class:'btn btn-sm btn-info disabled' %> </td>
-          <% end %>
-          <td>Group Rating</td>
-          <td><%= link_to @account.group_rating_qualification, '#', "data-toggle" => "modal", "data-target" => "#groupRatingRejectModal", "data-rejections" => @account.group_rating_rejections %> </td>
-          <td><%= @account.group_rating_group_number %> </td>
-          <td><%= @account.group_rating_tier %> </td>
-          <td><%= number_to_currency(@account.group_premium) %></td>
-          <td><%= number_to_currency(@account.group_savings) %></td>
-          <td>
-            <% if policy(@account).edit? %>
-              <%= link_to "Override", account_edit_group_rating_path(params[:id]), class: 'btn btn-primary btn-sm', method: :get %>
-            <% else %>
-              <%= link_to "Override", account_edit_group_rating_path(params[:id]), class: 'btn btn-default btn-sm disabled', method: :get %>
-            <% end %>
-          </td>
-
-        </tr>
-        <tr>
-          <% if  @account.group_retro_qualification == 'accept'  %>
-            <td><%= link_to 'Quote',quote_new_group_retro_path(account_id: params[:id], program_type: 'group_retro', fees: (@account.fee_override.nil? ? @account.group_fees : @account.fee_override), group_code: @account.group_retro_group_number, quote_tier: @account.group_retro_tier, quote_id: 1), class:'btn btn-sm btn-info' %></td>
-          <% else %>
-            <td><%= link_to 'Quote',new_quote_path(account_id: params[:id], program_type: 'group_retro', fees: (@account.fee_override.nil? ? @account.group_fees : @account.fee_override), group_code: @account.group_retro_group_number, quote_tier: @account.group_retro_tier), class:'btn btn-sm btn-info disabled' %> </td>
-          <% end %>
-
-          <td>Group Retro</td>
-          <td><%= link_to @account.group_retro_qualification, '#', "data-toggle" => "modal", "data-target" => "#groupRetroRejectModal", "data-rejections" => @account.group_rating_rejections %> </td>
-          <td><%= @account.group_retro_group_number %></td>
-          <td><%= @account.group_retro_tier %></td>
-          <td><%= number_to_currency(@account.group_retro_premium) %></td>
-          <td><%= number_to_currency(@account.group_retro_savings) %></td>
-          <td>
-            <% if policy(@account).edit? %>
-              <%= link_to "Override", account_edit_group_retro_path(params[:id]), class: 'btn btn-primary btn-sm', method: :get %>
-            <% else %>
-              <%= link_to "Override", account_edit_group_retro_path(params[:id]), class: 'btn btn-default btn-sm disabled', method: :get %>
-            <% end %>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-</div>
-
-<div class="container">
-  <div class="dropdown">
-    <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-      Reports
-      <span class="caret"></span>
-    </button>
-    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-      <!-- <li><%= link_to 'Risk Report', account_risk_report_path(account_id: @account.id, group_rating_id: @group_rating.id, format: :pdf) %></li> -->
-      <li><%= link_to 'Generate Risk Report', account_new_risk_report_path(account_id: @account.id, group_rating_id: @group_rating.id) %></li>
-    </ul>
-    <% unless @account.predecessor? || @account.invalid_policy_number? %>
-      <% if policy(@account).edit? %>
-        <%= link_to "Retainer Quote", new_quote_path(account_id: @account.id, program_type: 'retainer', fees: @account.group_fees, group_code: ''), class: 'btn btn-success'%>
-      <% else %>
-        <%= link_to "Retainer Quote", new_quote_path(account_id: @account.id, program_type: 'retainer', fees: @account.group_fees, group_code: ''), class: 'btn btn-success disabled'%>
-      <% end %>
-    <% end %>
-    <%= link_to "Change History", versions_path(item_id: @account.id, item_type: @account.class.name), class: 'btn btn-info', method: :get %>
-  </div>
-</div>
-
-<div class="container">
-  <div class="row text-center">
-    <%= render partial: 'policy_calculations/policy_snapshot', locals: { policy_calculation: @account.policy_calculation, account: @account} %>
-  </div>
-</div>
-
-<div class="container">
-  <div class="row">
-    <h3>Account Current Quotes</h3>
-    <% if @account.quotes.nil? %>
-      <p>No quote generated</p>
-    <% else %>
-      <table class="table table-hover table-striped">
+      <table class="table table-hover table-striped table-condensed">
         <thead>
           <tr>
-            <th>Quote Date</th>
-            <th>Quote Period</th>
-            <th>Program type</th>
-            <th>Invoice</th>
-            <th>Status</th>
-            <th>Discount Tier</th>
-            <th>Fees</th>
-            <th>AC2</th>
-            <th>AC26</th>
-            <th>U53</th>
-            <th>Contract</th>
-            <th>Quest.</th>
+            <th></th>
+            <th>Program</th>
+            <th>Qualification</th>
+            <th>Group Code</th>
+            <th>Discount</th>
+            <th>Premium</th>
+            <th>Savings</th>
             <th></th>
           </tr>
         </thead>
         <tbody>
-          <% @account.quotes.find_each do |quote| %>
-            <tr>
-              <td><%= quote.try(:created_at).try(:strftime, "%-m/%-d/%y") %>
-              <td><%= quote.try(:quote_year_lower_date).try(:strftime, "%-m/%-d/%y") %> - <%= quote.try(:quote_year_upper_date).try(:strftime, "%-m/%-d/%y")  %></td>
-              <td><%= quote.try(:program_type).try(:humanize)  %></td>
-              <td> <%= quote.try(:invoice_number) %> </td>
-              <td><%= quote.try(:status).try(:humanize)  %></td>
-              <td><%= quote.try(:quote_tier) %></td>
-              <td><%= number_to_currency(quote.try(:fees))  %></td>
-              <td>
-                <% if quote.ac2_signed_on.nil? %>
-                  <span class="glyphicon glyphicon-remove text-danger" aria-hidden="true"></span>
-                <% else %>
-                  <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
-                <% end %>
-              </td>
-              <td>
-                <% if quote.ac26_signed_on.nil? %>
-                  <span class="glyphicon glyphicon-remove text-danger" aria-hidden="true"></span>
-                <% else %>
-                  <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
-                <% end %>
-              </td>
-              <td>
-                <% if quote.u153_signed_on.nil? %>
-                  <span class="glyphicon glyphicon-remove text-danger" aria-hidden="true"></span>
-                <% else %>
-                  <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
-                <% end %>
-              </td>
-              <td>
-                <% if quote.contract_signed_on.nil? %>
-                  <span class="glyphicon glyphicon-remove text-danger" aria-hidden="true"></span>
-                <% else %>
-                  <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
-                <% end %>
-              </td>
-              <td>
-                <% if quote.questionnaire_signed_on.nil? %>
-                  <span class="glyphicon glyphicon-remove text-danger" aria-hidden="true"></span>
-                <% else %>
-                  <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
-                <% end %>
-              </td>
-              <td><%= link_to 'Manage', edit_quote_path(quote.id)  %></td>
+          <tr>
+            <% if @account.group_rating_qualification == 'accept' %>
+              <td><%= link_to 'Quote', new_quote_path(account_id: params[:id], program_type: 'group_rating', fees: (@account.fee_override.nil? ? @account.group_fees : @account.fee_override), group_code: @account.group_rating_group_number, quote_tier: @account.group_rating_tier), class: 'btn btn-sm btn-info' %></td>
+            <% else %>
+              <td><%= link_to 'Quote', new_quote_path(account_id: params[:id], program_type: 'group_rating', fees: (@account.fee_override.nil? ? @account.group_fees : @account.fee_override), group_code: @account.group_rating_group_number, quote_tier: @account.group_rating_tier), class: 'btn btn-sm btn-info disabled' %> </td>
+            <% end %>
+            <td>Group Rating</td>
+            <td><%= link_to @account.group_rating_qualification, '#', "data-toggle" => "modal", "data-target" => "#groupRatingRejectModal", "data-rejections" => @account.group_rating_rejections %> </td>
+            <td><%= @account.group_rating_group_number %> </td>
+            <td><%= @account.group_rating_tier %> </td>
+            <td><%= number_to_currency(@account.group_premium) %></td>
+            <td><%= number_to_currency(@account.group_savings) %></td>
+            <td>
+              <% if policy(@account).edit? %>
+                <%= link_to "Override", account_edit_group_rating_path(params[:id]), class: 'btn btn-primary btn-sm', method: :get %>
+              <% else %>
+                <%= link_to "Override", account_edit_group_rating_path(params[:id]), class: 'btn btn-default btn-sm disabled', method: :get %>
+              <% end %>
+            </td>
+
           </tr>
-          <% end %>
+          <tr>
+            <% if @account.group_retro_qualification == 'accept' %>
+              <td><%= link_to 'Quote', quote_new_group_retro_path(account_id: params[:id], program_type: 'group_retro', fees: (@account.fee_override.nil? ? @account.group_fees : @account.fee_override), group_code: @account.group_retro_group_number, quote_tier: @account.group_retro_tier, quote_id: 1), class: 'btn btn-sm btn-info' %></td>
+            <% else %>
+              <td><%= link_to 'Quote', new_quote_path(account_id: params[:id], program_type: 'group_retro', fees: (@account.fee_override.nil? ? @account.group_fees : @account.fee_override), group_code: @account.group_retro_group_number, quote_tier: @account.group_retro_tier), class: 'btn btn-sm btn-info disabled' %> </td>
+            <% end %>
+
+            <td>Group Retro</td>
+            <td><%= link_to @account.group_retro_qualification, '#', "data-toggle" => "modal", "data-target" => "#groupRetroRejectModal", "data-rejections" => @account.group_rating_rejections %> </td>
+            <td><%= @account.group_retro_group_number %></td>
+            <td><%= @account.group_retro_tier %></td>
+            <td><%= number_to_currency(@account.group_retro_premium) %></td>
+            <td><%= number_to_currency(@account.group_retro_savings) %></td>
+            <td>
+              <% if policy(@account).edit? %>
+                <%= link_to "Override", account_edit_group_retro_path(params[:id]), class: 'btn btn-primary btn-sm', method: :get %>
+              <% else %>
+                <%= link_to "Override", account_edit_group_retro_path(params[:id]), class: 'btn btn-default btn-sm disabled', method: :get %>
+              <% end %>
+            </td>
+          </tr>
         </tbody>
       </table>
-
-    <% end %>
-  </div>
-</div>
-
-<div class="container">
-  <div class="row">
-    <%= render partial: 'account_programs/account_programs', locals: {account_programs: @account.account_programs} %>
-  </div>
-</div>
-
-
-<div class="modal fade" id="groupRatingRejectModal" role="dialog">
-  <div class="modal-dialog modal-sm">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Group Rating Rejections</h4>
-      </div>
-      <div class="modal-body">
-        <ul>
-        <% if @group_rating_rejections.empty? %>
-            <h3>No Rejections</h3>
-        <% else %>
-          <% @group_rating_rejections.find_each do |reject| %>
-            <li><%= reject.reject_reason.humanize %></li>
-          <% end %>
-        <% end %>
-        </ul>
-
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-      </div>
     </div>
   </div>
-</div>
-
-<div class="modal fade" id="groupRetroRejectModal" role="dialog">
-  <div class="modal-dialog modal-sm">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Group Retro Rejections</h4>
-      </div>
-      <div class="modal-body">
-        <ul>
-        <% if @group_retro_rejections.empty? %>
-            <h3>No Rejections</h3>
-        <% else %>
-          <% @group_retro_rejections.find_each do |reject| %>
-            <li><%= reject.reject_reason.humanize %></li>
-          <% end %>
-        <% end %>
-        </ul>
-
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-      </div>
-    </div>
-  </div>
-</div>
 
   <div class="container">
-    <div class="row">
-      <%= render partial: 'notes/recent_account_notes', locals: { notes: @notes } %>
+    <div class="dropdown">
+      <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+        Reports
+        <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+        <!-- <li><%= link_to 'Risk Report', account_risk_report_path(account_id: @account.id, group_rating_id: @group_rating.id, format: :pdf) %></li> -->
+        <li><%= link_to 'Generate Risk Report', account_new_risk_report_path(account_id: @account.id, group_rating_id: @group_rating.id) %></li>
+      </ul>
+      <% unless @account.predecessor? || @account.invalid_policy_number? %>
+        <% if policy(@account).edit? %>
+          <%= link_to "Retainer Quote", new_quote_path(account_id: @account.id, program_type: 'retainer', fees: @account.group_fees, group_code: ''), class: 'btn btn-success' %>
+        <% else %>
+          <%= link_to "Retainer Quote", new_quote_path(account_id: @account.id, program_type: 'retainer', fees: @account.group_fees, group_code: ''), class: 'btn btn-success disabled' %>
+        <% end %>
+      <% end %>
+      <%= link_to "Change History", versions_path(item_id: @account.id, item_type: @account.class.name), class: 'btn btn-info', method: :get %>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="row text-center">
+      <%= render partial: 'policy_calculations/policy_snapshot', locals: { policy_calculation: @account.policy_calculation, account: @account } %>
     </div>
   </div>
 
   <div class="container">
     <div class="row">
-      <%= render partial: 'affiliates/affiliates', locals: { account: @account, affiliates: @account.affiliates} %>
+      <h3>Account Current Quotes</h3>
+      <% if @account.quotes.nil? %>
+        <p>No quote generated</p>
+      <% else %>
+        <table class="table table-hover table-striped">
+          <thead>
+            <tr>
+              <th>Quote Date</th>
+              <th>Quote Period</th>
+              <th>Program type</th>
+              <th>Invoice</th>
+              <th>Status</th>
+              <th>Discount Tier</th>
+              <th>Fees</th>
+              <th>AC2</th>
+              <th>AC26</th>
+              <th>U53</th>
+              <th>Contract</th>
+              <th>Quest.</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @account.quotes.find_each do |quote| %>
+              <tr>
+                <td><%= quote.try(:created_at).try(:strftime, "%-m/%-d/%y") %>
+                <td><%= quote.try(:quote_year_lower_date).try(:strftime, "%-m/%-d/%y") %> - <%= quote.try(:quote_year_upper_date).try(:strftime, "%-m/%-d/%y") %></td>
+                <td><%= quote.try(:program_type).try(:humanize) %></td>
+                <td> <%= quote.try(:invoice_number) %> </td>
+                <td><%= quote.try(:status).try(:humanize) %></td>
+                <td><%= quote.try(:quote_tier) %></td>
+                <td><%= number_to_currency(quote.try(:fees)) %></td>
+                <td>
+                  <% if quote.ac2_signed_on.nil? %>
+                    <span class="glyphicon glyphicon-remove text-danger" aria-hidden="true"></span>
+                  <% else %>
+                    <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+                  <% end %>
+                </td>
+                <td>
+                  <% if quote.ac26_signed_on.nil? %>
+                    <span class="glyphicon glyphicon-remove text-danger" aria-hidden="true"></span>
+                  <% else %>
+                    <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+                  <% end %>
+                </td>
+                <td>
+                  <% if quote.u153_signed_on.nil? %>
+                    <span class="glyphicon glyphicon-remove text-danger" aria-hidden="true"></span>
+                  <% else %>
+                    <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+                  <% end %>
+                </td>
+                <td>
+                  <% if quote.contract_signed_on.nil? %>
+                    <span class="glyphicon glyphicon-remove text-danger" aria-hidden="true"></span>
+                  <% else %>
+                    <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+                  <% end %>
+                </td>
+                <td>
+                  <% if quote.questionnaire_signed_on.nil? %>
+                    <span class="glyphicon glyphicon-remove text-danger" aria-hidden="true"></span>
+                  <% else %>
+                    <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+                  <% end %>
+                </td>
+                <td><%= link_to 'Manage', edit_quote_path(quote.id) %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+
+      <% end %>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="row">
+      <%= render partial: 'account_programs/account_programs', locals: { account_programs: @account.account_programs } %>
+    </div>
+  </div>
+
+
+  <div class="modal fade" id="groupRatingRejectModal" role="dialog">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Group Rating Rejections</h4>
+        </div>
+        <div class="modal-body">
+          <ul>
+            <% if @group_rating_rejections.empty? %>
+              <h3>No Rejections</h3>
+            <% else %>
+              <% @group_rating_rejections.find_each do |reject| %>
+                <li><%= reject.reject_reason.humanize %></li>
+              <% end %>
+            <% end %>
+          </ul>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="groupRetroRejectModal" role="dialog">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Group Retro Rejections</h4>
+        </div>
+        <div class="modal-body">
+          <ul>
+            <% if @group_retro_rejections.empty? %>
+              <h3>No Rejections</h3>
+            <% else %>
+              <% @group_retro_rejections.find_each do |reject| %>
+                <li><%= reject.reject_reason.humanize %></li>
+              <% end %>
+            <% end %>
+          </ul>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="row">
+      <div class="row">
+        <%= render partial: 'notes/recent_account_notes', locals: { notes: @notes } %>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="row">
+      <%= render partial: 'affiliates/affiliates', locals: { account: @account, affiliates: @account.affiliates } %>
     </div>
     <div class="row">
-      <%= render partial: 'contacts/accounts_contacts', locals: { account: @account, accounts_contacts: @account.accounts_contacts} %>
+      <%= render partial: 'contacts/accounts_contacts', locals: { account: @account, accounts_contacts: @account.accounts_contacts } %>
     </div>
   </div>
 
