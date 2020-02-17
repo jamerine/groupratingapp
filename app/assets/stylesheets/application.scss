@@ -12,6 +12,9 @@
  *
  *= require trix
  */
+
+$grid-float-breakpoint: 1285px;
+
 @import "normalize";
 @import "bootstrap-sprockets";
 @import "bootstrap";
@@ -41,6 +44,29 @@
   background: image-url("minute_men_hr_logo.jpg") center / contain no-repeat;
   width: 150px;
   margin-left: 25px;
+}
+
+.navbar-left {
+  li {
+    padding: 0;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1425px) {
+  ul.nav.navbar-nav {
+    li {
+      a {
+        padding: 15px 7.5px;
+      }
+    }
+  }
+}
+
+@media (max-width: 1285px) {
+  ul.nav.navbar-nav {
+    background-color: white;
+    text-align: center;
+  }
 }
 
 @media (max-width: 767px) {
@@ -230,7 +256,7 @@ $radius: 4px;
     .panel-body {
       padding: 0 10px;
 
-      table.table-bordered{
+      table.table-bordered {
         margin-bottom: 10px;
 
         th, td {
