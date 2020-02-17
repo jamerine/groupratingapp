@@ -714,7 +714,7 @@ class RiskReport < PdfReport
   def workers_comp_program_options_data
     # Experience Rated
     @experience_eligibility       = 'Yes'
-    @experience_projected_premium = @policy_calculation.policy_adjusted_individual_premium
+    @experience_projected_premium = @policy_calculation.policy_adjusted_individual_premium || 0
     @experience_costs             = 0
     @experience_maximum_risk      = 0
     @experience_total_cost        = @experience_projected_premium - @experience_costs
