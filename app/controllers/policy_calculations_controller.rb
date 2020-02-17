@@ -23,6 +23,7 @@ class PolicyCalculationsController < ApplicationController
     @claim_calculations        = @policy_calculation.claim_calculations.order(claim_injury_date: :desc).page(@page)
     @representative            = Representative.find(@policy_calculation.representative_id)
     @new_payroll_calculation   = PayrollCalculation.new
+    @notes                     = @account.notes.order(created_at: :desc).first(5)
   end
 
   def new

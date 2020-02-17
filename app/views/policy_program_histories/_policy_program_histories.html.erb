@@ -1,46 +1,50 @@
 <div class="container text-center">
-  <h2>BWC Policy Program History</h2>
-  <table class="table table-hover table-striped table-bordered" id="programHistoryTable">
-    <thead class="list-group active">
-      <tr class="header bg-primary">
-        <th></th>
-        <th>Start Date</th>
-        <th>End Date</th>
-        <th>EM Rate</th>
-        <th>Group</th>
-        <th>Group Code</th>
-        <th>Group Type</th>
-        <th>RRR</th>
-        <th>Deduct.</th>
-        <th>One Claim</th>
-        <th>Grow Ohio</th>
-        <th>EM Cap</th>
-        <th>Drug Free</th>
-        <th>ISSP</th>
-        <th>TWBNS</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% program_histories.order("reporting_period_start_date desc").each do |program_history| %>
-      <tr>
-        <td><%= link_to "View", policy_program_history_path(program_history.id), class: 'btn btn-sm btn-info' %></td>
-        <td><%= program_history.try(:reporting_period_start_date).try(:strftime,"%-m/%-d/%y") %></td>
-        <td><%= program_history.try(:reporting_period_end_date).try(:strftime,"%-m/%-d/%y") %></td>
-        <td><%= program_history.experience_modifier_rate %></td>
-        <td><%= program_history.group_participation_indicator %></td>
-        <td><%= program_history.group_code %></td>
-        <td><%= program_history.group_type %></td>
-        <td><%= program_history.rrr_participation_indicator %></td>
-        <td><%= program_history.deductible_participation_indicator %></td>
-        <td><%= program_history.ocp_participation_indicator %></td>
-        <td><%= program_history.grow_ohio_participation_indicator %></td>
-        <td><%= program_history.em_cap_participation_indicator %></td>
-        <td><%= program_history.drug_free_program_participation_indicator %></td>
-        <td><%= program_history.issp_participation_indicator %></td>
-        <td><%= program_history.twbns_participation_indicator %></td>
-      </tr>
-      <% end %>
+  <div class="row">
+    <div class="col-sm-12">
+      <h2>BWC Policy Program History</h2>
+      <table class="table table-hover table-striped table-bordered" id="programHistoryTable">
+        <thead class="list-group active">
+          <tr class="header bg-primary">
+            <th></th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>EM Rate</th>
+            <th>Group</th>
+            <th>Group Code</th>
+            <th>Group Type</th>
+            <th>RRR</th>
+            <th>Deduct.</th>
+            <th>One Claim</th>
+            <th>Grow Ohio</th>
+            <th>EM Cap</th>
+            <th>Drug Free</th>
+            <th>ISSP</th>
+            <th>TWBNS</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% program_histories.order("reporting_period_start_date desc").each do |program_history| %>
+            <tr>
+              <td><%= link_to "View", policy_program_history_path(program_history.id), class: 'btn btn-sm btn-info' %></td>
+              <td><%= program_history.try(:reporting_period_start_date).try(:strftime, "%-m/%-d/%y") %></td>
+              <td><%= program_history.try(:reporting_period_end_date).try(:strftime, "%-m/%-d/%y") %></td>
+              <td><%= program_history.experience_modifier_rate %></td>
+              <td><%= program_history.group_participation_indicator %></td>
+              <td><%= program_history.group_code %></td>
+              <td><%= program_history.group_type %></td>
+              <td><%= program_history.rrr_participation_indicator %></td>
+              <td><%= program_history.deductible_participation_indicator %></td>
+              <td><%= program_history.ocp_participation_indicator %></td>
+              <td><%= program_history.grow_ohio_participation_indicator %></td>
+              <td><%= program_history.em_cap_participation_indicator %></td>
+              <td><%= program_history.drug_free_program_participation_indicator %></td>
+              <td><%= program_history.issp_participation_indicator %></td>
+              <td><%= program_history.twbns_participation_indicator %></td>
+            </tr>
+          <% end %>
 
-    </tbody>
-  </table>
+        </tbody>
+      </table>
+    </div>
+  </div>
 </div>

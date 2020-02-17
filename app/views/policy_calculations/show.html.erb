@@ -23,8 +23,12 @@
   </div>
 
   <%= render partial: 'policy_coverage_status_histories/policy_coverage_status_histories', locals: { status_histories: @policy_calculation.policy_coverage_status_histories } %>
-  <div class="container">
-    <%= render partial: 'policy_program_histories/policy_program_histories', locals: { program_histories: @policy_calculation.policy_program_histories } %>
+  <%= render partial: 'policy_program_histories/policy_program_histories', locals: { program_histories: @policy_calculation.policy_program_histories } %>
+
+  <div class="container" style="margin-bottom: 50px">
+    <div class="row">
+      <%= render partial: 'notes/recent_account_notes', locals: { notes: @notes } %>
+    </div>
   </div>
 <% end %>
 
