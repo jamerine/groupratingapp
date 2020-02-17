@@ -77,30 +77,33 @@ Rails.application.configure do
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
 
-  config.action_mailer.default_url_options = { host: 'http://www.groupratingapp.herokuapp.com' }
-  #
+  config.action_mailer.default_url_options = { host: 'https://www.groupratingapp.switchboxinc.com' }
+
+  config.action_mailer.asset_host          = 'https://www.groupratingapp.switchboxinc.com'
+  config.action_controller.asset_host      = 'https://www.groupratingapp.switchboxinc.com'
+
   # config.action_mailer.smtp_settings = { port: 25 }
   #
   # config.action_mailer.delivery_method = :smtp
   #
-  # config.action_mailer.smtp_settings = {
-  #   address:              'smtp.gmail.com',
-  #   port:                 587,
-  #   domain:               'groupratingapp.herokuapp.com',
-  #   user_name:            'jason@dittoh.com',
-  #   password:             '<password>',
-  #   authentication:       'plain',
-  #   enable_starttls_auto: true
-  # }
+  config.action_mailer.smtp_settings = {
+    address:              'smtp.mailgun.org',
+    port:                 587,
+    domain:               'send.switchboxinc.com',
+    user_name:            'postmaster@send.switchboxinc.com',
+    password:             '89866cbed9d3fc6b4e3a322cfd18d159',
+    authentication:       'login',
+    enable_starttls_auto: true
+  }
 
   Rails.application.config.middleware.use ExceptionNotification::Rack,
-                                          # :email => {
-                                          #   :email_prefix         => "[ARM-PRODUCTION]",
-                                          #   :sender_address       => %{"Error!!" <donotreply@herokuapp.groupratingapp.com>},
-                                          #   :exception_recipients => %w{amoyer@switchboxinc.com}
-                                          # },
+                                          email: {
+                                            email_prefix:         "[ARM-PROD] ",
+                                            sender_address:       %{"notifier" <exceptions@switchboxinc.com>},
+                                            exception_recipients: %w{amoyer@switchboxinc.com}
+                                          },
                                           :slack => {
-                                            :webhook_url           => "https://hooks.slack.com/services/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",
+                                            :webhook_url           => "https://hooks.slack.com/services/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",
                                             :channel               => "#arm-errors",
                                             :additional_parameters => {
                                               :icon_url => "http://img.timeinc.net/time/photoessays/2010/halloween_costumes/sad_keanu.jpg",
