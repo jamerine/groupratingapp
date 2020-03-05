@@ -568,9 +568,8 @@ Rails.application.routes.draw do
     registrations: 'users/registrations',
   }
 
-  resources :users, except: :create
-
-  post 'create_user' => 'users#create', as: :create_user
+  resources :users
+  post 'create_user', to: 'users#create', as: :create_user
 
   resources :versions
 

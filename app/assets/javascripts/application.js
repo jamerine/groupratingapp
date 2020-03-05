@@ -12,14 +12,14 @@
 //
 //= require jquery
 //= require jquery_ujs
-//= require turbolinks
 //= require bootstrap
 //= require trix
-//= require_tree .
 //= require filterrific/filterrific-jquery
 //= require moment
 //= require bootstrap-datetimepicker
 //= require cocoon
+//= require select2
+//= require_tree .
 
 function validateFiles(inputFile) {
   var maxExceededMessage = "This file exceeds the maximum allowed file size (1 MB)";
