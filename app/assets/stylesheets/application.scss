@@ -92,6 +92,10 @@ main {
   text-align: center;
 }
 
+.jumbotron {
+  padding-top: 25px;
+}
+
 .jumbotron-white {
   background-color: white;
 }
@@ -281,12 +285,12 @@ $radius: 4px;
     margin: 0 0 3px;
 
     dt {
-      width: 65%;
+      width: 60%;
       text-align: left;
     }
 
     dd {
-      margin-left: calc(65% + 20px);
+      margin-left: calc(60% + 20px);
       width: auto;
       text-align: right;
     }
