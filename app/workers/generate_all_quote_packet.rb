@@ -1,5 +1,6 @@
 require 'combine_pdf'
 require 'net/http'
+require 'open-uri'
 require 'zip'
 
 class GenerateAllQuotePacket
@@ -24,6 +25,8 @@ class GenerateAllQuotePacket
           # Get the file object
           uri = URI(@quote.quote_generated.url)
           file_obj = Net::HTTP.get(uri) # => String
+
+          # file_obj = open(@quote.quote_generated.url)
 
           # Give a name to the file and start a new entry
           zip.put_next_entry("quote_#{@account.policy_number_entered}.pdf")
@@ -52,7 +55,7 @@ class GenerateAllQuotePacket
     tempZip.close
     tempZip.unlink
 
-    QuotePdfExportMailer.quote_pdf_export(representative_id, user_id, account_ids).deliver
+    QuotePdfExportMailer.quote_pdf_export(representative_id, user_id, account_ids).deliver_later
 
   end
 end
