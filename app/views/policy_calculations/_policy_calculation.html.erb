@@ -1,30 +1,51 @@
 <div class="jumbotron text-center">
   <div class="row">
     <div class="col-md-3">
-      <h5>Policy Number:</h5>
-      <h4><%= @policy_calculation.policy_number %></h4>
-      <h5>Policy Type:</h5>
-
-      <h5>Policy Status:</h5>
-      <h4><%= @policy_calculation.current_coverage_status %></h4>
+      <h3>
+        <small>Policy Number:</small>
+      </h3>
+      <h4><%= @account.policy_calculation.policy_number %></h4>
     </div>
     <div class="col-md-6">
-      <h2><%= @policy_calculation.business_name.titleize %></h2>
-      <p>Mailing: <%= @policy_calculation.mailing_address_line_1.try(:titleize) %>
-        , <%= @policy_calculation.mailing_address_line_2.try(:titleize) %><%= @policy_calculation.mailing_city.try(:titleize) %>
-        , <%= @policy_calculation.mailing_state.try(:upcase) %> <%= @policy_calculation.mailing_zip_code %></p>
-      <p>Location: <%= @policy_calculation.location_address_line_1.try(:titleize) %>
-        , <%= @policy_calculation.location_address_line_2.try(:titleize) %><%= @policy_calculation.location_city.try(:titleize) %>
-        , <%= @policy_calculation.location_state.try(:upcase) %> <%= @policy_calculation.location_zip_code %></p>
+      <h3>
+        <small>Policy Name:</small>
+      </h3>
+      <h2><%= @account.policy_calculation&.business_name&.titleize %></h2>
     </div>
-
     <div class="col-md-3">
-      <h5>Policy Updated at:</h5>
-      <h4><%= @policy_calculation.updated_at.try(:in_time_zone, "America/New_York").try(:strftime, "%m/%d/%y @ %I:%M %p") %></h4>
-      <h5>Status Effective Date:</h5>
-      <h4><%= @policy_calculation.coverage_status_effective_date.try(:strftime, "%b %d, %Y") %></h4>
-      <h5>Policy Creation Date:</h5>
-      <h4><%= @policy_calculation.policy_creation_date.try(:strftime, "%b %d, %Y") %></h4>
+      <h3>
+        <small>Account Status:</small>
+      </h3>
+      <h4><%= @account.status&.titleize %></h4>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-3">
+      <h3>
+        <small>Address:</small>
+      </h3>
+      <h4><%= @account.try(:street_address).try(:titleize) %>, <%= @account.try(:street_address_2).try(:titleize) %></h4>
+      <h4> <%= @account.try(:city).try(:titleize) %>, <%= @account.try(:state) %> <%= @account.zip_code %></h4>
+    </div>
+    <div class="col-md-6">
+      <h3>
+        <small>Business Phone Number:</small>
+      </h3>
+      <h4><%= @account&.business_phone_number %></h4>
+      <h3>
+        <small>Business Email:</small>
+      </h3>
+      <h4><%= @account&.business_email_address %></h4>
+      <h3>
+        <small>Business Website:</small>
+      </h3>
+      <h4><%= @account&.website_url %></h4>
+    </div>
+    <div class="col-md-3">
+      <h3>
+        <small>Updated On:</small>
+      </h3>
+      <h4><%= @account.updated_at.in_time_zone("America/New_York").strftime("%m/%d/%y %I:%M %p") %></h4>
     </div>
   </div>
 </div>

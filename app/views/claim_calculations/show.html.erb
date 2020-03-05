@@ -10,37 +10,34 @@
           <div class="panel-heading">Claim Information for: <%= @claim_calculation&.claimant_name&.titleize %></div>
           <div class="panel-body">
             <dl class="dl-horizontal">
-              <dt>Non At Fault:</dt>
-              <dd><%= @claim_calculation&.non_at_fault %></dd>
+              <dt>IW Name:</dt>
+              <dd><%= @claim_calculation&.claimant_name&.titleize %></dd>
 
-              <dt>Injury Type</dt>
-              <dd><%= @claim_calculation&.claim_mira_ncci_injury_type %></dd>
+              <dt>Address:</dt>
+              <dd></dd>
 
-              <dt>Individual Total Modified Losses:</dt>
-              <dd><%= number_to_currency(@claim_calculation&.claim_modified_losses_individual_reduced, precision: 0) %></dd>
+              <dt>Claim Number</dt>
+              <dd><%= @claim_calculation&.claim_number %></dd>
 
-              <dt>Max Value:</dt>
-              <dd><%= number_to_currency(@claim_calculation&.max_value, precision: 0) %></dd>
+              <dt>Date of Injury:</dt>
+              <dd><%= @claim_calculation&.mira_detail_record&.claim_injury_date.try(:strftime, "%b %d, %Y") %></dd>
             </dl>
           </div>
         </div>
       </div>
       <div class="col-md-4">
         <div class="panel panel-primary">
-          <div class="panel-heading">Settlement</div>
+          <div class="panel-heading">Medical</div>
           <div class="panel-body">
             <dl class="dl-horizontal">
-              <dt>Is Settled:</dt>
-              <dd><%= @claim_calculation&.settled_claim %></dd>
+              <dt>Amount:</dt>
+              <dd><%= number_to_currency(@claim_calculation&.claim_medical_paid, precision: 0) %></dd>
 
-              <dt>Type:</dt>
-              <dd><%= @claim_calculation&.settlement_type %></dd>
+              <dt>Last Paid Date:</dt>
+              <dd><%= @claim_calculation&.medical_last_paid_date&.strftime("%b %d, %Y") %></dd>
 
-              <dt>Medical Settlement Date:</dt>
-              <dd><%= @claim_calculation&.medical_settlement_date&.strftime("%b %d, %Y") %></dd>
-
-              <dt>Indemnity Settlement Date:</dt>
-              <dd><%= @claim_calculation&.indemnity_settlement_date&.strftime("%b %d, %Y") %></dd>
+              <dt>Reserve:</dt>
+              <dd><%= number_to_currency(@claim_calculation&.claim_mira_medical_reserve_amount, precision: 0) %></dd>
             </dl>
           </div>
         </div>
@@ -79,7 +76,7 @@
     </div>
     <br>
     <div class="row">
-      <div class="col-md-2">
+      <div class="col-md-4">
         <div class="panel panel-primary">
           <div class="panel-heading">Subrogation</div>
           <div class="panel-body">
@@ -93,24 +90,27 @@
           </div>
         </div>
       </div>
-      <div class="col-md-3">
+      <div class="col-md-4">
         <div class="panel panel-primary">
-          <div class="panel-heading">Medical</div>
+          <div class="panel-heading">Settlement</div>
           <div class="panel-body">
             <dl class="dl-horizontal">
-              <dt>Amount:</dt>
-              <dd><%= number_to_currency(@claim_calculation&.claim_medical_paid, precision: 0) %></dd>
+              <dt>Is Settled:</dt>
+              <dd><%= @claim_calculation&.settled_claim %></dd>
 
-              <dt>Last Paid Date:</dt>
-              <dd><%= @claim_calculation&.medical_last_paid_date&.strftime("%b %d, %Y") %></dd>
+              <dt>Type:</dt>
+              <dd><%= @claim_calculation&.settlement_type %></dd>
 
-              <dt>Reserve:</dt>
-              <dd><%= number_to_currency(@claim_calculation&.claim_mira_medical_reserve_amount, precision: 0) %></dd>
+              <dt>Medical Settlement Date:</dt>
+              <dd><%= @claim_calculation&.medical_settlement_date&.strftime("%b %d, %Y") %></dd>
+
+              <dt>Indemnity Settlement Date:</dt>
+              <dd><%= @claim_calculation&.indemnity_settlement_date&.strftime("%b %d, %Y") %></dd>
             </dl>
           </div>
         </div>
       </div>
-      <div class="col-md-3">
+      <div class="col-md-4">
         <div class="panel panel-primary">
           <div class="panel-heading">Handicap</div>
           <div class="panel-body">
@@ -120,20 +120,6 @@
 
               <dt>Effective Date:</dt>
               <dd><%= @claim_calculation&.claim_handicap_percent_effective_date&.strftime("%b %d, %Y") %></dd>
-            </dl>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="panel panel-primary">
-          <div class="panel-heading">Combined</div>
-          <div class="panel-body">
-            <dl class="dl-horizontal">
-              <dt>Is Combined:</dt>
-              <dd><%= @claim_calculation&.claim_combined %></dd>
-
-              <dt>Combined into Claim Number:</dt>
-              <dd><%= @claim_calculation&.combined_into_claim_number %></dd>
             </dl>
           </div>
         </div>
@@ -172,6 +158,18 @@
                   <div class="col-md-6">
                     <table class="table table-striped table-bordered">
                       <tbody>
+                        <tr>
+                          <td>Injury Type</td>
+                          <td><%= @claim_calculation&.claim_mira_ncci_injury_type %></td>
+                        </tr>
+                        <tr>
+                          <td>Individual Total Modified Losses</td>
+                          <td><%= number_to_currency(@claim_calculation&.claim_modified_losses_individual_reduced, precision: 0) %></td>
+                        </tr>
+                        <tr>
+                          <td>Max Value</td>
+                          <td><%= number_to_currency(@claim_calculation&.max_value, precision: 0) %></td>
+                        </tr>
                         <tr>
                           <td>Claim Filing Date</td>
                           <td><%= @mira.claim_filing_date&.strftime("%b %d, %Y") %></td>
@@ -220,6 +218,10 @@
                           <td>Reduction Reason</td>
                           <td><%= @mira.reduction_reason %></td>
                         </tr>
+                        <tr>
+                          <td>Industry Code</td>
+                          <td><%= @mira.industry_code %></td>
+                        </tr>
                       </tbody>
                     </table>
                   </div>
@@ -251,10 +253,6 @@
                           <td><%= @mira.claim_sub_manual_number %></td>
                         </tr>
                         <tr>
-                          <td>Industry Code</td>
-                          <td><%= @mira.industry_code %></td>
-                        </tr>
-                        <tr>
                           <td>Claim Type</td>
                           <td><%= @mira.claim_type %></td>
                         </tr>
@@ -281,6 +279,18 @@
                         <tr>
                           <td>Total Reserve Amount For Rates</td>
                           <td><%= @mira.total_reserve_amount_for_rates %></td>
+                        </tr>
+                        <tr>
+                          <td>Non At Fault</td>
+                          <td><%= @claim_calculation&.non_at_fault %></td>
+                        </tr>
+                        <tr>
+                          <td>Is Combined</td>
+                          <td><%= @claim_calculation&.claim_combined %></td>
+                        </tr>
+                        <tr>
+                          <td>Combined into Claim Number</td>
+                          <td><%= @claim_calculation&.combined_into_claim_number %></td>
                         </tr>
                       </tbody>
                     </table>

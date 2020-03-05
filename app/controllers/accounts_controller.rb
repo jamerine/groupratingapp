@@ -5,17 +5,17 @@ class AccountsController < ApplicationController
     @accounts = Account.where(representative_id: @representatives)
     if params[:search].present? && params[:representative_number].present?
       @representative = @representatives.find_by(representative_number: params[:representative_number])
-      @accounts = @accounts.where(representative_id: @representative.id).search(params[:search]).paginate(page: params[:page], per_page: 50)
+      @accounts       = @accounts.where(representative_id: @representative.id).search(params[:search]).paginate(page: params[:page], per_page: 50)
     elsif params[:search_name].present? && params[:representative_number].present?
       @representative = @representatives.find_by(representative_number: params[:representative_number])
-      @accounts = @accounts.where(representative_id: @representative.id).search_name(params[:search_name]).paginate(page: params[:page], per_page: 50)
+      @accounts       = @accounts.where(representative_id: @representative.id).search_name(params[:search_name]).paginate(page: params[:page], per_page: 50)
     elsif params[:search].present?
       @accounts = @accounts.search(params[:search]).paginate(page: params[:page], per_page: 50)
     elsif params[:search_name].present?
       @accounts = @accounts.search_name(params[:search_name]).paginate(page: params[:page], per_page: 50)
     elsif params[:representative_number].present?
       @representative = @representatives.find_by(representative_number: params[:representative_number])
-      @accounts = @accounts.where(representative_id: @representative.id).paginate(page: params[:page], per_page: 50)
+      @accounts       = @accounts.where(representative_id: @representative.id).paginate(page: params[:page], per_page: 50)
     else
       @accounts = @accounts.all.paginate(page: params[:page], per_page: 50)
     end
@@ -32,7 +32,7 @@ class AccountsController < ApplicationController
     @account = Account.new
     authorize @account
     @representatives = Representative.all
-    @statuses = Account.statuses
+    @statuses        = Account.statuses
   end
 
   def create
@@ -41,7 +41,7 @@ class AccountsController < ApplicationController
     @representative = Representative.find(@account.representative_id)
     if @account.save
       @policy_calculation = PolicyCalculation.where(policy_number: @account.policy_number_entered).update_or_create(policy_number: @account.policy_number_entered, representative_id: @representative.id, representative_number: @representative.representative_number, account_id: @account.id)
-      flash[:notice] = "Account was created successfully"
+      flash[:notice]      = "Account was created successfully"
       redirect_to @account
     else
       flash[:alert] = "There was an error creating account. Please try again."
@@ -49,14 +49,13 @@ class AccountsController < ApplicationController
     end
   end
 
-
   def edit
     @account = Account.find(params[:id])
     authorize @account
-    @representatives = Representative.all
-    @representative = Representative.find(@account.representative_id)
+    @representatives    = Representative.all
+    @representative     = Representative.find(@account.representative_id)
     @policy_calculation = PolicyCalculation.find_by(account_id: @account.id)
-    @statuses = Account.statuses
+    @statuses           = Account.statuses
     # @mailing_address = {:address_type => "mailing", :address_line_1 => @policy_calculation.mailing_address_line_1, :address_line_2 => @policy_calculation.mailing_address_line_2, :city => @policy_calculation.mailing_city, :state => @policy_calculation.mailing_state, :zip_code => @policy_calculation.mailing_zip_code}
     # @location_address = {:address_type => "location", :address_line_1 => @policy_calculation.location_address_line_1, :address_line_2 => @policy_calculation.location_address_line_2, :city => @policy_calculation.location_city, :state => @policy_calculation.location_state, :zip_code => @policy_calculation.location_zip_code}
     # @locations = []
@@ -71,7 +70,7 @@ class AccountsController < ApplicationController
     @account.assign_attributes(account_params)
     if @account.save
       @policy_calculation = PolicyCalculation.where(policy_number: @account.policy_number_entered).update_or_create(policy_number: @account.policy_number_entered, representative_id: @account.representative.id, representative_number: Representative.find(@account.representative.id).representative_number, account_id: @account.id)
-      flash[:notice] = "Account was updated successfully"
+      flash[:notice]      = "Account was updated successfully"
       redirect_to @account
     else
       flash.now[:alert] = "Error saving account. Please try again."
@@ -79,32 +78,31 @@ class AccountsController < ApplicationController
     end
   end
 
-
   def show
     get_details
+    @account_name = "Account #{@account.name&.titleize}"
   end
 
-
   def edit_group_rating
-    @account = Account.find(params[:account_id])
-    @policy_calculation = @account.policy_calculation
-    @group_rating_qualifications = Account.group_rating_qualifications
+    @account                                = Account.find(params[:account_id])
+    @policy_calculation                     = @account.policy_calculation
+    @group_rating_qualifications            = Account.group_rating_qualifications
     @group_rating_qualifications[:auto_run] = "3"
-    @group_rating_tiers = BwcCodesIndustryGroupSavingsRatioCriterium.where(industry_group: @account.industry_group).pluck(:market_rate)
+    @group_rating_tiers                     = BwcCodesIndustryGroupSavingsRatioCriterium.where(industry_group: @account.industry_group).pluck(:market_rate)
   end
 
   def edit_group_retro
     @account = Account.find(params[:account_id])
     authorize @account
-    @policy_calculation = @account.policy_calculation
-    @group_retro_qualifications = Account.group_rating_qualifications
+    @policy_calculation                    = @account.policy_calculation
+    @group_retro_qualifications            = Account.group_rating_qualifications
     @group_retro_qualifications[:auto_run] = "3"
-    @group_retro_tier = BwcCodesGroupRetroTier.find_by(industry_group: @account.industry_group).try(:discount_tier)
-    @group_retro_tiers = ["#{@group_retro_tier}"]
+    @group_retro_tier                      = BwcCodesGroupRetroTier.find_by(industry_group: @account.industry_group).try(:discount_tier)
+    @group_retro_tiers                     = ["#{@group_retro_tier}"]
   end
 
   def group_rating_calc
-    args = params[:account]
+    args     = params[:account]
     @account = Account.find(params[:account_id])
     if args[:group_rating_qualification] == "auto_run"
       @account.policy_calculation.calculate_experience
@@ -124,7 +122,7 @@ class AccountsController < ApplicationController
   end
 
   def group_retro_calc
-    args = params[:account]
+    args     = params[:account]
     @account = Account.find(params[:account_id])
     if args[:group_retro_qualification] == "auto_run"
       @account.policy_calculation.calculate_experience
@@ -149,10 +147,9 @@ class AccountsController < ApplicationController
     redirect_to @account
   end
 
-
   def assign
-    @account = Account.find(params[:account_id])
-    @affiliate = Affiliate.find(params[:account][:id])
+    @account            = Account.find(params[:account_id])
+    @affiliate          = Affiliate.find(params[:account][:id])
     @accounts_affiliate = AccountsAffiliate.create(affiliate_id: @affiliate.id, account_id: @account.id)
     redirect_to @account
   end
@@ -182,7 +179,7 @@ class AccountsController < ApplicationController
 
   def import_account_process
     begin
-        AccountImportProcess.perform_async(params[:file].path)
+      AccountImportProcess.perform_async(params[:file].path)
       redirect_to :back, notice: "Accounts imported."
     rescue
       redirect_to :back, alert: "There was an error importing file.  Please ensure file columns and file type are correct"
@@ -191,8 +188,8 @@ class AccountsController < ApplicationController
   end
 
   def new_risk_report
-    @account = Account.find(params[:account_id])
-    @group_rating = GroupRating.find(params[:group_rating_id])
+    @account        = Account.find(params[:account_id])
+    @group_rating   = GroupRating.find(params[:group_rating_id])
     @representative = @account.representative
 
   end
@@ -202,15 +199,15 @@ class AccountsController < ApplicationController
   end
 
   def risk_report
-    @account = Account.find(params[:account][:account_id])
-    @group_rating = GroupRating.find(params[:account][:group_rating_id])
+    @account       = Account.find(params[:account][:account_id])
+    @group_rating  = GroupRating.find(params[:account][:group_rating_id])
     @report_params = params[:account]
 
     respond_to do |format|
       format.html
       format.pdf do
 
-        pdf = RiskReport.new(@account, @account.policy_calculation, @group_rating,  @report_params, view_context)
+        pdf = RiskReport.new(@account, @account.policy_calculation, @group_rating, @report_params, view_context)
         # pdf = RiskReport.new(@account, @account.policy_calculation, @group_rating, @glance, @experience_stats, @expected_loss_and_premium, @estimated_current_premium, @program_options, @out_of_experience_claims, @in_experience_claims, @green_year_claims, @group_discount_levels, @coverage_status, @experience_modifier_info, @payroll_history, view_context)
 
         # uploader = QuoteUploader.new
@@ -225,8 +222,8 @@ class AccountsController < ApplicationController
         # tmpfile.close
         # tmpfile.unlink
         send_data pdf.render, filename: "#{ @account.policy_number_entered }_risk_report.pdf",
-                              type: "application/pdf",
-                              disposition: "inline"
+                  type:                 "application/pdf",
+                  disposition:          "inline"
         # pdf.render_file "app/reports/risk_report_#{@account.id}.pdf"
       end
     end
@@ -234,7 +231,7 @@ class AccountsController < ApplicationController
   end
 
   def payroll_test_report
-    @account = Account.find(params[:account][:account_id])
+    @account      = Account.find(params[:account][:account_id])
     @group_rating = GroupRating.find(params[:account][:group_rating_id])
     respond_to do |format|
       format.html
@@ -253,8 +250,8 @@ class AccountsController < ApplicationController
         # tmpfile.close
         # tmpfile.unlink
         send_data pdf.render, filename: "#{ @account.policy_number_entered }_payroll_test.pdf",
-                              type: "application/pdf",
-                              disposition: "inline"
+                  type:                 "application/pdf",
+                  disposition:          "inline"
         # pdf.render_file "app/reports/risk_report_#{@account.id}.pdf"
       end
     end
@@ -262,9 +259,9 @@ class AccountsController < ApplicationController
   end
 
   def group_retro_quote
-    @account = Account.find(params[:account_id])
+    @account      = Account.find(params[:account_id])
     @group_rating = GroupRating.find(params[:group_rating_id])
-    @quote = @account.quotes.where(program_type: 1).last
+    @quote        = @account.quotes.where(program_type: 1).last
     respond_to do |format|
       format.html
       format.pdf do
@@ -282,8 +279,8 @@ class AccountsController < ApplicationController
         # tmpfile.close
         # tmpfile.unlink
         send_data pdf.render, filename: "#{ @account.policy_number_entered }_risk_report.pdf",
-                              type: "application/pdf",
-                              disposition: "inline"
+                  type:                 "application/pdf",
+                  disposition:          "inline"
         # pdf.render_file "app/reports/risk_report_#{@account.id}.pdf"
       end
     end
@@ -292,7 +289,7 @@ class AccountsController < ApplicationController
   end
 
   def roc_report
-    @account = Account.find(params[:account_id])
+    @account      = Account.find(params[:account_id])
     @group_rating = GroupRating.find(params[:group_rating_id])
     respond_to do |format|
       format.html
@@ -311,8 +308,8 @@ class AccountsController < ApplicationController
         # tmpfile.close
         # tmpfile.unlink
         send_data pdf.render, filename: "#{ @account.policy_number_entered }_roc_report.pdf",
-                              type: "application/pdf",
-                              disposition: "inline"
+                  type:                 "application/pdf",
+                  disposition:          "inline"
 
         # pdf.render_file "app/reports/risk_report_#{@account.id}.pdf"
       end
@@ -320,19 +317,18 @@ class AccountsController < ApplicationController
 
   end
 
-
   private
 
   def get_details
-    @account = Account.includes(:group_rating_rejections, :group_rating_exceptions, :policy_calculation, :affiliates, :contacts, :quotes, :account_programs).find(params[:id] || params[:account_id])
-    @account_changes = @account.versions.map{|v| [v.created_at, v.changeset]}
-    @statuses = Account.statuses
-    @representative = Representative.find(@account.representative_id)
-    @group_rating = GroupRating.find_by(representative_id: @representative.id)
+    @account                 = Account.includes(:group_rating_rejections, :group_rating_exceptions, :policy_calculation, :affiliates, :contacts, :quotes, :account_programs).find(params[:id] || params[:account_id])
+    @account_changes         = @account.versions.map { |v| [v.created_at, v.changeset] }
+    @statuses                = Account.statuses
+    @representative          = Representative.find(@account.representative_id)
+    @group_rating            = GroupRating.find_by(representative_id: @representative.id)
     @new_payroll_calculation = PayrollCalculation.new
     @group_rating_rejections = @account.group_rating_rejections.where(program_type: 'group_rating')
-    @group_retro_rejections = @account.group_rating_rejections.where(program_type: 'group_retro')
-    @notes = @account.notes.order(created_at: :desc).first(5)
+    @group_retro_rejections  = @account.group_rating_rejections.where(program_type: 'group_retro')
+    @notes                   = @account.notes.order(created_at: :desc).first(5)
   end
 
   def account_params

@@ -24,6 +24,7 @@ class PolicyCalculationsController < ApplicationController
     @representative            = Representative.find(@policy_calculation.representative_id)
     @new_payroll_calculation   = PayrollCalculation.new
     @notes                     = @account.notes.order(created_at: :desc).first(5)
+    @policy_number             = "Policy #{@policy_calculation.policy_number} - #{@policy_calculation&.account&.name&.titleize}"
   end
 
   def new
