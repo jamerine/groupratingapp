@@ -10,17 +10,19 @@
  * defined in the other CSS/SCSS files in this directory. It is generally better to create a new
  * file per style scope.
  *
- *= require trix
  */
 
 $grid-float-breakpoint: 1285px;
 
-@import "normalize";
-@import "bootstrap-sprockets";
-@import "bootstrap";
-@import "font-awesome";
+@import 'trix';
+@import 'normalize';
+@import 'bootstrap-sprockets';
+@import 'bootstrap';
+@import 'font-awesome';
 @import 'bootstrap-datetimepicker';
 @import 'animate';
+@import 'select2';
+@import 'select2-bootstrap';
 
 .table td, th {
   text-align: center;
@@ -76,8 +78,13 @@ $grid-float-breakpoint: 1285px;
 }
 
 
-body {
-  padding-top: 125px;
+html, body {
+  height: 100%;
+}
+
+main {
+  padding-top: 115px;
+  min-height: calc(100% - 51px);
 }
 
 .account-header {
@@ -204,6 +211,7 @@ $radius: 4px;
 .navbar-master {
   height: 49px;
   z-index: 1031;
+  margin-bottom: 0;
 }
 
 .claim-container {
@@ -289,4 +297,10 @@ $radius: 4px;
       text-align: right;
     }
   }
+}
+
+footer {
+  padding: 15px 0;
+  background-color: #f8f8f8;
+  border-top: 1px solid #e7e7e7;
 }

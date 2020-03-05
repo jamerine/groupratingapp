@@ -12,7 +12,6 @@
 //
 //= require jquery
 //= require jquery_ujs
-//= require turbolinks
 //= require bootstrap
 //= require trix
 //= require_tree .
@@ -20,6 +19,7 @@
 //= require moment
 //= require bootstrap-datetimepicker
 //= require cocoon
+//= require select2
 
 function validateFiles(inputFile) {
   var maxExceededMessage = "This file exceeds the maximum allowed file size (1 MB)";
@@ -34,7 +34,7 @@ function validateFiles(inputFile) {
     if (this.size && maxFileSize && this.size > parseInt(maxFileSize)) {
       sizeExceeded = true;
     }
-    ;
+
     extName = this.name.split('.').pop();
   });
   if (sizeExceeded) {
@@ -46,4 +46,10 @@ function validateFiles(inputFile) {
 // Javascript to check_all boxes
 $('#selectAll').click(function (e) {
   $(this).closest('table').find('td input:checkbox').prop('checked', this.checked);
+});
+
+$(function () {
+  $("select").select2({
+    theme: "bootstrap"
+  });
 });

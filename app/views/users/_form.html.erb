@@ -1,0 +1,35 @@
+<%= simple_form_for @user do |f| %>
+  <div class="row">
+    <div class="col-sm-6">
+      <%= f.input :first_name %>
+    </div>
+    <div class="col-sm-6">
+      <%= f.input :last_name %>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-6">
+      <%= f.input :email, as: :email %>
+    </div>
+    <div class="col-sm-6">
+      <%= f.input :role, collection: User.roles, label_method: lambda { |role| role[0].titleize }, value_method: :last, include_blank: 'Select Role', selected: User.roles[@user.role]  %>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-6">
+      <%= f.input :password %>
+    </div>
+    <div class="col-sm-6">
+      <%= f.input :password_confirmation, label: 'Password Confirmation' %>
+    </div>
+  </div>
+
+  <%= f.association :representatives, collection: Representative.all.order(:abbreviated_name), label_method: :abbreviated_name, value_method: :id, prompt: "Select Representative(s)", input_html: { multiple: true } %>
+
+  <div class="text-right">
+    <%= link_to 'Cancel', users_path, class: 'btn btn-danger' %>
+    <%= f.submit class: 'btn btn-success' %>
+  </div>
+<% end %>

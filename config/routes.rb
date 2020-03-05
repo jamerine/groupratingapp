@@ -564,13 +564,11 @@ Rails.application.routes.draw do
 
   devise_for :users, controllers: {
     sessions:      'users/sessions',
-    confirmations: 'users/confirmations',
-    registrations: 'users/registrations',
+    confirmations: 'users/confirmations'
   }
 
-  resources :users, except: :create
-
-  post 'create_user' => 'users#create', as: :create_user
+  resources :users
+  post 'create_user', to: 'users#create', as: :create_user
 
   resources :versions
 

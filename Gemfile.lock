@@ -401,6 +401,8 @@ GEM
     sdoc (0.4.2)
       json (~> 1.7, >= 1.7.7)
       rdoc (~> 4.0)
+    select2-rails (4.0.3)
+      thor (~> 0.14)
     shellany (0.0.1)
     shoulda (3.6.0)
       shoulda-context (~> 1.0, >= 1.0.1)
@@ -514,6 +516,7 @@ DEPENDENCIES
   rubyzip
   sass-rails (~> 5.0)
   sdoc (~> 0.4.0)
+  select2-rails
   shoulda
   sidekiq
   simple_form
