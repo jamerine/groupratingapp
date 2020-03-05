@@ -2,9 +2,10 @@
 <html>
 <head>
   <title>Group Rating App</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track' => true %>
-  <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+  <%= stylesheet_link_tag 'application', media: 'all' %>
+  <%= javascript_include_tag 'application' %>
 
   <link href="//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css">
   <script charset="utf8" src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js" type="text/javascript"></script>
@@ -42,6 +43,7 @@
             <li><%= link_to 'Processing', group_ratings_path %></li>
             <li><%= link_to 'Accounts', accounts_path %></li>
             <% if current_user.admin? %>
+              <li><%= link_to 'Users', users_path, class: 'navbar-link' %></li>
               <li><%= link_to 'Rejections', program_rejections_path, class: 'navbar-link' %></li>
               <li><%= link_to 'Exceptions', group_rating_exceptions_path, class: 'navbar-link' %></li>
               <li><%= link_to 'Administration', admin_root_path %></li>
@@ -56,6 +58,11 @@
     </div><!-- /.container-fluid -->
   </nav>
 
-  <%= yield %>
+  <main>
+    <%= yield %>
+  </main>
+  <footer>
+    <div class="text-center">&copy; <%= Date.current.year %> Alternative Risk, LTD</div>
+  </footer>
 </body>
 </html>
