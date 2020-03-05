@@ -564,8 +564,7 @@ Rails.application.routes.draw do
 
   devise_for :users, controllers: {
     sessions:      'users/sessions',
-    confirmations: 'users/confirmations',
-    registrations: 'users/registrations',
+    confirmations: 'users/confirmations'
   }
 
   resources :users
