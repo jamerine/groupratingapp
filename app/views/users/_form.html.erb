@@ -13,7 +13,7 @@
       <%= f.input :email, as: :email %>
     </div>
     <div class="col-sm-6">
-      <%= f.input :role, collection: User.roles, label_method: lambda { |role| role[0].titleize }, value_method: lambda { |role| role[0] }, input_html: { class: 'select2' } %>
+      <%= f.input :role, collection: User.roles, label_method: lambda { |role| role[0].titleize }, value_method: :last, include_blank: 'Select Role', selected: User.roles[@user.role]  %>
     </div>
   </div>
 
@@ -22,22 +22,14 @@
       <%= f.input :password %>
     </div>
     <div class="col-sm-6">
-      <%= f.input :password_confirmation %>
+      <%= f.input :password_confirmation, label: 'Password Confirmation' %>
     </div>
   </div>
 
-  <%= f.input :representatives, collection: Representative.all, label_method: :abbreviated_name, value_method: :id, input_html: { multiple: true, class: 'select2' } %>
+  <%= f.association :representatives, collection: Representative.all.order(:abbreviated_name), label_method: :abbreviated_name, value_method: :id, prompt: "Select Representative(s)", input_html: { multiple: true } %>
 
   <div class="text-right">
+    <%= link_to 'Cancel', users_path, class: 'btn btn-danger' %>
     <%= f.submit class: 'btn btn-success' %>
   </div>
 <% end %>
-
-
-<script>
-  $(function () {
-    $(".select2").select2({
-      theme: "bootstrap"
-    });
-  });
-</script>

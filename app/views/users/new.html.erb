@@ -1,48 +1,11 @@
 <div class="container">
-  <div class="jumbotron">
-    <h2>Sign Up New User</h2>
-
-    <%= form_for User.new, url: create_user_path(representative_id: @representative.id) do |f| %>
-
-      <div class="field">
-        <%= f.label :role %>
-        <%= f.select :role, options_for_select(@roles.collect { |s| [s[0].humanize, s[0]] },), {} , class: "form-control" %>
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="jumbotron">
+        <h1 class="text-center">Sign Up New User</h1>
       </div>
 
-      <div class="field">
-        <%= f.label :first_name %><br />
-        <%= f.text_field :first_name, autofocus: true, class: 'form-control' %>
-      </div>
-
-      <div class="field">
-        <%= f.label :last_name %><br />
-        <%= f.text_field :last_name, autofocus: true, class: 'form-control' %>
-      </div>
-
-      <div class="field">
-        <%= f.label :email %><br />
-        <%= f.email_field :email, autofocus: true, class: 'form-control' %>
-      </div>
-
-      <div class="field">
-        <%= f.label :password %>
-        <% if @minimum_password_length %>
-        <em>(<%= @minimum_password_length %> characters minimum)</em>
-        <% end %><br />
-        <%= f.password_field :password, autocomplete: "off", class: 'form-control' %>
-      </div>
-
-      <div class="field">
-        <%= f.label :password_confirmation %><br />
-        <%= f.password_field :password_confirmation, autocomplete: "off", class: 'form-control' %>
-      </div>
-
-      <br />
-      <div class="actions">
-        <%= f.submit "Sign up", class: 'btn btn-default' %>
-      </div>
-    <% end %>
-    <br>
-
+      <%= render 'form' %>
+    </div>
   </div>
 </div>
