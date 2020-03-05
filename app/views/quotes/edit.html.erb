@@ -5,65 +5,66 @@
       <%= link_to 'Back', @account, class: 'btn btn-primary' %>
     </div>
     <div class="col col-md-1 col-md-offset-8">
-      <%= link_to 'Delete Quote', quote_path(params[:id]), method: :delete, class: 'btn btn-danger', data: {confirm: 'Are you sure you want to delete this quote?'} %>
+      <%= link_to 'Delete Quote', quote_path(params[:id]), method: :delete, class: 'btn btn-danger', data: { confirm: 'Are you sure you want to delete this quote?' } %>
     </div>
   </div>
 
-<br>
+  <br>
 </div>
+
 <div class="container">
-    <div class="jumbotron">
-      <div class="row">
-        <div class="col col-md-1">
-          <%= link_to 'View Generated Quote PDF', @quote.quote_generated.url, class: 'btn btn-primary' %>
-        </div>
-        <div class="col col-md-1 col-md-offset-8">
-          <% if @quote.program_type == 'group_rating' %>
-            <%= link_to 'Generate New Full Quote Packet PDF', quote_view_group_rating_quote_path(@quote, format: :pdf), class: 'btn btn-success' %>
-          <% elsif @quote.program_type == 'group_retro' %>
-              <%= link_to 'Generate New Full Quote Packet PDF', quote_view_group_retro_quote_path(@quote, format: :pdf), class: 'btn btn-success' %>
-          <% end %>
-        </div>
+  <div class="jumbotron">
+    <div class="row">
+      <div class="col col-md-1">
+        <%= link_to 'View Generated Quote PDF', @quote.quote_generated.url, class: 'btn btn-primary', target: '_blank' %>
       </div>
-      <div class="row">
-        <br>
-        <h2 class="text-center"> <%= @quote.quote_year %> Quote Information For <%= @account.name.titleize %></h2>
-        <br>
-      </div>
-      <br>
-      <div class="row text-center">
-        <div class="col col-sm-6 col-md-3">
-            <p>Invoice Number</p>
-            <h4><%= @quote.invoice_number %></h4>
-        </div>
-        <div class="col col-sm-6 col-md-3">
-          <p>Quote Period</p>
-          <h4><%= @quote.quote_year_lower_date.strftime("%m/%d/%y") %> - <%= @quote.quote_year_upper_date.strftime("%m/%d/%y")  %> </h4>
-        </div>
-        <div class="col col-sm-6 col-md-3">
-          <p>Quote Year</p>
-          <h4><%= @quote.quote_year %> </h4>
-        </div>
-        <div class="col col-sm-6 col-md-3">
-          <p>Quote creation date</p>
-          <h4><%= @quote.created_at.strftime("%m/%d/%y") %></h4>
-        </div>
+      <div class="col col-md-1 col-md-offset-8">
+        <% if @quote.program_type == 'group_rating' %>
+          <%= link_to 'Generate New Full Quote Packet PDF', quote_view_group_rating_quote_path(@quote, format: :pdf), class: 'btn btn-success', target: '_blank' %>
+        <% elsif @quote.program_type == 'group_retro' %>
+          <%= link_to 'Generate New Full Quote Packet PDF', quote_view_group_retro_quote_path(@quote, format: :pdf), class: 'btn btn-success', target: '_blank' %>
+        <% end %>
       </div>
     </div>
-    <div class="jumbotron jumbotron-white">
+    <div class="row">
+      <br>
+      <h2 class="text-center"> <%= @quote.quote_year %> Quote Information For <%= @account.name.titleize %></h2>
+      <br>
+    </div>
+    <br>
+    <div class="row text-center">
+      <div class="col col-sm-6 col-md-3">
+        <p>Invoice Number</p>
+        <h4><%= @quote.invoice_number %></h4>
+      </div>
+      <div class="col col-sm-6 col-md-3">
+        <p>Quote Period</p>
+        <h4><%= @quote.quote_year_lower_date.strftime("%m/%d/%y") %> - <%= @quote.quote_year_upper_date.strftime("%m/%d/%y") %> </h4>
+      </div>
+      <div class="col col-sm-6 col-md-3">
+        <p>Quote Year</p>
+        <h4><%= @quote.quote_year %> </h4>
+      </div>
+      <div class="col col-sm-6 col-md-3">
+        <p>Quote creation date</p>
+        <h4><%= @quote.created_at.strftime("%m/%d/%y") %></h4>
+      </div>
+    </div>
+  </div>
+  <div class="jumbotron jumbotron-white">
 
-      <%= form_for @quote do |f| %>
+    <%= form_for @quote do |f| %>
       <div class="row">
         <div class="col-md-2">
           <div class="form-group">
             <%= f.label :status %>
-            <%= f.select :status, options_for_select(@statuses.collect { |s| [s[0].humanize, s[0]] }, selected: @quote.status), {} , class: "form-control" %>
+            <%= f.select :status, options_for_select(@statuses.collect { |s| [s[0].humanize, s[0]] }, selected: @quote.status), {}, class: "form-control" %>
           </div>
         </div>
         <div class="col-md-2">
           <%= f.label :program_type %>
           <% if current_user.admin? %>
-            <%= f.select :program_type, options_for_select(@program_types.collect { |s| [s[0].humanize, s[0]] }, selected: @quote.program_type), {} , class: "form-control"%>
+            <%= f.select :program_type, options_for_select(@program_types.collect { |s| [s[0].humanize, s[0]] }, selected: @quote.program_type), {}, class: "form-control" %>
           <% else %>
             <p><%= @quote.program_type %></p>
           <% end %>
@@ -88,31 +89,31 @@
       <br>
       <div class="row">
         <div class="col-md-2">
-          <div class="form-group" >
+          <div class="form-group">
             <%= f.label 'ac2 Signed' %>
             <%= f.date_field :ac2_signed_on, class: "form-control" %>
           </div>
         </div>
         <div class="col-md-2">
-          <div class="form-group" >
+          <div class="form-group">
             <%= f.label 'AC26 Signed' %>
             <%= f.date_field :ac26_signed_on, class: "form-control" %>
           </div>
         </div>
         <div class="col-md-2">
-          <div class="form-group" >
+          <div class="form-group">
             <%= f.label 'U153 Signed' %>
             <%= f.date_field :u153_signed_on, class: "form-control" %>
           </div>
         </div>
         <div class="col-md-2">
-          <div class="form-group" >
+          <div class="form-group">
             <%= f.label "Contract Signed" %>
             <%= f.date_field :contract_signed_on, class: "form-control" %>
           </div>
         </div>
         <div class="col-md-2">
-          <div class="form-group" >
+          <div class="form-group">
             <%= f.label "Questionnaire Signed" %>
             <%= f.date_field :questionnaire_signed_on, class: "form-control" %>
           </div>
@@ -133,7 +134,7 @@
         </div>
         <div class="col-md-2">
           <div class="form-group">
-            <%= f.label "Questionnaire 3"  %>
+            <%= f.label "Questionnaire 3" %>
             <%= f.check_box :questionnaire_question_3 %>
           </div>
         </div>
@@ -177,23 +178,25 @@
       </div>
     <% end %>
   </div>
+</div>
+
 <div class="container">
-    <div class="row">
-      <h3>Quote Process</h3>
-      <div class="col-md-3">
-        <h4>Step 1</h4>
-        <%= link_to 'Send Packet to Customer','#', class: 'btn btn-info' %>
-      </div>
-      <div class="col-md-1">
-        <span class="glyphicon glyphicon-arrow-right" style="font-size:3.0em;"></span>
-      </div>
-      <div class="col-md-3">
-        <h4>Step 2</h4>
+  <div class="row">
+    <h3>Quote Process</h3>
+    <div class="col-md-3">
+      <h4>Step 1</h4>
+      <%= button_tag 'Send Packet to Customer', type: :button, onclick: QuotePdfExportMailer.quote_pdf_export(@account.representative.id, current_user.id, [@account.id]), class: 'btn btn-info' %>
+    </div>
+    <div class="col-md-1">
+      <span class="glyphicon glyphicon-arrow-right" style="font-size:3.0em;"></span>
+    </div>
+    <div class="col-md-3">
+      <h4>Step 2</h4>
 
-        <%= link_to 'Enroll Account in Program', new_account_program_path(quote_id: @quote.id), class: 'btn btn-primary' %>
-
-      </div>
+      <%= link_to 'Enroll Account in Program', new_account_program_path(quote_id: @quote.id), class: 'btn btn-primary' %>
 
     </div>
+
+  </div>
 
 </div>
