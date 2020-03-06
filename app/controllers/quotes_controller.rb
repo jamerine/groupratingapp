@@ -368,17 +368,17 @@ class QuotesController < ApplicationController
         ac_2_pdf_render = ac_2_pdf.render
         combine_pdf << CombinePDF.parse(ac_2_pdf_render)
 
-        contract_pdf = ArmContract.new(@quote, @account, @policy_calculation, view_context)
-        contract_pdf_render = contract_pdf.render
-        combine_pdf << CombinePDF.parse(contract_pdf_render)
+        # contract_pdf = ArmContract.new(@quote, @account, @policy_calculation, view_context)
+        # contract_pdf_render = contract_pdf.render
+        # combine_pdf << CombinePDF.parse(contract_pdf_render)
 
-        questionnaire_pdf = ArmQuestionnaire.new(@quote, @account, @policy_calculation, view_context)
-        questionnaire_pdf_render = questionnaire_pdf.render
-        combine_pdf << CombinePDF.parse(questionnaire_pdf_render)
+        # questionnaire_pdf = ArmQuestionnaire.new(@quote, @account, @policy_calculation, view_context)
+        # questionnaire_pdf_render = questionnaire_pdf.render
+        # combine_pdf << CombinePDF.parse(questionnaire_pdf_render)
 
-        invoice_pdf = ArmInvoice.new(@quote, @account, @policy_calculation, view_context)
-        invoice_pdf_render = invoice_pdf.render
-        combine_pdf << CombinePDF.parse(invoice_pdf_render)
+        # invoice_pdf = ArmInvoice.new(@quote, @account, @policy_calculation, view_context)
+        # invoice_pdf_render = invoice_pdf.render
+        # combine_pdf << CombinePDF.parse(invoice_pdf_render)
 
 
         send_data combine_pdf.to_pdf, filename: "#{ @account.policy_number_entered }_quote_#{ @quote.id }.pdf",
