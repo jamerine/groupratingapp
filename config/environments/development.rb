@@ -20,5 +20,6 @@ Rails.application.configure do
   config.action_mailer.perform_deliveries      = true
   config.action_controller.include_all_helpers = true
 
+  ActionMailer::Base.raise_delivery_errors     = true
   Rails.application.default_url_options[:host] = 'localhost:3000'
 end
