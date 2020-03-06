@@ -26,7 +26,7 @@ class WeeklyRequest
       csv.close
     end
 
-    WeeklyRequestExportMailer.weekly_request_export(@user, @representative, csv_string).deliver
+    WeeklyRequestExportMailer.weekly_request_export(@user, @representative, csv_string).deliver_later
 
   end
 end
