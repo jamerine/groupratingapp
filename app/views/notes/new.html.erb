@@ -2,7 +2,8 @@
 <%= render partial: "shared/account_navbar", locals: { object: @account } %>
   <div class="container">
 
-    <%= link_to 'Return to Account', account_path(@account.id), class: 'btn btn-default' %>
+    <%= link_to 'Return to Account', account_path(@account.id), class: 'btn btn-default', style: 'margin-bottom: 15px;' %>
+
     <div class="jumbotron">
       <div class="row text-center">
         <h4>Add Note:</h4>
