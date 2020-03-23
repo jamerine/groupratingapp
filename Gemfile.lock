@@ -268,6 +268,8 @@ GEM
     paper_trail (10.3.1)
       activerecord (>= 4.2)
       request_store (~> 1.1)
+    paranoia (2.4.2)
+      activerecord (>= 4.0, < 6.1)
     pdf-core (0.7.0)
     pg (0.21.0)
     prawn (2.2.2)
@@ -500,6 +502,7 @@ DEPENDENCIES
   mini_magick
   momentjs-rails (>= 2.9.0)
   paper_trail
+  paranoia
   pg (~> 0.15)
   prawn
   prawn-table
