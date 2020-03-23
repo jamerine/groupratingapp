@@ -83,6 +83,8 @@
 #                                                       PATCH      /affiliates/:id(.:format)                                                      affiliates#update
 #                                                       PUT        /affiliates/:id(.:format)                                                      affiliates#update
 #                                                       DELETE     /affiliates/:id(.:format)                                                      affiliates#destroy
+#                              claim_calculation_export GET        /claim_calculations/:claim_calculation_id/export(.:format)                     claim_calculations#export
+#                             search_claim_calculations GET        /claim_calculations/search(.:format)                                           claim_calculations#search
 #                         claim_calculation_claim_notes GET        /claim_calculations/:claim_calculation_id/claim_notes(.:format)                claim_notes#index
 #                                                       POST       /claim_calculations/:claim_calculation_id/claim_notes(.:format)                claim_notes#create
 #                      new_claim_calculation_claim_note GET        /claim_calculations/:claim_calculation_id/claim_notes/new(.:format)            claim_notes#new
@@ -91,7 +93,6 @@
 #                                                       PATCH      /claim_calculations/:claim_calculation_id/claim_notes/:id(.:format)            claim_notes#update
 #                                                       PUT        /claim_calculations/:claim_calculation_id/claim_notes/:id(.:format)            claim_notes#update
 #                                                       DELETE     /claim_calculations/:claim_calculation_id/claim_notes/:id(.:format)            claim_notes#destroy
-#                             search_claim_calculations GET        /claim_calculations/search(.:format)                                           claim_calculations#search
 #                                    claim_calculations GET        /claim_calculations(.:format)                                                  claim_calculations#index
 #                                                       POST       /claim_calculations(.:format)                                                  claim_calculations#create
 #                                 new_claim_calculation GET        /claim_calculations/new(.:format)                                              claim_calculations#new
@@ -349,14 +350,8 @@
 #                                    edit_user_password GET        /users/password/edit(.:format)                                                 devise/passwords#edit
 #                                                       PATCH      /users/password(.:format)                                                      devise/passwords#update
 #                                                       PUT        /users/password(.:format)                                                      devise/passwords#update
-#                              cancel_user_registration GET        /users/cancel(.:format)                                                        users/registrations#cancel
-#                                     user_registration POST       /users(.:format)                                                               users/registrations#create
-#                                 new_user_registration GET        /users/sign_up(.:format)                                                       users/registrations#new
-#                                edit_user_registration GET        /users/edit(.:format)                                                          users/registrations#edit
-#                                                       PATCH      /users(.:format)                                                               users/registrations#update
-#                                                       PUT        /users(.:format)                                                               users/registrations#update
-#                                                       DELETE     /users(.:format)                                                               users/registrations#destroy
 #                                                 users GET        /users(.:format)                                                               users#index
+#                                                       POST       /users(.:format)                                                               users#create
 #                                              new_user GET        /users/new(.:format)                                                           users#new
 #                                             edit_user GET        /users/:id/edit(.:format)                                                      users#edit
 #                                                  user GET        /users/:id(.:format)                                                           users#show

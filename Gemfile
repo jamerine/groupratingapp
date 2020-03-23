@@ -30,6 +30,7 @@ gem 'sidekiq'
 gem 'sinatra', :require => false
 gem 'rubyzip'
 gem 'paper_trail'
+gem 'paranoia'
 gem 'filterrific', '~> 2.1.2'
 gem 'pundit'
 gem 'prawn'

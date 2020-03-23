@@ -24,8 +24,7 @@
 #
 
 class Note < ActiveRecord::Base
-
-  belongs_to :user
+  belongs_to :user, optional: true
   belongs_to :account
 
   enum category: [:billing, :claims, :general, :group_rating, :group_retro, :policy_admin, :sales]

@@ -5,6 +5,7 @@
 #  id                     :integer          not null, primary key
 #  current_sign_in_at     :datetime
 #  current_sign_in_ip     :inet
+#  deleted_at             :datetime
 #  email                  :string           default(""), not null
 #  encrypted_password     :string           default(""), not null
 #  first_name             :string
@@ -29,6 +30,7 @@ class User < ActiveRecord::Base
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :registerable, :timeoutable and :omniauthable
   devise :database_authenticatable, :recoverable, :rememberable, :trackable, :validatable
+  acts_as_paranoid
 
   has_many :representatives_users, dependent: :destroy
   has_many :representatives, through: :representatives_users
