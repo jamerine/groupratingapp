@@ -84,13 +84,13 @@ Rails.application.configure do
   Rails.application.default_url_options[:host] = 'groupratingapp.switchboxinc.com'
 
   config.action_mailer.smtp_settings = {
-    address:              'smtp.mailgun.org',
-    port:                 587,
-    domain:               'send.switchboxinc.com',
-    user_name:            'postmaster@send.switchboxinc.com',
-    password:             '89866cbed9d3fc6b4e3a322cfd18d159',
-    authentication:       'login',
-    enable_starttls_auto: true
+    port:           587,
+    address:        'smtp.sendgrid.net',
+    user_name:      ENV['SENDGRID_USERNAME'],
+    password:       ENV['SENDGRID_PASSWORD'],
+    domain:         'groupratingapp.herokuapp.com',
+    authentication: :plain,
+    content_type:   'text/html'
   }
 
   Rails.application.config.middleware.use ExceptionNotification::Rack,
