@@ -25,31 +25,7 @@ class ArmGroupRetroInvoice < PdfReport
     current_cursor = cursor
 
     bounding_box([0, current_cursor], :width => 550, :height => 75) do
-      if @account.representative.logo.nil?
-        if [9,10,16].include? @account.representative.id
-          image "#{Rails.root}/app/assets/images/minute men hr.jpeg", height: 75
-        elsif [2].include? @account.representative.id
-          image "#{Rails.root}/app/assets/images/cose_logo.jpg", height: 75
-        elsif [17].include? @account.representative.id
-          image "#{Rails.root}/app/assets/images/tartan_logo.jpg", height: 75
-        else
-          image "#{Rails.root}/app/assets/images/logo.png", height: 50
-        end
-      else
-        if [9,10,16,2,17].include? @account.representative.id
-          if Rails.env.production?
-            image open(@account.representative.logo.url), height: 75
-          else
-            image "#{Rails.root}/app/assets/images/minute men hr.jpeg", height: 75
-          end
-        else
-          if Rails.env.production?
-            image open(@account.representative.logo.url), height: 50
-          else
-            image "#{Rails.root}/app/assets/images/logo.png", height: 50
-          end
-        end
-      end
+      representative_logo
     end
 
 

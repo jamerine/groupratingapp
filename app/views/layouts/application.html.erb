@@ -36,7 +36,7 @@
           <span class="icon-bar"></span>
         </button>
         <% if current_user %>
-          <%= link_to '', root_path, class: 'navbar-brand arm-brand-logo' %>
+          <%= link_to '', root_path, class: 'navbar-brand brand-logo', style: "background-image: url(#{image_path current_user.representative_logo_url})" %>
         <% end %>
 
         <ul class="list-unstyled list-inline navbar-left">

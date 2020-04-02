@@ -40,7 +40,6 @@ class RiskReport < PdfReport
       end
     end
 
-
     # GROUP RETRO LAPS CONFIG
 
     nov_first       = (Date.current.year.to_s + '-11-01').to_date
@@ -74,7 +73,6 @@ class RiskReport < PdfReport
                                else
                                  "N"
                                end
-
 
     # Section for calculating parameters for Claim Loss Runs
 
@@ -225,15 +223,10 @@ class RiskReport < PdfReport
     end
 
     @current_expected_losses = @current_expected_losses / 100
-
-    @payroll_calculations = @policy_calculation.manual_class_calculations.map { |u| u.payroll_calculations }.flatten
-
-    @payroll_periods = PayrollCalculation.select('reporting_period_start_date').group('payroll_calculations.reporting_period_start_date').where(:policy_number => @policy_calculation.policy_number).order(reporting_period_start_date: :desc).pluck(:reporting_period_start_date)
-
-
-    @ilr = round(((@policy_calculation.policy_total_modified_losses_group_reduced * @policy_calculation.policy_total_current_payroll) / (@policy_calculation.policy_total_four_year_payroll * (@policy_calculation.policy_adjusted_standard_premium || @policy_calculation.policy_total_standard_premium))), 2)
-
-    @f_s = round((((3660 * @experience_med_only) + (12500 * @experience_lost_time)) / @policy_calculation.policy_total_four_year_payroll) * (@policy_calculation.policy_total_current_payroll / (@policy_calculation.policy_adjusted_standard_premium || @policy_calculation.policy_total_standard_premium)), 2)
+    @payroll_calculations    = @policy_calculation.manual_class_calculations.map { |u| u.payroll_calculations }.flatten
+    @payroll_periods         = PayrollCalculation.select('reporting_period_start_date').group('payroll_calculations.reporting_period_start_date').where(:policy_number => @policy_calculation.policy_number).order(reporting_period_start_date: :desc).pluck(:reporting_period_start_date)
+    @ilr                     = round(((@policy_calculation.policy_total_modified_losses_group_reduced * @policy_calculation.policy_total_current_payroll) / (@policy_calculation.policy_total_four_year_payroll * (@policy_calculation.policy_adjusted_standard_premium || @policy_calculation.policy_total_standard_premium))), 2)
+    @f_s                     = round((((3660 * @experience_med_only) + (12500 * @experience_lost_time)) / @policy_calculation.policy_total_four_year_payroll) * (@policy_calculation.policy_total_current_payroll / (@policy_calculation.policy_adjusted_standard_premium || @policy_calculation.policy_total_standard_premium)), 2)
 
 
     @erc =
@@ -280,7 +273,6 @@ class RiskReport < PdfReport
         else
           BwcCodesEmployerRepresentative.find_by(representative_number: @account.policy_calculation.currently_assigned_risk_representative_number).try(:employer_rep_name)
         end
-
       end
 
     @group_rating_levels = BwcCodesIndustryGroupSavingsRatioCriterium.where(industry_group: @account.industry_group)
@@ -364,34 +356,11 @@ class RiskReport < PdfReport
   def header
     current_cursor = cursor
     bounding_box([0, current_cursor], :width => 80, :height => 80) do
-      if @account.representative.logo.nil?
-        if [9, 10, 16].include? @account.representative.id
-          image "#{Rails.root}/app/assets/images/minute men hr.jpeg", height: 75
-        elsif [2].include? @account.representative.id
-          image "#{Rails.root}/app/assets/images/cose_logo.jpg", height: 75
-        elsif [17].include? @account.representative.id
-          image "#{Rails.root}/app/assets/images/tartan_logo.jpg", height: 75
-        else
-          image "#{Rails.root}/app/assets/images/logo.png", height: 50
-        end
-      else
-        if [9, 10, 16, 2, 17].include? @account.representative.id
-          if Rails.env.production?
-            image open(@account.representative.logo.url), height: 75
-          else
-            image "#{Rails.root}/app/assets/images/minute men hr.jpeg", height: 75
-          end
-        else
-          if Rails.env.production?
-            image open(@account.representative.logo.url), height: 50
-          else
-            image "#{Rails.root}/app/assets/images/logo.png", height: 50
-          end
-        end
-      end
+      representative_logo
       transparent(0) { stroke_bounds }
       # stroke_bounds
     end
+
     bounding_box([100, current_cursor], :width => 350, :height => 80) do
       text "#{ @account.name}", size: 12, style: :bold, align: :center
       text "DBA: #{ @account.policy_calculation.try(:trading_as_name) }", size: 10, align: :center
@@ -418,9 +387,7 @@ class RiskReport < PdfReport
     move_down 5
     stroke_horizontal_rule
     pre_current_cursor = cursor
-
     move_down 5
-
     current_cursor = cursor
     bounding_box([0, current_cursor], :width => 275, :height => 125) do
       text "FEIN: #{ @account.policy_calculation.federal_identification_number }"
@@ -473,6 +440,7 @@ class RiskReport < PdfReport
     move_down 10
     text "Experience Statistics and EM Calculation:", style: :bold
     move_down 5
+
     table experience_table_data do
       self.position                 = :center
       row(0).font_style             = :bold
@@ -512,7 +480,6 @@ class RiskReport < PdfReport
     end
 
     move_down 5
-
   end
 
   def experience_table_data
@@ -524,6 +491,7 @@ class RiskReport < PdfReport
     move_down 10
     text "Expected Loss Development and Estimated Premium:", style: :bold
     move_down 5
+
     table expected_loss_table_data, :column_widths => { 0 => 30, 1 => 20, 2 => 60, 3 => 30, 4 => 55, 5 => 30, 6 => 60, 7 => 35, 8 => 50, 9 => 35, 10 => 50, 11 => 35, 12 => 50 } do
       self.position          = :center
       row(0).font_style      = :bold
@@ -538,6 +506,7 @@ class RiskReport < PdfReport
       self.cell_style  = { :size => 8 }
       self.header      = true
     end
+
     move_down 10
     text "Current Expected Losses: #{ round(@current_expected_losses, 0) }", style: :bold
   end
@@ -557,68 +526,36 @@ class RiskReport < PdfReport
   end
 
   def roc_report
-    @account = Account.includes(policy_calculation: [:claim_calculations, :policy_coverage_status_histories, :policy_program_histories, { manual_class_calculations: :payroll_calculations }]).find(@account.id)
-
+    @account                = Account.includes(policy_calculation: [:claim_calculations, :policy_coverage_status_histories, :policy_program_histories, { manual_class_calculations: :payroll_calculations }]).find(@account.id)
     @current_policy_program = @account.policy_calculation.policy_program_histories.order(reporting_period_start_date: :desc).first
+    @current_date           = DateTime.now.to_date
+    @total_est_premium      = 0
 
-    @current_date = DateTime.now.to_date
-
-
-    @total_est_premium = 0
     @account.policy_calculation.manual_class_calculations.each do |man|
-      unless man.payroll_calculations.where("reporting_period_start_date < :current_date and reporting_period_end_date > :current_date", current_date: @current_date).first.nil?
-        rate = man.payroll_calculations.where("reporting_period_start_date < :current_date and reporting_period_end_date > :current_date", current_date: @current_date).first.manual_class_rate
-        if rate.nil?
-          est_premium = 0
-        else
-          est_premium = rate * man.manual_class_current_estimated_payroll * 0.01
-        end
-        @total_est_premium += est_premium
-      end
+        rate = man.payroll_calculations.where("reporting_period_start_date < :current_date and reporting_period_end_date > :current_date", current_date: @current_date).first&.manual_class_rate
+        @total_est_premium += rate.nil? ? 0 :  rate * man.manual_class_current_estimated_payroll * 0.01
     end
+
     if @report_params["estimated_current_premium"] == "1" || @report_params["program_options"] == "1"
       header_two
       stroke_horizontal_rule
     end
+
     if @report_params["estimated_current_premium"] == "1"
       estimated_current_period_premium
     end
+
     if @report_params["program_options"] == "1"
       workers_comp_program_options
       workers_comp_program_additional_options
       descriptions
     end
-
   end
 
   def header_two
     current_cursor = cursor
     bounding_box([0, current_cursor], :width => 80, :height => 80) do
-      if @account.representative.logo.nil?
-        if [9, 10, 16].include? @account.representative.id
-          image "#{Rails.root}/app/assets/images/minute men hr.jpeg", height: 75
-        elsif [2].include? @account.representative.id
-          image "#{Rails.root}/app/assets/images/cose_logo.jpg", height: 75
-        elsif [17].include? @account.representative.id
-          image "#{Rails.root}/app/assets/images/tartan_logo.jpg", height: 75
-        else
-          image "#{Rails.root}/app/assets/images/logo.png", height: 50
-        end
-      else
-        if [9, 10, 16, 2, 17].include? @account.representative.id
-          if Rails.env.production?
-            image open(@account.representative.logo.url), height: 75
-          else
-            image "#{Rails.root}/app/assets/images/minute men hr.jpeg", height: 75
-          end
-        else
-          if Rails.env.production?
-            image open(@account.representative.logo.url), height: 50
-          else
-            image "#{Rails.root}/app/assets/images/logo.png", height: 50
-          end
-        end
-      end
+      representative_logo
       transparent(0) { stroke_bounds }
       # stroke_bounds
     end
