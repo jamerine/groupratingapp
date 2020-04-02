@@ -441,6 +441,8 @@ class Account < ActiveRecord::Base
   def group_retro(user_override = nil)
     self.group_retro_reject
 
+    return unless self.policy_calculation.present?
+
     @industry_group = policy_calculation.policy_industry_group
 
     if @group_retro_qualification == "accept"
@@ -532,6 +534,7 @@ class Account < ActiveRecord::Base
 
     @group_rating = GroupRating.where(representative_id: self.representative_id).last
     # NEGATIVE PAYROLL ON A MANUAL CLASS
+
     unless self.policy_calculation.manual_class_calculations.where("manual_class_current_estimated_payroll < 0 or manual_class_four_year_period_payroll < 0").empty?
       if @found_rejection = self.group_rating_rejections.find_by(reject_reason: 'manual_class_negative_payroll', program_type: 'group_retro')
         @group_retro_rejection_array << self.group_rating_rejections.new(reject_reason: 'manual_class_negative_payroll', representative_id: @group_rating.representative_id, program_type: 'group_retro', hide: @found_rejection.hide)
