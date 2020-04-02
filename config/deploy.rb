@@ -18,6 +18,3 @@ set :default_env, { path: "/home/deploy/.gem/ruby/2.3.0/bin:$PATH" }
 
 # Uncomment the following to require manually verifying the host key before first deploy.
 # set :ssh_options, verify_host_key: :secure
-set :slack_url, ENV['WEBHOOK_URL']
-set :slack_channel, ['#arm-errors']
-set :slack_username, 'groupratingapp'
