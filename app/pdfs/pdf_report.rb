@@ -12,32 +12,8 @@ class PdfReport < Prawn::Document
     font_size 10
   end
 
-  def header(title=nil)
-    if @account.representative.logo.nil?
-      if [9,10,16].include? @account.representative.id
-        image "#{Rails.root}/app/assets/images/minute men hr.jpeg", height: 75
-      elsif [2].include? @account.representative.id
-        image "#{Rails.root}/app/assets/images/cose_logo.jpg", height: 75
-      elsif [17].include? @account.representative.id
-        image "#{Rails.root}/app/assets/images/tartan_logo.jpg", height: 75
-      else
-        image "#{Rails.root}/app/assets/images/logo.png", height: 50
-      end
-    else
-      if [9,10,16,2,17].include? @account.representative.id
-        if Rails.env.production?
-          image open(@account.representative.logo.url), height: 75
-        else
-          image "#{Rails.root}/app/assets/images/minute men hr.jpeg", height: 75
-        end
-      else
-        if Rails.env.production?
-          image open(@account.representative.logo.url), height: 50
-        else
-          image "#{Rails.root}/app/assets/images/logo.png", height: 50
-        end
-      end
-    end
+  def header
+    representative_logo
   end
 
   def footer(account)
@@ -72,6 +48,8 @@ class PdfReport < Prawn::Document
     num = num * 100
     @view.number_to_percentage(num, precision: 0)
   end
-  # ... More helpers
 
+  def representative_logo(height_px = 75)
+    image "#{Rails.root}/public#{@account.representative.logo_url}", height: height_px
+  end
 end

@@ -68,7 +68,7 @@
         <%= link_to "Edit Representative", edit_representative_path(@representative.id), class: 'btn btn-primary' %>
       </div>
       <div class="row">
-          <%= image_tag @representative.logo.url if @representative.logo? %>
+          <%= image_tag @representative.logo_url %>
       </div>
     </div>
     <hr>
