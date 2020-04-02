@@ -280,8 +280,8 @@ class RiskReport < PdfReport
     @em_cap =
       policy_em_rate = @policy_calculation.policy_individual_adjusted_experience_modified_rate || @policy_calculation.policy_individual_experience_modified_rate
 
-    if policy_em_rate > (2 * @policy_calculation.policy_program_histories.order(reporting_period_start_date: :desc).first.experience_modifier_rate)
-      (2 * @policy_calculation.policy_program_histories.order(reporting_period_start_date: :desc).first.experience_modifier_rate)
+    if policy_em_rate > (2 * (@policy_calculation.policy_program_histories.order(reporting_period_start_date: :desc).first&.experience_modifier_rate || 0))
+      (2 * (@policy_calculation.policy_program_histories.order(reporting_period_start_date: :desc).first&.experience_modifier_rate || 0))
     else
       policy_em_rate
     end
@@ -530,7 +530,7 @@ class RiskReport < PdfReport
 
   def roc_report
     @account                = Account.includes(policy_calculation: [:claim_calculations, :policy_coverage_status_histories, :policy_program_histories, { manual_class_calculations: :payroll_calculations }]).find(@account.id)
-    @current_policy_program = @account.policy_calculation.policy_program_histories.order(reporting_period_start_date: :desc).first
+    @current_policy_program = @account.policy_calculation.policy_program_histories&.order(reporting_period_start_date: :desc)&.first
     @current_date           = DateTime.now.to_date
     @total_est_premium      = 0
 
@@ -583,15 +583,19 @@ class RiskReport < PdfReport
       move_down 3
       text "Estimated Current Period Premium", size: 10, style: :bold, align: :center
       horizontal_line 0, 350, :at => cursor
-      bounding_box([0, cursor], :width => 350) do
-        table ([["Rating Plan: #{@current_policy_program.group_type }", "Current EM: #{ @current_policy_program.experience_modifier_rate }", "OCP: #{ @current_policy_program.ocp_participation_indicator }", "EM CAP: #{ @current_policy_program.em_cap_participation_indicator }"], ["DFSP: #{@current_policy_program.drug_free_program_participation_indicator }", "Ded Pct: #{ @current_policy_program.deductible_discount_percentage }", "ISSP: #{ @current_policy_program.issp_participation_indicator }", "TWBNS: #{ @current_policy_program.twbns_participation_indicator }"]]), :column_widths => { 0 => 89, 1 => 87, 2 => 87, 3 => 87 } do
-          self.position      = :center
-          row(0..-1).borders = []
-          self.cell_style    = { size: 9 }
-          cells.padding      = 3
+
+      if @current_policy_program.present?
+        bounding_box([0, cursor], :width => 350) do
+          table ([["Rating Plan: #{@current_policy_program.group_type }", "Current EM: #{ @current_policy_program.experience_modifier_rate }", "OCP: #{ @current_policy_program.ocp_participation_indicator }", "EM CAP: #{ @current_policy_program.em_cap_participation_indicator }"], ["DFSP: #{@current_policy_program.drug_free_program_participation_indicator }", "Ded Pct: #{ @current_policy_program.deductible_discount_percentage }", "ISSP: #{ @current_policy_program.issp_participation_indicator }", "TWBNS: #{ @current_policy_program.twbns_participation_indicator }"]]), :column_widths => { 0 => 89, 1 => 87, 2 => 87, 3 => 87 } do
+            self.position      = :center
+            row(0..-1).borders = []
+            self.cell_style    = { size: 9 }
+            cells.padding      = 3
+          end
+          stroke_bounds
         end
-        stroke_bounds
       end
+
       bounding_box([0, cursor], :width => 350) do
         table current_policy_data, :column_widths => { 0 => 87, 1 => 87, 2 => 87, 3 => 87 }, :row_colors => ["FFFFFF", "F0F0F0"] do
           self.position      = :center
@@ -662,9 +666,9 @@ class RiskReport < PdfReport
 
     # EM Cap
     @em_cap_eligibility =
-      (@policy_calculation.policy_individual_experience_modified_rate > (2 * @policy_calculation.policy_program_histories.order(reporting_period_start_date: :desc).first.experience_modifier_rate) ? 'Yes' : 'No')
+      (@policy_calculation.policy_individual_experience_modified_rate > (2 * (@policy_calculation.policy_program_histories.order(reporting_period_start_date: :desc).first&.experience_modifier_rate || 0)) ? 'Yes' : 'No')
     if @em_cap_eligibility == 'Yes'
-      @em_cap_projected_premium = (2 * @policy_calculation.policy_program_histories.order(reporting_period_start_date: :desc).first.experience_modifier_rate)
+      @em_cap_projected_premium = (2 * (@policy_calculation.policy_program_histories.order(reporting_period_start_date: :desc).first&.experience_modifier_rate || 0))
       @em_cap_costs             = 0
       @em_cap_maximum_risk      = 0
       @em_cap_total_cost        = @em_cap_projected_premium - @em_cap_costs
