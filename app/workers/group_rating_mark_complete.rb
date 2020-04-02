@@ -5,7 +5,12 @@ class GroupRatingMarkComplete
   sidekiq_options queue: :group_rating_mark_complete, retry: 3
 
   def perform(group_rating_id, all_process = nil)
-    @group_rating        = GroupRating.find_by(id: group_rating_id)
+    return unless group_rating_id.present?
+
+    @group_rating = GroupRating.find_by(id: group_rating_id)
+
+    return unless @group_rating.present?
+
     @group_rating.status = "Completed"
     @group_rating.save
 

@@ -39,6 +39,8 @@
 #  sc230_claim_medical_payments_count                  :integer
 #  sc230_employer_demographics_count                   :integer
 #  sc230s_count                                        :integer
+#  weekly_mira_details_records_count                   :integer
+#  weekly_miras_count                                  :integer
 #  created_at                                          :datetime         not null
 #  updated_at                                          :datetime         not null
 #  group_rating_id                                     :integer

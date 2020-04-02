@@ -105,6 +105,10 @@ class ImportFile
       @import.miras_count               = Mira.count
       @import.mira_detail_records_count = MiraDetailRecord.filter_by(representative_number).count
       @import.import_status             = "#{table_name} Completed"
+    elsif table_name == "weekly_miras"
+      @import.weekly_miras_count                = WeeklyMira.count
+      @import.weekly_mira_details_records_count = WeeklyMiraDetailRecord.filter_by(representative_number).count
+      @import.import_status                     = "#{table_name} Completed"
     elsif table_name == "clicds"
       @import.clicds_count               = Clicd.count
       @import.clicd_detail_records_count = ClicdDetailRecord.filter_by(representative_number).count
