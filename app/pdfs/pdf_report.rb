@@ -50,6 +50,6 @@ class PdfReport < Prawn::Document
   end
 
   def representative_logo(height_px = 75)
-    image_url(@account.representative.logo_filename, height: height_px)
+    image(@account.representative.logo_filename, height: height_px)
   end
 end
