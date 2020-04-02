@@ -88,7 +88,7 @@ Rails.application.configure do
     address:        'smtp.sendgrid.net',
     user_name:      ENV['SENDGRID_USERNAME'],
     password:       ENV['SENDGRID_PASSWORD'],
-    domain:         'groupratingapp.herokuapp.com',
+    domain:         'groupratingapp.switchboxinc.com',
     authentication: :plain,
     content_type:   'text/html'
   }
@@ -100,7 +100,7 @@ Rails.application.configure do
                                             exception_recipients: %w{amoyer@switchboxinc.com}
                                           },
                                           :slack => {
-                                            :webhook_url           => "https://hooks.slack.com/services/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",
+                                            :webhook_url           => "ENV['WEBHOOK_URL']",
                                             :channel               => "#arm-errors",
                                             :additional_parameters => {
                                               :icon_url => "http://img.timeinc.net/time/photoessays/2010/halloween_costumes/sad_keanu.jpg",
