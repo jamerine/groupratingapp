@@ -3,11 +3,11 @@ class PdfReport < Prawn::Document
 
   # Often-Used Constants
 
-  TABLE_ROW_COLORS = ["FFFFFF","DDDDDD"]
-  TABLE_FONT_SIZE = 9
+  TABLE_ROW_COLORS   = ["FFFFFF", "DDDDDD"]
+  TABLE_FONT_SIZE    = 9
   TABLE_BORDER_STYLE = :grid
 
-  def initialize(default_prawn_options={})
+  def initialize(default_prawn_options = {})
     super(default_prawn_options)
     font_size 10
   end
@@ -17,13 +17,13 @@ class PdfReport < Prawn::Document
   end
 
   def footer(account)
-    bounding_box([0, 0], :width => bounds.width/3, :height => 10) do
-     number_pages "#{account.name.titleize}", { :start_count_at => 0, :page_filter => :all, align: :left, :size => 8 }
+    bounding_box([0, 0], :width => bounds.width / 3, :height => 10) do
+      number_pages "#{account.name.titleize}", { :start_count_at => 0, :page_filter => :all, align: :left, :size => 8 }
     end
-    bounding_box([(bounds.width/3), 0], :width => bounds.width/3, :height => 10) do
-     number_pages "Page <page> of <total>", { :start_count_at => 0, :page_filter => :all, align: :center, :size => 8 }
+    bounding_box([(bounds.width / 3), 0], :width => bounds.width / 3, :height => 10) do
+      number_pages "Page <page> of <total>", { :start_count_at => 0, :page_filter => :all, align: :center, :size => 8 }
     end
-    bounding_box([((bounds.width/3)*2), 0], :width => bounds.width/3, :height => 10) do
+    bounding_box([((bounds.width / 3) * 2), 0], :width => bounds.width / 3, :height => 10) do
       number_pages "#{@current_date.strftime("%A, %B %e, %Y")}", { :start_count_at => 0, :page_filter => :all, align: :right, :size => 8 }
     end
   end
@@ -50,6 +50,6 @@ class PdfReport < Prawn::Document
   end
 
   def representative_logo(height_px = 75)
-    image "#{Rails.root}/public#{@account.representative.logo_url}", height: height_px
+    image_url(@account.representative.logo_filename, height: height_px)
   end
 end
