@@ -79,9 +79,12 @@ class ClaimCalculation < ActiveRecord::Base
     ClicdDetailRecord.where(claim_number: claim_number, representative_number: representative_number, policy_number: policy_number)
   end
 
+  def weekly_mira_detail_record
+    WeeklyMiraDetailRecord.find_by(claim_number: claim_number, representative_number: representative_number, policy_number: policy_number)
+  end
+
   def mira_detail_record
-    WeeklyMiraDetailRecord.find_by(claim_number: claim_number, representative_number: representative_number, policy_number: policy_number) ||
-      MiraDetailRecord.find_by(claim_number: claim_number, representative_number: representative_number, policy_number: policy_number)
+    weekly_mira_detail_record || MiraDetailRecord.find_by(claim_number: claim_number, representative_number: representative_number, policy_number: policy_number)
   end
 
   def democ_detail_record
