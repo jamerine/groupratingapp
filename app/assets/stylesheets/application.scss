@@ -36,8 +36,10 @@ $grid-float-breakpoint: 1285px;
   width: 25%;
 }
 
-.navbar-default .navbar-header .arm-brand-logo {
-  background: image-url("logo.png") center / contain no-repeat;
+.navbar-default .navbar-header .brand-logo {
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
   width: 150px;
   margin-left: 25px;
 }

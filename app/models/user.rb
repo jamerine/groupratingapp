@@ -43,4 +43,18 @@ class User < ActiveRecord::Base
   def full_name
     "#{first_name} #{last_name}"
   end
+
+  def representative_logo_filename
+    representative_to_use.logo_filename
+  end
+
+  def representative_logo_url
+    representative_to_use.logo_url
+  end
+
+  private
+
+  def representative_to_use
+    self.representatives.sort_by(&:id).first || Representative.default_representative
+  end
 end

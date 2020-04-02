@@ -58,8 +58,21 @@ class Representative < ActiveRecord::Base
   mount_uploader :logo, LogoUploader
   mount_uploader :zip_file, RepresentativeUploader
 
+  scope :default_representative, -> { find(1) }
+
   def self.options_for_select
     order('LOWER(abbreviated_name)').map { |e| [e.abbreviated_name, e.id] }
   end
 
+  def logo_filename
+    logo_to_use.file.filename
+  end
+
+  def logo_url
+    logo_to_use.url || 'logo.png'
+  end
+
+  def logo_to_use
+    logo? ? logo : self.class.default_representative.logo
+  end
 end
