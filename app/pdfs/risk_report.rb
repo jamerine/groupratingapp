@@ -406,26 +406,29 @@ class RiskReport < PdfReport
       transparent(0) { stroke_bounds }
     end
 
-    bounding_box([285, current_cursor], :width => 275, :height => 125) do
-      text "Current Rating Plan:", style: :bold
-      move_down 5
-      text "Current EM: #{@policy_program_history.experience_modifier_rate}"
-      move_down 2
-      text "Retro Min%: #{ @policy_program_history.rrr_minimum_premium_percentage }"
-      move_down 2
-      text "One Claim: #{ @policy_program_history.ocp_participation_indicator }   OCP_Year: #{ @policy_program_history.ocp_first_year_of_participation }"
-      move_down 2
-      text "EM Capping: #{ @policy_program_history.em_cap_participation_indicator }"
-      move_down 2
-      text "DFSP: #{ @policy_program_history.drug_free_program_participation_indicator }"
-      move_down 2
-      text "Deductible %: #{ @policy_program_history.deductible_participation_indicator }"
-      move_down 2
-      text "Trans Work: #{ @policy_program_history.twbns_participation_indicator }  ISSP: #{@policy_program_history.issp_participation_indicator }"
-      move_down 2
-      text "Grow Ohio: #{@policy_program_history.drug_free_program_participation_indicator  }"
-      transparent(0) { stroke_bounds }
+    if @policy_program_history.present?
+      bounding_box([285, current_cursor], :width => 275, :height => 125) do
+        text "Current Rating Plan:", style: :bold
+        move_down 5
+        text "Current EM: #{@policy_program_history.experience_modifier_rate}"
+        move_down 2
+        text "Retro Min%: #{ @policy_program_history.rrr_minimum_premium_percentage }"
+        move_down 2
+        text "One Claim: #{ @policy_program_history.ocp_participation_indicator }   OCP_Year: #{ @policy_program_history.ocp_first_year_of_participation }"
+        move_down 2
+        text "EM Capping: #{ @policy_program_history.em_cap_participation_indicator }"
+        move_down 2
+        text "DFSP: #{ @policy_program_history.drug_free_program_participation_indicator }"
+        move_down 2
+        text "Deductible %: #{ @policy_program_history.deductible_participation_indicator }"
+        move_down 2
+        text "Trans Work: #{ @policy_program_history.twbns_participation_indicator }  ISSP: #{@policy_program_history.issp_participation_indicator }"
+        move_down 2
+        text "Grow Ohio: #{@policy_program_history.drug_free_program_participation_indicator  }"
+        transparent(0) { stroke_bounds }
+      end
     end
+
     post_current_cursor = cursor
     stroke do
       # just lower the current y position
@@ -532,8 +535,8 @@ class RiskReport < PdfReport
     @total_est_premium      = 0
 
     @account.policy_calculation.manual_class_calculations.each do |man|
-        rate = man.payroll_calculations.where("reporting_period_start_date < :current_date and reporting_period_end_date > :current_date", current_date: @current_date).first&.manual_class_rate
-        @total_est_premium += rate.nil? ? 0 :  rate * man.manual_class_current_estimated_payroll * 0.01
+      rate               = man.payroll_calculations.where("reporting_period_start_date < :current_date and reporting_period_end_date > :current_date", current_date: @current_date).first&.manual_class_rate
+      @total_est_premium += rate.nil? ? 0 : rate * man.manual_class_current_estimated_payroll * 0.01
     end
 
     if @report_params["estimated_current_premium"] == "1" || @report_params["program_options"] == "1"
