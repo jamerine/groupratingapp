@@ -2,15 +2,14 @@
 <html>
 <head>
   <title>
-    ARM
     <% if @claimant_name.present? %>
-      - <%= @claimant_name %>
+      <%= @claimant_name %>
     <% elsif @policy_number.present? %>
-      - <%= @policy_number %>
+      <%= @policy_number %>
     <% elsif @account_name.present? %>
-      - <%= @account_name %>
+      <%= @account_name %>
     <% else %>
-      - Group Rating App
+      Group Rating App
     <% end %>
   </title>
 
