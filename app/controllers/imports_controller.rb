@@ -50,56 +50,6 @@ class ImportsController < ApplicationController
     @import.parse_status           = 'Queuing'
     # Flat files
     if @import.save
-      Democ.delete_all
-      Mrcl.delete_all
-      Mremp.delete_all
-      Pcomb.delete_all
-      Phmgn.delete_all
-      Sc220.delete_all
-      Sc230.delete_all
-      Mira.delete_all
-      Clicd.delete_all
-      DemocDetailRecord.filter_by(@representative.representative_number).delete_all
-      MrclDetailRecord.delete_all
-      MrempEmployeeExperiencePolicyLevel.delete_all
-      MrempEmployeeExperienceManualClassLevel.delete_all
-      MrempEmployeeExperienceClaimLevel.delete_all
-      PcombDetailRecord.delete_all
-      PhmgnDetailRecord.delete_all
-      MiraDetailRecord.filter_by(@representative.representative_number).delete_all
-      ClicdDetailRecord.filter_by(@representative.representative_number).delete_all
-      Sc220Rec1EmployerDemographic.delete_all
-      Sc220Rec2EmployerManualLevelPayroll.delete_all
-      Sc220Rec3EmployerArTransaction.delete_all
-      Sc220Rec4PolicyNotFound.delete_all
-      Sc230EmployerDemographic.delete_all
-      Sc230ClaimMedicalPayment.delete_all
-      Sc230ClaimIndemnityAward.delete_all
-      ExceptionTablePolicyCombinedRequestPayrollInfo.where(data_source: 'bwc').delete_all
-      FinalClaimCostCalculationTable.where(data_source: 'bwc').delete_all
-      FinalEmployerDemographicsInformation.where(data_source: 'bwc').delete_all
-      FinalManualClassFourYearPayrollAndExpLoss.where(data_source: 'bwc').delete_all
-      FinalManualClassGroupRatingAndPremiumProjection.where(data_source: 'bwc').delete_all
-      FinalPolicyExperienceCalculation.where(data_source: 'bwc').delete_all
-      FinalPolicyGroupRatingAndPremiumProjection.where(data_source: 'bwc').delete_all
-      ProcessManualClassFourYearPayrollWithCondition.where(data_source: 'bwc').delete_all
-      ProcessManualClassFourYearPayrollWithoutCondition.where(data_source: 'bwc').delete_all
-      ProcessManualReclassTable.where(data_source: 'bwc').delete_all
-      ProcessPayrollAllTransactionsBreakdownByManualClass.where(data_source: 'bwc').delete_all
-      ProcessPayrollBreakdownByManualClass.where(data_source: 'bwc').delete_all
-      ProcessPolicyCombinationLeaseTermination.where(data_source: 'bwc').delete_all
-      ProcessPolicyCombineFullTransfer.where(data_source: 'bwc').delete_all
-      ProcessPolicyCombinePartialToFullLease.where(data_source: 'bwc').delete_all
-      ProcessPolicyCombinePartialTransferNoLease.where(data_source: 'bwc').delete_all
-      ProcessPolicyCoverageStatusHistory.where(data_source: 'bwc').delete_all
-
-      # ImportFile.perform_async("https://s3.amazonaws.com/grouprating/ARM/DEMOCFILE", "democs", @import.id)
-      # ImportFile.perform_async("https://s3.amazonaws.com/grouprating/ARM/MRCLSFILE", "mrcls", @import.id)
-      # ImportFile.perform_async("https://s3.amazonaws.com/grouprating/ARM/MREMPFILE", "mremps", @import.id)
-      # ImportFile.perform_async("https://s3.amazonaws.com/grouprating/ARM/PCOMBFILE", "pcombs", @import.id)
-      # ImportFile.perform_async("https://s3.amazonaws.com/grouprating/ARM/PHMGNFILE", "phmgns", @import.id)
-      # ImportFile.perform_async("https://s3.amazonaws.com/grouprating/ARM/SC220FILE", "sc220s", @import.id)
-      # ImportFile.perform_async("https://s3.amazonaws.com/grouprating/ARM/SC230FILE", "sc230s", @import.id)
       @new_group_rating                        = GroupRating.new(experience_period_lower_date: @representative.experience_period_lower_date, experience_period_upper_date: @representative.experience_period_upper_date, current_payroll_period_lower_date: @representative.current_payroll_period_lower_date, current_payroll_period_upper_date: @representative.current_payroll_period_upper_date, current_payroll_year: @representative.current_payroll_year, program_year_lower_date: @representative.program_year_lower_date, program_year_upper_date: @representative.program_year_upper_date, program_year: @representative.program_year, quote_year_lower_date: @representative.quote_year_lower_date, quote_year_upper_date: @representative.quote_year_upper_date, quote_year: @representative.quote_year, representative_id: @representative.id)
       @new_group_rating.status                 = 'Queuing'
       @new_group_rating.process_representative = @representative.representative_number
