@@ -62,7 +62,7 @@
 class ClaimCalculation < ActiveRecord::Base
   belongs_to :policy_calculation
 
-  attr_accessor :comp_awarded, :medical_paid, :mira_reserve
+  attr_accessor :comp_awarded, :medical_paid, :mira_reserve, :address_id
 
   def self.update_or_create(attributes)
     obj = first || new
@@ -95,6 +95,10 @@ class ClaimCalculation < ActiveRecord::Base
 
   def claim_notes
     ClaimNote.where(claim_number: claim_number, representative_number: representative_number, policy_number: policy_number)
+  end
+
+  def address
+    ClaimAddress.find_by(claim_number: claim_number, representative_number: representative_number, policy_number: policy_number)
   end
 
   def program_type
