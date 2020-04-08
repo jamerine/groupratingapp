@@ -174,15 +174,18 @@ class ClaimCalculation < ActiveRecord::Base
   end
 
   def medical_last_paid_date
-    democ_detail_record.try(:last_paid_medical_date)
+    return unless @democ_detail_record.present?
+    @democ_detail_record.&last_paid_medical_date
   end
 
   def indemnity_last_paid_date
-    democ_detail_record.try(:last_paid_indemnity_date)
+    return unless @democ_detail_record.present?
+    @democ_detail_record.&last_paid_indemnity_date
   end
 
   def non_at_fault
-    democ_detail_record.try(:non_at_fault)
+    return unless @democ_detail_record.present?
+    @democ_detail_record.&non_at_fault
   end
 
   def total_loss_of_claim
