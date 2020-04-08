@@ -9,19 +9,37 @@
         <div class="panel panel-primary">
           <div class="panel-heading">Claim Information for: <%= @claim_calculation&.claimant_name&.titleize %></div>
           <div class="panel-body">
-            <dl class="dl-horizontal">
-              <dt>IW Name:</dt>
-              <dd><%= @claim_calculation&.claimant_name&.titleize %></dd>
-
-              <dt>Address:</dt>
-              <dd></dd>
-
-              <dt>Claim Number</dt>
-              <dd><%= @claim_calculation&.claim_number %></dd>
-
-              <dt>Date of Injury:</dt>
-              <dd><%= @claim_calculation&.mira_detail_record&.claim_injury_date.try(:strftime, "%b %d, %Y") %></dd>
-            </dl>
+            <table style="width:100%;">
+              <tbody>
+                <tr>
+                  <td class="text-bold">IW Name:</td>
+                  <td class="text-right" colspan="2">
+                    <%= @claim_calculation&.claimant_name&.titleize %>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="text-bold">Address:</td>
+                  <td class="text-right">
+                    <%= simple_format(@claim_calculation.address&.address, {}, wrapper_tag: :div) %>
+                  </td>
+                  <td class="text-right">
+                    <button class="btn btn-transparent text-primary" style="display: inline-block;" data-toggle="modal" data-target="#address-modal"><i class="fa fa-edit"></i></button>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="text-bold">Claim Number:</td>
+                  <td class="text-right" colspan="2">
+                    <%= @claim_calculation&.claim_number %>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="text-bold">Date of Injury:</td>
+                  <td class="text-right" colspan="2">
+                    <%= @claim_calculation&.mira_detail_record&.claim_injury_date.try(:strftime, "%b %d, %Y") %>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
@@ -616,3 +634,5 @@
     });
   </script>
 <% end %>
+
+<%= render 'address_modal' %>

@@ -32,4 +32,22 @@ class ClaimCalculationsController < ApplicationController
       end
     end
   end
+
+  def update_address
+    @claim_calculation = ClaimCalculation.find(params[:id])
+    @address           = ClaimAddress.find_by(id: address_params[:address_id]) ||
+      ClaimAddress.new(claim_number:          @claim_calculation.claim_number,
+                       policy_number:         @claim_calculation.policy_number,
+                       representative_number: @claim_calculation.representative_number)
+    @address.address   = address_params[:address]
+    @address.save ? flash[:success] = 'Saved Address Successfully!' : flash[:error] = 'Something went wrong saving the address!'
+
+    redirect_to action: :show, id: params[:id]
+  end
+
+  private
+
+  def address_params
+    params.require(:claim_calculation).permit(:address_id, :address)
+  end
 end

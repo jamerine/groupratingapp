@@ -305,8 +305,18 @@ $radius: 4px;
   }
 }
 
+.text-bold {
+  font-weight: 700;
+}
+
 footer {
   padding: 15px 0;
   background-color: #f8f8f8;
   border-top: 1px solid #e7e7e7;
+}
+
+.btn.btn-transparent {
+  background-color: transparent;
+  padding: 5px;
+  border: none;
 }

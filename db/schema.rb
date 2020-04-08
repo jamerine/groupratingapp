@@ -290,6 +290,15 @@ ActiveRecord::Schema.define(version: 202004020223665) do
     t.datetime "updated_at"
   end
 
+  create_table "claim_addresses", force: :cascade do |t|
+    t.string   "claim_number"
+    t.integer  "policy_number"
+    t.integer  "representative_number"
+    t.text     "address"
+    t.datetime "created_at",            null: false
+    t.datetime "updated_at",            null: false
+  end
+
   create_table "claim_calculations", force: :cascade do |t|
     t.integer  "representative_number"
     t.string   "policy_type"
