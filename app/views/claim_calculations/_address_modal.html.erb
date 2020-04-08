@@ -1,0 +1,20 @@
+<div class="modal fade" id="address-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <%= simple_form_for @claim_calculation, url: update_address_claim_calculation_path(@claim_calculation), method: :post do |f| %>
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="myModalLabel">Update Claim Address for <%= @claim_calculation.claimant_name&.titleize %></h4>
+        </div>
+        <div class="modal-body">
+          <%= f.input :address_id, as: :hidden, input_html: { value: @claim_calculation.address&.id } %>
+          <%= f.input :address, as: :text, input_html: { value: @claim_calculation.address&.address } %>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <%= f.submit 'Save Changes', class: 'btn btn-primary' %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
