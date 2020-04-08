@@ -437,6 +437,10 @@ Rails.application.routes.draw do
       get :search
     end
 
+    member do
+      post :update_address
+    end
+
     resources :claim_notes
   end
 
