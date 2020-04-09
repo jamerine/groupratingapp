@@ -1,27 +1,38 @@
 <nav class="navbar account-header navbar-inverse navbar-fixed-top ">
-  <div class="row text-center">
-    <div class="col-md-4 col-sm-6 col-xs-6">
-      <p class="navbar-text">
-        <span>Account: <%= link_to "#{@account.name.slice(0..25).try(:titleize) }", account_path(@account), target: '_blank' %></span>
-        <span style="margin-left: 30px;">Representative: <%= @account.representative&.abbreviated_name %></span>
-      </p>
+  <div class="row">
+    <div class="col-md-5">
+      <div class="row">
+        <div class="col-sm-6 col-md-7">
+          <div class="account-text">Account: <%= link_to "#{@account.name.slice(0..25).try(:titleize) }", account_path(@account), target: '_blank' %></div>
+        </div>
+        <div class="col-sm-6 col-md-5">
+          <div class="account-text">Representative: <%= @account.representative&.abbreviated_name %></div>
+        </div>
+      </div>
     </div>
-    <div class="col-md-2 col-sm-6 col-xs-6">
-      <% if @account.predecessor? || @account.invalid_policy_number? %>
-        <p class="navbar-text">Policy: <%= @account.policy_calculation.policy_number %></p>
-      <% else %>
-        <p class="navbar-text">Policy: <%= link_to "#{@account.policy_calculation.policy_number}", policy_calculation_path(@account.policy_calculation), target: '_blank' %></p>
-      <% end %>
+    <div class="col-md-3">
+      <div class="row">
+        <div class="col-sm-6">
+          <% if @account.predecessor? || @account.invalid_policy_number? %>
+            <div class="account-text">Policy: <%= @account.policy_calculation.policy_number %></div>
+          <% else %>
+            <div class="account-text">Policy: <%= link_to "#{@account.policy_calculation.policy_number}", policy_calculation_path(@account.policy_calculation), target: '_blank' %></div>
+          <% end %>
+        </div>
+        <div class="col-sm-6">
+          <div class="account-text">Policy Status: <%= @account.policy_calculation.current_coverage_status.try(:humanize) %></div>
+        </div>
+      </div>
     </div>
-    <div class="col-md-2 col-sm-4 col-xs-6">
-      <p class="navbar-text">Account: <%= @account.status.slice(0..9).try(:humanize) %></p>
-    </div>
-    <div class="col-md-2 col-sm-4 col-xs-6">
-      <p class="navbar-text">Policy: <%= @account.policy_calculation.current_coverage_status.try(:humanize) %></p>
-    </div>
-    <div class="col-md-2 col-sm-2 col-xs-6 ret-nav-div">
-      <%= link_to "Retention", account_retention_path(:account_id => @account.id), class: "retention-nav", target: '_blank' %>
+    <div class="col-md-4">
+      <div class="row">
+        <div class="col-sm-6">
+          <div class="account-text">Account: <%= @account.status.slice(0..9).try(:humanize) %></div>
+        </div>
+        <div class="col-sm-6">
+          <div class="account-text"><%= link_to "Retention", account_retention_path(:account_id => @account.id), class: "retention-nav", target: '_blank' %></div>
+        </div>
+      </div>
     </div>
   </div>
-  <!-- </ul> -->
 </nav>

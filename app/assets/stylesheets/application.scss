@@ -92,6 +92,16 @@ main {
 .account-header {
   margin-top: 50px;
   text-align: center;
+  padding-bottom: 15px;
+
+  .account-text {
+    color: rgb(204, 204, 204);
+    padding-top: 15px;
+  }
+
+  @media (max-width: 1440px){
+    text-align: left;
+  }
 }
 
 .jumbotron {
@@ -152,7 +162,11 @@ $radius: 4px;
 #search-claim, #search-policy {
   margin: 8px 4px;
   width: auto;
-  max-width: 275px;
+  max-width: 150px;
+
+  @media(max-width: 1440px){
+    max-width: 125px;
+  }
 
   #claim-search-wrapper, #policy-search-wrapper {
     position: absolute;
@@ -160,7 +174,7 @@ $radius: 4px;
     left: 0;
     background-color: #FFF;
     min-height: 50px;
-    width: 275px;
+    width: 100%;
     border: $search-results-boarder;
     border-radius: $radius;
   }
