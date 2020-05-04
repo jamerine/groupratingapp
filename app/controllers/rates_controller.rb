@@ -76,12 +76,18 @@ class RatesController < ApplicationController
   end
 
   def handle_rates_updates
-    base_rates_file     = rates_params[:base_rates_file]
-    limited_rates_file  = rates_params[:limited_loss_rates_file]
+    base_rates_file    = rates_params[:base_rates_file]
+    limited_rates_file = rates_params[:limited_loss_rates_file]
+
     @base_rates         = []
     @limited_loss_rates = []
 
     if base_rates_file.present?
+      unless base_rates_file.content_type == 'text/csv'
+        flash[:error] = 'Base Rates File must be a CSV file!'
+        redirect_to action: :index and return
+      end
+
       @base_rates = parse_csv(base_rates_file)
 
       if @base_rates.nil?
@@ -96,6 +102,11 @@ class RatesController < ApplicationController
     end
 
     if limited_rates_file.present?
+      unless limited_rates_file.content_type == 'text/csv'
+        flash[:error] = 'Limited Loss Rates File must be a CSV file!'
+        redirect_to action: :index and return
+      end
+
       @limited_loss_rates = parse_limited_csv(limited_rates_file)
 
       if @limited_loss_rates.nil?
