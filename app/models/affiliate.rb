@@ -31,10 +31,11 @@ class Affiliate < ActiveRecord::Base
 
   validates_presence_of :role, :first_name, :last_name
 
-  enum role: [:accountant, :association, :company_code, :crm, :examiner, :account_examiner, :member, :sales, :referral]
-  enum internal_external: [:external, :internal]
+  enum role: [:accountant, :association, :company_code, :crm, :examiner, :account_examiner, :member, :sales, :referral].freeze
+  enum internal_external: [:external, :internal].freeze
 
   default_scope -> { order(first_name: :asc, last_name: :asc) }
 
   scope :by_representative, -> (representative_id) { where(representative_id: representative_id) }
+  scope :for_claims, -> { where('role IN (?)', [3, 5, 7]) } # :sales, :account_examiner, :crm
 end
