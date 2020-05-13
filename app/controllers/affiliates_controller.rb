@@ -6,9 +6,12 @@ class AffiliatesController < ApplicationController
     @affiliate         = @account_affiliate.build_affiliate(representative_id: @account.representative_id)
   end
 
+  def edit
+    @account_affiliate = AccountsAffiliate.find_by(account_id: params[:account_id], affiliate_id: params[:id])
+    @affiliate         = @account_affiliate.affiliate
+  end
+
   def create
-    # @affiliate         = Affiliate.new(account_affiliate_params[:affiliate])
-    # @account_affiliate = AccountsAffiliate.new(account_id: params[:account_id], affiliate: @affiliate)
     @account_affiliate = AccountsAffiliate.new(account_affiliate_params)
 
     if @account_affiliate.save
@@ -20,15 +23,26 @@ class AffiliatesController < ApplicationController
     end
   end
 
-  def destroy
-    @affiliate          = Affiliate.find(params[:id])
-    @accounts_affiliate = AccountsAffiliate.find_by(account_id: @account, affiliate_id: @affiliate)
-    if @accounts_affiliate.destroy
-      redirect_to @account, notice: "Affiliate has been removed"
-    else
-      redirect_to @account, alert: "Error removing affiliate"
-    end
+  def update
+    @account_affiliate = AccountsAffiliate.find_by(account_id: params[:account_id], affiliate_id: params[:id])
 
+    if @account_affiliate.update(account_affiliate_params)
+      flash[:success] = 'Affiliates Saved Successfully!'
+      redirect_to @account
+    else
+      flash[:error] = 'Something went wrong, please try again!'
+      render :edit
+    end
+  end
+
+  def destroy
+    if AccountsAffiliate.find_by(account_id: params[:account_id], affiliate_id: params[:id])&.destroy
+      flash[:success] = "Affiliate Has Been Removed Successfully!"
+      redirect_to @account
+    else
+      flash[:error] = "Error Removing Affiliate!"
+      redirect_to @account
+    end
   end
 
   def import_affiliate_process

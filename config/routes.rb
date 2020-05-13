@@ -420,7 +420,7 @@ Rails.application.routes.draw do
       delete :remove_attachment
     end
 
-    resources :affiliates, only: [:new, :create, :destroy]
+    resources :affiliates
 
     collection { post :import_account_process }
   end

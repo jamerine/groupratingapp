@@ -28,7 +28,11 @@
             <td> <%= affiliate.company_name %></td>
             <td> <%= affiliate.email_address %></td>
             <td> <%= affiliate.external_id %></td>
-            <td> <%= link_to 'Edit' %> | <%= link_to 'Delete', account_affiliate_path(@account, affiliate), method: :delete %> </td>
+            <td>
+              <%= link_to 'Edit', edit_account_affiliate_path(@account, affiliate) %>
+              '  |
+              <%= link_to 'Delete', account_affiliate_path(@account, affiliate), method: :delete, data: { confirm: 'Are you sure you want to delete this affiliate?' } %>
+            </td>
           </tr>
         <% end %>
       </tbody>
