@@ -1,0 +1,38 @@
+= render partial: 'shared/account_navbar', object: @account
+
+.container
+  .row
+    .col-sm-12
+      h1 Affiliates For #{@account.name}
+      hr style="margin-top:0;"
+
+      h4 Add Current Affiliates
+      = simple_form_for @account, url: account_assign_path(@account), html: { method: :post } do |f|
+        .row
+          .col-sm-12
+            = f.association :affiliates, collection: @affiliates.collect { |x| ["#{x.first_name} #{x.last_name} - #{x.role.upcase} - #{x.company_name}", x.id] }, prompt: false, blank: false, include_empty: false, multiple: true, label: false
+        .form-group.text-center
+          = f.submit 'Assign Affiliates', class: 'btn btn-success'
+
+      = simple_form_for @account_affiliate, url: account_affiliates_path(@account) do |f|
+        = f.input :account_id, as: :hidden
+        .panel.panel-primary
+          .panel-heading
+            h4.panel-title Create New Affiliate
+          .panel-body
+            = f.simple_fields_for :affiliate, @affiliate do |ff|
+              = ff.input :representative_id, as: :hidden, input_html: { value:  @account.representative_id }
+
+              .row
+                .col-sm-4 = ff.input :role, collection: @roles.collect { |s| [s[0].humanize, s[0]] }, prompt: 'Select One'
+              .row
+                .col-sm-4 = ff.input :company_name
+                .col-sm-4 = ff.input :first_name
+                .col-sm-4 = ff.input :last_name
+              .row
+                .col-sm-4 = ff.input :email_address, as: :email
+                .col-sm-4 = ff.input :external_id
+                .col-sm-4 = ff.input :salesforce_id
+          .panel-footer.text-right
+            = link_to 'Cancel', @account, class: 'btn btn-danger', style: 'margin-right: 5px;'
+            = f.submit 'Create Affiliate', class: 'btn btn-primary'

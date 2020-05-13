@@ -1,8 +1,8 @@
 <br>
-<h3>Affiliates - <%= link_to 'Add Affiliate', new_affiliate_path(account_id: params[:id]), class: "btn btn-success btn-sm" %></h3>
+<h3>Affiliates - <%= link_to 'Add Affiliates', new_account_affiliate_path(@account), class: "btn btn-success btn-sm" %></h3>
 
 <div class="table-responsive">
-  <% if affiliates.empty? %>
+  <% unless affiliates.any? %>
     <div class="container">
       <h5>No Affiliates have been added.</h5>
     </div>
@@ -28,7 +28,7 @@
             <td> <%= affiliate.company_name %></td>
             <td> <%= affiliate.email_address %></td>
             <td> <%= affiliate.external_id %></td>
-            <td> <%= link_to 'Edit' %> | <%= link_to 'Delete', affiliate_path(id: affiliate.id, account_id: @account.id), method: :delete  %> </td>
+            <td> <%= link_to 'Edit' %> | <%= link_to 'Delete', account_affiliate_path(@account, affiliate), method: :delete %> </td>
           </tr>
         <% end %>
       </tbody>

@@ -85,6 +85,7 @@
 #                                                       DELETE     /affiliates/:id(.:format)                                                      affiliates#destroy
 #                              claim_calculation_export GET        /claim_calculations/:claim_calculation_id/export(.:format)                     claim_calculations#export
 #                             search_claim_calculations GET        /claim_calculations/search(.:format)                                           claim_calculations#search
+#                      update_address_claim_calculation POST       /claim_calculations/:id/update_address(.:format)                               claim_calculations#update_address
 #                         claim_calculation_claim_notes GET        /claim_calculations/:claim_calculation_id/claim_notes(.:format)                claim_notes#index
 #                                                       POST       /claim_calculations/:claim_calculation_id/claim_notes(.:format)                claim_notes#create
 #                      new_claim_calculation_claim_note GET        /claim_calculations/:claim_calculation_id/claim_notes/new(.:format)            claim_notes#new
@@ -409,7 +410,6 @@ Rails.application.routes.draw do
     post :group_rating
     post :assign
     post :assign_address
-    collection { post :import_account_process }
     get :risk_report
     get :new_risk_report
     get :retention
@@ -419,6 +419,10 @@ Rails.application.routes.draw do
     resources :notes do
       delete :remove_attachment
     end
+
+    resources :affiliates, only: [:new, :create, :destroy]
+
+    collection { post :import_account_process }
   end
 
   resources :account_programs do

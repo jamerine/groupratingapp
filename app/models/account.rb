@@ -4,6 +4,7 @@
 #
 #  id                            :integer          not null, primary key
 #  ac3_approval                  :boolean
+#  account_type                  :integer
 #  business_email_address        :string
 #  business_phone_number         :bigint(8)
 #  city                          :string
@@ -68,7 +69,8 @@ class Account < ActiveRecord::Base
 
   validates :policy_number_entered, :presence => true, length: { maximum: 8 }
 
-  enum status: [:active, :inactive, :invalid_policy_number, :predecessor, :prospect]
+  enum status: [:active, :cancelled, :client, :dead, :inactive, :invalid_policy_number, :new_account, :predecessor, :prospect, :suspended]
+  enum account_type: [:grp_group, :gtro_group_retro, :individual_retro, :non_group, :ocp_one_claim_program, :pg_pregroup, :self_insured_tail]
 
   enum group_rating_qualification: [:accept, :pending_predecessor, :reject]
 

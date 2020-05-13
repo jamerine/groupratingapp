@@ -11,10 +11,10 @@ Rails.application.configure do
   config.assets.digest                         = true
   config.assets.raise_runtime_errors           = true
   config.assets.quiet                          = true
-  config.action_mailer.default_url_options     = { host: 'localhost', port: 3000 }
-  config.action_controller.default_url_options = { host: 'localhost', port: 3000 }
-  config.action_mailer.asset_host              = 'http://localhost:3000'
-  config.action_controller.asset_host          = 'http://localhost:3000'
+  config.action_mailer.default_url_options     = { host: 'arm.local', port: 3000 }
+  config.action_controller.default_url_options = { host: 'arm.local', port: 3000 }
+  config.action_mailer.asset_host              = 'http://arm.local:3000'
+  config.action_controller.asset_host          = 'http://arm.local:3000'
   config.action_mailer.delivery_method         = :letter_opener
   config.action_mailer.raise_delivery_errors   = true
   config.action_mailer.perform_deliveries      = true
@@ -22,5 +22,5 @@ Rails.application.configure do
   config.log_level                             = :debug
 
   ActionMailer::Base.raise_delivery_errors     = true
-  Rails.application.default_url_options[:host] = 'localhost:3000'
+  Rails.application.default_url_options[:host] = 'arm.local:3000'
 end
