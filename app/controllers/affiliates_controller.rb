@@ -1,28 +1,32 @@
 class AffiliatesController < ApplicationController
+  before_action :set_account, except: :import_affiliate_process
 
   def new
-    @account = Account.find(params[:account_id])
-    @affiliate = Affiliate.new
-    @affiliates = Affiliate.all
-    @roles = Affiliate.roles
+    @account_affiliate = AccountsAffiliate.new(account_id: @account.id)
+    @affiliate         = @account_affiliate.build_affiliate(representative_id: @account.representative_id)
   end
 
   def create
-    @account = Account.find(params[:affiliate][:account_id])
-    @affiliate = @account.affiliates.create(affiliate_params)
-    redirect_to @account
+    # @affiliate         = Affiliate.new(account_affiliate_params[:affiliate])
+    # @account_affiliate = AccountsAffiliate.new(account_id: params[:account_id], affiliate: @affiliate)
+    @account_affiliate = AccountsAffiliate.new(account_affiliate_params)
+
+    if @account_affiliate.save
+      flash[:success] = 'Affiliates Saved Successfully!'
+      redirect_to @account
+    else
+      flash[:error] = 'Something went wrong, please try again!'
+      render :new
+    end
   end
 
-
-
   def destroy
-    @affiliate = Affiliate.find(params[:id])
-    @account = Account.find(params[:account_id])
+    @affiliate          = Affiliate.find(params[:id])
     @accounts_affiliate = AccountsAffiliate.find_by(account_id: @account, affiliate_id: @affiliate)
     if @accounts_affiliate.destroy
-        redirect_to @account, notice: "Affiliate has been removed"
+      redirect_to @account, notice: "Affiliate has been removed"
     else
-        redirect_to @account, alert: "Error removing affiliate"
+      redirect_to @account, alert: "Error removing affiliate"
     end
 
   end
@@ -42,12 +46,15 @@ class AffiliatesController < ApplicationController
     end
   end
 
-
-
-
   private
 
-  def affiliate_params
-    params.require(:affiliate).permit(:first_name, :last_name, :role, :email_address, :company_name, :external_id, :internal_external, :salesforce_id)
+  def account_affiliate_params
+    params.require(:accounts_affiliate).permit(:account_id, affiliate_attributes: [:first_name, :last_name, :representative_id, :role, :email_address, :company_name, :external_id, :internal_external, :salesforce_id])
+  end
+
+  def set_account
+    @account    = Account.find(params[:account_id])
+    @affiliates = Affiliate.by_representative(@account.representative_id)
+    @roles      = Affiliate.roles
   end
 end

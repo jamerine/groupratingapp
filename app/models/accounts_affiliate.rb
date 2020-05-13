@@ -22,4 +22,6 @@
 class AccountsAffiliate < ActiveRecord::Base
   belongs_to :account
   belongs_to :affiliate
+
+  accepts_nested_attributes_for :affiliate
 end

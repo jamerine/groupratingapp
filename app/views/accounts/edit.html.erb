@@ -1,100 +1,110 @@
 <div class="container">
   <%= render partial: "shared/account_navbar", locals: { object: @account } %>
-
   <%= link_to 'Back', :back, class: 'btn btn-primary' %>
+
   <div class="jumbotron text-center">
     <h1>Edit Account</h1>
-    <div class="row">
-      <%= form_for @account do |f| %>
-          <div class="form-group col-md-12" >
-            <%= f.label :representative %>
-            <%= f.collection_select(:representative_id, @representatives, :id, :abbreviated_name, class: "form-control ")%>
-          </div>
-
-          <div class="form-group col-md-4" >
-            <%= f.label :name %>
-            <%= f.text_field :name, class: "form-control" %>
-          </div>
-
-          <div class="form-group col-md-4" >
-            <%= f.label 'Policy Number' %>
-            <%= f.number_field :policy_number_entered, class: "form-control" %>
-          </div>
-
-          <div class="form-group col-md-4 " >
-            <%= f.label :status %>
-            <%= f.select :status, options_for_select(@statuses.collect { |s| [s[0].humanize, s[0]] }, selected: @account.status), {} , class: "form-control" %>
-          </div>
-
-
-          <div class="form-group col-md-6" >
-            <%= f.label :street_address %>
-            <%= f.text_field :street_address, class: "form-control" %>
-          </div>
-
-          <div class="form-group col-md-6" >
-            <%= f.label :street_address_2 %>
-            <%= f.text_field :street_address_2, class: "form-control" %>
-          </div>
-
-          <div class="form-group col-md-2" >
-            <%= f.label :city %>
-            <%= f.text_field :city, class: "form-control" %>
-          </div>
-
-          <div class="form-group col-md-2" >
-            <%= f.label :state %>
-            <%= f.text_field :state, class: "form-control" %>
-          </div>
-
-          <div class="form-group col-md-2" >
-            <%= f.label :zip_code %>
-            <%= f.text_field :zip_code, class: "form-control" %>
-          </div>
-
-          <div class="form-group col-md-2" >
-            <%= f.label 'Phone number' %>
-            <%= f.text_field :business_phone_number, class: "form-control" %>
-          </div>
-
-          <div class="form-group col-md-2" >
-            <%= f.label 'Email address' %>
-            <%= f.text_field :business_email_address, class: "form-control" %>
-          </div>
-
-          <div class="form-group col-md-2" >
-            <%= f.label :website_url %>
-            <%= f.text_field :website_url, class: "form-control" %>
-          </div>
-
-          <div class="form-group col-md-3" >
-            <label>Cycle Date</label>
-            <p><%= @account.cycle_date || 'Never' %></p>
-          </div>
-
-          <div class="form-group col-md-3" >
-            <label>Last Requested</label>
-            <p><%= @account.request_date || 'Never' %></p>
-          </div>
-
-          <div class="form-group col-md-6" >
-            <%= f.label :weekly_request %>
-            <%= f.check_box :weekly_request%>
-          </div>
-
-          <div class="form-group col-md-6" >
-            <%= f.label :quarterly_request %>
-            <%= f.check_box :quarterly_request%>
-          </div>
-
-          <div class="form-group col-md-4  col-md-offset-4" >
-            <%= f.submit 'Update Account', class: 'btn btn-info' %>
-          </div>
-
-      <% end %>
-
+    <%= form_for @account do |f| %>
+      <div class="row">
+        <div class="form-group col-md-12">
+          <%= f.label :representative %>
+          <%= f.collection_select(:representative_id, @representatives, :id, :abbreviated_name, class: "form-control ") %>
+        </div>
       </div>
 
-    </div>
+      <div class="row">
+        <div class="form-group col-md-4">
+          <%= f.label :name %>
+          <%= f.text_field :name, class: "form-control" %>
+        </div>
 
+        <div class="form-group col-md-4">
+          <%= f.label 'Policy Number' %>
+          <%= f.number_field :policy_number_entered, class: "form-control" %>
+        </div>
+
+        <div class="form-group col-md-4 ">
+          <%= f.label :status %>
+          <%= f.select :status, options_for_select(@statuses.collect { |s| [s[0].titleize, s[0]] }, selected: @account.status), {}, class: "form-control" %>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="form-group col-md-4">
+          <%= f.label :street_address %>
+          <%= f.text_field :street_address, class: "form-control" %>
+        </div>
+
+        <div class="form-group col-md-4">
+          <%= f.label :street_address_2 %>
+          <%= f.text_field :street_address_2, class: "form-control" %>
+        </div>
+
+        <div class="form-group col-md-4 ">
+          <%= f.label :account_type %>
+          <%= f.select :account_type, options_for_select(@account_types.collect { |s| [s[0].titleize, s[0]] }, selected: @account.account_type), {}, class: "form-control" %>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="form-group col-md-2">
+          <%= f.label :city %>
+          <%= f.text_field :city, class: "form-control" %>
+        </div>
+
+        <div class="form-group col-md-2">
+          <%= f.label :state %>
+          <%= f.text_field :state, class: "form-control" %>
+        </div>
+
+        <div class="form-group col-md-2">
+          <%= f.label :zip_code %>
+          <%= f.text_field :zip_code, class: "form-control" %>
+        </div>
+
+        <div class="form-group col-md-2">
+          <%= f.label 'Phone number' %>
+          <%= f.text_field :business_phone_number, class: "form-control" %>
+        </div>
+
+        <div class="form-group col-md-2">
+          <%= f.label 'Email address' %>
+          <%= f.text_field :business_email_address, class: "form-control" %>
+        </div>
+
+        <div class="form-group col-md-2">
+          <%= f.label :website_url %>
+          <%= f.text_field :website_url, class: "form-control" %>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="form-group col-md-3">
+          <label>Cycle Date</label>
+          <p><%= @account.cycle_date || 'Never' %></p>
+        </div>
+
+        <div class="form-group col-md-3">
+          <label>Last Requested</label>
+          <p><%= @account.request_date || 'Never' %></p>
+        </div>
+
+        <div class="form-group col-md-6">
+          <%= f.label :weekly_request %>
+          <%= f.check_box :weekly_request %>
+        </div>
+
+        <div class="form-group col-md-6">
+          <%= f.label :quarterly_request %>
+          <%= f.check_box :quarterly_request %>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="form-group col-md-4  col-md-offset-4">
+          <%= f.submit 'Update Account', class: 'btn btn-info' %>
+        </div>
+      </div>
+    <% end %>
   </div>
+</div>

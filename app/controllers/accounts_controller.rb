@@ -56,6 +56,7 @@ class AccountsController < ApplicationController
     @representative     = Representative.find(@account.representative_id)
     @policy_calculation = PolicyCalculation.find_by(account_id: @account.id)
     @statuses           = Account.statuses
+    @account_types      = Account.account_types
     # @mailing_address = {:address_type => "mailing", :address_line_1 => @policy_calculation.mailing_address_line_1, :address_line_2 => @policy_calculation.mailing_address_line_2, :city => @policy_calculation.mailing_city, :state => @policy_calculation.mailing_state, :zip_code => @policy_calculation.mailing_zip_code}
     # @location_address = {:address_type => "location", :address_line_1 => @policy_calculation.location_address_line_1, :address_line_2 => @policy_calculation.location_address_line_2, :city => @policy_calculation.location_city, :state => @policy_calculation.location_state, :zip_code => @policy_calculation.location_zip_code}
     # @locations = []
@@ -148,9 +149,9 @@ class AccountsController < ApplicationController
   end
 
   def assign
-    @account            = Account.find(params[:account_id])
-    @affiliate          = Affiliate.find(params[:account][:id])
-    @accounts_affiliate = AccountsAffiliate.create(affiliate_id: @affiliate.id, account_id: @account.id)
+    @account = Account.find(params[:account_id])
+    account_params[:affiliate_ids].each { |affiliate_id| AccountsAffiliate.find_or_create_by(affiliate_id: affiliate_id, account_id: @account.id) }
+    flash[:success] = 'Affiliates Saved!'
     redirect_to @account
   end
 
@@ -332,7 +333,7 @@ class AccountsController < ApplicationController
   end
 
   def account_params
-    params.require(:account).permit(:representative_id, :name, :policy_number_entered, :street_address, :street_address_2, :city, :state, :zip_code, :business_phone_number, :business_email_address, :website_url, :group_rating_qualification, :group_rating_tier, :group_fees, :user_override, :industry_group, :group_dues, :total_costs, :status, :federal_identification_number, :cycle_date, :request_date, :quarterly_request, :weekly_request, :ac3_approval, :fee_override)
+    params.require(:account).permit(:representative_id, :name, :policy_number_entered, :street_address, :street_address_2, :city, :state, :zip_code, :business_phone_number, :business_email_address, :website_url, :group_rating_qualification, :group_rating_tier, :group_fees, :user_override, :industry_group, :group_dues, :total_costs, :status, :federal_identification_number, :cycle_date, :request_date, :quarterly_request, :weekly_request, :ac3_approval, :fee_override,
+                                    affiliate_ids: [])
   end
-
 end
