@@ -1,0 +1,120 @@
+= content_tag_for :div, @claim_calculation do
+  .container = render 'shared/account_navbar', object: @account
+  .container.claim-container style="margin-top: 15px;"
+    .row
+      .col-md-4
+        .panel.panel-primary
+          .panel-heading Claim Information for: #{@claim_calculation&.claimant_name&.titleize}
+          .panel-body
+            table style="width:100%;"
+              tbody
+                tr
+                  td.text-bold IW Name:
+                  td.text-right colspan="2"
+                    = @claim_calculation&.claimant_name&.titleize
+                tr
+                  td.text-bold Address:
+                  td.text-right = simple_format(@claim_calculation.address&.address, {}, wrapper_tag: :div)
+                  td.text-right
+                    button.btn.btn-transparent.text-primary data-target="#address-modal" data-toggle="modal" style=("display: inline-block;")
+                      i.fa.fa-edit
+                tr
+                  td.text-bold Claim Number:
+                  td.text-right colspan="2" = @claim_calculation&.claim_number
+                tr
+                  td.text-bold Date of Injury:
+                  td.text-right colspan="2" = @claim_calculation&.mira_detail_record&.claim_injury_date.try(:strftime, "%b %d, %Y")
+      .col-md-4
+        .panel.panel-primary
+          .panel-heading Medical
+          .panel-body
+            dl.dl-horizontal
+              dt Amount:
+              dd = number_to_currency(@claim_calculation&.claim_medical_paid, precision: 0)
+              dt Last Paid Date:
+              dd = @claim_calculation&.medical_last_paid_date&.strftime("%b %d, %Y")
+              dt Reserve:
+              dd = number_to_currency(@claim_calculation&.claim_mira_medical_reserve_amount, precision: 0)
+      .col-md-4
+        .panel.panel-primary
+          .panel-heading
+            | Indemnity
+            = link_to 'Export', claim_calculation_export_path(@claim_calculation, format: :pdf), class: 'btn btn-sm btn-success pull-right', target: '_blank', style: 'margin-top: -5px;'
+          .panel-body
+            dl.dl-horizontal
+              dt Reducible Amount:
+              dd = number_to_currency(@claim_calculation&.claim_mira_reducible_indemnity_paid, precision: 0)
+              - unless @claim_calculation&.claim_mira_non_reducible_indemnity_paid.zero?
+                dt Non Reducible Amount 1:
+                dd = number_to_currency(@claim_calculation&.claim_mira_non_reducible_indemnity_paid, precision: 0)
+
+              - unless @claim_calculation&.claim_mira_non_reducible_indemnity_paid_2.zero?
+                dt Non Reducible Amount 2:
+                dd = number_to_currency(@claim_calculation&.claim_mira_non_reducible_indemnity_paid_2, precision: 0)
+
+              dt Last Paid Date:
+              dd = @claim_calculation&.indemnity_last_paid_date&.strftime("%b %d, %Y")
+              dt Reserve:
+              dd = number_to_currency(@claim_calculation&.claim_mira_indemnity_reserve_amount, precision: 0)
+    br
+    .row
+      .col-md-4
+        .panel.panel-primary
+          .panel-heading Subrogation
+          .panel-body
+            dl.dl-horizontal
+              dt Percentage:
+              dd = number_to_percentage(@claim_calculation&.claim_subrogation_percent * 100, precision: 0)
+              dt Amount:
+              dd = number_to_currency(@claim_calculation&.claim_total_subrogation_collected, precision: 0)
+      .col-md-4
+        .panel.panel-primary
+          .panel-heading Settlement
+          .panel-body
+            dl.dl-horizontal
+              dt Is Settled:
+              dd = @claim_calculation&.settled_claim
+              dt Type:
+              dd = @claim_calculation&.settlement_type
+              dt Medical Settlement Date:
+              dd = @claim_calculation&.medical_settlement_date&.strftime("%b %d, %Y")
+              dt Indemnity Settlement Date:
+              dd = @claim_calculation&.indemnity_settlement_date&.strftime("%b %d, %Y")
+      .col-md-4
+        .panel.panel-primary
+          .panel-heading Handicap
+          .panel-body
+            dl.dl-horizontal
+              dt Percentage:
+              dd = number_to_percentage(@claim_calculation&.claim_handicap_percent * 100, precision: 0)
+              dt Effective Date:
+              dd = @claim_calculation&.claim_handicap_percent_effective_date&.strftime("%b %d, %Y")
+    br
+
+    - if @mira.present?
+      = render partial: 'mira_data'
+
+  div style=("margin-bottom: 50px;")
+
+  = render 'notes'
+
+  div style=("margin-bottom: 50px;")
+
+  - if @affiliates.any?
+    = render 'affiliates'
+    div style=("margin-bottom: 50px;")
+
+= render 'address_modal'
+
+javascript:
+  $(function () {
+    $('.datatable').DataTable({
+      order: [[0, 'desc']]
+    });
+
+    $('.note-datatable').DataTable({
+      order:      [[0, 'asc']],
+      columnDefs: [{ targets: -1, orderable: false }]
+    });
+  });
+

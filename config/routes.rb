@@ -41,7 +41,6 @@
 #                                  account_group_rating POST       /accounts/:account_id/group_rating(.:format)                                   accounts#group_rating
 #                                        account_assign POST       /accounts/:account_id/assign(.:format)                                         accounts#assign
 #                                account_assign_address POST       /accounts/:account_id/assign_address(.:format)                                 accounts#assign_address
-#                       import_account_process_accounts POST       /accounts/import_account_process(.:format)                                     accounts#import_account_process
 #                                   account_risk_report GET        /accounts/:account_id/risk_report(.:format)                                    accounts#risk_report
 #                               account_new_risk_report GET        /accounts/:account_id/new_risk_report(.:format)                                accounts#new_risk_report
 #                                     account_retention GET        /accounts/:account_id/retention(.:format)                                      accounts#retention
@@ -56,6 +55,15 @@
 #                                                       PATCH      /accounts/:account_id/notes/:id(.:format)                                      notes#update
 #                                                       PUT        /accounts/:account_id/notes/:id(.:format)                                      notes#update
 #                                                       DELETE     /accounts/:account_id/notes/:id(.:format)                                      notes#destroy
+#                                    account_affiliates GET        /accounts/:account_id/affiliates(.:format)                                     affiliates#index
+#                                                       POST       /accounts/:account_id/affiliates(.:format)                                     affiliates#create
+#                                 new_account_affiliate GET        /accounts/:account_id/affiliates/new(.:format)                                 affiliates#new
+#                                edit_account_affiliate GET        /accounts/:account_id/affiliates/:id/edit(.:format)                            affiliates#edit
+#                                     account_affiliate GET        /accounts/:account_id/affiliates/:id(.:format)                                 affiliates#show
+#                                                       PATCH      /accounts/:account_id/affiliates/:id(.:format)                                 affiliates#update
+#                                                       PUT        /accounts/:account_id/affiliates/:id(.:format)                                 affiliates#update
+#                                                       DELETE     /accounts/:account_id/affiliates/:id(.:format)                                 affiliates#destroy
+#                       import_account_process_accounts POST       /accounts/import_account_process(.:format)                                     accounts#import_account_process
 #                                              accounts GET        /accounts(.:format)                                                            accounts#index
 #                                                       POST       /accounts(.:format)                                                            accounts#create
 #                                           new_account GET        /accounts/new(.:format)                                                        accounts#new

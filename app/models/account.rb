@@ -5,6 +5,7 @@
 #  id                            :integer          not null, primary key
 #  ac3_approval                  :boolean
 #  account_type                  :integer
+#  business_contact_name         :string
 #  business_email_address        :string
 #  business_phone_number         :bigint(8)
 #  city                          :string

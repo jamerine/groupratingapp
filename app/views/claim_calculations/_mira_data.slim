@@ -1,0 +1,324 @@
+.row
+  .col-md-12
+    .panel.panel-default.mira-tab-panel
+      .panel-heading
+        ul.nav.nav-tabs role="tablist" 
+          li.active role="presentation" = link_to 'Overview and Status', '#overview', data: { toggle: :tab }
+          li role="presentation" = link_to 'ICDs', '#icds', data: { toggle: :tab }
+          li role="presentation" = link_to 'Employment', '#employment', data: { toggle: :tab }
+          li role="presentation" = link_to 'Medical', '#medical', data: { toggle: :tab }
+          li role="presentation" = link_to 'Indemnity', '#indemnity', data: { toggle: :tab }
+        .claim-number Claim Number: #{@claim_calculation.claim_number&.strip}
+      .panel-body.tab-content
+        #overview.tab-pane.fade.in.active role="tabpanel" 
+          .row
+            .col-md-6
+              table.table.table-striped.table-bordered
+                tbody
+                  tr
+                    td Injury Type
+                    td = @claim_calculation&.claim_mira_ncci_injury_type
+                  tr
+                    td Individual Total Modified Losses
+                    td = number_to_currency(@claim_calculation&.claim_modified_losses_individual_reduced, precision: 0)
+                  tr
+                    td Max Value
+                    td = number_to_currency(@claim_calculation&.max_value, precision: 0)
+                  tr
+                    td Claim Filing Date
+                    td = @mira.claim_filing_date&.strftime("b d, Y")
+                  tr
+                    td Gender
+                    td = @mira.gender
+                  tr
+                    td Marital Status
+                    td = @mira.marital_status
+                  tr
+                    td Injured Worker Represented
+                    td = @mira.injured_worked_represented
+                  tr
+                    td Claim Status
+                    td = @mira.claim_status
+                  tr
+                    td Claim Status Effective Date
+                    td = @mira.claim_status_effective_date&.strftime("b d, Y")
+                  tr
+                    td Claim Activity Status
+                    td = @mira.claim_status_effective_date&.strftime("b d, Y")
+                  tr
+                    td Claim Activity Status Effective Date
+                    td = @mira.claim_activity_status_effective_date&.strftime("b d, Y")
+                  tr
+                    td Claimant Zip Code
+                    td = @mira.claimant_zip_code
+                  tr
+                    td Catastrophic Claim
+                    td = @mira.catastrophic_claim
+                  tr
+                    td Reduction Amount
+                    td = @mira.reduction_amount
+                  tr
+                    td Reduction Reason
+                    td = @mira.reduction_reason
+                  tr
+                    td Industry Code
+                    td = @mira.industry_code
+            .col-md-6
+              table.table.table-striped.table-bordered
+                tbody
+                  tr
+                    td Claimant Name
+                    td = @mira.claimant_name
+                  tr
+                    td Claimant Date of Birth
+                    td = @mira.claimant_date_of_birth.try(:strftime, "b d, Y")
+                  tr
+                    td Date of Injury
+                    td = @mira.claim_injury_date.try(:strftime, "b d, Y")
+                  tr
+                    td Age at Injury
+                    td = @mira.age_at_injury
+                  tr
+                    td Claim Manual Number
+                    td = @mira.claim_manual_number
+                  tr
+                    td Claim Sub Manual Number
+                    td = @mira.claim_sub_manual_number
+                  tr
+                    td Claim Type
+                    td = @mira.claim_type
+                  tr
+                    td Claimant Date of Death
+                    td = @mira.claimant_date_of_death&.strftime("b d, Y")
+                  tr
+                    td Prediction Status
+                    td = @mira.prediction_status
+                  tr
+                    td Prediction Close Status Effective Date
+                    td = @mira.prediction_close_status_effective_date&.strftime("b d, Y")
+                  tr
+                    td Temporary Partial Payments
+                    td = @mira.temporary_partial_payments
+                  tr
+                    td Temporary Total Payments
+                    td = @mira.temporary_total_payments
+                  tr
+                    td Total Reserve Amount For Rates
+                    td = @mira.total_reserve_amount_for_rates
+                  tr
+                    td Non At Fault
+                    td = @claim_calculation&.non_at_fault
+                  tr
+                    td Is Combined
+                    td = @claim_calculation&.claim_combined
+                  tr
+                    td Combined into Claim Number
+                    td = @claim_calculation&.combined_into_claim_number
+        #icds.tab-pane.fade role="tabpanel" style=("padding-top: 10px; padding-bottom: 10px;")
+          table.table.datatable.table-striped
+            thead
+              tr
+                th width="25"  Primary ICD
+                th width="25"  Status
+                th width="25"  Code
+                th width="25"  Injury Location
+            tbody
+              - @claim_calculation.clicd_detail_records.each do |clicd_detail|
+                tr
+                  td = clicd_detail&.primary_icd
+                  td = clicd_detail&.icd_status_display
+                  td = clicd_detail&.icd_code
+                  td = clicd_detail&.icd_injury_location_code&.strip
+        #employment.tab-pane.fade role="tabpanel" 
+          table.table.table-striped.table-bordered
+            tbody
+              tr
+                td Average Weekly Wage
+                td = @mira.average_weekly_wage
+              tr
+                td Claimant Hire Date
+                td = @mira.claim_hire_date&.strftime("b d, Y")
+              tr
+                td Salary Continuation
+                td = @mira.salary_continuation
+              tr
+                td Last Date Worked
+                td = @mira.last_date_worked&.strftime("b d, Y")
+              tr
+                td Estimated Return To Work Date
+                td = @mira.estimated_return_to_work_date&.strftime("b d, Y")
+              tr
+                td Return To Work Date
+                td = @mira.return_to_work_date&.strftime("b d, Y")
+              tr
+                td Injury Or Litigation Type
+                td = @mira.injury_or_litigation_type
+              tr
+                td Wage Loss Payments
+                td = @mira.wage_loss_payments
+        #medical.tab-pane.fade role="tabpanel" 
+          .row
+            .col-md-6
+              table.table.table-striped.table-bordered
+                tbody
+                  tr
+                    td Chiropractor
+                    td = @mira.chiropractor
+                  tr
+                    td Physical Therapy
+                    td = @mira.physical_therapy
+                  tr
+                    td MMI Date
+                    td = @mira.mmi_date&.strftime("b d, Y")
+                  tr
+                    td Last Medical Date of Service
+                    td = @mira.mmi_date&.strftime("b d, Y")
+                  tr
+                    td Total Medical Paid
+                    td = @mira.total_medical_paid
+                  tr
+                    td Total Medical Reserve Amount
+                    td = @mira.total_medical_reserve_amount
+                  tr
+                    td Medical Ambulance Payments
+                    td = @mira.medical_ambulance_payments
+                  tr
+                    td Medical Clinic or Nursing Home Payments
+                    td = @mira.medical_clinic_or_nursing_home_payments
+                  tr
+                    td Medical Court Cost Payments
+                    td = @mira.medical_court_cost_payments
+                  tr
+                    td Medical Doctors Payments
+                    td = @mira.medical_doctors_payments
+                  tr
+                    td Medical Reserve Prediction
+                    td = @mira.medical_reserve_prediction
+            .col-md-6
+              table.table.table-striped.table-bordered
+                tbody
+                  tr
+                    td Medical Drug and Pharmacy Payments
+                    td = @mira.medical_drug_and_pharmacy_payments
+                  tr
+                    td Medical Emergency Room Payments
+                    td = @mira.medical_emergency_room_payments
+                  tr
+                    td Medical Funeral Payments
+                    td = @mira.medical_funeral_payments
+                  tr
+                    td Medical Hospital Payments
+                    td = @mira.medical_hospital_payments
+                  tr
+                    td Medical Device Payments
+                    td = @mira.medical_medical_device_payments
+                  tr
+                    td Medical Misc. Payments
+                    td = @mira.medical_misc_payments
+                  tr
+                    td Medical Nursing Services Payments
+                    td = @mira.medical_nursing_services_payments
+                  tr
+                    td Medical Prostheses Device Payments
+                    td = @mira.medical_prostheses_device_payments
+                  tr
+                    td Medical Prostheses Exam Payments
+                    td = @mira.medical_prostheses_exam_payments
+                  tr
+                    td Medical Travel Payments
+                    td = @mira.medical_travel_payments
+                  tr
+                    td Medical X-Rays And Radiology Payments
+                    td = @mira.medical_x_rays_and_radiology_payments
+        #indemnity.tab-pane.fade role="tabpanel" 
+          .row
+            .col-md-6
+              table.table.table-striped.table-bordered
+                tbody
+                  tr
+                    td Last Indemnity Period End Date
+                    td = @mira.mmi_date&.strftime("b d, Y")
+                  tr
+                    td Indemnity Change of Occupation Payments
+                    td = @mira.indemnity_change_of_occupation_payments
+                  tr
+                    td Indemnity Change of Occupation Reserve Prediction
+                    td = @mira.indemnity_change_of_occupation_reserve_prediction
+                  tr
+                    td Indemnity Change of Occupation Reserve Amount
+                    td = @mira.indemnity_change_of_occupation_reserve_amount
+                  tr
+                    td Indemnity Death Benefit Payments
+                    td = @mira.indemnity_death_benefit_payments
+                  tr
+                    td Indemnity Death Benefit Reserve Prediction
+                    td = @mira.indemnity_death_benefit_reserve_prediction
+                  tr
+                    td Indemnity Death Benefit Reserve Amount
+                    td = @mira.indemnity_death_benefit_reserve_amount
+                  tr
+                    td Indemnity Facial Disfigurement Payments
+                    td = @mira.indemnity_facial_disfigurement_payments
+                  tr
+                    td Indemnity Facial Disfigurement Reserve Prediction
+                    td = @mira.indemnity_facial_disfigurement_reserve_prediction
+                  tr
+                    td Indemnity Facial Disfigurement Reserve Amount
+                    td = @mira.indemnity_facial_disfigurement_reserve_amount
+                  tr
+                    td Indemnity Living Maintenance Payments
+                    td = @mira.indemnity_living_maintenance_payments
+                  tr
+                    td Indemnity Living Maintenance Wage Loss Payments
+                    td = @mira.indemnity_living_maintenance_wage_loss_payments
+                  tr
+                    td Indemnity Living Maintenance Reserve Prediction
+                    td = @mira.indemnity_living_maintenance_reserve_prediction
+                  tr
+                    td Indemnity Living Maintenance Reserve Amount
+                    td = @mira.indemnity_living_maintenance_reserve_amount
+            .col-md-6
+              table.table.table-striped.table-bordered
+                tbody
+                  tr
+                    td Indemnity Permanent Partial Payments
+                    td = @mira.indemnity_permanent_partial_payments
+                  tr
+                    td Indemnity Percent Permanent Partial Payments
+                    td = @mira.indemnity_percent_permanent_partial_payments
+                  tr
+                    td Indemnity Percent Permanent Partial Reserve Prediction
+                    td = @mira.indemnity_percent_permanent_partial_reserve_prediction
+                  tr
+                    td Indemnity Percent Permanent Partial Reserve Amount
+                    td = @mira.indemnity_percent_permanent_partial_reserve_amount
+                  tr
+                    td Indemnity PTD Payments
+                    td = @mira.indemnity_ptd_payments
+                  tr
+                    td Indemnity PTD Reserve Prediction
+                    td = @mira.indemnity_ptd_reserve_prediction
+                  tr
+                    td Indemnity PTD Reserve Amount
+                    td = @mira.indemnity_ptd_reserve_amount
+                  tr
+                    td Indemnity Temporary Toal Reserve Prediction
+                    td = @mira.indemnity_temporary_total_reserve_prediction
+                  tr
+                    td Indemnity Temporary Total Reserve Amount
+                    td = @mira.indemnity_temporary_total_reserve_amount
+                  tr
+                    td Indemnity Lump Sum Settlement Payments
+                    td = @mira.indemnity_lump_sum_settlement_payments
+                  tr
+                    td Indemnity Attorney Fee Payments
+                    td = @mira.indemnity_attorney_fee_payments
+                  tr
+                    td Indemnity Other Benefit Payments
+                    td = @mira.indemnity_other_benefit_payments
+                  tr
+                    td Total Indemnity Paid Amount
+                    td = @mira.total_indemnity_paid_amount
+                  tr
+                    td Total Indemnity Reserve Amount
+                    td = @mira.total_indemnity_reserve_amount 

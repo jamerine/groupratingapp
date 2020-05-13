@@ -1,0 +1,50 @@
+.container = render partial: "shared/account_navbar", locals: { object: @account }
+.container
+  .row
+    .col-sm-12
+      = simple_form_for @account do |f|
+        .panel.panel-primary style="margin-top: 15px;"
+          .panel-heading
+            h1.panel-title Edit Account
+          .panel-body
+            .row
+              .col-sm-4 = f.association :representative, collection: @representatives, value_method: :id, label_method: :abbreviated_name
+            .row
+              .col-sm-3 = f.input :name
+              .col-sm-3 = f.input :policy_number_entered, label: 'Policy Number'
+              .col-sm-3 = f.input :status, collection: @statuses.collect { |s| [s[0].titleize, s[0]] }, prompt: 'Select One'
+              .col-sm-3 = f.input :account_type, collection: @account_types.collect { |s| [s[0].titleize, s[0]] }, prompt: 'Select One'
+            .row
+              .col-sm-6 = f.input :street_address
+              .col-sm-6 = f.input :street_address_2
+            .row
+              .col-sm-4 = f.input :city
+              .col-sm-4 = f.input :state
+              .col-sm-4 = f.input :zip_code
+            hr
+            h4.text-center Contact Information
+            .row
+              .col-sm-3 = f.input :business_contact_name, label: 'Contact Name'
+              .col-sm-3 = f.input :business_phone_number, as: :tel, label: 'Phone Number'
+              .col-sm-3 = f.input :business_email_address, as: :email, label: 'Email'
+              .col-sm-3 = f.input :website_url, as: :url
+
+            .row
+              .form-group.col-md-3
+                label Cycle Date
+                h4 = @account.cycle_date || 'Never'
+              .form-group.col-md-3
+                label Last Requested
+                h4 = @account.request_date || 'Never'
+              .form-group.col-md-6.text-left
+                div
+                  = f.label :weekly_request
+                  '
+                  = f.check_box :weekly_request
+                div
+                  = f.label :quarterly_request
+                  '
+                  = f.check_box :quarterly_request
+          .panel-footer.text-right
+            = link_to 'Back', :back, class: 'btn btn-danger', style: 'margin-right: 5px;'
+            = f.submit 'Update Account', class: 'btn btn-primary'
