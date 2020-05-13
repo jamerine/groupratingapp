@@ -1,0 +1,24 @@
+.container.notes-container
+  .row
+    .col-md-12
+      .panel.panel-primary
+        .panel-heading Account Affiliates
+        .panel-body
+          table.table
+            thead
+              tr
+                th Role
+                th First Name
+                th Last Name
+                th Company Name
+                th Email
+                th External Id
+            tbody
+              - @affiliates.find_each do |affiliate|
+                tr
+                  td = affiliate.role.titleize
+                  td = affiliate.first_name
+                  td = affiliate.last_name
+                  td = affiliate.company_name
+                  td = affiliate.email_address
+                  td = affiliate.external_id
