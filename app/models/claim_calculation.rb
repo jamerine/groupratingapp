@@ -75,6 +75,10 @@ class ClaimCalculation < ActiveRecord::Base
     Representative.find_by_representative_number(representative_number)&.abbreviated_name
   end
 
+  def policy_name
+    self.policy_calculation&.account_name
+  end
+
   def clicd_detail_records
     ClicdDetailRecord.where(claim_number: claim_number, representative_number: representative_number, policy_number: policy_number)
   end
