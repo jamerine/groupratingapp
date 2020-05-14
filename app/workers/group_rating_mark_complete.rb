@@ -35,10 +35,10 @@ class GroupRatingMarkComplete
             end
           end
         end
-      else
-        # No other files to process, finish up with the Manual Policy Updates (September 2019)
-        HandleManualPolicyCalculations.perform_async(@group_rating.representative&.representative_number)
       end
     end
+
+    # No other files to process, finish up with the Manual Policy Updates (September 2019)
+    HandleManualPolicyCalculations.perform_async(@group_rating.representative&.representative_number)
   end
 end
