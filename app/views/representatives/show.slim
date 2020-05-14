@@ -1,0 +1,263 @@
+= content_tag_for :div, @representative do
+  .container
+    = link_to 'Return to All Representatives', representatives_path, class: 'btn btn-default'
+  - if policy(@representative).conversion?
+    .container.text-center
+      hr
+      .row
+        h3 Conversion Section - CSV
+        .col-md-3
+          label
+            a href="#"  Update Accounts
+          br
+          = form_tag import_account_process_accounts_path, multipart: true do
+          = file_field_tag :file, class: 'form-control'
+          br
+          = submit_tag "Import Accounts", class: 'form-control btn btn-primary'
+
+        .col-md-3
+          label
+            a href="#"  Insert Contacts
+          br
+          = form_tag import_contact_process_contacts_path, multipart: true do
+          = file_field_tag :file, class: 'form-control'
+          br
+          = submit_tag "Import Contacts", class: 'form-control btn btn-primary'
+
+        .col-md-3
+          label
+            a href="#"  Insert Affiliates
+          br
+          = form_tag import_affiliate_process_affiliates_path, multipart: true do
+          = file_field_tag :file, class: 'form-control'
+          br
+          = submit_tag "Import Affiliates", class: 'form-control btn btn-primary'
+
+        .col-md-3
+          label
+            a href="#"  Insert Program
+          br
+          = form_tag import_account_program_process_account_programs_path, multipart: true do
+          = file_field_tag :file, class: 'form-control'
+          br
+          = submit_tag "Import Programs", class: 'form-control btn btn-primary'
+
+      hr
+
+  .container
+    .jumbotron.text-center.jumbotron-white
+      .row
+        .col-md-4
+          h5 Representative Number:
+          h3 = @representative.representative_number
+        .col-md-4
+          h5 Representative:
+          h3 = @representative.company_name
+        .col-md-4
+          h5 abbreviated Name:
+          h3 = @representative.abbreviated_name
+      .row
+        = link_to "Edit Representative", edit_representative_path(@representative.id), class: 'btn btn-primary'
+      .row
+        = image_tag @representative.logo_url
+    hr
+  .container.text-center
+    - if policy(@representative).edit_global_dates?
+      .row
+        h3 Representative Global Date Values
+        = link_to "Edit Dates", representative_edit_global_dates_path(@representative), class: 'btn btn-primary'
+
+    .row
+      .col-sm-3
+        h5 Experience Period Dates
+      .col-sm-3
+        h5 Lower
+        p = @representative.experience_period_lower_date
+      .col-sm-3
+        h5 Upper
+        p = @representative.experience_period_upper_date
+    .row
+      .col-sm-3
+        h5 Current Payroll Period Dates
+      .col-sm-3
+        h5 Lower
+        p = @representative.current_payroll_period_lower_date
+      .col-sm-3
+        h5 Upper
+        p = @representative.current_payroll_period_upper_date
+      .col-sm-3
+        h5 Year
+        p = @representative.current_payroll_year
+    .row
+      .col-sm-3
+        h5 Program Year Period Dates
+      .col-sm-3
+        h5 Lower
+        p = @representative.program_year_lower_date
+      .col-sm-3
+        h5 Upper
+        p = @representative.program_year_upper_date
+      .col-sm-3
+        h5 Year
+        p = @representative.program_year
+    .row
+      .col-sm-3
+        h5 Quote Year Period Dates
+      .col-sm-3
+        h5 Lower
+        p = @representative.quote_year_lower_date
+      .col-sm-3
+        h5 Upper
+        p = @representative.quote_year_upper_date
+      .col-sm-3
+        h5 Year
+        p = @representative.quote_year
+    br
+    hr
+
+  - if policy(@representative).edit_global_dates?
+    .container.text-center
+      .row
+        h3 Processing
+      .row
+        .col-md-4
+          h5 Run Worker's Comp Process
+          = link_to "Full Group Rating Process", new_group_rating_path(representative_id: @representative.id), class: 'btn btn-default'
+        .col-md-4
+          h5 Run Group Rating For All Accounts
+          = link_to "All #{@representative.abbreviated_name} Accounts Group Rating", representative_all_account_group_rating_path(representative_id: @representative.id), class: 'btn btn-default'
+      br
+      hr
+
+
+  - if policy(@representative).fee_calculations?
+    .container.text-center
+      .row
+        h3 Quoting & Fees
+      .row
+        .col-md-4
+          h5 Fee Changes
+          = link_to "Fee Process", fees_path(representative_id: @representative.id), class: 'btn btn-default'
+        .col-md-4
+          h5 Group Rating Quotes
+          = link_to "Quote Process", quotes_path(representative_id: @representative.id), class: 'btn btn-default'
+        /!
+          | <div class="col-md-4"
+          | <h5>Create Group Rating Zip</h5
+          = link_to "Create Zip", representative_zip_file_path(representative_id: @representative.id), method: :post, class: 'btn btn-default'
+          | </div
+        .col-md-4
+          - unless @representative.zip_file_url.nil?
+            h5 View Group Rating Zip
+            = link_to "View Zip", @representative.zip_file.url, class: 'btn btn-default'
+
+      br
+      hr
+
+  .container
+    .jumbotron.text-center.jumbotron-white
+      .row
+        h3 Export Data
+      br
+      .row
+        .col-md-4
+          h5 Accounts
+          = link_to "Account Export", representative_export_accounts_path(params[:id], format: "csv"), class: 'btn btn-default'
+        .col-md-4
+          h5 Manual Classes
+          = link_to "Manual Class Export", representative_export_manual_classes_path(params[:id], format: "csv"), class: 'btn btn-default'
+        .col-md-4
+          h5 Weekly 159 Requests
+          = link_to "159 Export", representative_filter_export_159_request_weekly_path(params[:id]), class: 'btn btn-default'
+    hr
+  .container.text-center
+    .row
+      h3 Statistics
+    .row
+      .col-md-3
+        h4 Total Accounts
+        = @accounts.count
+      .col-md-3
+        h4 Active
+        = @accounts.active.count
+      .col-md-3
+        h4 Prospects
+        = @accounts.prospect.count
+      .col-md-3
+        h4 Invalid
+        = @accounts.invalid_policy_number.count
+    br
+  .container
+    hr
+    .row.text-center
+      h3 Users
+      - if policy(@representative).users_management?
+        = link_to "Add Users", representative_users_management_path(representative_id: @representative.id), class: 'btn btn-success btn-sm'
+
+    table.table.table-hover.table-striped
+      thead
+        tr
+          th Name
+          th Email
+          th Role
+          th Logins
+          th Last Login
+          th
+      tbody
+        - @users.order("id asc").each do |user|
+          tr
+            td = user.full_name
+            td = user.email
+            td = user.try(:role).try(:humanize)
+            td = user.sign_in_count
+            td = user.try(:last_sign_in_at).try(:strftime, "-m/-d/y")
+            td
+              - if policy(@representative).users_management?
+                = link_to 'Remove', representatives_user_path(representative_id: @representative.id, user_id: user.id), method: :delete, class: 'btn btn-danger btn-sm'
+
+    hr
+  .container.text-center
+    .row
+      .col
+        h3 Import Data
+        br
+    .row
+      .col-md-4.col-sm-offset-2
+        = form_tag representative_import_account_notes_process_path(@representative.id), multipart: true do
+          = file_field_tag :file, class: 'form-control'
+          br
+          = submit_tag "Import Account Notes", class: 'form-control btn btn-primary'
+      .col-md-4
+        = form_tag representative_import_claim_notes_process_path(@representative.id), multipart: true do
+          = file_field_tag :file, class: 'form-control'
+          br
+          = submit_tag "Import Claim Notes", class: 'form-control btn btn-primary'
+    br
+    - if policy(@representative).import_contact_process?
+      .row
+        .col-md-4
+          label
+            a href="https://s3.amazonaws.com/piarm/IMPORT_TEMPLATES/contacts_template.csv"  Insert Contacts
+          br
+          = form_tag representative_import_contact_process_path(@representative.id), multipart: true do
+            = file_field_tag :file, class: 'form-control'
+            br
+            = submit_tag "Import Contacts", class: 'form-control btn btn-primary'
+
+        .col-md-4
+          label
+            a href="https://s3.amazonaws.com/piarm/IMPORT_TEMPLATES/payroll_template.csv"  Insert Payroll
+          br
+          = form_tag representative_import_payroll_process_path(@representative.id), multipart: true do
+            = file_field_tag :file, class: 'form-control'
+            br
+            = submit_tag "Import Payroll", class: 'form-control btn btn-primary'
+
+        .col-md-4
+          label
+            a href="https://s3.amazonaws.com/piarm/IMPORT_TEMPLATES/claim_template.csv"  Insert Claims
+          br
+          = form_tag representative_import_claim_process_path(@representative.id), multipart: true do
+            = file_field_tag :file, class: 'form-control'
+            br
+            = submit_tag "Import Claim", class: 'form-control btn btn-primary'

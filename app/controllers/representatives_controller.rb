@@ -9,7 +9,7 @@ class RepresentativesController < ApplicationController
     @representative = Representative.find(params[:id])
     authorize @representative
     @accounts = @representative.accounts
-    @users = @representative.users
+    @users    = @representative.users
     # respond_to do |format|
     #   format.html
     #   format.csv { send_data @policy_calculations.to_csv, filename: "#{@representative.abbreviated_name}_policies_#{Date.today}.csv" }
@@ -20,7 +20,7 @@ class RepresentativesController < ApplicationController
     @representative = Representative.find(params[:representative_id])
     authorize @representative
     @representative_users = @representative.users
-    @available_users = User.where.not(id: @representative_users)
+    @available_users      = User.where.not(id: @representative_users)
   end
 
   def export_accounts
@@ -32,7 +32,6 @@ class RepresentativesController < ApplicationController
     redirect_to @representative
   end
 
-
   def export_manual_classes
     @representative = Representative.find(params[:representative_id])
     authorize @representative
@@ -43,7 +42,6 @@ class RepresentativesController < ApplicationController
 
   end
 
-
   def export_159_request_weekly
     @representative = Representative.find(params[:representative_id])
     authorize @representative
@@ -52,9 +50,9 @@ class RepresentativesController < ApplicationController
     else
       @weekly_request = params[:weekly_request]
     end
-    @statuses = params[:statuses]
+    @statuses         = params[:statuses]
     @account_statuses = Account.statuses
-    @status_integers = []
+    @status_integers  = []
     @statuses.each do |status|
       @status_integers << @account_statuses[status]
     end
@@ -76,7 +74,6 @@ class RepresentativesController < ApplicationController
 
   end
 
-
   # def import_account_process
   #   @representative = Representative.find(params[:id])
   #   begin
@@ -89,6 +86,34 @@ class RepresentativesController < ApplicationController
   #     redirect_to @representative, alert: "There was an error importing file.  Please ensure file columns and file type are correct"
   #   end
   # end
+
+  def import_account_notes_process
+    @representative = Representative.find(params[:representative_id])
+
+    begin
+      CSV.foreach(params[:file].path, headers: true) do |row|
+        notes_hash = row.to_hash.transform_keys(&:parameterize).transform_keys(&:to_sym)
+        AccountNotesImport.perform_async(notes_hash, @representative.id, current_user.id)
+      end
+      redirect_to @representative, notice: "Account Notes Imported."
+    rescue
+      redirect_to @representative, alert: "There was an error importing file.  Please ensure file columns and file type are correct"
+    end
+  end
+
+  def import_claim_notes_process
+    @representative = Representative.find(params[:representative_id])
+
+    begin
+      CSV.foreach(params[:file].path, headers: true) do |row|
+        notes_hash = row.to_hash.transform_keys(&:parameterize).transform_keys(&:to_sym)
+        ClaimNotesImport.perform_async(notes_hash, @representative.id)
+      end
+      redirect_to @representative, notice: "Claim Notes Imported."
+    rescue
+      redirect_to @representative, alert: "There was an error importing file.  Please ensure file columns and file type are correct"
+    end
+  end
 
   def import_contact_process
     @representative = Representative.find(params[:representative_id])
@@ -132,8 +157,6 @@ class RepresentativesController < ApplicationController
     end
   end
 
-
-
   def edit
     @representative = Representative.find(params[:id])
   end
@@ -146,15 +169,14 @@ class RepresentativesController < ApplicationController
   def fee_calculations
     @representative = Representative.find(params[:representative_id])
     authorize @representative
-    @policy_calculations = PolicyCalculation.where(representative_id: @representative.id )
-    flash.now[:alert] = "All of #{@representative.abbreviated_name} policies are beginning to update."
+    @policy_calculations = PolicyCalculation.where(representative_id: @representative.id)
+    flash.now[:alert]    = "All of #{@representative.abbreviated_name} policies are beginning to update."
     @policy_calculations.each do |policy|
       policy.fee_calculation
     end
     flash[:notice] = "All of #{@representative.abbreviated_name} policies group fees are now updated."
     redirect_to representatives_path
   end
-
 
   def update
     @representative = Representative.find(params[:id])
@@ -168,11 +190,11 @@ class RepresentativesController < ApplicationController
   end
 
   def all_quote_process
-     @representative = Representative.find(params[:representative_id])
-     authorize @representative
-     @account_ids = @representative.accounts.pluck(:id)
-     GenerateGroupRatingQuoteProcess.perform_async(@representative.id, current_user.id, @account_ids)
-     redirect_to quotes_path(representative_id: @representative.id), notice: 'The Group Rating Quoting Process has successfully started.  Please allow a few for this process to complete.'
+    @representative = Representative.find(params[:representative_id])
+    authorize @representative
+    @account_ids = @representative.accounts.pluck(:id)
+    GenerateGroupRatingQuoteProcess.perform_async(@representative.id, current_user.id, @account_ids)
+    redirect_to quotes_path(representative_id: @representative.id), notice: 'The Group Rating Quoting Process has successfully started.  Please allow a few for this process to complete.'
   end
 
   def zip_file
@@ -195,7 +217,7 @@ class RepresentativesController < ApplicationController
       files.each do |file_name|
 
         # Get the file object
-        uri = URI("https://s3.amazonaws.com/grouprating/uploads/quote/#{file_name}")
+        uri      = URI("https://s3.amazonaws.com/grouprating/uploads/quote/#{file_name}")
         file_obj = Net::HTTP.get(uri) # => String
 
         # Give a name to the file and start a new entry
@@ -212,7 +234,7 @@ class RepresentativesController < ApplicationController
     zip_stream.rewind
 
     # Create a temp file for the zip
-    tempZip = Tempfile.new(['pdf_stream','.zip'])
+    tempZip = Tempfile.new(['pdf_stream', '.zip'])
 
     # Write the stringIO data
     tempZip.binmode
@@ -246,12 +268,12 @@ class RepresentativesController < ApplicationController
     authorize @representative
     RepresentativeAllAccountRating.perform_async(@representative.id)
     redirect_to @representative, notice: "Group Rating is being calculated for all accounts under #{@representative.company_name}.  Please allow a few for this process to complete."
- end
+  end
 
   private
 
   def representative_params
-    params.require(:representative).permit(:logo, :experience_period_lower_date, :experience_period_upper_date, :current_payroll_period_lower_date, :current_payroll_period_upper_date, :current_payroll_year, :program_year_lower_date, :program_year_upper_date, :program_year, :quote_year_lower_date, :quote_year_upper_date, :quote_year, :location_address_1, :location_address_2, :location_city, :location_state, :location_zip_code, :mailing_address_1, :mailing_address_2, :mailing_city, :mailing_state, :mailing_zip_code, :phone_number, :toll_free_number, :fax_number, :email_address, :president_first_name, :president_last_name )
+    params.require(:representative).permit(:logo, :experience_period_lower_date, :experience_period_upper_date, :current_payroll_period_lower_date, :current_payroll_period_upper_date, :current_payroll_year, :program_year_lower_date, :program_year_upper_date, :program_year, :quote_year_lower_date, :quote_year_upper_date, :quote_year, :location_address_1, :location_address_2, :location_city, :location_state, :location_zip_code, :mailing_address_1, :mailing_address_2, :mailing_city, :mailing_state, :mailing_zip_code, :phone_number, :toll_free_number, :fax_number, :email_address, :president_first_name, :president_last_name)
   end
 
 end
