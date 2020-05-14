@@ -2,6 +2,7 @@ class RatesController < ApplicationController
   require 'csv'
   require 'open-uri'
 
+  before_action :authorize_admin
   before_action :handle_retro_tiers, :handle_rates_updates, :handle_administrative_rate, :handle_max_losses, only: :create
 
   def index
@@ -179,7 +180,7 @@ class RatesController < ApplicationController
       if row_index > 0
         credibility_number = columns[0]
 
-        (1..10).to_a.each do |index|
+        (1..22).to_a.each do |index|
           data << {
             credibility_number: credibility_number,
             industry_group:     index,
@@ -213,5 +214,10 @@ class RatesController < ApplicationController
     limited_rates_hash.each do |hash|
       BwcCodesLimitedLossRatio.find_or_create_by(credibility_group: hash[:credibility_number], industry_group: hash[:industry_group], limited_loss_ratio: hash[:loss_ratio])
     end
+  end
+
+  def authorize_admin
+    return if current_user.admin?
+    redirect_to root_path, flash: { alert: 'Admins only!' }
   end
 end

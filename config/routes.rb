@@ -457,6 +457,7 @@ Rails.application.routes.draw do
   end
 
   resources :claim_note_categories
+  resources :note_categories
 
   resources :contacts do
     collection { post :import_contact_process }

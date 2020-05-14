@@ -11,7 +11,7 @@
       <%= form_tag(account_notes_path(@account), :method => "get", id: "search-form", remote: true ) do %>
         <div class="form-inline">
           <div class="form-group">
-            <%= select_tag(:category_filter, options_for_select(@categories), include_blank: "All Categores" ,class: 'dropdown-toggle form-control')%>
+            <%= select_tag(:category_filter, options_for_select(@categories), include_blank: "All Categories" ,class: 'dropdown-toggle form-control')%>
           </div>
           <div class="form-group">
             <%= select_tag(:user_filter, options_from_collection_for_select(@users, :id, :email, params[:user_filter]), include_blank: "All Users" ,class: 'dropdown-toggle form-control')%>
@@ -19,6 +19,9 @@
 
         <%= submit_tag "Search", name: nil, class: 'btn btn-primary' %>
 
+          <div class="pull-right">
+            <%= link_to 'New Note', new_account_note_path(@account), class: 'btn btn-success' %>
+          </div>
         </div>
 
       <% end %>

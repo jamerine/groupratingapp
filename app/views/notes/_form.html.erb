@@ -1,7 +1,7 @@
-<%= simple_form_for [account, note] do |f| %>
+<%= simple_form_for [@account, @note] do |f| %>
   <div class="row">
     <div class="col-sm-4">
-      <%= f.input :category, collection: @categories, value_method: lambda { |cat| cat[0] }, label_method: lambda { |cat| cat[0].humanize&.titleize }, include_blank: "Choose Category" %>
+      <%= f.association :note_category, collection: @categories, value_method: :id, label_method: :title, include_blank: "Choose Category", label: 'Category' %>
     </div>
   </div>
 

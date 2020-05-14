@@ -1,9 +1,0 @@
-<%= simple_form_for @category do |f| %>
-  <%= f.input :title %>
-  <%= f.input :note %>
-
-  <div class="form-group text-right">
-    <%= link_to 'Cancel', claim_note_categories_path, class: 'btn btn-danger' %>
-    <%= f.submit 'Save', class: 'btn btn-success' %>
-  </div>
-<% end %>

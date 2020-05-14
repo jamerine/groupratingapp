@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200513205136) do
+ActiveRecord::Schema.define(version: 20200514133945) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1065,6 +1065,12 @@ ActiveRecord::Schema.define(version: 20200513205136) do
     t.string "single_rec"
   end
 
+  create_table "note_categories", force: :cascade do |t|
+    t.string   "title"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "notes", force: :cascade do |t|
     t.text     "description"
     t.integer  "category"
@@ -1074,6 +1080,7 @@ ActiveRecord::Schema.define(version: 20200513205136) do
     t.integer  "user_id"
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
+    t.integer  "category_id"
   end
 
   add_index "notes", ["account_id"], name: "index_notes_on_account_id", using: :btree
