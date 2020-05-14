@@ -1,0 +1,22 @@
+ul
+  - if @claim_search_results.any?
+    - @claim_search_results.each do |matching_claim_calculation|
+      li
+        = link_to claim_calculation_path(matching_claim_calculation), target: '_blank', class: 'calc-link' do
+          .claim-number = matching_claim_calculation.claim_number.strip
+          span.policy-name style="display: block;" = matching_claim_calculation.policy_name.strip
+          span.claimant-name = "#{matching_claim_calculation.claimant_name.strip} - #{matching_claim_calculation.representative_name}"
+  - else
+    li style='text-align: center;'
+      ' No matching results for:
+      b = @search_value
+
+javascript:
+  $(function () {
+    $('.calc-link').click(function (e) {
+      $searchSpinner.fadeOut();
+      $searchWrapper.fadeOut();
+      $claimSearchResults.html('');
+      $claimSearchResults.addClass('hidden');
+    });
+  });
