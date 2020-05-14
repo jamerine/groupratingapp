@@ -1,0 +1,25 @@
+.container style=("margin-bottom: 100px;")
+  .row
+    .col-sm-12
+      .jumbotron
+        h1.text-center Group Max Values
+  .row
+    .col-sm-12
+      = simple_form_for :max_values, url: update_max_losses_path do |f|
+        table.table.table-striped.table-bordered
+          thead
+            tr
+              th Expected Losses
+              th Credibility Group
+              th Credibility %
+              th Max Value
+          tbody
+            - @max_losses.each do |max_loss|
+              tr
+                td = number_to_currency(max_loss.expected_losses)
+                td = max_loss.credibility_group
+                td = number_to_percentage(max_loss.credibility_percent * 100, precision: 1)
+                td
+                  input name="max_losses[][id]" title="loss_id" type="hidden" value=(max_loss.id)
+                  input name="max_losses[][maximum_value]" style=("margin: 0;") title="max_value" type="number" value=(max_loss.group_maximum_value)
+        .text-right = f.submit 'Update Max Values', class: 'btn btn-primary'

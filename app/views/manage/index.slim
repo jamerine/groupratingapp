@@ -1,0 +1,23 @@
+.container.manage-container
+  .row
+    .col-sm-12
+      h1 Manage Site
+      hr
+  .row
+    .col-sm-6
+      = link_to rates_path, class: 'btn btn-primary btn-lg btn-block' do
+        ' Manage Rates
+        i.fa.fa-chevron-right
+      = link_to manual_classes_path, class: 'btn btn-primary btn-lg btn-block' do
+        ' Annual Manual Class Updates
+        i.fa.fa-chevron-right
+      = link_to max_losses_path, class: 'btn btn-primary btn-lg btn-block' do
+        ' Manage Group Max Values
+        i.fa.fa-chevron-right
+    .col-sm-6
+      = link_to claim_note_categories_path, class: 'btn btn-primary btn-lg btn-block' do
+        ' Manage Claim Note Categories
+        i.fa.fa-chevron-right
+      = link_to note_categories_path, class: 'btn btn-primary btn-lg btn-block' do
+        ' Manage Account Note Categories
+        i.fa.fa-chevron-right

@@ -456,9 +456,6 @@ Rails.application.routes.draw do
     resources :claim_notes
   end
 
-  resources :claim_note_categories
-  resources :note_categories
-
   resources :contacts do
     collection { post :import_contact_process }
   end
@@ -586,7 +583,15 @@ Rails.application.routes.draw do
 
   resources :welcome
 
-  resources :rates
+  scope :manage do
+    resources :rates
+    resources :claim_note_categories
+    resources :note_categories
+    get 'max-losses', to: 'bwc_codes_credibility_max_losses#index', as: :max_losses
+    post 'max_losses', to: 'bwc_codes_credibility_max_losses#update_losses', as: :update_max_losses
+  end
+
+  get 'manage', to: 'manage#index', as: :manage
 
   resources :bwc_annual_manual_class_changes, path: 'manual-classes', as: :manual_classes
 
