@@ -2,7 +2,7 @@ class HandleManualPolicyCalculations
   require 'sidekiq/api'
   include Sidekiq::Worker
 
-  sidekiq_options queue: :handle_manual_policy_calculations, retry: 1
+  sidekiq_options queue: :handle_manual_policy_calculations, retry: 3
 
   def perform(representative_number)
     return unless representative_number.present?
