@@ -554,6 +554,8 @@ Rails.application.routes.draw do
     post :import_contact_process
     post :import_payroll_process
     post :import_claim_process
+    post :import_account_notes_process
+    post :import_claim_notes_process
     get :all_quote_process
     post :zip_file
     get :edit_global_dates
