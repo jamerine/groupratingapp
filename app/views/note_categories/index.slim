@@ -3,8 +3,6 @@
     .col-sm-12
       .jumbotron
         h1.text-center Note Categories
-      .text-right style=("margin-bottom: 15px;")
-        = link_to 'Back to Rates', rates_path, class: 'btn btn-danger'
   .row
     .col-md-12
       table.table.table-striped.note-datatable
@@ -20,7 +18,7 @@
                 = link_to edit_note_category_path(category), class: 'btn btn-primary btn-sm' do
                   i.fa.fa-edit
                 '
-                = link_to note_category_path(category), method: :delete, class: 'btn btn-danger btn-sm', style: 'margin-right: 8px;', input_html: { data: { confirm: 'Are you sure you want to delete this category?' } } do
+                = link_to note_category_path(category), method: :delete, class: 'btn btn-danger btn-sm', style: 'margin-right: 8px;', data: { confirm: 'Are you sure you want to delete this category?' } do
                   i.fa.fa-trash
 
 javascript:

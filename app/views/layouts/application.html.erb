@@ -57,8 +57,8 @@
               <li><%= link_to 'Users', users_path, class: 'navbar-link' %></li>
               <li><%= link_to 'Rejections', program_rejections_path, class: 'navbar-link' %></li>
               <li><%= link_to 'Exceptions', group_rating_exceptions_path, class: 'navbar-link' %></li>
-              <li><%= link_to 'Administration', admin_root_path %></li>
-              <li><%= link_to 'Manage Rates', rates_path %></li>
+              <li><%= link_to 'View Data', admin_root_path %></li>
+              <li><%= link_to 'Manage Site', manage_path %></li>
             <% end %>
             <li><%= link_to "Sign Out", destroy_user_session_path, method: :delete, :class => 'navbar-link' %> </li>
           <% else %>
