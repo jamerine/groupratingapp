@@ -1,0 +1,7 @@
+= simple_form_for @category do |f|
+  = f.input :title
+
+  .form-group.text-right
+    = link_to 'Cancel', note_categories_path, class: 'btn btn-danger'
+    '
+    = f.submit 'Save', class: 'btn btn-success'

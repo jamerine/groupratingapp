@@ -1,0 +1,13 @@
+.container style=("margin-bottom: 100px;")
+  .row
+    .col-sm-12
+      .jumbotron
+        h1.text-center Claim Note Categories
+      .text-right style=("margin-bottom: 15px;")
+        = link_to 'Back to Rates', rates_path, class: 'btn btn-info'
+      h3 New Claim Note Category
+
+  hr style=("margin-top: 0;")
+
+  .row
+    .col-sm-12 = render 'form'

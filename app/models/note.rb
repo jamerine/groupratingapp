@@ -10,6 +10,7 @@
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
 #  account_id  :integer
+#  category_id :integer
 #  user_id     :integer
 #
 # Indexes
@@ -26,10 +27,11 @@
 class Note < ActiveRecord::Base
   belongs_to :user
   belongs_to :account
+  belongs_to :note_category, foreign_key: :category_id
 
   enum category: [:billing, :claims, :general, :group_rating, :group_retro, :policy_admin, :sales]
 
-  validates :category, presence: true
+  validates :note_category, presence: true
   validates :description, presence: true
   validates :title, presence: true
   validates :user, presence: true

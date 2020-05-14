@@ -1,8 +1,10 @@
 <%= content_tag_for :div, @note do %>
-<%= render partial: "shared/account_navbar", locals: { object: @account } %>
+  <%= render partial: "shared/account_navbar", locals: { object: @account } %>
   <div class="container">
 
     <%= link_to 'Return to Account', account_path(@account.id), class: 'btn btn-default', style: 'margin-bottom: 15px;' %>
+
+    <%= link_to 'Return to Notes', account_notes_path(@account), class: 'btn btn-default', style: 'margin-bottom: 15px;' %>
 
     <div class="jumbotron">
       <div class="row text-center">
@@ -12,7 +14,7 @@
       </div>
 
       <div class="row">
-        <%= render partial: 'form', locals: { account: @account, note: @note } %>
+        <%= render partial: 'form' %>
       </div>
     </div>
   </div>

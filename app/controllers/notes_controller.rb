@@ -8,12 +8,12 @@ class NotesController < ApplicationController
   def new
     @account    = Account.find(params[:account_id])
     @note       = current_user.notes.build
-    @categories = Note.categories
+    @categories = NoteCategory.all
   end
 
   def create
     @account         = Account.find(params[:account_id])
-    @categories      = Note.categories
+    @categories      = NoteCategory.all
     @note            = Note.new(note_params)
     @note.account_id = @account.id
     @note.user_id    = current_user.id
@@ -30,7 +30,7 @@ class NotesController < ApplicationController
   def index
     @account    = Account.find(params[:account_id])
     @notes      = @account.notes.order(created_at: :desc)
-    @categories = Note.categories
+    @categories = NoteCategory.all
     @users      = []
     @notes.each do |note|
       unless @users.include? note.user
@@ -42,12 +42,12 @@ class NotesController < ApplicationController
   end
 
   def edit
-    @categories = Note.categories
+    @categories = NoteCategory.all
     authorize @note
   end
 
   def update
-    @categories = Note.categories
+    @categories = NoteCategory.all
     @note.assign_attributes(note_params)
     if @note.save
       flash[:notice] = "Notes was updated successfully"
@@ -87,7 +87,7 @@ class NotesController < ApplicationController
   end
 
   def note_params
-    params.require(:note).permit(:category, :description, :title, :attachment)
+    params.require(:note).permit(:category_id, :description, :title, :attachment)
   end
 
 end

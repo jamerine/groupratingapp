@@ -1,0 +1,32 @@
+.container style=("margin-bottom: 100px;")
+  .row
+    .col-sm-12
+      .jumbotron
+        h1.text-center Note Categories
+      .text-right style=("margin-bottom: 15px;")
+        = link_to 'Back to Rates', rates_path, class: 'btn btn-danger'
+  .row
+    .col-md-12
+      table.table.table-striped.note-datatable
+        thead
+          tr
+            th style=("text-align: left;")  Title
+            th style=("text-align: right;") width="15%" = link_to 'Add Category', new_note_category_path, class: 'btn btn-success btn-sm'
+        tbody
+          - @categories.each do |category|
+            tr
+              td style=("text-align: left;") = category.title
+              td style=("text-align: right;") width="15%"
+                = link_to edit_note_category_path(category), class: 'btn btn-primary btn-sm' do
+                  i.fa.fa-edit
+                '
+                = link_to note_category_path(category), method: :delete, class: 'btn btn-danger btn-sm', style: 'margin-right: 8px;', input_html: { data: { confirm: 'Are you sure you want to delete this category?' } } do
+                  i.fa.fa-trash
+
+javascript:
+  $(function () {
+    $('.note-datatable').DataTable({
+      order:      [[0, 'asc']],
+      columnDefs: [{ targets: -1, orderable: false }]
+    });
+  });
