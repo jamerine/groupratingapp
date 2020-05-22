@@ -5,6 +5,7 @@
 #  id          :integer          not null, primary key
 #  attachment  :string
 #  category    :integer
+#  date        :datetime
 #  description :text
 #  title       :string
 #  created_at  :datetime         not null

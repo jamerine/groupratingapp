@@ -98,7 +98,7 @@ class ClaimCalculation < ActiveRecord::Base
   end
 
   def claim_notes
-    ClaimNote.where(representative_number: self.representative_number, policy_number: self.policy_number).where('claim_number IN (?)', [self.claim_number, self.claim_number.strip])
+    ClaimNote.where(representative_number: self.representative_number, policy_number: self.policy_number).where('claim_number IN (?)', [self.claim_number, self.claim_number.strip, "#{self.claim_number} "])
   end
 
   def address

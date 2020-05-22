@@ -21,7 +21,7 @@
             <b><%= note.user.email %></b>
           </div>
           <div class="col col-sm-3">
-            <b><%= note.created_at.in_time_zone("America/New_York").strftime("%m/%d/%y %I:%M %P") %></b>
+            <b><%= (note.date || note.created_at)&.in_time_zone("America/New_York")&.strftime("%m/%d/%y %I:%M %P") %></b>
           </div>
         </div>
       </a>

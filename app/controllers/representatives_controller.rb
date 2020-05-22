@@ -105,7 +105,7 @@ class RepresentativesController < ApplicationController
     @representative = Representative.find(params[:representative_id])
 
     begin
-      CSV.foreach(params[:file].path, headers: true) do |row|
+      CSV.foreach(params[:file].path, headers: true, encoding: 'ISO-8859-1') do |row|
         notes_hash = row.to_hash.transform_keys(&:parameterize).transform_keys(&:to_sym)
         ClaimNotesImport.perform_async(notes_hash, @representative.id)
       end

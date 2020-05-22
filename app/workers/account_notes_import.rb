@@ -13,8 +13,9 @@ class AccountNotesImport
       @note.category_id = @category.id
       @note.description = notes_hash[:description]
       @note.user_id     = user_id
+      @note.date        = notes_hash[:updated_at]
 
-      @note.save!
+      @note.save
     end
   end
 end

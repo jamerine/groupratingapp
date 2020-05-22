@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200514133945) do
+ActiveRecord::Schema.define(version: 20200522183101) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -369,6 +369,7 @@ ActiveRecord::Schema.define(version: 20200514133945) do
     t.string   "claim_number"
     t.integer  "representative_number"
     t.integer  "policy_number"
+    t.datetime "date"
   end
 
   create_table "clicd_detail_records", force: :cascade do |t|
@@ -1081,6 +1082,7 @@ ActiveRecord::Schema.define(version: 20200514133945) do
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
     t.integer  "category_id"
+    t.datetime "date"
   end
 
   add_index "notes", ["account_id"], name: "index_notes_on_account_id", using: :btree
