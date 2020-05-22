@@ -44,13 +44,16 @@ class ImportFile
       puts "Skipped File..."
     end
 
-    result = ActiveRecord::Base.connection.execute("SELECT public.proc_process_flat_" + table_name + "()")
-    result.clear
+    unless table_name.in? %w[miras weekly_miras]
+      result = ActiveRecord::Base.connection.execute("SELECT public.proc_process_flat_" + table_name + "()")
+      result.clear
+    end
 
     @import               = Import.find_by(id: import_id)
     representative_number = @import.representative&.representative_number
 
-    if table_name == "sc230s"
+    case table_name
+    when "sc230s"
       @import.sc230s_count                       = Sc230.count
       @import.sc230_employer_demographics_count  = Sc230EmployerDemographic.count
       @import.sc230_claim_medical_payments_count = Sc230ClaimMedicalPayment.count
@@ -63,53 +66,53 @@ class ImportFile
       #   @import.sc220_rec3_employer_ar_transactions_count = Sc220Rec3EmployerArTransaction.count
       #   @import.sc220_rec4_policy_not_founds_count = Sc220Rec4PolicyNotFound.count
       #   @import.import_status = "#{table_name} Completed"
-    elsif table_name == "democs"
+    when "democs"
       @import.democs_count               = Democ.count
       @import.democ_detail_records_count = DemocDetailRecord.filter_by(representative_number).count
       @import.import_status              = "#{table_name} Completed"
-    elsif table_name == "mrcls"
+    when "mrcls"
       @import.mrcls_count               = Mrcl.count
       @import.mrcl_detail_records_count = MrclDetailRecord.count
       @import.import_status             = "#{table_name} Completed"
-    elsif table_name == "mremps"
+    when "mremps"
       @import.mremps_count                                        = Mremp.count
       @import.mremp_employee_experience_policy_levels_count       = MrempEmployeeExperiencePolicyLevel.count
       @import.mremp_employee_experience_manual_class_levels_count = MrempEmployeeExperienceManualClassLevel.count
       @import.mremp_employee_experience_claim_levels_count        = MrempEmployeeExperienceClaimLevel.count
       @import.import_status                                       = "#{table_name} Completed"
-    elsif table_name == "pcombs"
+    when "pcombs"
       @import.pcombs_count               = Pcomb.count
       @import.pcomb_detail_records_count = PcombDetailRecord.count
       @import.import_status              = "#{table_name} Completed"
-    elsif table_name == "phmgns"
+    when "phmgns"
       @import.phmgns_count               = Phmgn.count
       @import.phmgn_detail_records_count = PhmgnDetailRecord.count
       @import.import_status              = "#{table_name} Completed"
-    elsif table_name == "rates"
+    when "rates"
       @import.rates_count               = Rate.count
       @import.rate_detail_records_count = RateDetailRecord.count
       @import.import_status             = "#{table_name} Completed"
-    elsif table_name == "pdemos"
+    when "pdemos"
       @import.pdemos_count               = Pdemo.count
       @import.pdemo_detail_records_count = PdemoDetailRecord.count
       @import.import_status              = "#{table_name} Completed"
-    elsif table_name == "pemhs"
+    when "pemhs"
       @import.pemhs_count               = Pemh.count
       @import.pemh_detail_records_count = PemhDetailRecord.count
       @import.import_status             = "#{table_name} Completed"
-    elsif table_name == "pcovgs"
+    when "pcovgs"
       @import.pcovgs_count               = Pcovg.count
       @import.pcovg_detail_records_count = PcovgDetailRecord.count
       @import.import_status              = "#{table_name} Completed"
-    elsif table_name == "miras"
+    when "miras"
       @import.miras_count               = Mira.count
       @import.mira_detail_records_count = MiraDetailRecord.filter_by(representative_number).count
       @import.import_status             = "#{table_name} Completed"
-    elsif table_name == "weekly_miras"
+    when "weekly_miras"
       @import.weekly_miras_count                = WeeklyMira.count
       @import.weekly_mira_details_records_count = WeeklyMiraDetailRecord.filter_by(representative_number).count
       @import.import_status                     = "#{table_name} Completed"
-    elsif table_name == "clicds"
+    when "clicds"
       @import.clicds_count               = Clicd.count
       @import.clicd_detail_records_count = ClicdDetailRecord.filter_by(representative_number).count
       @import.import_status              = "#{table_name} Completed"

@@ -14,8 +14,8 @@ class ImportProcess
     Pdemo.delete_all
     Pemh.delete_all
     Pcovg.delete_all
-    Mira.delete_all
-    WeeklyMira.delete_all
+    Mira.by_representative(representative_number).delete_all
+    WeeklyMira.by_representative(representative_number).delete_all
     Clicd.delete_all
     DemocDetailRecord.filter_by(representative_number).delete_all
     MrclDetailRecord.delete_all
@@ -23,8 +23,6 @@ class ImportProcess
     MrempEmployeeExperienceManualClassLevel.delete_all
     MrempEmployeeExperienceClaimLevel.delete_all
     PcombDetailRecord.delete_all
-    MiraDetailRecord.filter_by(representative_number).delete_all
-    WeeklyMiraDetailRecord.filter_by(representative_number).delete_all
     ClicdDetailRecord.filter_by(representative_number).delete_all
     PhmgnDetailRecord.delete_all
     Sc220Rec1EmployerDemographic.delete_all
@@ -68,6 +66,8 @@ class ImportProcess
     ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/PCOVGFILE", "pcovgs", import_id, group_rating_id, all_process, import_only)
     ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/MIRA2FILE", "miras", import_id, group_rating_id, all_process, import_only)
     ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/MIRA2FILW", "weekly_miras", import_id, group_rating_id, all_process, import_only)
+    ImportMiraData.perform_async(representative_number)
+    ImportWeeklyMiraData.perform_async(representative_number)
     ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/CLICDFILE", "clicds", import_id, group_rating_id, all_process, import_only)
   end
 end

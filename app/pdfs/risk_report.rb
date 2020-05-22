@@ -111,12 +111,12 @@ class RiskReport < PdfReport
       @experience_mira_medical_reserve_total += (1 - e.claim_handicap_percent) * (e.claim_mira_medical_reserve_amount + (e.claim_mira_indemnity_reserve_amount)) * (e.claim_group_multiplier || 1) * (1 - (e.claim_subrogation_percent || 0.00))
     end
 
-    @experience_group_modidified_losses_total      = @experience_year_claims.sum(:claim_modified_losses_group_reduced)
-    @experience_individual_modidified_losses_total = @experience_year_claims.sum(:claim_modified_losses_individual_reduced)
-    @experience_individual_reduced_total           = @experience_year_claims.sum(:claim_individual_reduced_amount)
-    @experience_si_total                           = @experience_year_claims.sum(:claim_unlimited_limited_loss) - @experience_year_claims.sum(:claim_total_subrogation_collected)
-    @experience_si_avg                             = (@experience_si_total / 4)
-    @experience_si_ratio_avg                       = (@experience_si_total / @policy_calculation.policy_total_four_year_payroll) * @policy_calculation.policy_total_current_payroll
+    @experience_group_modified_losses_total      = @experience_year_claims.sum(:claim_modified_losses_group_reduced)
+    @experience_individual_modified_losses_total = @experience_year_claims.sum(:claim_modified_losses_individual_reduced)
+    @experience_individual_reduced_total         = @experience_year_claims.sum(:claim_individual_reduced_amount)
+    @experience_si_total                         = @experience_year_claims.sum(:claim_unlimited_limited_loss) - @experience_year_claims.sum(:claim_total_subrogation_collected)
+    @experience_si_avg                           = (@experience_si_total / 4)
+    @experience_si_ratio_avg                     = (@experience_si_total / @policy_calculation.policy_total_four_year_payroll) * @policy_calculation.policy_total_current_payroll
 
     # Out Of Experience Years Parameters
     @first_out_of_experience_year        = @first_experience_year - 5
@@ -155,10 +155,10 @@ class RiskReport < PdfReport
       @out_of_experience_medical_total              += (((e.claim_medical_paid + e.claim_mira_non_reducible_indemnity_paid_2) * (1 - e.claim_subrogation_percent) - e.claim_mira_non_reducible_indemnity_paid_2) * (1 - e.claim_handicap_percent) + e.claim_mira_non_reducible_indemnity_paid_2) * e.claim_group_multiplier
       @out_of_experience_mira_medical_reserve_total += (1 - e.claim_handicap_percent) * (e.claim_mira_medical_reserve_amount + (e.claim_mira_indemnity_reserve_amount)) * e.claim_group_multiplier * (1 - e.claim_subrogation_percent)
     end
-    @out_of_experience_group_modidified_losses_total      = @out_of_experience_year_claims.sum(:claim_modified_losses_group_reduced)
-    @out_of_experience_individual_modidified_losses_total = @out_of_experience_year_claims.sum(:claim_modified_losses_individual_reduced)
-    @out_of_experience_individual_reduced_total           = @out_of_experience_year_claims.sum(:claim_individual_reduced_amount)
-    @out_of_experience_si_total                           = @out_of_experience_year_claims.sum(:claim_unlimited_limited_loss) - @out_of_experience_year_claims.sum(:claim_total_subrogation_collected)
+    @out_of_experience_group_modified_losses_total      = @out_of_experience_year_claims.sum(:claim_modified_losses_group_reduced)
+    @out_of_experience_individual_modified_losses_total = @out_of_experience_year_claims.sum(:claim_modified_losses_individual_reduced)
+    @out_of_experience_individual_reduced_total         = @out_of_experience_year_claims.sum(:claim_individual_reduced_amount)
+    @out_of_experience_si_total                         = @out_of_experience_year_claims.sum(:claim_unlimited_limited_loss) - @out_of_experience_year_claims.sum(:claim_total_subrogation_collected)
 
     # TEN YEAR EXPERIENCE TOTALS
 
@@ -171,14 +171,14 @@ class RiskReport < PdfReport
 
     @ten_year_comp_total = (@ten_year_claims.sum(:claim_modified_losses_group_reduced) - @ten_year_claims.sum(:claim_medical_paid) - @ten_year_claims.sum(:claim_mira_medical_reserve_amount))
 
-    @ten_year_medical_total                      = @ten_year_claims.sum(:claim_medical_paid)
-    @ten_year_mira_medical_reserve_total         = @ten_year_claims.sum(:claim_mira_medical_reserve_amount)
-    @ten_year_group_modidified_losses_total      = @ten_year_claims.sum(:claim_modified_losses_group_reduced)
-    @ten_year_individual_modidified_losses_total = @ten_year_claims.sum(:claim_modified_losses_individual_reduced)
-    @ten_year_individual_reduced_total           = @ten_year_claims.sum(:claim_individual_reduced_amount)
-    @ten_year_si_total                           = @experience_si_total + @out_of_experience_si_total
-    @ten_year_si_avg                             = (@ten_year_si_total / 10)
-    @ten_year_si_ratio_avg                       = 'N/A'
+    @ten_year_medical_total                    = @ten_year_claims.sum(:claim_medical_paid)
+    @ten_year_mira_medical_reserve_total       = @ten_year_claims.sum(:claim_mira_medical_reserve_amount)
+    @ten_year_group_modified_losses_total      = @ten_year_claims.sum(:claim_modified_losses_group_reduced)
+    @ten_year_individual_modified_losses_total = @ten_year_claims.sum(:claim_modified_losses_individual_reduced)
+    @ten_year_individual_reduced_total         = @ten_year_claims.sum(:claim_individual_reduced_amount)
+    @ten_year_si_total                         = @experience_si_total + @out_of_experience_si_total
+    @ten_year_si_avg                           = (@ten_year_si_total / 10)
+    @ten_year_si_ratio_avg                     = 'N/A'
 
     @ten_year_si_average   = (@ten_year_si_total / 10)
     @ten_year_si_ratio_avg = 'N/A'
@@ -212,9 +212,9 @@ class RiskReport < PdfReport
       @green_year_mira_medical_reserve_total += (1 - e.claim_handicap_percent) * (e.claim_mira_medical_reserve_amount + (e.claim_mira_indemnity_reserve_amount)) * e.claim_group_multiplier * (1 - e.claim_subrogation_percent)
     end
 
-    @green_year_group_modidified_losses_total      = @green_year_claims.sum(:claim_modified_losses_group_reduced)
-    @green_year_individual_modidified_losses_total = @green_year_claims.sum(:claim_modified_losses_individual_reduced)
-    @green_year_individual_reduced_total           = @green_year_claims.sum(:claim_individual_reduced_amount)
+    @green_year_group_modified_losses_total      = @green_year_claims.sum(:claim_modified_losses_group_reduced)
+    @green_year_individual_modified_losses_total = @green_year_claims.sum(:claim_modified_losses_individual_reduced)
+    @green_year_individual_reduced_total         = @green_year_claims.sum(:claim_individual_reduced_amount)
 
     @current_expected_losses = 0
 
@@ -979,7 +979,7 @@ class RiskReport < PdfReport
   end
 
   def totals_green_year_data
-    @data = [[{ :content => "Green Year Totals", :colspan => 4 }, "#{ round(@green_year_comp_total, 0) }", "#{round(@green_year_medical_total, 0)}", "#{round(@green_year_mira_medical_reserve_total, 0)}", "#{round(@green_year_group_modidified_losses_total, 0)}", "#{round(@green_year_individual_modidified_losses_total, 0)}", "#{round(@green_year_individual_reduced_total, 0)}", "", ""]]
+    @data = [[{ :content => "Green Year Totals", :colspan => 4 }, "#{ round(@green_year_comp_total, 0) }", "#{round(@green_year_medical_total, 0)}", "#{round(@green_year_mira_medical_reserve_total, 0)}", "#{round(@green_year_group_modified_losses_total, 0)}", "#{round(@green_year_individual_modified_losses_total, 0)}", "#{round(@green_year_individual_reduced_total, 0)}", "", ""]]
   end
 
   def out_of_experience_year_total_table
@@ -997,7 +997,7 @@ class RiskReport < PdfReport
   end
 
   def totals_out_of_experience_year_data
-    @data = [[{ :content => "Out Of Experience Year Totals", :colspan => 4 }, "#{ round(@out_of_experience_comp_total, 0) }", "#{round(@out_of_experience_medical_total, 0)}", "#{round(@out_of_experience_mira_medical_reserve_total, 0)}", "#{round(@out_of_experience_group_modidified_losses_total, 0)}", "#{round(@out_of_experience_individual_modidified_losses_total, 0)}", "#{round(@out_of_experience_si_total, 0)}", "", ""]]
+    @data = [[{ :content => "Out Of Experience Year Totals", :colspan => 4 }, "#{ round(@out_of_experience_comp_total, 0) }", "#{round(@out_of_experience_medical_total, 0)}", "#{round(@out_of_experience_mira_medical_reserve_total, 0)}", "#{round(@out_of_experience_group_modified_losses_total, 0)}", "#{round(@out_of_experience_individual_modified_losses_total, 0)}", "#{round(@out_of_experience_si_total, 0)}", "", ""]]
   end
 
   def experience_year_total_table
@@ -1024,7 +1024,7 @@ class RiskReport < PdfReport
   end
 
   def totals_experience_year_data
-    @data = [[{ :content => "Experience Year Totals", :colspan => 4 }, "#{ round(@experience_comp_total, 0) }", "#{round(@experience_medical_total, 0)}", "#{round(@experience_mira_medical_reserve_total, 0)}", "#{round(@experience_group_modidified_losses_total, 0)}", "#{round(@experience_individual_modidified_losses_total, 0)}", "#{round(@experience_si_total, 0)}", "", ""]]
+    @data = [[{ :content => "Experience Year Totals", :colspan => 4 }, "#{ round(@experience_comp_total, 0) }", "#{round(@experience_medical_total, 0)}", "#{round(@experience_mira_medical_reserve_total, 0)}", "#{round(@experience_group_modified_losses_total, 0)}", "#{round(@experience_individual_modified_losses_total, 0)}", "#{round(@experience_si_total, 0)}", "", ""]]
   end
 
   def ten_year_total_table
@@ -1052,7 +1052,7 @@ class RiskReport < PdfReport
   end
 
   def ten_year_total_data
-    @data = [[{ :content => "10 Year Totals", :colspan => 4 }, "#{ round(@ten_year_comp_total, 0) }", "#{round(@ten_year_medical_total, 0)}", "#{round(@ten_year_mira_medical_reserve_total, 0)}", "#{round(@ten_year_group_modidified_losses_total, 0)}", "#{round(@ten_year_individual_modidified_losses_total, 0)}", "#{round(@ten_year_si_total, 0)}", "", ""]]
+    @data = [[{ :content => "10 Year Totals", :colspan => 4 }, "#{ round(@ten_year_comp_total, 0) }", "#{round(@ten_year_medical_total, 0)}", "#{round(@ten_year_mira_medical_reserve_total, 0)}", "#{round(@ten_year_group_modified_losses_total, 0)}", "#{round(@ten_year_individual_modified_losses_total, 0)}", "#{round(@ten_year_si_total, 0)}", "", ""]]
   end
 
   def year_claim_table(claim_year_data)
@@ -1160,7 +1160,7 @@ class RiskReport < PdfReport
       new_mod      = modifier - original_modifier_as_percent
       new_modifier = (modifier.to_f / 100.00).to_f
       mod_amount   = new_mod * ntm
-      rows << [round(new_modifier, 2), round(@experience_group_modidified_losses_total + mod_amount, 0), round(@policy_calculation.calculate_premium_for_risk(new_modifier), 0)]
+      rows << [round(new_modifier, 2), round(@experience_group_modified_losses_total + mod_amount, 0), round(@policy_calculation.calculate_premium_for_risk(new_modifier), 0)]
     end
 
     @data += rows
