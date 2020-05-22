@@ -146,7 +146,7 @@
   <% end %>
   <% group_rating = GroupRating.find_by(process_representative: @policy_calculation.representative_number) %>
   <% experience_year_claims = @policy_calculation.claim_calculations.where("claim_injury_date BETWEEN ? AND ? ", group_rating.experience_period_lower_date, group_rating.experience_period_upper_date).order(:claim_injury_date) %>
-  <% experience_group_modidified_losses_total = experience_year_claims.sum(:claim_modified_losses_group_reduced) %>
+  <% experience_group_modified_losses_total = experience_year_claims.sum(:claim_modified_losses_group_reduced) %>
 
   <h2>Individual Policy Discount Levels</h2>
   <div class="row text-center">
@@ -168,7 +168,7 @@
 
             <tr style="<%= 'font-weight: 700;' if index == 4 %>">
               <td><%= number_with_precision(new_modifier, precision: 2, delimiter: ',') %>
-              <td><%= number_with_precision(experience_group_modidified_losses_total + mod_amount, precision: 2, delimiter: ',') %></td>
+              <td><%= number_with_precision(experience_group_modified_losses_total + mod_amount, precision: 2, delimiter: ',') %></td>
               <td><%= number_with_precision(new_premium.nan? ? 0.00 : new_premium, precision: 2, delimiter: ',') %></td>
             </tr>
           <% end %>

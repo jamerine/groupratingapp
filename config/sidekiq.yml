@@ -8,6 +8,8 @@ production:
   - default
   - import_file
   - import_process
+  - import_mira_data
+  - import_weekly_mira_data
   - parse_file
   - group_rating_step_one
   - group_rating_step_two
