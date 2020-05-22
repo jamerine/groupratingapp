@@ -5,6 +5,7 @@
 #  id          :integer          not null, primary key
 #  attachment  :string
 #  category    :integer
+#  date        :datetime
 #  description :text
 #  title       :string
 #  created_at  :datetime         not null
@@ -32,8 +33,6 @@ class Note < ActiveRecord::Base
   enum category: [:billing, :claims, :general, :group_rating, :group_retro, :policy_admin, :sales]
 
   validates :note_category, presence: true
-  validates :description, presence: true
-  validates :title, presence: true
   validates :user, presence: true
   validates :account, presence: true
 

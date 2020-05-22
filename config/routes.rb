@@ -110,14 +110,6 @@
 #                                                       PATCH      /claim_calculations/:id(.:format)                                              claim_calculations#update
 #                                                       PUT        /claim_calculations/:id(.:format)                                              claim_calculations#update
 #                                                       DELETE     /claim_calculations/:id(.:format)                                              claim_calculations#destroy
-#                                 claim_note_categories GET        /claim_note_categories(.:format)                                               claim_note_categories#index
-#                                                       POST       /claim_note_categories(.:format)                                               claim_note_categories#create
-#                               new_claim_note_category GET        /claim_note_categories/new(.:format)                                           claim_note_categories#new
-#                              edit_claim_note_category GET        /claim_note_categories/:id/edit(.:format)                                      claim_note_categories#edit
-#                                   claim_note_category GET        /claim_note_categories/:id(.:format)                                           claim_note_categories#show
-#                                                       PATCH      /claim_note_categories/:id(.:format)                                           claim_note_categories#update
-#                                                       PUT        /claim_note_categories/:id(.:format)                                           claim_note_categories#update
-#                                                       DELETE     /claim_note_categories/:id(.:format)                                           claim_note_categories#destroy
 #                       import_contact_process_contacts POST       /contacts/import_contact_process(.:format)                                     contacts#import_contact_process
 #                                              contacts GET        /contacts(.:format)                                                            contacts#index
 #                                                       POST       /contacts(.:format)                                                            contacts#create
@@ -312,6 +304,8 @@
 #                 representative_import_contact_process POST       /representatives/:representative_id/import_contact_process(.:format)           representatives#import_contact_process
 #                 representative_import_payroll_process POST       /representatives/:representative_id/import_payroll_process(.:format)           representatives#import_payroll_process
 #                   representative_import_claim_process POST       /representatives/:representative_id/import_claim_process(.:format)             representatives#import_claim_process
+#           representative_import_account_notes_process POST       /representatives/:representative_id/import_account_notes_process(.:format)     representatives#import_account_notes_process
+#             representative_import_claim_notes_process POST       /representatives/:representative_id/import_claim_notes_process(.:format)       representatives#import_claim_notes_process
 #                      representative_all_quote_process GET        /representatives/:representative_id/all_quote_process(.:format)                representatives#all_quote_process
 #                               representative_zip_file POST       /representatives/:representative_id/zip_file(.:format)                         representatives#zip_file
 #                      representative_edit_global_dates GET        /representatives/:representative_id/edit_global_dates(.:format)                representatives#edit_global_dates
@@ -384,14 +378,33 @@
 #                                                       PATCH      /welcome/:id(.:format)                                                         welcome#update
 #                                                       PUT        /welcome/:id(.:format)                                                         welcome#update
 #                                                       DELETE     /welcome/:id(.:format)                                                         welcome#destroy
-#                                                 rates GET        /rates(.:format)                                                               rates#index
-#                                                       POST       /rates(.:format)                                                               rates#create
-#                                              new_rate GET        /rates/new(.:format)                                                           rates#new
-#                                             edit_rate GET        /rates/:id/edit(.:format)                                                      rates#edit
-#                                                  rate GET        /rates/:id(.:format)                                                           rates#show
-#                                                       PATCH      /rates/:id(.:format)                                                           rates#update
-#                                                       PUT        /rates/:id(.:format)                                                           rates#update
-#                                                       DELETE     /rates/:id(.:format)                                                           rates#destroy
+#                                                 rates GET        /manage/rates(.:format)                                                        rates#index
+#                                                       POST       /manage/rates(.:format)                                                        rates#create
+#                                              new_rate GET        /manage/rates/new(.:format)                                                    rates#new
+#                                             edit_rate GET        /manage/rates/:id/edit(.:format)                                               rates#edit
+#                                                  rate GET        /manage/rates/:id(.:format)                                                    rates#show
+#                                                       PATCH      /manage/rates/:id(.:format)                                                    rates#update
+#                                                       PUT        /manage/rates/:id(.:format)                                                    rates#update
+#                                                       DELETE     /manage/rates/:id(.:format)                                                    rates#destroy
+#                                 claim_note_categories GET        /manage/claim_note_categories(.:format)                                        claim_note_categories#index
+#                                                       POST       /manage/claim_note_categories(.:format)                                        claim_note_categories#create
+#                               new_claim_note_category GET        /manage/claim_note_categories/new(.:format)                                    claim_note_categories#new
+#                              edit_claim_note_category GET        /manage/claim_note_categories/:id/edit(.:format)                               claim_note_categories#edit
+#                                   claim_note_category GET        /manage/claim_note_categories/:id(.:format)                                    claim_note_categories#show
+#                                                       PATCH      /manage/claim_note_categories/:id(.:format)                                    claim_note_categories#update
+#                                                       PUT        /manage/claim_note_categories/:id(.:format)                                    claim_note_categories#update
+#                                                       DELETE     /manage/claim_note_categories/:id(.:format)                                    claim_note_categories#destroy
+#                                       note_categories GET        /manage/note_categories(.:format)                                              note_categories#index
+#                                                       POST       /manage/note_categories(.:format)                                              note_categories#create
+#                                     new_note_category GET        /manage/note_categories/new(.:format)                                          note_categories#new
+#                                    edit_note_category GET        /manage/note_categories/:id/edit(.:format)                                     note_categories#edit
+#                                         note_category GET        /manage/note_categories/:id(.:format)                                          note_categories#show
+#                                                       PATCH      /manage/note_categories/:id(.:format)                                          note_categories#update
+#                                                       PUT        /manage/note_categories/:id(.:format)                                          note_categories#update
+#                                                       DELETE     /manage/note_categories/:id(.:format)                                          note_categories#destroy
+#                                            max_losses GET        /manage/max-losses(.:format)                                                   bwc_codes_credibility_max_losses#index
+#                                     update_max_losses POST       /manage/max_losses(.:format)                                                   bwc_codes_credibility_max_losses#update_losses
+#                                                manage GET        /manage(.:format)                                                              manage#index
 #                                        manual_classes GET        /manual-classes(.:format)                                                      bwc_annual_manual_class_changes#index
 #                                                       POST       /manual-classes(.:format)                                                      bwc_annual_manual_class_changes#create
 #                                      new_manual_class GET        /manual-classes/new(.:format)                                                  bwc_annual_manual_class_changes#new
