@@ -65,8 +65,8 @@ class ImportProcess
     ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/PEMHSFILE", "pemhs", import_id, group_rating_id, all_process, import_only)
     ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/PCOVGFILE", "pcovgs", import_id, group_rating_id, all_process, import_only)
     ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/MIRA2FILE", "miras", import_id, group_rating_id, all_process, import_only)
-    ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/MIRA2FILW", "weekly_miras", import_id, group_rating_id, all_process, import_only)
     ImportMiraData.perform_async(representative_number)
+    ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/MIRA2FILW", "weekly_miras", import_id, group_rating_id, all_process, import_only)
     ImportWeeklyMiraData.perform_async(representative_number)
     ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/CLICDFILE", "clicds", import_id, group_rating_id, all_process, import_only)
   end
