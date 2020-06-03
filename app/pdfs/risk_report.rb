@@ -1259,15 +1259,17 @@ class RiskReport < PdfReport
 
   def claim_code_calc(claim)
     claim_code = ''
-    if claim.claim_type&.first == "1"
+
+    if claim.claim_type.present? && claim.claim_type[0] == '1'
       claim_code << "MO/"
     else
       claim_code << "LT/"
     end
-    claim_code << claim.claim_status || ''
+
+    claim_code << claim.claim_status if claim.claim_status.present?
     claim_code << "/"
-    claim_code << claim.claim_mira_ncci_injury_type || ''
-    claim_code << "/NO COV" if claim.claim_type&.last == "1"
+    claim_code << claim.claim_mira_ncci_injury_type if claim.claim_mira_ncci_injury_type.present?
+    claim_code << "/NO COV" if claim.claim_type.present? && claim.claim_type[-1] == '1'
 
     claim_code
   end
