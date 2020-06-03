@@ -336,7 +336,7 @@ class AccountsController < ApplicationController
     params.require(:account).permit(:representative_id, :name, :policy_number_entered, :street_address, :street_address_2, :city, :state, :zip_code,
                                     :business_contact_name, :business_phone_number, :business_email_address, :website_url, :group_rating_qualification,
                                     :group_rating_tier, :group_fees, :user_override, :industry_group, :group_dues, :total_costs, :status, :federal_identification_number,
-                                    :cycle_date, :request_date, :quarterly_request, :weekly_request, :ac3_approval, :fee_override,
+                                    :cycle_date, :request_date, :quarterly_request, :weekly_request, :ac3_approval, :fee_override, :account_type, :business_contact_name,
                                     affiliate_ids: [])
   end
 end
