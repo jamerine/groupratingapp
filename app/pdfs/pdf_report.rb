@@ -50,7 +50,10 @@ class PdfReport < Prawn::Document
   end
 
   def representative_logo(height_px = 75)
-    # image open('public/' + @account.representative.logo_url), height: height_px
-    image open(@account.representative.logo_url), height: height_px
+    if Rails.env.development?
+      image open('public/' + @account.representative.logo_url), height: height_px
+    else
+      image open(@account.representative.logo_url), height: height_px
+    end
   end
 end
