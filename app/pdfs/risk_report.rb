@@ -1264,13 +1264,12 @@ class RiskReport < PdfReport
     else
       claim_code << "LT/"
     end
-    claim_code << claim.claim_status
+    claim_code << claim.claim_status || ''
     claim_code << "/"
-    claim_code << claim.claim_mira_ncci_injury_type
-    if claim.claim_type&.last == "1"
-      claim_code << "/NO COV"
-    end
-    return claim_code
+    claim_code << claim.claim_mira_ncci_injury_type || ''
+    claim_code << "/NO COV" if claim.claim_type&.last == "1"
+
+    claim_code
   end
 
   def price(num)
