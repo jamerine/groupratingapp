@@ -14,7 +14,7 @@ class ClaimCalculationsController < ApplicationController
 
   def search
     @search_value         = params[:search_value]
-    @claim_search_results = ClaimCalculation.where("claim_number ILIKE :search_value OR REPLACE(claim_number, '-', '') ILIKE :search_value OR claimant_name ILIKE :search_value", search_value: "%#{@search_value}%")
+    @claim_search_results = ClaimCalculation.where("claim_number ILIKE :search_value OR REPLACE(claim_number, '-', '') ILIKE :search_value OR claimant_name ILIKE :search_value", search_value: "%#{@search_value}%").order(:claim_number)
 
     render json: { matchingClaimsList: render_to_string('claim_calculations/_search-results', layout: false) }
   end

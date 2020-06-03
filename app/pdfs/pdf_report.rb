@@ -12,7 +12,7 @@ class PdfReport < Prawn::Document
     font_size 10
   end
 
-  def header
+  def header(title = nil)
     representative_logo
   end
 
