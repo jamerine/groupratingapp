@@ -341,7 +341,13 @@ class PolicyCalculation < ActiveRecord::Base
       manual.calculate_potential_premium(new_mod_rate, administrative_rate)
     end.sum
 
-    calculate_premium_with_assessments(total_individual_premium)
+
+    total_standard_premium = self.manual_class_calculations.map do |manual|
+      manual.calculate_potential_standard_premium(new_mod_rate)
+    end.sum
+    # total_standard_premium = adjust_premium_size_factors(total_standard_premium)&.round(0)
+
+    calculate_premium_with_assessments(total_individual_premium, total_standard_premium)
   end
 
   def adjust_ind_emr emr
