@@ -12,11 +12,11 @@
       <br>
       <div class="col-md-3">
         <p>Reporting Period</p>
-        <h4> <%= @policy_program_history.try(:reporting_period_start_date).strftime("%-m/%-d/%y") %> - <%= @policy_program_history.try(:reporting_period_end_date).strftime("%-m/%-d/%y") %> </h4>
+        <h4> <%= @policy_program_history.try(:reporting_period_start_date)&.strftime("%-m/%-d/%y") %> - <%= @policy_program_history.try(:reporting_period_end_date)&.strftime("%-m/%-d/%y") %> </h4>
       </div>
       <div class="col-md-3">
         <p>EM Effective Date</p>
-        <h4> <%= @policy_program_history.try(:em_effective_date).strftime("%-m/%-d/%y") %> </h4>
+        <h4> <%= @policy_program_history.try(:em_effective_date)&.strftime("%-m/%-d/%y") %> </h4>
       </div>
       <div class="col-md-3">
         <p>EM Rate</p>
