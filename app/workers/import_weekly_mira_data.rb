@@ -8,6 +8,7 @@ class ImportWeeklyMiraData
                                                           record_type:              mira.record_type,
                                                           requestor_number:         mira.requestor_number,
                                                           policy_number:            mira.policy_number,
+                                                          claim_number:             mira.claim_number,
                                                           business_sequence_number: mira.business_sequence_number
                                                         })
       record.update_attributes(gather_attributes(mira))
