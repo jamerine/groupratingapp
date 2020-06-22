@@ -37,7 +37,7 @@ class Mira < ActiveRecord::Base
                 :reduction_amount, :total_reserve_amount_for_rates, :reduction_reason
 
   def detail_record
-    MiraDetailRecord.find_by(representative_number: representative_number, policy_number: policy_number, claim_number: claim_number)
+    MiraDetailRecord.where('mira_detail_records.claim_number IN (?)', [claim_number, claim_number&.strip]).find_by(representative_number: representative_number, policy_number: policy_number)
   end
 
   def representative_number
@@ -49,11 +49,11 @@ class Mira < ActiveRecord::Base
   end
 
   def requestor_number
-    self.single_rec[12, 3]&.to_i
+    self.single_rec[11, 3]&.to_i
   end
 
   def policy_number
-    self.single_rec[15, 1] == '0' ? self.single_rec[15, 7]&.to_i : self.single_rec[15, 1]&.to_i
+    self.single_rec[14, 8]&.to_i
   end
 
   def business_sequence_number
