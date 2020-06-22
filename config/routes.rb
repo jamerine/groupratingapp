@@ -496,7 +496,9 @@ Rails.application.routes.draw do
     collection do
       delete :destroy
       post :import_miras
-      get :import_all_miras
+      post :import_clicds
+      post :import_all_miras
+      post :import_all_clicds
     end
   end
 
