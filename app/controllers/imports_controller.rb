@@ -85,7 +85,21 @@ class ImportsController < ApplicationController
 
   end
 
-  #
+  def import_miras
+    @representative = Representative.find(import_params[:representative_id])
+
+    ImportMiraFilesProcess.perform_async(@representative.representative_number, @representative.abbreviated_name)
+
+    redirect_to imports_path, notice: "Files to be imported and parse have been queued."
+  end
+
+  def import_all_miras
+    Representative.all.find_each do |representative|
+      ImportMiraFilesProcess.perform_async(representative.representative_number, representative.abbreviated_name)
+    end
+
+    redirect_to imports_path, notice: "Files to be imported and parse have been queued."
+  end
 
   private
 

@@ -1,9 +1,15 @@
-class ImportMiraData
+class ImportMiraFilesProcess
   include Sidekiq::Worker
-  sidekiq_options queue: :import_mira_data, retry: 3
+  sidekiq_options queue: :import_mira_files_process, retry: 3
 
-  def perform(representative_number)
-    Mira.by_representative(representative_number).by_record_type.each do |mira|
+  def perform(representative_number, representative_abbreviated_name)
+    Mira.by_representative(representative_number).delete_all
+    WeeklyMira.by_representative(representative_number).delete_all
+
+    import_file("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/MIRA2FILE", 'miras')
+    import_file("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/MIRA2FILW", 'weekly_miras')
+
+    Mira.by_representative(representative_number).by_record_type.find_each do |mira|
       record = MiraDetailRecord.find_or_create_by({ representative_number:    mira.representative_number,
                                                     record_type:              mira.record_type,
                                                     requestor_number:         mira.requestor_number,
@@ -12,6 +18,56 @@ class ImportMiraData
                                                   })
       record.update_attributes(gather_attributes(mira))
     end
+
+    WeeklyMira.by_representative(representative_number).by_record_type.find_each do |mira|
+      record = WeeklyMiraDetailRecord.find_or_create_by({ representative_number:    mira.representative_number,
+                                                          record_type:              mira.record_type,
+                                                          requestor_number:         mira.requestor_number,
+                                                          policy_number:            mira.policy_number,
+                                                          business_sequence_number: mira.business_sequence_number
+                                                        })
+      record.update_attributes(gather_attributes(mira))
+    end
+  end
+
+  def import_file(url, table_name)
+    require 'open-uri'
+
+    begin
+      puts "Start Time: " + Time.new.inspect
+      conn = ActiveRecord::Base.connection
+      rc   = conn.raw_connection
+      rc.exec("COPY " + table_name + " (single_rec) FROM STDIN WITH DELIMITER AS '|'")
+
+      file = open(url)
+
+      until file.eof?
+        # Add row to copy data
+        line = file.readline
+        if line[40, 4] == "0000"
+          #puts "incorrect characters"
+        else
+          puts 'Reading....'
+          rc.put_copy_data(line)
+        end
+      end
+
+      # We are done adding copy data
+      rc.put_copy_end
+      # Display any error messages
+      while (res = rc.get_result)
+        if e_message = res.error_message
+          p e_message
+        end
+      end
+
+    rescue OpenURI::HTTPError => e
+      rc.put_copy_end unless rc.nil?
+
+      puts "Skipped File..."
+    end
+
+    puts "End Time: " + Time.new.inspect
   end
 
   def gather_attributes(mira)

@@ -493,7 +493,11 @@ Rails.application.routes.draw do
   end
 
   resources :imports do
-    collection { delete :destroy }
+    collection do
+      delete :destroy
+      post :import_miras
+      get :import_all_miras
+    end
   end
 
   resources :manual_class_calculations do

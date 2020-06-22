@@ -14,8 +14,8 @@ class ImportProcess
     Pdemo.delete_all
     Pemh.delete_all
     Pcovg.delete_all
-    Mira.by_representative(representative_number).delete_all
-    WeeklyMira.by_representative(representative_number).delete_all
+    # Mira.by_representative(representative_number).delete_all
+    # WeeklyMira.by_representative(representative_number).delete_all
     Clicd.delete_all
     DemocDetailRecord.filter_by(representative_number).delete_all
     MrclDetailRecord.delete_all
@@ -53,6 +53,7 @@ class ImportProcess
     ProcessPolicyCombinePartialToFullLease.where(data_source: 'bwc').delete_all
     ProcessPolicyCombinePartialTransferNoLease.where(data_source: 'bwc').delete_all
     ProcessPolicyCoverageStatusHistory.where(data_source: 'bwc').delete_all
+    ImportMiraFilesProcess.perform_async(representative_number, representative_abbreviated_name)
     ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/DEMOCFILE", "democs", import_id, group_rating_id, all_process, import_only)
     ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/MRCLSFILE", "mrcls", import_id, group_rating_id, all_process, import_only)
     ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/MREMPFILE", "mremps", import_id, group_rating_id, all_process, import_only)
@@ -64,10 +65,10 @@ class ImportProcess
     ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/PDEMOFILE", "pdemos", import_id, group_rating_id, all_process, import_only)
     ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/PEMHSFILE", "pemhs", import_id, group_rating_id, all_process, import_only)
     ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/PCOVGFILE", "pcovgs", import_id, group_rating_id, all_process, import_only)
-    ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/MIRA2FILE", "miras", import_id, group_rating_id, all_process, import_only)
-    ImportMiraData.perform_async(representative_number)
-    ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/MIRA2FILW", "weekly_miras", import_id, group_rating_id, all_process, import_only)
-    ImportWeeklyMiraData.perform_async(representative_number)
+    # ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/MIRA2FILE", "miras", import_id, group_rating_id, all_process, import_only)
+    # ImportMiraData.perform_async(representative_number)
+    # ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/MIRA2FILW", "weekly_miras", import_id, group_rating_id, all_process, import_only)
+    # ImportWeeklyMiraData.perform_async(representative_number)
     ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/CLICDFILE", "clicds", import_id, group_rating_id, all_process, import_only)
   end
 end

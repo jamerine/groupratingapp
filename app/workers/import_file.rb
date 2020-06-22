@@ -44,7 +44,7 @@ class ImportFile
       puts "Skipped File..."
     end
 
-    unless table_name.in? %w[miras weekly_miras]
+    unless table_name.in?(%w[miras weekly_miras])
       result = ActiveRecord::Base.connection.execute("SELECT public.proc_process_flat_" + table_name + "()")
       result.clear
     end
@@ -133,7 +133,6 @@ class ImportFile
       (!@import.pdemos_count.nil? || !@import.pdemo_detail_records_count.nil?) &&
       (!@import.pemhs_count.nil? || !@import.pemh_detail_records_count.nil?) &&
       (!@import.pcovgs_count.nil? || !@import.pcovg_detail_records_count.nil?) &&
-      (!@import.miras_count.nil? || !@import.mira_detail_records_count.nil?) &&
       (!@import.clicds_count.nil? || !@import.clicd_detail_records_count.nil?)
 
       @import.import_status = "Completed"
