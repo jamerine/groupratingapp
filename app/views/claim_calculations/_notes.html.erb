@@ -10,6 +10,7 @@
                 <th style="text-align: left;">Title</th>
                 <th style="text-align: left;">Category</th>
                 <th style="text-align: left;">Note</th>
+                <th style="text-align: center;">Last Updated</th>
                 <th width="15%" style="text-align: right;"><%= link_to 'Add Note', new_claim_calculation_claim_note_path(@claim_calculation), class: 'btn btn-success btn-sm' %></th>
               </tr>
             </thead>
@@ -19,6 +20,7 @@
                   <td style="text-align: left;"><%= note.title %></td>
                   <td style="text-align: left;"><%= note.claim_note_category&.title %></td>
                   <td class="trix-content" style="text-align: left;"><%= note.body&.html_safe %></td>
+                  <td class="trix-content" data-sort="<%= note.date || note.updated_at %>" style="text-align: center;"><%= l(note.date || note.updated_at) %></td>
                   <td width="15%" style="text-align: right;">
                     <%= link_to edit_claim_calculation_claim_note_path(@claim_calculation, note), class: 'btn btn-primary btn-sm' do %>
                       <i class="fa fa-edit"></i>
