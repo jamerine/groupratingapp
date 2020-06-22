@@ -19,7 +19,7 @@ Sidekiq Server Configuration failed.
   end
 
   def client_redis_size
-    Rails.env.production? ? 4 : DEFAULT_CLIENT_REDIS_SIZE
+    Rails.env.production? ? 6 : DEFAULT_CLIENT_REDIS_SIZE
       # puma_workers * (puma_threads/2) * web_dynos
   end
 
