@@ -3,7 +3,7 @@
 # Table name: claim_notes
 #
 #  id                     :integer          not null, primary key
-#  body                   :text
+#  body                   :text             default("")
 #  claim_number           :string
 #  date                   :datetime
 #  policy_number          :integer
