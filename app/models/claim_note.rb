@@ -19,7 +19,7 @@ class ClaimNote < ActiveRecord::Base
   #belongs_to :claim_calculation
   belongs_to :claim_note_category
 
-  validates_presence_of :title, :policy_number, :representative_number, :claim_number
+  validates_presence_of :policy_number, :representative_number, :claim_number
 
   def claim_calculation
     ClaimCalculation.find_by(claim_number: claim_number, policy_number: policy_number, representative_number: representative_number) ||
