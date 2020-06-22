@@ -8,7 +8,6 @@ class ImportMiraData
                                                     record_type:              mira.record_type,
                                                     requestor_number:         mira.requestor_number,
                                                     policy_number:            mira.policy_number,
-                                                    claim_number:             mira.claim_number,
                                                     business_sequence_number: mira.business_sequence_number
                                                   })
       record.update_attributes(gather_attributes(mira))
@@ -19,6 +18,7 @@ class ImportMiraData
     { valid_policy_number:                                    mira.valid_policy_number,
       claim_indicator:                                        mira.claim_indicator,
       claim_injury_date:                                      mira.claim_injury_date,
+      claim_number:                                           mira.claim_number,
       claim_filing_date:                                      mira.claim_filing_date,
       claim_hire_date:                                        mira.claim_hire_date,
       gender:                                                 mira.gender,
