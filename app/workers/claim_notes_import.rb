@@ -17,6 +17,7 @@ class ClaimNotesImport
                                                      policy_number:         notes_hash[:policy_number].strip,
                                                      claim_number:          notes_hash[:claim_number].strip,
                                                      title:                 notes_hash[:title])
+      @note.title                  ||= 'No Title'
       @note.claim_note_category_id = @category&.id
       @note.body                   = notes_hash[:body]
       @note.date                   = notes_hash[:updated_at]

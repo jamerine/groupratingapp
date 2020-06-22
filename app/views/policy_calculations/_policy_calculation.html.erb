@@ -177,7 +177,7 @@
             <tr style="<%= 'font-weight: 700;' if index == 4 %>">
               <td><%= number_with_precision(new_modifier, precision: 2, delimiter: ',') %>
               <td><%= number_with_precision(experience_group_modified_losses_total + mod_amount, precision: 2, delimiter: ',') %></td>
-              <td><%= number_with_precision(new_premium.nan? ? 0.00 : new_premium, precision: 2, delimiter: ',') %></td>
+              <td><%= number_with_precision((!new_premium.present? || new_premium.zero?) ? 0.00 : new_premium, precision: 2, delimiter: ',') %></td>
             </tr>
           <% end %>
         </tbody>
