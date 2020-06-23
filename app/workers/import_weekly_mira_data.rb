@@ -6,6 +6,7 @@ class ImportWeeklyMiraData
     WeeklyMira.by_representative(representative_number).by_record_type.each do |mira|
       record = WeeklyMiraDetailRecord.find_or_create_by({ representative_number:    mira.representative_number,
                                                           record_type:              mira.record_type,
+                                                          claim_number:             mira.claim_number,
                                                           requestor_number:         mira.requestor_number,
                                                           policy_number:            mira.policy_number,
                                                           business_sequence_number: mira.business_sequence_number
@@ -17,7 +18,6 @@ class ImportWeeklyMiraData
   def gather_attributes(mira)
     { valid_policy_number:                                    mira.valid_policy_number,
       claim_indicator:                                        mira.claim_indicator,
-      claim_number:                                           mira.claim_number,
       claim_injury_date:                                      mira.claim_injury_date,
       claim_filing_date:                                      mira.claim_filing_date,
       claim_hire_date:                                        mira.claim_hire_date,
