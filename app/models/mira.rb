@@ -105,7 +105,7 @@ class Mira < ActiveRecord::Base
   end
 
   def claimant_name
-    self.single_rec[76, 20]&.strip
+    self.single_rec[75, 20]&.strip
   end
 
   def claim_manual_number
