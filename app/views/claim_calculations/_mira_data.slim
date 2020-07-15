@@ -26,7 +26,7 @@
                     td = number_to_currency(@claim_calculation&.max_value, precision: 0)
                   tr
                     td Claim Filing Date
-                    td = @mira.claim_filing_date&.strftime("b d, Y")
+                    td = display_date(@mira.claim_filing_date)
                   tr
                     td Gender
                     td = @mira.gender
@@ -41,13 +41,13 @@
                     td = @mira.claim_status
                   tr
                     td Claim Status Effective Date
-                    td = @mira.claim_status_effective_date&.strftime("b d, Y")
+                    td = display_date(@mira.claim_status_effective_date)
                   tr
                     td Claim Activity Status
-                    td = @mira.claim_status_effective_date&.strftime("b d, Y")
+                    td = display_date(@mira.claim_status_effective_date)
                   tr
                     td Claim Activity Status Effective Date
-                    td = @mira.claim_activity_status_effective_date&.strftime("b d, Y")
+                    td = display_date(@mira.claim_activity_status_effective_date)
                   tr
                     td Claimant Zip Code
                     td = @mira.claimant_zip_code
@@ -71,10 +71,10 @@
                     td = @mira.claimant_name
                   tr
                     td Claimant Date of Birth
-                    td = @mira.claimant_date_of_birth.try(:strftime, "b d, Y")
+                    td = display_date(@mira.claimant_date_of_birth)
                   tr
                     td Date of Injury
-                    td = @mira.claim_injury_date.try(:strftime, "b d, Y")
+                    td = display_date(@mira.claim_injury_date)
                   tr
                     td Age at Injury
                     td = @mira.age_at_injury
@@ -89,13 +89,13 @@
                     td = @mira.claim_type
                   tr
                     td Claimant Date of Death
-                    td = @mira.claimant_date_of_death&.strftime("b d, Y")
+                    td = display_date(@mira.claimant_date_of_death)
                   tr
                     td Prediction Status
                     td = @mira.prediction_status
                   tr
                     td Prediction Close Status Effective Date
-                    td = @mira.prediction_close_status_effective_date&.strftime("b d, Y")
+                    td = display_date(@mira.prediction_close_status_effective_date)
                   tr
                     td Temporary Partial Payments
                     td = @mira.temporary_partial_payments
@@ -137,19 +137,19 @@
                 td = @mira.average_weekly_wage
               tr
                 td Claimant Hire Date
-                td = @mira.claim_hire_date&.strftime("b d, Y")
+                td = display_date(@mira.claim_hire_date)
               tr
                 td Salary Continuation
                 td = @mira.salary_continuation
               tr
                 td Last Date Worked
-                td = @mira.last_date_worked&.strftime("b d, Y")
+                td = display_date(@mira.last_date_worked)
               tr
                 td Estimated Return To Work Date
-                td = @mira.estimated_return_to_work_date&.strftime("b d, Y")
+                td = display_date(@mira.estimated_return_to_work_date)
               tr
                 td Return To Work Date
-                td = @mira.return_to_work_date&.strftime("b d, Y")
+                td = display_date(@mira.return_to_work_date)
               tr
                 td Injury Or Litigation Type
                 td = @mira.injury_or_litigation_type
@@ -169,10 +169,10 @@
                     td = @mira.physical_therapy
                   tr
                     td MMI Date
-                    td = @mira.mmi_date&.strftime("b d, Y")
+                    td = display_date(@mira.mmi_date)
                   tr
                     td Last Medical Date of Service
-                    td = @mira.mmi_date&.strftime("b d, Y")
+                    td = display_date(@mira.mmi_date)
                   tr
                     td Total Medical Paid
                     td = @mira.total_medical_paid
@@ -237,7 +237,7 @@
                 tbody
                   tr
                     td Last Indemnity Period End Date
-                    td = @mira.mmi_date&.strftime("b d, Y")
+                    td = display_date(@mira.mmi_date)
                   tr
                     td Indemnity Change of Occupation Payments
                     td = @mira.indemnity_change_of_occupation_payments
@@ -302,7 +302,7 @@
                     td Indemnity PTD Reserve Amount
                     td = @mira.indemnity_ptd_reserve_amount
                   tr
-                    td Indemnity Temporary Toal Reserve Prediction
+                    td Indemnity Temporary Total Reserve Prediction
                     td = @mira.indemnity_temporary_total_reserve_prediction
                   tr
                     td Indemnity Temporary Total Reserve Amount
