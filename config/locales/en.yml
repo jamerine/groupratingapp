@@ -24,6 +24,8 @@ en:
   date:
     formats:
       default: '%m/%d/%Y'
+      mira: '%b %d, %Y'
   time:
     formats:
       default: '%m/%d/%Y %H:%M'
+      mira: '%b %d, %Y'
