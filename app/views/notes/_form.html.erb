@@ -5,8 +5,21 @@
     </div>
   </div>
 
-  <%= f.input :title %>
+  <div class="row">
+    <div class="col-sm-4"><%= f.input :title %></div>
+    <div class="col-sm-4"><%= f.input :date, as: :string, input_html: { class: 'datepicker' } %></div>
+  </div>
   <%= f.input :description, as: :trix_editor %>
   <%= f.input :attachment, as: :file, onchange: 'validateFiles(this);', input_html: { data: { max_file_size: 1.megabytes } } %>
-  <%= f.submit 'Create Note', class: 'btn btn-info' %>
+  <%= f.submit 'Submit', class: 'btn btn-info' %>
 <% end %>
+
+
+<script>
+  $(function () {
+    $('.datepicker').datetimepicker({
+      format:     'YYYY-MM-DD hh:mm',
+      useCurrent: false
+    });
+  });
+</script>
