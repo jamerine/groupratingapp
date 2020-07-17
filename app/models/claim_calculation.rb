@@ -80,7 +80,7 @@ class ClaimCalculation < ActiveRecord::Base
   end
 
   def clicd_detail_records
-    ClicdDetailRecord.where(claim_number: claim_number, representative_number: representative_number, policy_number: policy_number)
+    ClicdDetailRecord.where('clicd_detail_records.claim_number IN (?)', [claim_number, claim_number&.strip, "#{claim_number} "]).where(representative_number: representative_number, policy_number: policy_number)
   end
 
   def weekly_mira_detail_record
