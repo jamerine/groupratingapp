@@ -27,11 +27,11 @@ class Clicd < ActiveRecord::Base
   end
 
   def requestor_number
-    self.single_rec[12, 3]&.to_i
+    self.single_rec[11, 3]&.to_i
   end
 
   def policy_number
-    self.single_rec[15, 1] == '0' ? self.single_rec[15, 7]&.to_i : self.single_rec[15, 1]&.to_i
+    self.single_rec[14, 8]&.to_i
   end
 
   def business_sequence_number
@@ -91,7 +91,7 @@ class Clicd < ActiveRecord::Base
   end
 
   def primary_icd
-    self.single_rec[82, 1]
+    self.single_rec[81, 1]
   end
 
   private

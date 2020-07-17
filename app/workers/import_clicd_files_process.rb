@@ -11,8 +11,8 @@ class ImportClicdFilesProcess
       record = ClicdDetailRecord.find_or_create_by({ representative_number:    clicd.representative_number,
                                                      record_type:              clicd.record_type,
                                                      requestor_number:         clicd.requestor_number,
-                                                     policy_number:            clicd.policy_number,
-                                                     business_sequence_number: clicd.business_sequence_number
+                                                     business_sequence_number: clicd.business_sequence_number,
+                                                     policy_number:            clicd.policy_number
                                                    })
       record.update_attributes(gather_attributes(clicd))
     end
