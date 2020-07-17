@@ -51,12 +51,9 @@ class GroupRatingStepThreeB1
     if @group_rating.present?
       @group_rating.status = "Step #{step} Completed"
       @group_rating.save
+
+      GroupRatingStepThreeC.perform_async("3_c", @group_rating.process_representative, @group_rating.experience_period_lower_date, @group_rating.experience_period_upper_date, @group_rating.current_payroll_period_lower_date, @group_rating.current_payroll_period_upper_date, @group_rating.id, all_process)
+      # GroupRatingStepThreeC.perform_async("3_c",219406, "2012-07-01", "2016-06-30", "2015-07-01", "2016-06-30", 1,)
     end
-
-
-    GroupRatingStepThreeC.perform_async("3_c", @group_rating.process_representative, @group_rating.experience_period_lower_date, @group_rating.experience_period_upper_date, @group_rating.current_payroll_period_lower_date, @group_rating.current_payroll_period_upper_date, @group_rating.id, all_process)
-    # GroupRatingStepThreeC.perform_async("3_c",219406, "2012-07-01", "2016-06-30", "2015-07-01", "2016-06-30", 1,)
-
   end
-
 end
