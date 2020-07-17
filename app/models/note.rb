@@ -42,10 +42,13 @@ class Note < ActiveRecord::Base
   scope :user_filter, -> (user) { where user: user }
   scope :category_filter, -> (category) { where category: category }
 
+  def order_date
+    self.date || self.created_at
+  end
+
   private
 
   def attachment_size_validation
     errors[:image] << "Should be less than 3 MB" if attachment.size > 1.megabytes
   end
-
 end

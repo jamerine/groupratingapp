@@ -15,11 +15,13 @@
               </tr>
             </thead>
             <tbody>
-              <% @claim_calculation.claim_notes.each do |note| %>
+              <% @claim_calculation.claim_notes.order(date: :desc).each do |note| %>
                 <tr>
                   <td style="text-align: left;"><%= note.title %></td>
                   <td style="text-align: left;"><%= note.claim_note_category&.title %></td>
-                  <td class="trix-content" style="text-align: left;"><%= note.body&.html_safe %></td>
+                  <td class="trix-content" style="text-align: left;">
+                    <div data-toggle="tooltip" title="<%= note.body&.html_safe %>"><%= note.body&.html_safe.truncate(250) %></div>
+                  </td>
                   <td class="trix-content" data-sort="<%= note.date || note.updated_at %>" style="text-align: center;"><%= l(note.date || note.updated_at) %></td>
                   <td width="15%" style="text-align: right;">
                     <%= link_to edit_claim_calculation_claim_note_path(@claim_calculation, note), class: 'btn btn-primary btn-sm' do %>

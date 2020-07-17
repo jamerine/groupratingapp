@@ -21,13 +21,13 @@
             <b>User</b>
           </div>
           <div class="col col-sm-3">
-            <b>Created</b>
+            <b>Date</b>
           </div>
         </div>
       </div>
     </div>
 
-    <% @notes.each do |note| %>
+    <% notes.each do |note| %>
       <%= render partial: 'notes/full_note', locals: { note: note } %>
     <% end %>
     <br>
