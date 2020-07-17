@@ -13,7 +13,8 @@ class ImportClicdFilesProcess
                                                      requestor_number:         clicd.requestor_number,
                                                      business_sequence_number: clicd.business_sequence_number,
                                                      policy_number:            clicd.policy_number,
-                                                     claim_number:             clicd.claim_number
+                                                     claim_number:             clicd.claim_number,
+                                                     icd_code:                 clicd.icd_code
                                                    })
       record.update_attributes(gather_attributes(clicd))
     end
@@ -67,7 +68,6 @@ class ImportClicdFilesProcess
       policy_year_rating_plan:              clicd.policy_year_rating_plan,
       claim_indicator:                      clicd.claim_indicator,
       icd_codes_assigned:                   clicd.icd_codes_assigned,
-      icd_code:                             clicd.icd_code,
       icd_status:                           clicd.icd_status,
       icd_status_effective_date:            clicd.icd_status_effective_date,
       icd_injury_location_code:             clicd.icd_injury_location_code,
