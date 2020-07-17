@@ -23,7 +23,6 @@ class PolicyCalculationsController < ApplicationController
     @claim_calculations        = @policy_calculation.claim_calculations.order(claim_injury_date: :desc).page(@page)
     @representative            = Representative.find(@policy_calculation.representative_id)
     @new_payroll_calculation   = PayrollCalculation.new
-    @notes                     = @account.notes.sort_by { |note| note.order_date }.reverse.first(5)
     @policy_number             = "Policy: #{@policy_calculation.policy_number} - #{@policy_calculation&.account&.name&.titleize}"
   end
 

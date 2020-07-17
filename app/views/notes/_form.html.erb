@@ -6,6 +6,16 @@
   </div>
 
   <div class="row">
+    <div class="col-sm-3">
+      <%= f.input :is_group, label: ' Group Note', input_html: { checked: @group } %>
+    </div>
+
+    <div class="col-sm-3">
+      <%= f.input :is_retention, label: ' Retention Note', input_html: { checked: @retention } %>
+    </div>
+  </div>
+
+  <div class="row">
     <div class="col-sm-4"><%= f.input :title %></div>
     <div class="col-sm-4"><%= f.input :date, as: :string, input_html: { class: 'datepicker' } %></div>
   </div>
