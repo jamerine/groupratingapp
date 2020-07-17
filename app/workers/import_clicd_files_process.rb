@@ -8,13 +8,13 @@ class ImportClicdFilesProcess
     import_file("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/CLICDFILE", 'clicds')
 
     Clicd.by_representative(representative_number).by_record_type.find_each do |clicd|
-      record = ClicdDetailRecord.find_by({ representative_number:    clicd.representative_number,
-                                           record_type:              clicd.record_type,
-                                           requestor_number:         clicd.requestor_number,
-                                           business_sequence_number: clicd.business_sequence_number,
-                                           policy_number:            clicd.policy_number,
-                                           claim_number:             clicd.claim_number
-                                         })
+      record = ClicdDetailRecord.find_or_create_by({ representative_number:    clicd.representative_number,
+                                                     record_type:              clicd.record_type,
+                                                     requestor_number:         clicd.requestor_number,
+                                                     business_sequence_number: clicd.business_sequence_number,
+                                                     policy_number:            clicd.policy_number,
+                                                     claim_number:             clicd.claim_number
+                                                   })
       record.update_attributes(gather_attributes(clicd))
     end
   end
