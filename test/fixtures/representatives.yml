@@ -4,17 +4,20 @@
 #
 #  id                                :integer          not null, primary key
 #  abbreviated_name                  :string
+#  bwc_quote_completion_date         :date
 #  company_name                      :string
 #  current_payroll_period_lower_date :date
 #  current_payroll_period_upper_date :date
 #  current_payroll_year              :integer
 #  email_address                     :string
+#  experience_date                   :date
 #  experience_period_lower_date      :date
 #  experience_period_upper_date      :date
 #  fax_number                        :string
 #  footer                            :string
 #  group_dues                        :string
 #  group_fees                        :string
+#  internal_quote_completion_date    :date
 #  location_address_1                :string
 #  location_address_2                :string
 #  location_city                     :string

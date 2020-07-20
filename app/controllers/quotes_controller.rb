@@ -3,7 +3,7 @@ class QuotesController < ApplicationController
   def new
     @account = Account.find(params[:account_id])
     @representative = @account.representative
-    @quote = Quote.new
+    @quote = @account.quotes.new
     authorize @quote
     @program_types = Quote.program_types
     @statuses = Quote.statuses
@@ -13,7 +13,7 @@ class QuotesController < ApplicationController
   def new_group_retro
     @account = Account.find(params[:account_id])
     @representative = @account.representative
-    @quote = Quote.new
+    @quote = @account.quotes.new
     # authorize @quote
     @program_types = Quote.program_types
     @statuses = Quote.statuses

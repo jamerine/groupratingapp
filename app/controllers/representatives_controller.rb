@@ -183,7 +183,7 @@ class RepresentativesController < ApplicationController
     authorize @representative
     @representative.assign_attributes(representative_params)
     if @representative.save
-      redirect_to @representative, notice: 'Logo successfully added to Representative'
+      redirect_to @representative, notice: 'Representative Updated!'
     else
       redirect_to @representative, alert: 'Error adding logo to Representative'
     end
@@ -277,7 +277,7 @@ class RepresentativesController < ApplicationController
                                            :current_payroll_year, :program_year_lower_date, :program_year_upper_date, :program_year, :quote_year_lower_date, :quote_year_upper_date, :quote_year,
                                            :location_address_1, :location_address_2, :location_city, :location_state, :location_zip_code, :mailing_address_1, :mailing_address_2, :mailing_city,
                                            :mailing_state, :mailing_zip_code, :phone_number, :toll_free_number, :fax_number, :email_address, :president_first_name, :president_last_name,
-                                           :signature, :president, :footer)
+                                           :signature, :president, :footer, :experience_date, :bwc_quote_completion_date, :internal_quote_completion_date)
   end
 
 end

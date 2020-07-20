@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200720132940) do
+ActiveRecord::Schema.define(version: 20200720155108) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -85,6 +85,8 @@ ActiveRecord::Schema.define(version: 20200720132940) do
     t.float    "fee_change"
     t.integer  "account_type"
     t.string   "business_contact_name"
+    t.date     "tpa_start_date"
+    t.date     "tpa_end_date"
   end
 
   add_index "accounts", ["representative_id"], name: "index_accounts_on_representative_id", using: :btree
@@ -1883,6 +1885,9 @@ ActiveRecord::Schema.define(version: 20200720132940) do
     t.string   "signature"
     t.string   "president"
     t.string   "footer"
+    t.date     "internal_quote_completion_date"
+    t.date     "bwc_quote_completion_date"
+    t.date     "experience_date"
   end
 
   create_table "representatives_users", force: :cascade do |t|

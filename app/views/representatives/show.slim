@@ -150,8 +150,8 @@
           - unless @representative.zip_file_url.nil?
             h5 View Group Rating Zip
             = link_to "View Zip", @representative.zip_file.url, class: 'btn btn-default'
-      - if @representative.representative_number == 1740 # MATRIX
-        .row
+      - if @representative.matrix?
+        .row.form-group
           .col-sm-4
             h5 Signature Image
             = image_tag(@representative.signature.url, width: '100%') if @representative.signature
@@ -161,6 +161,17 @@
           .col-sm-4
             h5 Footer Image
             = image_tag(@representative.footer.url, width: '100%') if @representative.footer
+        .row
+          .col-sm-4
+            h5 Internal Quote Completion Date
+            p = l @representative.internal_quote_completion_date if @representative.internal_quote_completion_date.present?
+          .col-sm-4
+            h5 BWC Quote Completion Date
+            p = l @representative.bwc_quote_completion_date if @representative.bwc_quote_completion_date.present?
+          .col-sm-4
+            h5 Experience Date
+            p = l @representative.experience_date if @representative.experience_date.present?
+
 
       br
       hr

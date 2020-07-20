@@ -162,7 +162,7 @@ class ArmGroupRatingContract < PdfReport
       text "2.", indent_paragraphs: 15, size: 9
     end
     bounding_box([30, current_cursor], :width => 520, :height => 35) do
-      text "The initial term of this agreement will be from Decmber 1, #{@account.representative.program_year} through March 31, #{@account.representative.quote_year_upper_date.strftime("%Y")}. This agreement will automatically renew for additional one (1) year terms unless either party gives the other notice at least 21 days prior to the termination date.  Either party may terminate this agreement without penalty upon providing a 21 day notice to the other party.", size: 9
+      text "The initial term of this agreement will be from December 1, #{@account.representative.program_year} through March 31, #{@account.representative.quote_year_upper_date.strftime("%Y")}. This agreement will automatically renew for additional one (1) year terms unless either party gives the other notice at least 21 days prior to the termination date.  Either party may terminate this agreement without penalty upon providing a 21 day notice to the other party.", size: 9
     end
     current_cursor = cursor
     bounding_box([0, current_cursor], :width => 30, :height => 15) do
