@@ -56,10 +56,10 @@
         .col-md-4
           h5 abbreviated Name:
           h3 = @representative.abbreviated_name
+      .row style="margin-bottom: 10px;"
+        .col-sm-12 = link_to "Edit Representative", edit_representative_path(@representative.id), class: 'btn btn-primary'
       .row
-        = link_to "Edit Representative", edit_representative_path(@representative.id), class: 'btn btn-primary'
-      .row
-        = image_tag @representative.logo_url
+        .col-sm-6.col-sm-offset-3 = image_tag @representative.logo_url, style: 'max-width: 100%'
     hr
   .container.text-center
     - if policy(@representative).edit_global_dates?
@@ -129,7 +129,6 @@
       br
       hr
 
-
   - if policy(@representative).fee_calculations?
     .container.text-center
       .row
@@ -150,6 +149,17 @@
           - unless @representative.zip_file_url.nil?
             h5 View Group Rating Zip
             = link_to "View Zip", @representative.zip_file.url, class: 'btn btn-default'
+      - if @representative.representative_number == 1740 # MATRIX
+        .row
+          .col-sm-4
+            h5 Signature Image
+            = image_tag(@representative.signature.url, width: '100%') if @representative.signature
+          .col-sm-4
+            h5 President Image
+            = image_tag(@representative.president.url, width: '100%') if @representative.president
+          .col-sm-4
+            h5 Footer Image
+            = image_tag(@representative.footer.url, width: '100%') if @representative.footer
 
       br
       hr
