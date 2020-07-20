@@ -100,6 +100,7 @@
             <th>Discount</th>
             <th>Premium</th>
             <th>Savings</th>
+            <th>Fees</th>
             <th></th>
           </tr>
         </thead>
@@ -116,6 +117,7 @@
             <td><%= @account.group_rating_tier %> </td>
             <td><%= number_to_currency(@account.group_premium) %></td>
             <td><%= number_to_currency(@account.group_savings) %></td>
+            <td><%= number_to_currency(@account.fee_override.nil? ? @account.group_fees : @account.fee_override) %></td>
             <td>
               <% if policy(@account).edit? %>
                 <%= link_to "Override", account_edit_group_rating_path(params[:id]), class: 'btn btn-primary btn-sm', method: :get %>
@@ -138,6 +140,7 @@
             <td><%= @account.group_retro_tier %></td>
             <td><%= number_to_currency(@account.group_retro_premium) %></td>
             <td><%= number_to_currency(@account.group_retro_savings) %></td>
+            <td><%= number_to_currency(@account.fee_override.nil? ? @account.group_fees : @account.fee_override) %></td>
             <td>
               <% if policy(@account).edit? %>
                 <%= link_to "Override", account_edit_group_retro_path(params[:id]), class: 'btn btn-primary btn-sm', method: :get %>
