@@ -73,6 +73,14 @@ class Representative < ActiveRecord::Base
     order('LOWER(abbreviated_name)').map { |e| [e.abbreviated_name, e.id] }
   end
 
+  def full_location_address
+    "#{self.location_address_1} #{self.location_city} #{self.location_state.upcase} #{self.location_zip_code}"
+  end
+
+  def president_full_name
+    "#{ self.president_first_name } #{ self.president_last_name }"
+  end
+
   def matrix?
     self.representative_number == 1740
   end

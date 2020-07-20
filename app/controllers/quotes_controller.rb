@@ -1,85 +1,124 @@
 class QuotesController < ApplicationController
 
   def new
-    @account = Account.find(params[:account_id])
+    @account        = Account.find(params[:account_id])
     @representative = @account.representative
-    @quote = @account.quotes.new
+    @quote          = @account.quotes.new
     authorize @quote
     @program_types = Quote.program_types
-    @statuses = Quote.statuses
-    @current_date = Date.current
+    @statuses      = Quote.statuses
+    @current_date  = Date.current
   end
 
   def new_group_retro
-    @account = Account.find(params[:account_id])
+    @account        = Account.find(params[:account_id])
     @representative = @account.representative
-    @quote = @account.quotes.new
+    @quote          = @account.quotes.new
     # authorize @quote
     @program_types = Quote.program_types
-    @statuses = Quote.statuses
-    @current_date = Date.current
+    @statuses      = Quote.statuses
+    @current_date  = Date.current
+  end
+
+  def test_client_packet
+    @quote              = Quote.find(params[:id])
+    @account            = @quote.account
+    @representative     = @account.representative
+    @group_rating       = @representative.group_ratings.last
+    @program_types      = Quote.program_types
+    @type               = @program_types[@quote.program_type]
+    @policy_calculation = @account.policy_calculation
+
+    policy_year = @quote.quote_year
+    s           = "#{@account.policy_number_entered}-#{policy_year}-#{@quote.program_type}-#{@quote.id}"
+    combine_pdf = CombinePDF.new
+
+    intro_pdf        = @representative.matrix? ? MatrixGroupRatingIntro.new(@quote, @account, @policy_calculation, view_context) : ArmGroupRatingIntro.new(@quote, @account, @policy_calculation, view_context)
+    intro_pdf_render = intro_pdf.render
+    combine_pdf << CombinePDF.parse(intro_pdf_render)
+
+    #   quote_pdf        = GroupRatingQuote.new(@quote, @account, @policy_calculation, view_context)
+    #   quote_pdf_render = quote_pdf.render
+    #   combine_pdf << CombinePDF.parse(quote_pdf_render)
+    #
+    #   ac_26_pdf        = Ac26.new(@quote, @account, @policy_calculation, view_context)
+    #   ac_26_pdf_render = ac_26_pdf.render
+    #   combine_pdf << CombinePDF.parse(ac_26_pdf_render)
+    #
+    #   contract_pdf        = ArmGroupRatingContract.new(@quote, @account, @policy_calculation, view_context)
+    #   contract_pdf_render = contract_pdf.render
+    #   combine_pdf << CombinePDF.parse(contract_pdf_render)
+    #
+    #   questionnaire_pdf        = ArmGroupRatingQuestionnaire.new(@quote, @account, @policy_calculation, view_context)
+    #   questionnaire_pdf_render = questionnaire_pdf.render
+    #   combine_pdf << CombinePDF.parse(questionnaire_pdf_render)
+
+    send_data combine_pdf.to_pdf,
+              filename:    "#{ @account.policy_number_entered }_quote_#{ @quote.id }.pdf",
+              type:        "application/pdf",
+              disposition: "inline"
   end
 
   def create
-    @account = Account.find(params[:quote][:account_id])
+    @account        = Account.find(params[:quote][:account_id])
     @representative = @account.representative
-    @group_rating = @representative.group_ratings.last
-    @program_types = Quote.program_types
-    @quote = Quote.new(quote_params)
+    @group_rating   = @representative.group_ratings.last
+    @program_types  = Quote.program_types
+    @quote          = Quote.new(quote_params)
     authorize @quote
-    @type = @program_types[params[:quote][:program_type]]
+    @type               = @program_types[params[:quote][:program_type]]
     @policy_calculation = @account.policy_calculation
+
     if @quote.save
       @quote.update_attributes(quote_date: @quote.created_at)
       policy_year = @quote.quote_year
-      s = "#{@account.policy_number_entered}-#{policy_year}-#{@quote.program_type}-#{@quote.id}"
+      s           = "#{@account.policy_number_entered}-#{policy_year}-#{@quote.program_type}-#{@quote.id}"
       @quote.assign_attributes(invoice_number: s)
       ##### ADDED THIS PART #####
       combine_pdf = CombinePDF.new
 
       if params[:quote][:intro] == "1"
-        intro_pdf = ArmGroupRatingIntro.new(@quote, @account, @policy_calculation, view_context)
+        intro_pdf        = @representative.matrix? ? MatrixGroupRatingIntro.new(@quote, @account, @policy_calculation, view_context) : ArmGroupRatingIntro.new(@quote, @account, @policy_calculation, view_context)
         intro_pdf_render = intro_pdf.render
         combine_pdf << CombinePDF.parse(intro_pdf_render)
       end
 
       if params[:quote][:quote] == "1"
-        quote_pdf = GroupRatingQuote.new(@quote, @account, @policy_calculation, view_context)
+        quote_pdf        = GroupRatingQuote.new(@quote, @account, @policy_calculation, view_context)
         quote_pdf_render = quote_pdf.render
         combine_pdf << CombinePDF.parse(quote_pdf_render)
       end
 
       if params[:quote][:ac_26] == "1"
-        ac_26_pdf = Ac26.new(@quote, @account, @policy_calculation, view_context)
+        ac_26_pdf        = Ac26.new(@quote, @account, @policy_calculation, view_context)
         ac_26_pdf_render = ac_26_pdf.render
         combine_pdf << CombinePDF.parse(ac_26_pdf_render)
       end
 
       if params[:quote][:ac_2] == "1"
-        ac_2_pdf = Ac2.new(@quote, @account, @policy_calculation, view_context)
+        ac_2_pdf        = Ac2.new(@quote, @account, @policy_calculation, view_context)
         ac_2_pdf_render = ac_2_pdf.render
         combine_pdf << CombinePDF.parse(ac_2_pdf_render)
       end
 
       if params[:quote][:contract] == "1"
-        contract_pdf = ArmGroupRatingContract.new(@quote, @account, @policy_calculation, view_context)
+        contract_pdf        = ArmGroupRatingContract.new(@quote, @account, @policy_calculation, view_context)
         contract_pdf_render = contract_pdf.render
         combine_pdf << CombinePDF.parse(contract_pdf_render)
       end
 
       if params[:quote][:questionnaire] == "1"
-        questionnaire_pdf = ArmGroupRatingQuestionnaire.new(@quote, @account, @policy_calculation, view_context)
+        questionnaire_pdf        = ArmGroupRatingQuestionnaire.new(@quote, @account, @policy_calculation, view_context)
         questionnaire_pdf_render = questionnaire_pdf.render
         combine_pdf << CombinePDF.parse(questionnaire_pdf_render)
       end
 
       if params[:quote][:invoice] == "1"
-        invoice_pdf = ArmGroupRatingInvoice.new(@quote, @account, @policy_calculation, view_context)
+        invoice_pdf        = ArmGroupRatingInvoice.new(@quote, @account, @policy_calculation, view_context)
         invoice_pdf_render = invoice_pdf.render
         combine_pdf << CombinePDF.parse(invoice_pdf_render)
       end
 
-      # uploader = QuoteUploader.new
       tmpfile = Tempfile.new(["#{ @account.policy_number_entered }-#{@quote.program_type}-#{ @quote.id }", '.pdf'])
       tmpfile.binmode
       tmpfile.write(combine_pdf.to_pdf)
@@ -87,7 +126,7 @@ class QuotesController < ApplicationController
       tmpfile.close
       tmpfile.unlink
       @quote.save!
-      #######
+      ######
       redirect_to edit_quote_path(@quote), notice: "Quote successfully created"
     else
       render :new
@@ -95,60 +134,60 @@ class QuotesController < ApplicationController
   end
 
   def create_group_retro
-    @account = Account.find(params[:quote][:account_id])
+    @account        = Account.find(params[:quote][:account_id])
     @representative = @account.representative
-    @group_rating = @representative.group_ratings.last
-    @program_types = Quote.program_types
-    @quote = Quote.new(quote_params)
+    @group_rating   = @representative.group_ratings.last
+    @program_types  = Quote.program_types
+    @quote          = Quote.new(quote_params)
     authorize @quote
-    @type = @program_types[params[:quote][:program_type]]
+    @type               = @program_types[params[:quote][:program_type]]
     @policy_calculation = @account.policy_calculation
     if @quote.save
       @quote.update_attributes(quote_date: @quote.created_at)
       policy_year = @quote.quote_year
-      s = "#{@account.policy_number_entered}-#{policy_year}-#{@quote.program_type}-#{@quote.id}"
+      s           = "#{@account.policy_number_entered}-#{policy_year}-#{@quote.program_type}-#{@quote.id}"
       @quote.assign_attributes(invoice_number: s)
       ##### ADDED THIS PART #####
       combine_pdf = CombinePDF.new
 
       if params[:quote][:intro] == "1"
-        intro_pdf = ArmGroupRetroIntro.new(@quote, @account, @policy_calculation, view_context)
+        intro_pdf        = ArmGroupRetroIntro.new(@quote, @account, @policy_calculation, view_context)
         intro_pdf_render = intro_pdf.render
         combine_pdf << CombinePDF.parse(intro_pdf_render)
       end
 
       if params[:quote][:quote] == "1"
-        quote_pdf = GroupRetroQuote.new(@quote, @account, @policy_calculation, view_context)
+        quote_pdf        = GroupRetroQuote.new(@quote, @account, @policy_calculation, view_context)
         quote_pdf_render = quote_pdf.render
         combine_pdf << CombinePDF.parse(quote_pdf_render)
       end
 
       if params[:quote][:u_153] == "1"
-        u_153_pdf = U153.new(@quote, @account, @policy_calculation, view_context)
+        u_153_pdf        = U153.new(@quote, @account, @policy_calculation, view_context)
         u_153_pdf_render = u_153_pdf.render
         combine_pdf << CombinePDF.parse(u_153_pdf_render)
       end
 
       if params[:quote][:ac_2] == "1"
-        ac_2_pdf = Ac2.new(@quote, @account, @policy_calculation, view_context)
+        ac_2_pdf        = Ac2.new(@quote, @account, @policy_calculation, view_context)
         ac_2_pdf_render = ac_2_pdf.render
         combine_pdf << CombinePDF.parse(ac_2_pdf_render)
       end
 
       if params[:quote][:contract] == "1"
-        contract_pdf = ArmGroupRetroContract.new(@quote, @account, @policy_calculation, view_context)
+        contract_pdf        = ArmGroupRetroContract.new(@quote, @account, @policy_calculation, view_context)
         contract_pdf_render = contract_pdf.render
         combine_pdf << CombinePDF.parse(contract_pdf_render)
       end
 
       if params[:quote][:assessment] == "1"
-        assessment_pdf = ArmGroupRetroAssessment.new(@quote, @account, @policy_calculation, view_context)
+        assessment_pdf        = ArmGroupRetroAssessment.new(@quote, @account, @policy_calculation, view_context)
         assessment_pdf_render = assessment_pdf.render
         combine_pdf << CombinePDF.parse(assessment_pdf_render)
       end
 
       if params[:quote][:invoice] == "1"
-        invoice_pdf = ArmGroupRetroInvoice.new(@quote, @account, @policy_calculation, view_context)
+        invoice_pdf        = ArmGroupRetroInvoice.new(@quote, @account, @policy_calculation, view_context)
         invoice_pdf_render = invoice_pdf.render
         combine_pdf << CombinePDF.parse(invoice_pdf_render)
       end
@@ -171,29 +210,29 @@ class QuotesController < ApplicationController
   def index
     @representative = Representative.find(params[:representative_id])
     authorize Quote
-    @statuses = Account.statuses
+    @statuses           = Account.statuses
     @group_rating_tiers = BwcCodesIndustryGroupSavingsRatioCriterium.all.order(market_rate: :asc).pluck(:market_rate).uniq
-    @group_retro_tiers = BwcCodesGroupRetroTier.all.order(discount_tier: :asc).pluck(:discount_tier).uniq
-    @accounts = Account.where(representative_id: params[:representative_id]).paginate(page: params[:page], per_page: 100)
-    @accounts = @accounts.status(params[:status]).paginate(page: params[:page], per_page: 100) if params[:status].present?
-    @accounts = @accounts.group_rating_tier(params[:group_rating_tier]).paginate(page: params[:page], per_page: 100) if params[:group_rating_tier].present?
-    @accounts = @accounts.group_retro_tier(params[:group_retro_tier]).paginate(page: params[:page], per_page: 100) if params[:group_retro_tier].present?
-    @accounts = @accounts.joins(:quotes).where('group_rating_tier > quotes.quote_tier').paginate(page: params[:page], per_page: 100) if params[:qualify_equality_quote] == "Qualify Less Than Quote"
-    @accounts = @accounts.joins(:quotes).where('group_rating_tier < quotes.quote_tier or (group_rating_tier is not null and quotes.quote_tier is null)').paginate(page: params[:page], per_page: 50) if params[:qualify_equality_quote] == "Qualify Better Than Quote"
-    @accounts = @accounts.joins(:quotes).where('group_rating_tier is not null and quotes.quote_tier is null').paginate(page: params[:page], per_page: 100) if params[:qualify_equality_quote] == "Now Qualify"
-    @accounts = @accounts.joins(:quotes).where('group_rating_tier is null and quotes.quote_tier is not null').paginate(page: params[:page], per_page: 100) if params[:qualify_equality_quote] == "Now Do Not Qualify"
+    @group_retro_tiers  = BwcCodesGroupRetroTier.all.order(discount_tier: :asc).pluck(:discount_tier).uniq
+    @accounts           = Account.where(representative_id: params[:representative_id]).paginate(page: params[:page], per_page: 100)
+    @accounts           = @accounts.status(params[:status]).paginate(page: params[:page], per_page: 100) if params[:status].present?
+    @accounts           = @accounts.group_rating_tier(params[:group_rating_tier]).paginate(page: params[:page], per_page: 100) if params[:group_rating_tier].present?
+    @accounts           = @accounts.group_retro_tier(params[:group_retro_tier]).paginate(page: params[:page], per_page: 100) if params[:group_retro_tier].present?
+    @accounts           = @accounts.joins(:quotes).where('group_rating_tier > quotes.quote_tier').paginate(page: params[:page], per_page: 100) if params[:qualify_equality_quote] == "Qualify Less Than Quote"
+    @accounts           = @accounts.joins(:quotes).where('group_rating_tier < quotes.quote_tier or (group_rating_tier is not null and quotes.quote_tier is null)').paginate(page: params[:page], per_page: 50) if params[:qualify_equality_quote] == "Qualify Better Than Quote"
+    @accounts           = @accounts.joins(:quotes).where('group_rating_tier is not null and quotes.quote_tier is null').paginate(page: params[:page], per_page: 100) if params[:qualify_equality_quote] == "Now Qualify"
+    @accounts           = @accounts.joins(:quotes).where('group_rating_tier is null and quotes.quote_tier is not null').paginate(page: params[:page], per_page: 100) if params[:qualify_equality_quote] == "Now Do Not Qualify"
 
-    @accounts_all = Account.where(representative_id: params[:representative_id])
-    @accounts_all = @accounts_all.status(params[:status]) if params[:status].present?
-    @accounts_all = @accounts_all.group_rating_tier(params[:group_rating_tier]) if params[:group_rating_tier].present?
-    @accounts_all = @accounts_all.group_retro_tier(params[:group_retro_tier]) if params[:group_retro_tier].present?
-    @accounts_all = @accounts_all.joins(:quotes).where('group_rating_tier > quotes.quote_tier or (group_rating_tier is not null and quotes.quote_tier is null)') if params[:qual_greater_quote] == "Qualify > Quote"
-    @accounts_all = @accounts_all.joins(:quotes).where('group_rating_tier < quotes.quote_tier') if params[:qual_greater_quote] == "Qualify < Quote"
-    @parameters = {}
-    @parameters[:representative_id] = params[:representative_id] if params[:representative_id].present?
-    @parameters[:status] = params[:status] if params[:status].present?
-    @parameters[:group_rating_tier] = params[:group_rating_tier] if params[:group_rating_tier].present?
-    @parameters[:group_retro_tier] = params[:group_retro_tier] if params[:group_retro_tier].present?
+    @accounts_all                        = Account.where(representative_id: params[:representative_id])
+    @accounts_all                        = @accounts_all.status(params[:status]) if params[:status].present?
+    @accounts_all                        = @accounts_all.group_rating_tier(params[:group_rating_tier]) if params[:group_rating_tier].present?
+    @accounts_all                        = @accounts_all.group_retro_tier(params[:group_retro_tier]) if params[:group_retro_tier].present?
+    @accounts_all                        = @accounts_all.joins(:quotes).where('group_rating_tier > quotes.quote_tier or (group_rating_tier is not null and quotes.quote_tier is null)') if params[:qual_greater_quote] == "Qualify > Quote"
+    @accounts_all                        = @accounts_all.joins(:quotes).where('group_rating_tier < quotes.quote_tier') if params[:qual_greater_quote] == "Qualify < Quote"
+    @parameters                          = {}
+    @parameters[:representative_id]      = params[:representative_id] if params[:representative_id].present?
+    @parameters[:status]                 = params[:status] if params[:status].present?
+    @parameters[:group_rating_tier]      = params[:group_rating_tier] if params[:group_rating_tier].present?
+    @parameters[:group_retro_tier]       = params[:group_retro_tier] if params[:group_retro_tier].present?
     @parameters[:qualify_equality_quote] = params[:qualify_equality_quote] if params[:group_retro_tier].present?
 
     respond_to do |format|
@@ -211,9 +250,9 @@ class QuotesController < ApplicationController
   def edit
     @quote = Quote.find(params[:id])
     authorize @quote
-    @account = @quote.account
+    @account       = @quote.account
     @program_types = Quote.program_types
-    @statuses = Quote.statuses
+    @statuses      = Quote.statuses
   end
 
   def update
@@ -239,18 +278,17 @@ class QuotesController < ApplicationController
     end
   end
 
-
   def group_rating_report
-    @quote = Quote.find(params[:quote_id])
-    @account = @quote.account
+    @quote              = Quote.find(params[:quote_id])
+    @account            = @quote.account
     @policy_calculation = @account.policy_calculation
     respond_to do |format|
       format.html
       format.pdf do
-        pdf = GroupRatingQuote.new(@quote, @account, @policy_calculation, view_context)
-        uploader = QuoteUploader.new
-        tmpfile = Tempfile.new(["#{ @account.policy_number_entered }_quote_#{ @quote.id }", '.pdf'])
-        quote = File.basename(tmpfile)
+        pdf        = GroupRatingQuote.new(@quote, @account, @policy_calculation, view_context)
+        uploader   = QuoteUploader.new
+        tmpfile    = Tempfile.new(["#{ @account.policy_number_entered }_quote_#{ @quote.id }", '.pdf'])
+        quote      = File.basename(tmpfile)
         quote_path = "https://console.aws.amazon.com/s3/buckets/grouprating/uploads/#{quote}"
         tmpfile.binmode
         tmpfile.write (pdf.render)
@@ -263,13 +301,14 @@ class QuotesController < ApplicationController
         # tmpfile.close
         # tmpfile.unlink
         send_data pdf.render, filename: "#{ @account.policy_number_entered }_quote_#{ @quote.id }.pdf",
-                              type: "application/pdf",
-                              disposition: "inline"
+                  type:                 "application/pdf",
+                  disposition:          "inline"
         # pdf.render_file "app/reports/#{ @account.policy_number_entered }_quote_#{ @quote.id }.pdf"
       end
     end
     # redirect_to edit_quote_path(@quote), notice: "Quote `Generate`d"
   end
+
   #
   # def run_quote_process
   #   @representative = Representative.find(params[:representative_id])
@@ -287,35 +326,33 @@ class QuotesController < ApplicationController
 
   def edit_quote_accounts
     if params[:account_ids].present?
-      @parameters = {}
-      @accounts = Account.where("id in (?)", params[:account_ids])
-      @account_ids = @accounts.pluck(:id)
-      @representative = Representative.find(params[:representative_id])
-      @status = nil
+      @parameters        = {}
+      @accounts          = Account.where("id in (?)", params[:account_ids])
+      @account_ids       = @accounts.pluck(:id)
+      @representative    = Representative.find(params[:representative_id])
+      @status            = nil
       @group_rating_tier = nil
-      @group_retro_tier = nil
+      @group_retro_tier  = nil
     elsif params[:parameters].present?
-      @parameters = params[:parameters]
-      @representative = Representative.find(@parameters["representative_id"])
-      @status = Account.statuses.key(@parameters["status"].to_i) if @parameters["status"].present?
+      @parameters        = params[:parameters]
+      @representative    = Representative.find(@parameters["representative_id"])
+      @status            = Account.statuses.key(@parameters["status"].to_i) if @parameters["status"].present?
       @group_rating_tier = @parameters["group_rating_tier"]
-      @group_retro_tier = @parameters["group_retro_tier"]
-      @accounts = Account.where(representative_id: @parameters["representative_id"])
-      @accounts = @accounts.status(@parameters["status"]) if @parameters["status"].present?
-      @accounts = @accounts.group_rating_tier(@parameters["group_rating_tier"]) if @parameters["group_rating_tier"].present?
-      @accounts = @accounts.group_retro_tier(@parameters["group_retro_tier"]) if @parameters["group_retro_tier"].present?
+      @group_retro_tier  = @parameters["group_retro_tier"]
+      @accounts          = Account.where(representative_id: @parameters["representative_id"])
+      @accounts          = @accounts.status(@parameters["status"]) if @parameters["status"].present?
+      @accounts          = @accounts.group_rating_tier(@parameters["group_rating_tier"]) if @parameters["group_rating_tier"].present?
+      @accounts          = @accounts.group_retro_tier(@parameters["group_retro_tier"]) if @parameters["group_retro_tier"].present?
     end
 
   end
 
-
-
   def generate_account_quotes
-    @parameters = params[:parameters]
-    @representative = Representative.find(params[:quote_checkboxes][:representative_id].to_i)
-    @status = Account.statuses[params[:quote_checkboxes]["status"]] if params[:quote_checkboxes]["status"].present?
+    @parameters        = params[:parameters]
+    @representative    = Representative.find(params[:quote_checkboxes][:representative_id].to_i)
+    @status            = Account.statuses[params[:quote_checkboxes]["status"]] if params[:quote_checkboxes]["status"].present?
     @group_rating_tier = params[:quote_checkboxes]["group_rating_tier"] if params[:quote_checkboxes]["group_rating_tier"].present?
-    @group_retro_tier = params[:quote_checkboxes]["group_retro_tier"] if params[:quote_checkboxes]["group_retro_tier"].present?
+    @group_retro_tier  = params[:quote_checkboxes]["group_retro_tier"] if params[:quote_checkboxes]["group_retro_tier"].present?
     if params["account_ids"].present?
       @account_ids = params["account_ids"]
     else
@@ -330,7 +367,6 @@ class QuotesController < ApplicationController
     redirect_to quotes_path(representative_id: @representative.id), notice: "Quoting packet process has started. Please check your email for a link to a zip file for the collection of the quote pdf packets."
   end
 
-
   def delete_all_quotes
     DeleteQuoteProcess.perform_async(params[:representative_id])
     # @representative = Representative.find(params[:representative_id])
@@ -344,27 +380,27 @@ class QuotesController < ApplicationController
   end
 
   def view_group_rating_quote
-    @quote = Quote.find(params[:quote_id])
-    @account = @quote.account
+    @quote              = Quote.find(params[:quote_id])
+    @account            = @quote.account
     @policy_calculation = @account.policy_calculation
     respond_to do |format|
       format.html
       format.pdf do
         combine_pdf = CombinePDF.new
 
-        intro_pdf = ArmGroupRatingIntro.new(@quote, @account, @policy_calculation, view_context)
+        intro_pdf        = ArmGroupRatingIntro.new(@quote, @account, @policy_calculation, view_context)
         intro_pdf_render = intro_pdf.render
-        combine_pdf = CombinePDF.parse(intro_pdf_render)
+        combine_pdf      = CombinePDF.parse(intro_pdf_render)
 
-        quote_pdf = GroupRatingQuote.new(@quote, @account, @policy_calculation, view_context)
+        quote_pdf        = GroupRatingQuote.new(@quote, @account, @policy_calculation, view_context)
         quote_pdf_render = quote_pdf.render
         combine_pdf << CombinePDF.parse(quote_pdf_render)
 
-        ac_26_pdf = Ac26.new(@quote, @account, @policy_calculation, view_context)
+        ac_26_pdf        = Ac26.new(@quote, @account, @policy_calculation, view_context)
         ac_26_pdf_render = ac_26_pdf.render
         combine_pdf << CombinePDF.parse(ac_26_pdf_render)
 
-        ac_2_pdf = Ac2.new(@quote, @account, @policy_calculation, view_context)
+        ac_2_pdf        = Ac2.new(@quote, @account, @policy_calculation, view_context)
         ac_2_pdf_render = ac_2_pdf.render
         combine_pdf << CombinePDF.parse(ac_2_pdf_render)
 
@@ -382,8 +418,8 @@ class QuotesController < ApplicationController
 
 
         send_data combine_pdf.to_pdf, filename: "#{ @account.policy_number_entered }_quote_#{ @quote.id }.pdf",
-                              type: "application/pdf",
-                              disposition: "inline"
+                  type:                         "application/pdf",
+                  disposition:                  "inline"
         # pdf.render_file "app/reports/#{ @account.policy_number_entered }_quote_#{ @quote.id }.pdf"
       end
     end
@@ -391,45 +427,45 @@ class QuotesController < ApplicationController
   end
 
   def view_group_retro_quote
-    @quote = Quote.find(params[:quote_id])
-    @account = @quote.account
+    @quote              = Quote.find(params[:quote_id])
+    @account            = @quote.account
     @policy_calculation = @account.policy_calculation
     respond_to do |format|
       format.html
       format.pdf do
         combine_pdf = CombinePDF.new
 
-        intro_pdf = ArmGroupRetroIntro.new(@quote, @account, @policy_calculation, view_context)
+        intro_pdf        = ArmGroupRetroIntro.new(@quote, @account, @policy_calculation, view_context)
         intro_pdf_render = intro_pdf.render
         combine_pdf << CombinePDF.parse(intro_pdf_render)
 
-        quote_pdf = GroupRetroQuote.new(@quote, @account, @policy_calculation, view_context)
+        quote_pdf        = GroupRetroQuote.new(@quote, @account, @policy_calculation, view_context)
         quote_pdf_render = quote_pdf.render
         combine_pdf << CombinePDF.parse(quote_pdf_render)
 
-        u_153_pdf = U153.new(@quote, @account, @policy_calculation, view_context)
+        u_153_pdf        = U153.new(@quote, @account, @policy_calculation, view_context)
         u_153_pdf_render = u_153_pdf.render
         combine_pdf << CombinePDF.parse(u_153_pdf_render)
 
-        ac_2_pdf = Ac2.new(@quote, @account, @policy_calculation, view_context)
+        ac_2_pdf        = Ac2.new(@quote, @account, @policy_calculation, view_context)
         ac_2_pdf_render = ac_2_pdf.render
         combine_pdf << CombinePDF.parse(ac_2_pdf_render)
 
-        contract_pdf = ArmGroupRetroContract.new(@quote, @account, @policy_calculation, view_context)
+        contract_pdf        = ArmGroupRetroContract.new(@quote, @account, @policy_calculation, view_context)
         contract_pdf_render = contract_pdf.render
         combine_pdf << CombinePDF.parse(contract_pdf_render)
 
-        assessment_pdf = ArmGroupRetroAssessment.new(@quote, @account, @policy_calculation, view_context)
+        assessment_pdf        = ArmGroupRetroAssessment.new(@quote, @account, @policy_calculation, view_context)
         assessment_pdf_render = assessment_pdf.render
         combine_pdf << CombinePDF.parse(assessment_pdf_render)
 
-        invoice_pdf = ArmGroupRetroInvoice.new(@quote, @account, @policy_calculation, view_context)
+        invoice_pdf        = ArmGroupRetroInvoice.new(@quote, @account, @policy_calculation, view_context)
         invoice_pdf_render = invoice_pdf.render
         combine_pdf << CombinePDF.parse(invoice_pdf_render)
 
         send_data combine_pdf.to_pdf, filename: "#{ @account.policy_number_entered }_quote_#{ @quote.id }.pdf",
-                              type: "application/pdf",
-                              disposition: "inline"
+                  type:                         "application/pdf",
+                  disposition:                  "inline"
         # pdf.render_file "app/reports/#{ @account.policy_number_entered }_quote_#{ @quote.id }.pdf"
       end
     end
