@@ -329,7 +329,6 @@ class AccountsController < ApplicationController
     @new_payroll_calculation = PayrollCalculation.new
     @group_rating_rejections = @account.group_rating_rejections.where(program_type: 'group_rating')
     @group_retro_rejections  = @account.group_rating_rejections.where(program_type: 'group_retro')
-    @notes                   = @account.notes.order(created_at: :desc).first(5)
   end
 
   def account_params

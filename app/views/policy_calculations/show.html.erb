@@ -27,7 +27,7 @@
 
   <div class="container" style="margin-bottom: 50px">
     <div class="row">
-      <%= render partial: 'notes/recent_account_notes', locals: { notes: @notes } %>
+      <%= render 'notes/recent_account_notes', notes: @account.notes.policy_notes.sort_by { |note| note.order_date }.reverse, group: false, retention: false %>
     </div>
   </div>
 <% end %>

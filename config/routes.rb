@@ -166,6 +166,10 @@
 #                                                       PUT        /group_rating_exceptions/:id(.:format)                                         group_rating_exceptions#update
 #                                                       DELETE     /group_rating_exceptions/:id(.:format)                                         group_rating_exceptions#destroy
 #                                               imports DELETE     /imports(.:format)                                                             imports#destroy
+#                                  import_miras_imports POST       /imports/import_miras(.:format)                                                imports#import_miras
+#                                 import_clicds_imports POST       /imports/import_clicds(.:format)                                               imports#import_clicds
+#                              import_all_miras_imports POST       /imports/import_all_miras(.:format)                                            imports#import_all_miras
+#                             import_all_clicds_imports POST       /imports/import_all_clicds(.:format)                                           imports#import_all_clicds
 #                                                       GET        /imports(.:format)                                                             imports#index
 #                                                       POST       /imports(.:format)                                                             imports#create
 #                                            new_import GET        /imports/new(.:format)                                                         imports#new

@@ -2,17 +2,19 @@
 #
 # Table name: notes
 #
-#  id          :integer          not null, primary key
-#  attachment  :string
-#  category    :integer
-#  date        :datetime
-#  description :text
-#  title       :string
-#  created_at  :datetime         not null
-#  updated_at  :datetime         not null
-#  account_id  :integer
-#  category_id :integer
-#  user_id     :integer
+#  id           :integer          not null, primary key
+#  attachment   :string
+#  category     :integer
+#  date         :datetime
+#  description  :text
+#  is_group     :boolean          default(FALSE)
+#  is_retention :boolean          default(FALSE)
+#  title        :string
+#  created_at   :datetime         not null
+#  updated_at   :datetime         not null
+#  account_id   :integer
+#  category_id  :integer
+#  user_id      :integer
 #
 # Indexes
 #
