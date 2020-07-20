@@ -1,9 +1,12 @@
 <div class="form-inline">
   <div class="form-group">
-    <%= select_tag(:representative_number, options_from_collection_for_select(@representatives, :representative_number, :abbreviated_name, params[:representative_number]), include_blank: "All Representatives", class: 'dropdown-toggle form-control') %>
+    <%= select_tag(:representative_number, options_from_collection_for_select(@representatives.order(:abbreviated_name), :representative_number, :abbreviated_name, params[:representative_number]), include_blank: "All Representatives", class: 'dropdown-toggle form-control') %>
   </div>
   <div class="form-group">
     <%= select_tag(:status, options_from_collection_for_select(@statuses, :last, lambda { |s| s.first.titleize }), include_blank: 'Account Status', class: 'form-control') %>
+  </div>
+  <div class="form-group">
+    <%= select_tag(:policy_status, options_from_collection_for_select(@policy_statuses, lambda { |s| s.upcase }, lambda { |s| s.upcase }), include_blank: 'Policy Status', class: 'form-control') %>
   </div>
   <div class="form-group">
     <%= text_field_tag :search, params[:search], placeholder: "Search Policy Number", class: 'form-control' %>

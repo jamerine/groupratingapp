@@ -15,19 +15,19 @@
       </tr>
     </thead>
     <tbody>
-      <% accounts.order("representative_id asc, status desc, name asc").each do |account| %>
-      <tr>
-        <td><%= link_to "#{account.policy_number_entered}",account_path(account.id), class: 'btn btn-info' %> </td>
-        <td><%= account.try(:name).try(:titleize) %> </td>
-        <td><%= account.status.humanize %> </td>
-        <td><%= account.policy_calculation.try(:current_coverage_status) %></td>
-        <td><%= account.representative.abbreviated_name %></td>
-        <td><%= account.updated_at.in_time_zone("America/New_York").strftime("%m/%d/%y @ %I:%M %p") %> </td>
-      </tr>
+      <% accounts.order(representative_id: :asc, status: :asc, name: :asc).each do |account| %>
+        <tr>
+          <td><%= link_to "#{account.policy_number_entered}", account_path(account.id), class: 'btn btn-info' %> </td>
+          <td><%= account.try(:name).try(:titleize) %> </td>
+          <td><%= account.status.humanize %> </td>
+          <td><%= account.policy_calculation.try(:current_coverage_status) %></td>
+          <td><%= account.representative.abbreviated_name %></td>
+          <td><%= account.updated_at.in_time_zone("America/New_York").strftime("%m/%d/%y @ %I:%M %p") %> </td>
+        </tr>
       <% end %>
 
     </tbody>
   </table>
 
-<%= will_paginate accounts %>
+  <%= will_paginate accounts %>
 </div>

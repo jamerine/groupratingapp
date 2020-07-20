@@ -102,6 +102,8 @@ class PolicyCalculation < ActiveRecord::Base
 
   delegate :name, to: :account, prefix: true, allow_nil: false
 
+  scope :current_coverage_statuses, -> { all.select(:current_coverage_status).map(&:current_coverage_status).reject(&:blank?).uniq }
+
   def representative_name
     representative.abbreviated_name
   end

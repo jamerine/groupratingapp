@@ -77,8 +77,8 @@ class Account < ActiveRecord::Base
 
   # Scopes
   scope :active_policy, -> { joins(:policy_calculation).where('policy_calculations.current_coverage_status IN (?)', ["ACTIV", "REINS", "LAPSE"]) }
-
   scope :status, -> (status) { where status: status }
+  scope :by_policy_status, -> (status) { joins(:policy_calculation).where('policy_calculations.current_coverage_status = ?', status.upcase) }
   scope :group_rating_tier, -> (group_rating_tier) { where group_rating_tier: group_rating_tier }
   scope :group_retro_tier, -> (group_retro_tier) { where group_retro_tier: group_retro_tier }
   # scope :policy_search, -> (policy_search) { self.search(policy_search)}

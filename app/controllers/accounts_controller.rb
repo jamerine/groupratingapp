@@ -1,8 +1,10 @@
 class AccountsController < ApplicationController
 
   def index
-    @statuses = Account.statuses
-    @accounts = Account.where(representative_id: @representatives)
+    @statuses        = Account.statuses
+    @policy_statuses = PolicyCalculation.current_coverage_statuses
+    @accounts        = Account.where(representative_id: @representatives).includes(:representative, :policy_calculation)
+
     if params[:search].present? && params[:representative_number].present?
       @representative = @representatives.find_by(representative_number: params[:representative_number])
       @accounts       = @accounts.where(representative_id: @representative.id).search(params[:search]).paginate(page: params[:page], per_page: 50)
@@ -19,7 +21,9 @@ class AccountsController < ApplicationController
     else
       @accounts = @accounts.all.paginate(page: params[:page], per_page: 50)
     end
+
     @accounts = @accounts.status(params[:status]) if params["status"].present?
+    @accounts = @accounts.by_policy_status(params[:policy_status]) if params["policy_status"].present?
 
     respond_to do |format|
       format.html
