@@ -2,17 +2,19 @@
 #
 # Table name: notes
 #
-#  id          :integer          not null, primary key
-#  attachment  :string
-#  category    :integer
-#  date        :datetime
-#  description :text
-#  title       :string
-#  created_at  :datetime         not null
-#  updated_at  :datetime         not null
-#  account_id  :integer
-#  category_id :integer
-#  user_id     :integer
+#  id           :integer          not null, primary key
+#  attachment   :string
+#  category     :integer
+#  date         :datetime
+#  description  :text
+#  is_group     :boolean          default(FALSE)
+#  is_retention :boolean          default(FALSE)
+#  title        :string
+#  created_at   :datetime         not null
+#  updated_at   :datetime         not null
+#  account_id   :integer
+#  category_id  :integer
+#  user_id      :integer
 #
 # Indexes
 #
@@ -41,11 +43,17 @@ class Note < ActiveRecord::Base
 
   scope :user_filter, -> (user) { where user: user }
   scope :category_filter, -> (category) { where category: category }
+  scope :retention_notes, -> { where(is_retention: true) }
+  scope :group_notes, -> { where(is_group: true) }
+  scope :policy_notes, -> { where(is_retention: false, is_group: false) }
+
+  def order_date
+    self.date || self.created_at
+  end
 
   private
 
   def attachment_size_validation
     errors[:image] << "Should be less than 3 MB" if attachment.size > 1.megabytes
   end
-
 end

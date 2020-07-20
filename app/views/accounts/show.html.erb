@@ -319,17 +319,17 @@
   <div class="container">
     <div class="row">
       <div class="row">
-        <%= render partial: 'notes/recent_account_notes', locals: { notes: @notes } %>
+        <%= render 'notes/recent_account_notes', notes: @account.notes.group_notes.sort_by { |note| note.order_date }.reverse, group: true, retention: false %>
       </div>
     </div>
   </div>
 
   <div class="container">
     <div class="row">
-      <%= render partial: 'affiliates/affiliates', locals: { account: @account, affiliates: @account.affiliates } %>
+      <%= render 'affiliates/affiliates', account: @account, affiliates: @account.affiliates %>
     </div>
     <div class="row">
-      <%= render partial: 'contacts/accounts_contacts', locals: { account: @account, accounts_contacts: @account.accounts_contacts } %>
+      <%= render 'contacts/accounts_contacts', account: @account, accounts_contacts: @account.accounts_contacts %>
     </div>
   </div>
 

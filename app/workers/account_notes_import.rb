@@ -8,12 +8,14 @@ class AccountNotesImport
     account    = Account.find_by(representative_id: representative_id, policy_number_entered: notes_hash[:policy_number])
 
     if account.present?
-      @category         = NoteCategory.find_by(title: notes_hash[:category_name].titleize) || NoteCategory.find_by(title: 'General')
-      @note             = Note.find_by(account_id: account.id, title: notes_hash[:title]) || Note.new(account_id: account.id, title: notes_hash[:title])
-      @note.category_id = @category.id
-      @note.description = notes_hash[:description]
-      @note.user_id     = user_id
-      @note.date        = notes_hash[:updated_at]
+      @category          = NoteCategory.find_by(title: notes_hash[:category_name].titleize) || NoteCategory.find_by(title: 'General')
+      @note              = Note.find_by(account_id: account.id, title: notes_hash[:title]) || Note.new(account_id: account.id, title: notes_hash[:title])
+      @note.category_id  = @category.id
+      @note.description  = notes_hash[:description]
+      @note.user_id      = user_id
+      @note.date         = notes_hash[:updated_at]
+      @note.is_group     = notes_hash[:group]&.to_i == 1
+      @note.is_retention = notes_hash[:retention]&.to_i == 1
 
       @note.save
     end

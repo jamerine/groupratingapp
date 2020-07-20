@@ -3,9 +3,13 @@ class NotesController < ApplicationController
   before_action :authenticate_user!
 
   def show
+    @group     = params[:group].present? && params[:group] == 'true'
+    @retention = params[:retention].present? && params[:retention] == 'true'
   end
 
   def new
+    @group      = params[:group].present? && params[:group] == 'true'
+    @retention  = params[:retention].present? && params[:retention] == 'true'
     @account    = Account.find(params[:account_id])
     @note       = current_user.notes.build
     @categories = NoteCategory.all
@@ -20,7 +24,7 @@ class NotesController < ApplicationController
 
     if @note.save
       flash[:notice] = "Notes was created successfully"
-      redirect_to account_path(@account)
+      redirect_to account_path(@account, group: @note.is_group, retention: @note.is_retention)
     else
       flash[:alert] = "There was an error creating note. Please try again."
       render :new
@@ -28,8 +32,10 @@ class NotesController < ApplicationController
   end
 
   def index
+    @group      = params[:group].present? && params[:group] == 'true'
+    @retention  = params[:retention].present? && params[:retention] == 'true'
     @account    = Account.find(params[:account_id])
-    @notes      = @account.notes.order(created_at: :desc)
+    @notes      = @account.notes.where(is_group: @group, is_retention: @retention)
     @categories = NoteCategory.all
     @users      = []
     @notes.each do |note|
@@ -42,6 +48,8 @@ class NotesController < ApplicationController
   end
 
   def edit
+    @group      = params[:group].present? && params[:group] == 'true'
+    @retention  = params[:retention].present? && params[:retention] == 'true'
     @categories = NoteCategory.all
     authorize @note
   end
@@ -51,7 +59,7 @@ class NotesController < ApplicationController
     @note.assign_attributes(note_params)
     if @note.save
       flash[:notice] = "Notes was updated successfully"
-      redirect_to account_note_path(@account, @note)
+      redirect_to account_note_path(@account, @note, group: @note.is_group, retention: @note.is_retention)
     else
       flash[:alert] = "There was an error updating note. Please try again."
       render :edit
@@ -59,23 +67,27 @@ class NotesController < ApplicationController
   end
 
   def destroy
+    @group     = params[:group].present? && params[:group] == 'true'
+    @retention = params[:retention].present? && params[:retention] == 'true'
     if @note.destroy
       flash[:notice] = "Notes was deleted successfully"
-      redirect_to account_path(@account)
+      redirect_to account_path(@account, group: @group, retention: @retention)
     else
       flash[:alert] = "There was an error creating note. Please try again."
-      redirect_to account_path(@account)
+      redirect_to account_path(@account, group: @group, retention: @retention)
     end
   end
 
   def remove_attachment
+    @group     = params[:group].present? && params[:group] == 'true'
+    @retention = params[:retention].present? && params[:retention] == 'true'
     @note.remove_attachment!
     if @note.save
       flash[:notice] = "Attachment was deleted successfully"
-      redirect_to edit_account_note_path(@account, @note)
+      redirect_to edit_account_note_path(@account, @note, group: @group, retention: @retention)
     else
       flash[:alert] = "There was an error deleting attachment"
-      redirect_to edit_account_note_path(@account, @note)
+      redirect_to edit_account_note_path(@account, @note, group: @group, retention: @retention)
     end
   end
 
@@ -87,7 +99,7 @@ class NotesController < ApplicationController
   end
 
   def note_params
-    params.require(:note).permit(:category_id, :description, :title, :attachment)
+    params.require(:note).permit(:category_id, :description, :title, :attachment, :date, :is_group, :is_retention)
   end
 
 end

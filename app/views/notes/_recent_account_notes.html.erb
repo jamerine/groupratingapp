@@ -1,5 +1,8 @@
+<% group ||= false %>
+<% retention ||= false %>
+
 <div class="col-sm-12">
-  <h3>Recent Notes - <%= link_to 'Add Note', new_account_note_path(account_id: @account.id), class: 'btn btn-success' %></h3>
+  <h3>Recent Notes - <%= link_to 'Add Note', new_account_note_path(account_id: @account.id, group: group, retention: retention), class: 'btn btn-success' %></h3>
   <% if notes.empty? %>
     <div class="container">
       <h5>No Notes have been added.</h5>
@@ -21,19 +24,19 @@
             <b>User</b>
           </div>
           <div class="col col-sm-3">
-            <b>Created</b>
+            <b>Date</b>
           </div>
         </div>
       </div>
     </div>
 
-    <% @notes.each do |note| %>
-      <%= render partial: 'notes/full_note', locals: { note: note } %>
+    <% notes.each do |note| %>
+      <%= render 'notes/full_note', note: note %>
     <% end %>
     <br>
     <div class="container">
       <div class="row text-center">
-        <%= link_to 'View All Notes', account_notes_path(@account), class: 'btn btn-default' %>
+        <%= link_to 'View All Notes', account_notes_path(@account, group: group, retention: retention), class: 'btn btn-default' %>
       </div>
     </div>
   <% end %>

@@ -59,6 +59,6 @@
   </div>
 <div class="container">
   <div class="row">
-    <%= render partial: 'notes/recent_account_notes', locals: { notes: @notes } %>
+    <%= render 'notes/recent_account_notes', notes: @account.notes.retention_notes.sort_by { |note| note.order_date }.reverse, group: false, retention: true %>
   </div>
 </div>
