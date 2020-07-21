@@ -563,7 +563,11 @@ Rails.application.routes.draw do
     get :view_invoice
     get :new_group_retro
     post :create_group_retro
-    member { get :test_client_packet }
+
+    member do
+      get :test_client_packet
+      get :test_prospect_packet
+    end
   end
 
   resources :representatives do

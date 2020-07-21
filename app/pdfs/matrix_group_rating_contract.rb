@@ -116,7 +116,7 @@ class MatrixGroupRatingContract < MatrixPdfReport
       move_down 15
       agreement_text 'VI. Terms', style: :bold
       move_down 5
-      agreement_text "Matrix Claims Management, Inc. will provide the aforementioned services for the fee of <u>  #{@group_fees}  </u> for the period stipulated at the top of this agreement. It is further understood that this agreement will renew for twelve months at the end of the initial service period and subsequent service periods, unless written notice, stating otherwise, is received, at least 90 days, prior to the end of the current service period. Fees for renewal periods will be adjusted to reflect cost inflation, Client activity and volume."
+      agreement_text "Matrix Claims Management, Inc. will provide the aforementioned services for the fee of <u>  #{price(@group_fees)}  </u> for the period stipulated at the top of this agreement. It is further understood that this agreement will renew for twelve months at the end of the initial service period and subsequent service periods, unless written notice, stating otherwise, is received, at least 90 days, prior to the end of the current service period. Fees for renewal periods will be adjusted to reflect cost inflation, Client activity and volume."
       move_down 12
       agreement_text 'Payment of the first year fees is due within 15 days of the initiation of this agreement. Subsequent years will be billed and are due as stipulated on the Matrix invoice. If payment is not received by Matrix as defined in this agreement, it is understood that all further Matrix services may be suspended and the agreement terminated at Matrix’s discretion.'
     end

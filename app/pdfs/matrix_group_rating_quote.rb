@@ -33,11 +33,23 @@ class MatrixGroupRatingQuote < MatrixPdfReport
 
     display_data_table
     move_down 40
-    inline_text "To Enroll, complete and fax the following enclosed items by #{@representative.internal_quote_completion_date.strftime('%B %d, %Y')} to #{@representative.fax_number}"
+    inline_text "To enroll, complete and fax the following enclosed items by #{@representative.internal_quote_completion_date.strftime('%B %d, %Y')}#{@quote.client_packet? ? " to #{@representative.fax_number}." : '.'}"
     move_down 15
-    bullet_list(["BWC AC-26 Employer Statement for Group Experience Rating Program", "Group Rating Enrollment Questionnaire", "Matrix Group Rating Agreement (2 pages)"])
+
+    if @quote.client_packet?
+      bullet_list(["BWC AC-26 Employer Statement for Group Experience Rating Program", "Group Rating Enrollment Questionnaire", "Matrix Group Rating Agreement (2 pages)"])
+    else
+      bullet_list([
+                    "BWC AC-26 Employer Statement for Group Experience Rating Program",
+                    "Group Rating Enrollment Questionnaire",
+                    "BWC AC-2 Permanent Authorization",
+                    "Matrix Group Rating Agreement (2 pages)",
+                    "Payment of #{price(@group_fees)} service fee payable to Matrix Claims Management"
+                  ])
+    end
+
     move_down 35
-    inline_text "Questions: Laurie Ritter, lritter@matrixtpa.com"
+    inline_text @quote.client_packet? ? "Questions: Laurie Ritter, lritter@matrixtpa.com" : "Questions: Katie Jones, kjones@matrixtpa.com"
     move_down 15
     text "*Note: Based on current Ohio BWC data, the offer may be altered/revoked if #{@representative.experience_date.strftime('%m/%d/%y')} experience data adversely affects your eligibility or Ohio BWC rules you ineligible.", size: 10
     matrix_footer
