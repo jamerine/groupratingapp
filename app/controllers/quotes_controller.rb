@@ -41,9 +41,9 @@ class QuotesController < ApplicationController
     quote_pdf_render = quote_pdf.render
     combine_pdf << CombinePDF.parse(quote_pdf_render)
 
-    #   ac_26_pdf        = Ac26.new(@quote, @account, @policy_calculation, view_context)
-    #   ac_26_pdf_render = ac_26_pdf.render
-    #   combine_pdf << CombinePDF.parse(ac_26_pdf_render)
+    ac_26_pdf        = @representative.matrix? ? MatrixAc26.new(@quote, @account, @policy_calculation, view_context) : Ac26.new(@quote, @account, @policy_calculation, view_context)
+    ac_26_pdf_render = ac_26_pdf.render
+    combine_pdf << CombinePDF.parse(ac_26_pdf_render)
     #
     #   contract_pdf        = ArmGroupRatingContract.new(@quote, @account, @policy_calculation, view_context)
     #   contract_pdf_render = contract_pdf.render
