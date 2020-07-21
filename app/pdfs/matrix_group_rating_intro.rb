@@ -6,17 +6,15 @@ class MatrixGroupRatingIntro < MatrixPdfReport
     @representative     = @account.representative
     @policy_calculation = policy_calculation
     @view               = view
-
-    @group_fees   =
+    @group_fees         =
       if @quote.fees.nil?
         0
       else
         @quote.fees
       end
-    @current_date = DateTime.now.to_date
+    @current_date       = DateTime.now.to_date
 
     intro_page
-
   end
 
   private

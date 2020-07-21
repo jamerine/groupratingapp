@@ -5,18 +5,15 @@ class MatrixAc26 < MatrixPdfReport
     @account            = account
     @policy_calculation = policy_calculation
     @view               = view
-
-    @group_fees   =
+    @group_fees         =
       if @quote.fees.nil?
         0
       else
         @quote.fees
       end
-    @current_date = DateTime.now.to_date
-
+    @current_date       = DateTime.now.to_date
 
     ac_26
-
   end
 
   private

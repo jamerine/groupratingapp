@@ -44,14 +44,14 @@ class QuotesController < ApplicationController
     ac_26_pdf        = @representative.matrix? ? MatrixAc26.new(@quote, @account, @policy_calculation, view_context) : Ac26.new(@quote, @account, @policy_calculation, view_context)
     ac_26_pdf_render = ac_26_pdf.render
     combine_pdf << CombinePDF.parse(ac_26_pdf_render)
-    #
-    #   contract_pdf        = ArmGroupRatingContract.new(@quote, @account, @policy_calculation, view_context)
-    #   contract_pdf_render = contract_pdf.render
-    #   combine_pdf << CombinePDF.parse(contract_pdf_render)
-    #
-    #   questionnaire_pdf        = ArmGroupRatingQuestionnaire.new(@quote, @account, @policy_calculation, view_context)
-    #   questionnaire_pdf_render = questionnaire_pdf.render
-    #   combine_pdf << CombinePDF.parse(questionnaire_pdf_render)
+
+    questionnaire_pdf        = @representative.matrix? ? MatrixGroupRatingQuestionnaire.new(@quote, @account, @policy_calculation, view_context) : ArmGroupRatingQuestionnaire.new(@quote, @account, @policy_calculation, view_context)
+    questionnaire_pdf_render = questionnaire_pdf.render
+    combine_pdf << CombinePDF.parse(questionnaire_pdf_render)
+
+      # contract_pdf        = ArmGroupRatingContract.new(@quote, @account, @policy_calculation, view_context)
+      # contract_pdf_render = contract_pdf.render
+      # combine_pdf << CombinePDF.parse(contract_pdf_render)
 
     send_data combine_pdf.to_pdf,
               filename:    "#{ @account.policy_number_entered }_quote_#{ @quote.id }.pdf",
