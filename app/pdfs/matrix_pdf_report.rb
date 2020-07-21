@@ -31,7 +31,7 @@ class MatrixPdfReport < PdfReport
   end
 
   def inline_text(text, additional_options = [])
-    options            = { size: 10, inline_format: true }
+    options            = { size: 12, inline_format: true }
     additional_options = additional_options.any? ? additional_options.merge(options) : options
     text text, additional_options
   end
@@ -56,6 +56,17 @@ class MatrixPdfReport < PdfReport
       end
 
       transparent(0) { stroke_bounds }
+    end
+  end
+
+  def bullet_list(items)
+    start_new_page if cursor < 50
+    items.each do |item|
+      text_box "•", at: [15, cursor], size: 20
+      move_down 2.5
+      indent(35) do
+        inline_text item
+      end
     end
   end
 end

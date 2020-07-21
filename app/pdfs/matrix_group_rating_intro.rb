@@ -56,7 +56,7 @@ class MatrixGroupRatingIntro < MatrixPdfReport
   end
 
   def signature
-    text "Sincerely,"
+    inline_text "Sincerely,"
     move_down 5
 
     if Rails.env.development?
@@ -66,8 +66,8 @@ class MatrixGroupRatingIntro < MatrixPdfReport
     end
 
     move_down 5
-    text @representative.president_full_name
-    text "President/CEO"
-    text "The Matrix Companies"
+    inline_text @representative.president_full_name
+    inline_text "President/CEO"
+    inline_text "The Matrix Companies"
   end
 end

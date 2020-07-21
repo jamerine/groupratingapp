@@ -23,8 +23,6 @@ class GroupRatingQuote < PdfReport
 
   private
 
-
-
   def quote_analysis
     #Header comes from pdf_report template
     header 'Group Rate Quote Analysis'

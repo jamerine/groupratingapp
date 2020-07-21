@@ -37,10 +37,10 @@ class QuotesController < ApplicationController
     intro_pdf_render = intro_pdf.render
     combine_pdf << CombinePDF.parse(intro_pdf_render)
 
-    #   quote_pdf        = GroupRatingQuote.new(@quote, @account, @policy_calculation, view_context)
-    #   quote_pdf_render = quote_pdf.render
-    #   combine_pdf << CombinePDF.parse(quote_pdf_render)
-    #
+    quote_pdf        = @representative.matrix? ? MatrixGroupRatingQuote.new(@quote, @account, @policy_calculation, view_context) : GroupRatingQuote.new(@quote, @account, @policy_calculation, view_context)
+    quote_pdf_render = quote_pdf.render
+    combine_pdf << CombinePDF.parse(quote_pdf_render)
+
     #   ac_26_pdf        = Ac26.new(@quote, @account, @policy_calculation, view_context)
     #   ac_26_pdf_render = ac_26_pdf.render
     #   combine_pdf << CombinePDF.parse(ac_26_pdf_render)
