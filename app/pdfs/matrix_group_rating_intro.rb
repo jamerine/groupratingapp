@@ -57,11 +57,7 @@ class MatrixGroupRatingIntro < MatrixPdfReport
     inline_text "Sincerely,"
     move_down 5
 
-    if Rails.env.development?
-      image open('public/' + @representative.signature.url), height: 50
-    else
-      image open(@representative.signature.url), height: 50
-    end
+    signature_image
 
     move_down 5
     inline_text @representative.president_full_name

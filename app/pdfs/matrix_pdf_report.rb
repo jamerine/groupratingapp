@@ -36,6 +36,12 @@ class MatrixPdfReport < PdfReport
     text text, additional_options
   end
 
+  def agreement_text(text, additional_options = [])
+    options            = { size: 8.5, inline_format: true }
+    additional_options = additional_options.any? ? additional_options.merge(options) : options
+    text text, additional_options
+  end
+
   def matrix_footer
     bounding_box([0, 0], width: 375, height: 50) do
       transparent 0.55 do
@@ -67,6 +73,24 @@ class MatrixPdfReport < PdfReport
       indent(35) do
         inline_text item
       end
+    end
+  end
+
+  def arrowhead_list(items)
+    items.each do |item|
+      image("#{Rails.root}/app/assets/images/arrowhead.png", height: 8, at: [15, cursor])
+      move_down 0.5
+      indent(35) do
+        agreement_text item
+      end
+    end
+  end
+
+  def signature_image
+    if Rails.env.development?
+      image open('public/' + @representative.signature.url), height: 50
+    else
+      image open(@representative.signature.url), height: 50
     end
   end
 end

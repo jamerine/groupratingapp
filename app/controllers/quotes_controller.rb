@@ -49,9 +49,9 @@ class QuotesController < ApplicationController
     questionnaire_pdf_render = questionnaire_pdf.render
     combine_pdf << CombinePDF.parse(questionnaire_pdf_render)
 
-      # contract_pdf        = ArmGroupRatingContract.new(@quote, @account, @policy_calculation, view_context)
-      # contract_pdf_render = contract_pdf.render
-      # combine_pdf << CombinePDF.parse(contract_pdf_render)
+    contract_pdf        = @representative.matrix? ? MatrixGroupRatingContract.new(@quote, @account, @policy_calculation, view_context) : ArmGroupRatingContract.new(@quote, @account, @policy_calculation, view_context)
+    contract_pdf_render = contract_pdf.render
+    combine_pdf << CombinePDF.parse(contract_pdf_render)
 
     send_data combine_pdf.to_pdf,
               filename:    "#{ @account.policy_number_entered }_quote_#{ @quote.id }.pdf",
