@@ -42,6 +42,12 @@ class MatrixPdfReport < PdfReport
     text text, additional_options
   end
 
+  def faq_text(text, additional_options = [])
+    options            = { size: 10, inline_format: true }
+    additional_options = additional_options.any? ? additional_options.merge(options) : options
+    text text, additional_options
+  end
+
   def matrix_footer
     bounding_box([0, 0], width: 375, height: 50) do
       transparent 0.55 do
@@ -65,13 +71,13 @@ class MatrixPdfReport < PdfReport
     end
   end
 
-  def bullet_list(items)
+  def bullet_list(items, use_faq_text = false)
     start_new_page if cursor < 50
     items.each do |item|
       text_box "•", at: [15, cursor], size: 20
       move_down 2.5
       indent(35) do
-        inline_text item
+        use_faq_text ? faq_text(item) : inline_text(item)
       end
     end
   end

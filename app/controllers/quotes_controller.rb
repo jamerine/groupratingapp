@@ -53,6 +53,12 @@ class QuotesController < ApplicationController
     contract_pdf_render = contract_pdf.render
     combine_pdf << CombinePDF.parse(contract_pdf_render)
 
+    if @representative.matrix?
+      faq_pdf        = MatrixFAQ.new(@quote, @account, @policy_calculation, view_context)
+      faq_pdf_render = faq_pdf.render
+      combine_pdf << CombinePDF.parse(faq_pdf_render)
+    end
+
     send_data combine_pdf.to_pdf,
               filename:    "#{ @account.policy_number_entered }_quote_#{ @quote.id }.pdf",
               type:        "application/pdf",

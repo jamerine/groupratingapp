@@ -26,7 +26,7 @@ class MatrixGroupRatingIntro < MatrixPdfReport
     move_down 15
     inline_text "Thank you for your continued loyalty to The Matrix Companies."
     move_down 15
-    inline_text "We are excited to offer you admittance into our top notch #{@account.representative.quote_year} Group Rating plan. Enclosed you will find an explanation of the premium savings and services that are included in your enrollment. In the event you are considering multiple program enrollment options, please contact us for further discussion and analysis."
+    inline_text "We are excited to offer you admittance into our top notch #{@representative.quote_year} Group Rating plan. Enclosed you will find an explanation of the premium savings and services that are included in your enrollment. In the event you are considering multiple program enrollment options, please contact us for further discussion and analysis."
     move_down 15
     inline_text "Enrollment is simple. Just complete the enclosed pages and submit to Matrix. If you have any questions or feedback, give us a call."
     move_down 15
@@ -35,17 +35,15 @@ class MatrixGroupRatingIntro < MatrixPdfReport
 
     current_cursor = cursor
 
-    # box_shadow: '10px 7px 15px 5px rgba(0,0,0,0.25);'
-
-    bounding_box([0, current_cursor], width: 85, height: 165) do
+    bounding_box([0, current_cursor], width: 100) do
       if Rails.env.development?
-        image open('public/' + @representative.president.url), height: 165
+        image open('public/' + @representative.president.url), width: 100
       else
-        image open(@representative.president.url), height: 175
+        image open(@representative.president.url), width: 100
       end
     end
 
-    bounding_box([145, current_cursor - 10], :width => 150, :height => 300) do
+    bounding_box([125, current_cursor - 10], :width => 150, :height => 300) do
       signature
       transparent(0) { stroke_bounds }
     end

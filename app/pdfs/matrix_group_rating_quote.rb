@@ -28,7 +28,7 @@ class MatrixGroupRatingQuote < MatrixPdfReport
     inline_text @account.street_address, size: 12, style: :bold
     inline_text "#{@account.city}, #{@account.state} #{@account.zip_code}", size: 12, style: :bold
     move_down 20
-    inline_text "We are pleased to invite you to participate in our Group Rating Program for the 2021 rate year. Please keep in mind the annual Matrix fee includes our top-notch claims management and there are no additional association dues.", size: 13
+    inline_text "We are pleased to invite you to participate in our Group Rating Program for the #{@representative.quote_year} rate year. Please keep in mind the annual Matrix fee includes our top-notch claims management and there are no additional association dues.", size: 13
     move_down 35
 
     display_data_table
