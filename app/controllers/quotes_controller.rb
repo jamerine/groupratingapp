@@ -96,10 +96,18 @@ class QuotesController < ApplicationController
     ac_2_pdf_render = ac_2_pdf.render
     combine_pdf << CombinePDF.parse(ac_2_pdf_render)
 
+    invoice_pdf        = @representative.matrix? ? MatrixGroupRatingInvoice.new(@quote, @account, @policy_calculation, view_context) : ArmGroupRatingInvoice.new(@quote, @account, @policy_calculation, view_context)
+    invoice_pdf_render = invoice_pdf.render
+    combine_pdf << CombinePDF.parse(invoice_pdf_render)
+
     if @representative.matrix?
       faq_pdf        = MatrixFAQ.new(@quote, @account, @policy_calculation, view_context)
       faq_pdf_render = faq_pdf.render
       combine_pdf << CombinePDF.parse(faq_pdf_render)
+
+      testimonial_pdf        = MatrixTestimonials.new(@quote, @account, @policy_calculation, view_context)
+      testimonial_pdf_render = testimonial_pdf.render
+      combine_pdf << CombinePDF.parse(testimonial_pdf_render)
     end
 
     send_data combine_pdf.to_pdf,

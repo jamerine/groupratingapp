@@ -5,13 +5,13 @@ class MatrixPdfReport < PdfReport
     super(default_prawn_options)
   end
 
-  def matrix_header(title = true)
+  def matrix_header(title = true, testimonial = false)
     current_cursor = cursor
 
     if title
       bounding_box([0, current_cursor], width: 350, height: 100) do
         move_down 35
-        text "#{@account.representative.quote_year} Group Rating Enrollment", style: :bold, size: 20
+        text (testimonial ? 'Client Testimonials' : "#{@account.representative.quote_year} Group Rating Enrollment"), style: :bold, size: 20
         transparent(0) { stroke_bounds }
       end
     end
@@ -54,7 +54,7 @@ class MatrixPdfReport < PdfReport
         text @representative.phone_number.split('.').join(' ') +
                "   <color rgb='#{MATRIX_COLOR}'>|</color>   " +
                @representative.full_location_address +
-               "   <color rgb='#{MATRIX_COLOR}'>|</color>   www.matrixpa.com", size: 8, inline_format: true
+               "   <color rgb='#{MATRIX_COLOR}'>|</color>   www.matrixtpa.com", size: 8, inline_format: true
       end
 
       transparent(0) { stroke_bounds }
