@@ -5,13 +5,17 @@ class MatrixPdfReport < PdfReport
     super(default_prawn_options)
   end
 
-  def matrix_header(title = true, testimonial = false)
+  def matrix_header(title = true, retro = false, testimonial = false)
     current_cursor = cursor
 
     if title
       bounding_box([0, current_cursor], width: 350, height: 100) do
         move_down 35
-        text (testimonial ? 'Client Testimonials' : "#{@account.representative.quote_year} Group Rating Enrollment"), style: :bold, size: 20
+        if retro
+          text (testimonial ? 'Client Testimonials' : "#{@account.representative.quote_year} Group Retrospective Rating Enrollment"), style: :bold, size: 20
+        else
+          text (testimonial ? 'Client Testimonials' : "#{@account.representative.quote_year} Group Rating Enrollment"), style: :bold, size: 20
+        end
         transparent(0) { stroke_bounds }
       end
     end

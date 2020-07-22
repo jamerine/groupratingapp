@@ -20,7 +20,7 @@ class MatrixTestimonials < MatrixPdfReport
   private
 
   def testimonials
-    matrix_header true, true
+    matrix_header true, false, true
     move_down 5
     testimonial 'Matrix provides excellent service that is very flexible and meets our needs in a timely manner. We like the process of case assignments not being separated out by medical only and lost time claims, which allows familiarity of claims for an injured employee. We also like that Matrix’s operating system focuses on Ohio workers’ compensation and that you have attorneys to attend hearings.', 'Diana Tracey, The City of Cincinnati', 'diana.tracey@cincinatti-oh.gov'
     testimonial 'On the workers’ comp side, I think the Matrix program is the best in Ohio. The claim administration has been flawless. You have been able to keep our claims under control and get people back to work or claims settled before they become a nightmare. We have also had great success with you case management. When I checked your references I asked everyone what their worst problem had been and nobody could think of anything and I can’t either. Matrix does not just process paperwork and take hearings, you are truly working with our company to improve our programs and reduce our cost and take great price in doing so. And, you are great people to work with.', 'Donna Hadley, United Dairy Farmers', 'dhadley@udfinc.com'

@@ -1,4 +1,4 @@
-class MatrixGroupRatingIntro < MatrixPdfReport
+class MatrixGroupRetroIntro < MatrixPdfReport
   def initialize(quote = [], account = [], policy_calculation = [], view)
     super()
     @quote              = quote
@@ -20,18 +20,21 @@ class MatrixGroupRatingIntro < MatrixPdfReport
   private
 
   def intro_page
-    matrix_header
-    inline_text "Dear Group Rated Employer: #{@account.name.titleize}"
+    matrix_header true, true
+    move_down 45
+    inline_text "Dear Group Retrospective Rated Employer: #{@account.name.titleize}"
     move_down 15
 
     if @quote.client_packet?
       inline_text "Thank you for your continued loyalty to The Matrix Companies."
       move_down 15
-      inline_text "We are excited to offer you admittance into our top notch #{@representative.quote_year} Group Rating plan. Enclosed you will find an explanation of the premium savings and services that are included in your enrollment. In the event you are considering multiple program enrollment options, please contact us for further discussion and analysis."
+      inline_text "We are excited to offer you admittance into our top notch #{@representative.quote_year} Group Retro plan. Enclosed you will find an explanation of the premium savings and services that are included in your enrollment. In the event you are considering multiple program enrollment options, please contact us for further discussion and analysis."
       move_down 15
       inline_text "Enrollment is simple. Just complete the enclosed pages and submit to Matrix. If you have any questions or feedback, give us a call."
       move_down 15
-      inline_text "As an additional benefit to our group rating program enrollees, Matrix is offering our premier services at a reduced rate this year. These services allow our clients to reduce claims and maximize savings. Please email Jessica Esterkamp at <link href='mailto:jessica@matrixtpa.com'>jessica@matrixtpa.com</link> if you are interested in a safety assessment and recommendations."
+      inline_text "As an additional benefit to our group rating program enrollees, Matrix is offering our premier safety services at a reduced rate this year. These services allow our clients to reduce claims and maximize savings. Please email Jessica Esterkamp at <color rgb='0563c1'><u><link href='mailto:jessica@matrixtpa.com'>jessica@matrixtpa.com</link></u></color> if you are interested in a safety assessment and recommendations."
+      move_down 15
+      inline_text 'We look forward to receiving your enrollment documents and continuing to serve you.'
     else
       inline_text "Thank you for the opportunity to provide a #{@representative.quote_year} Group Rating program enrollment quote. We are confident that you will find our program and service offerings to be proactive and unique."
       move_down 15
@@ -49,7 +52,7 @@ class MatrixGroupRatingIntro < MatrixPdfReport
       inline_text 'Matrix has experienced rapid growth and recognition because of our model which makes every client feel important. As the founder and owner of Matrix, I stand behind what we promise and am confident you will be impressed.'
     end
 
-    move_down 40
+    move_down 45
 
     current_cursor = cursor
 

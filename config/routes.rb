@@ -567,6 +567,8 @@ Rails.application.routes.draw do
     member do
       get :test_client_packet
       get :test_prospect_packet
+      get :test_retro_client_packet
+      get :test_retro_prospect_packet
     end
   end
 
