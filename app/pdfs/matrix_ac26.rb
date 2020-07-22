@@ -125,18 +125,18 @@ class MatrixAc26 < MatrixPdfReport
         text "I am associated with the sponsoring organization or a certified affiliate sponsoring organization  <u>  X  </u> Yes <u>     </u> No", size: 10, inline_format: true
         move_down 20
         current_cursor = cursor
-        bounding_box([50, current_cursor], :width => 130, :height => 25) do
-          inline_text "NEOSC", indent_paragraphs: 45
+        bounding_box([50, current_cursor], :width => 150, :height => 25) do
+          inline_text "NEOSC", align: :center
           stroke_horizontal_rule
           move_down 3
-          text "Name of sponsor or affiliate sponsor", size: 8
+          text "Name of sponsor or affiliate sponsor", size: 8, align: :center
         end
 
-        bounding_box([350, current_cursor], :width => 130, :height => 25) do
-          text "#{@account.policy_number_entered}", indent_paragraphs: 45
+        bounding_box([350, current_cursor], :width => 150, :height => 25) do
+          text "35849", align: :center
           stroke_horizontal_rule
           move_down 3
-          text "Policy Number", size: 8, indent_paragraphs: 40
+          text "Sponsor or affiliate sponsor policy number", size: 8, align: :center
         end
       end
       stroke_bounds
@@ -155,12 +155,12 @@ class MatrixAc26 < MatrixPdfReport
       text "_<u>                                                        </u> certifies that he/she is the <u>                                                        </u> of", inline_format: true, indent_paragraphs: 10
       text "(Officer Name)                                                                                 (Title)", indent_paragraphs: 65
       move_down 10
-      text "_<u>                          #{@account.name}                      </u> , the employer referred to above, and that all the information is", inline_format: true, indent_paragraphs: 10
-      text "(Employer Name)", indent_paragraphs: 65
+      text "_<u>         #{@account.name.titleize}             </u> , the employer referred to above, and that all the information is", inline_format: true, indent_paragraphs: 10
+      text "(Employer Name)", indent_paragraphs: 75
       move_down 10
       text "true to the best of his/her knowledge, information, and belief, after careful investigation.", indent_paragraphs: 10
       move_down 10
-      current_cursor = cursor
+
       bounding_box([50, 50], :width => 130, :height => 50) do
         move_down 25
         stroke_horizontal_rule

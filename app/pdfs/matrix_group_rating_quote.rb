@@ -24,9 +24,9 @@ class MatrixGroupRatingQuote < MatrixPdfReport
     inline_text @current_date.strftime('%m/%d/%Y'), style: :bold, size: 12
     move_down 15
     inline_text "BWC Policy Number: #{@account.policy_number_entered}", size: 12, style: :bold
-    inline_text @account.name, size: 12, style: :bold
-    inline_text @account.street_address, size: 12, style: :bold
-    inline_text "#{@account.city}, #{@account.state} #{@account.zip_code}", size: 12, style: :bold
+    inline_text @account.name.titleize, size: 12, style: :bold
+    inline_text @account.street_address.titleize, size: 12, style: :bold
+    inline_text "#{@account.city.titleize}, #{@account.state.upcase} #{@account.zip_code}", size: 12, style: :bold
     move_down 20
     inline_text "We are pleased to invite you to participate in our Group Rating Program for the #{@representative.quote_year} rate year. Please keep in mind the annual Matrix fee includes our top-notch claims management and there are no additional association dues.", size: 13
     move_down 35

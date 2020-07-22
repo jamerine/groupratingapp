@@ -172,7 +172,7 @@ class MatrixGroupRatingContract < MatrixPdfReport
   end
 
   def contract_table_data
-    [[{ content: '<b><u>Matrix Claims Management Inc.</u><b>', colspan: 2 }, '<b><u>Company Name:</u></b>', @account.name],
+    [[{ content: '<b><u>Matrix Claims Management Inc.</u><b>', colspan: 2 }, '<b><u>Company Name:</u></b>', @account.name.titleize],
      ['By:', { image: "#{Rails.env.development? ? 'public/' : '' }#{@representative.signature.url}", image_height: 15 }, 'By:', ''],
      ['Printed:', @representative.president_full_name, 'Printed:', ''],
      ['Title:', 'CEO', 'Title:', ''],

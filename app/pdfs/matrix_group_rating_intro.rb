@@ -21,7 +21,7 @@ class MatrixGroupRatingIntro < MatrixPdfReport
 
   def intro_page
     matrix_header
-    inline_text "Dear Group Rated Employer: #{@account.name}"
+    inline_text "Dear Group Rated Employer: #{@account.name.titleize}"
     move_down 15
 
     if @quote.client_packet?
