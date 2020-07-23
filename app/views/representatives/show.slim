@@ -141,10 +141,9 @@
         .col-md-4
           h5 Group Rating Quotes
           = link_to "Quote Process", quotes_path(representative_id: @representative.id), class: 'btn btn-default'
-        .col-md-4
-          label
-            a href="https://s3.amazonaws.com/piarm/IMPORT_TEMPLATES/claim_template.csv" Account TPA Dates
-            br
+        - if @representative.matrix?
+          .col-md-4
+            h5 Account TPA Dates
             = form_tag representative_import_tpa_dates_path(@representative.id), multipart: true do
               = file_field_tag :file, class: 'form-control'
               br
