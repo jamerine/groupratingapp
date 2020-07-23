@@ -89,7 +89,7 @@ class QuotesController < ApplicationController
     assessment_pdf_render = assessment_pdf.render
     combine_pdf << CombinePDF.parse(assessment_pdf_render)
 
-    contract_pdf        = ArmGroupRetroContract.new(@quote, @account, @policy_calculation, view_context)
+    contract_pdf        = @representative.matrix? ? MatrixGroupRetroContract.new(@quote, @account, @policy_calculation, view_context) : ArmGroupRetroContract.new(@quote, @account, @policy_calculation, view_context)
     contract_pdf_render = contract_pdf.render
     combine_pdf << CombinePDF.parse(contract_pdf_render)
 

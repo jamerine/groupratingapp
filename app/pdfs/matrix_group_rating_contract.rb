@@ -28,7 +28,7 @@ class MatrixGroupRatingContract < MatrixPdfReport
     agreement_text "Matrix Claims Management, Inc., #{@representative.full_location_address}", align: :center
     agreement_text "(“Matrix”) hereby offers workers’ Compensation consulting services to:", align: :center
     move_down 15
-    text "<u><b>  #{@account.name.titleize}, #{@account.policy_number_entered}  </b></u>, (“Client”) for the period beginning on <u><b>  #{@account.tpa_from_date.strftime('%m/%d/%Y')}  </b></u> and ending on <u><b>  #{@account.tpa_to_date.strftime('%m/%d/%Y')}  </b></u> and to renew as stipulated in this agreement.", inline_format: true, size: 10
+    text "<u><b>#{@account.name.titleize}, BWC POLICY #: #{@account.policy_number_entered}</b></u>, (“Client”) for the period beginning on <u><b>  #{@account.tpa_from_date.strftime('%m/%d/%Y')}  </b></u> and ending on <u><b>  #{@account.tpa_to_date.strftime('%m/%d/%Y')}  </b></u> and to renew as stipulated in this agreement.", inline_format: true, size: 10
     move_down 15
 
     current_cursor = cursor
