@@ -109,14 +109,14 @@ class MatrixU153 < MatrixPdfReport
     current_cursor = cursor
 
     table([["Group-Retrospective-Rating Enrollment"]], :width => bounds.width, :row_colors => ["EFEFEF"]) do
-      row(0).font_style = :bold
-      row(0).align      = :center
-      self.cell_style   = { :size => 10 }
+      row(0).font_style       = :bold
+      row(0).align            = :center
+      self.cell_style         = { :size => 10 }
       self.cells.border_width = 0.5
     end
 
     current_cursor = cursor
-    bounding_box([0, current_cursor], :width => bounds.width, :height => 305) do
+    bounding_box([0, current_cursor], :width => bounds.width, :height => 335) do
       move_down 5
       indent(5) do
         text "I agree to comply with the Ohio Bureau of Workers’ Compensation Group-Retrospective-Rating Program rules (Ohio Administrative Rule 4123-17-73). I understand that my participation in the program is contingent on such compliance.", size: 9
@@ -133,66 +133,72 @@ class MatrixU153 < MatrixPdfReport
         move_down 10
         text "I am associated with the sponsoring organization or a certified affiliate sponsoring organization  <u>  X  </u> Yes <u>     </u> No", size: 9, inline_format: true
         move_down 20
+
         current_cursor = cursor
 
-        bounding_box([50, current_cursor], :width => 175, :height => 25) do
+        bounding_box([25, current_cursor], :width => 225, :height => 25) do
           inline_text "Northeast Ohio Safety Council", align: :center
           stroke_horizontal_rule
           move_down 3
           text "Name of sponsor or affiliate sponsor", size: 8, align: :center
         end
 
-        bounding_box([350, current_cursor], :width => 175, :height => 25) do
+        bounding_box([300, current_cursor], :width => 175, :height => 25) do
           text "35849", align: :center
           stroke_horizontal_rule
           move_down 3
           text "Sponsor or affiliate sponsor policy number", size: 8, align: :center
         end
       end
+      move_down 15
+
       stroke_horizontal_rule
-      move_down 5
+      move_down 10
       indent(5) do
         text "Note: For injuries that occur during the period an employer is enrolled in the Group-Retrospective-Rating Program, employers may not utilize or participate in the Deductible Program, Group Rating, Retrospective Rating, Safety Council Discount Program, $15,000 Medical-Only Program, or the Drug-Free Safety Program.", size: 8
       end
       stroke_bounds
-
     end
-    table([["Certification"]], :width => 540, :row_colors => ["EFEFEF"]) do
-      row(0).font_style = :bold
-      row(0).align      = :center
-      self.cell_style   = { :size => 10 }
-      self.cell_style   = { :height => 20 }
+
+    table([["Certification"]], :width => bounds.width, :row_colors => ["EFEFEF"]) do
+      row(0).font_style       = :bold
+      row(0).align            = :center
+      self.cells.border_width = 0.5
+      self.cell_style         = { :size => 10 }
+      self.cell_style         = { :height => 20 }
     end
     current_cursor = cursor
-    bounding_box([0, current_cursor], :width => 540, :height => 148) do
-      move_down 15
+    bounding_box([0, current_cursor], :width => 540, :height => 140) do
+      move_down 20
+
       text "_<u>                                                        </u> certifies that he/she is the <u>                                                        </u> of", inline_format: true, indent_paragraphs: 10
       text "(Officer Name)                                                                                 (Title)", indent_paragraphs: 65
       move_down 10
-      text "_<u>                                                                             </u>, the employer referred to above, and that all the information is", inline_format: true, indent_paragraphs: 10
-      text "(Employer Name)", indent_paragraphs: 65
+      text "_<u>         #{@account.name.titleize}             </u> , the employer referred to above, and that all the information is", inline_format: true, indent_paragraphs: 10
+      text "(Employer Name)", indent_paragraphs: 75
       move_down 10
       text "true to the best of his/her knowledge, information, and belief, after careful investigation.", indent_paragraphs: 10
       move_down 10
-      bounding_box([50, 35], :width => 130, :height => 23) do
-        move_down 10
+
+      bounding_box([50, 50], :width => 175, :height => 50) do
+        move_down 35
         stroke_horizontal_rule
         move_down 3
-        text "(OFFICER SIGNATURE)", size: 8, align: :center
+        text "(Officer Signature)", size: 8, align: :center
       end
-      bounding_box([350, 35], :width => 130, :height => 23) do
-        move_down 10
+
+      bounding_box([350, 50], :width => 130, :height => 50) do
+        move_down 35
         stroke_horizontal_rule
         move_down 3
-        text "(DATE)", size: 8, align: :center
+        text "(Date)", size: 8, align: :center
       end
+
       stroke_bounds
     end
-    move_down 3
+
+    move_down 5
     text "BWC-7659 (Rev. 12/15/2010)", size: 8
     text "U-153", size: 8, style: :bold
-
-
   end
-
 end
