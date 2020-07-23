@@ -86,6 +86,16 @@ class MatrixPdfReport < PdfReport
     end
   end
 
+  def instructions_list(items)
+    items.each do |item|
+      text_box "•", at: [5, cursor], size: 12
+      move_down 1.5
+      indent(15) do
+        text(item, inline_format: true, size: 7)
+      end
+    end
+  end
+
   def arrowhead_list(items)
     items.each do |item|
       image("#{Rails.root}/app/assets/images/arrowhead.png", height: 8, at: [15, cursor])

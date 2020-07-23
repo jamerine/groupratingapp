@@ -81,7 +81,7 @@ class QuotesController < ApplicationController
     quote_pdf_render = quote_pdf.render
     combine_pdf << CombinePDF.parse(quote_pdf_render)
 
-    u_153_pdf        = U153.new(@quote, @account, @policy_calculation, view_context)
+    u_153_pdf        = @representative.matrix? ? MatrixU153.new(@quote, @account, @policy_calculation, view_context) : U153.new(@quote, @account, @policy_calculation, view_context)
     u_153_pdf_render = u_153_pdf.render
     combine_pdf << CombinePDF.parse(u_153_pdf_render)
 
