@@ -3,6 +3,7 @@ class MatrixU153 < MatrixPdfReport
     super()
     @quote              = quote
     @account            = account
+    @representative     = @account.representative
     @policy_calculation = policy_calculation
     @view               = view
     @group_fees         =
