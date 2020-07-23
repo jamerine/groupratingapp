@@ -73,7 +73,7 @@
     <%= yield %>
   </main>
   <footer>
-    <div class="text-center">&copy; <%= Date.current.year %> Alternative Risk, LTD | <small>Signed in as <%= current_user.full_name %></small></div>
+    <div class="text-center">&copy; <%= Date.current.year %> Alternative Risk, LTD <%= current_user.present? ? " | <small>Signed in as #{ current_user.full_name }</small>".html_safe : '' %></div>
   </footer>
 </body>
 </html>
