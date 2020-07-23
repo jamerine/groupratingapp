@@ -22,6 +22,6 @@ class ManualClassExport
       csv.close
     end
 
-    ManualClassExportMailer.manual_class_export(@user, @representative, csv_string).deliver
+    ManualClassExportMailer.manual_class_export(@user, @representative, csv_string).deliver_later
   end
 end
