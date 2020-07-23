@@ -531,7 +531,6 @@ Rails.application.routes.draw do
     collection { delete :destroy }
   end
 
-
   resources :phmgn_detail_records do
     collection { post :parse }
     collection { delete :destroy }
@@ -581,6 +580,7 @@ Rails.application.routes.draw do
     get :export_accounts
     post :export_159_request_weekly
     get :filter_export_159_request_weekly
+    post :import_tpa_dates
     post :import_contact_process
     post :import_payroll_process
     post :import_claim_process

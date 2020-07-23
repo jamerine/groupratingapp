@@ -115,6 +115,20 @@ class RepresentativesController < ApplicationController
     end
   end
 
+  def import_tpa_dates
+    @representative = Representative.find(params[:representative_id])
+
+    begin
+      CSV.foreach(params[:file].path, headers: true, encoding: 'ISO8859-1:utf-8') do |row|
+        tpa_hash = row.to_hash.transform_keys(&:parameterize).transform_keys(&:to_sym)
+        TPADatesImport.perform_async(tpa_hash, @representative.id)
+      end
+      redirect_to @representative, notice: "TPA Dates Imported."
+    rescue
+      redirect_to @representative, alert: "There was an error importing the file.  Please ensure file columns type are correct."
+    end
+  end
+
   def import_contact_process
     @representative = Representative.find(params[:representative_id])
     authorize @representative

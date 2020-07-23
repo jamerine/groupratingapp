@@ -141,6 +141,14 @@
         .col-md-4
           h5 Group Rating Quotes
           = link_to "Quote Process", quotes_path(representative_id: @representative.id), class: 'btn btn-default'
+        .col-md-4
+          label
+            a href="https://s3.amazonaws.com/piarm/IMPORT_TEMPLATES/claim_template.csv" Account TPA Dates
+            br
+            = form_tag representative_import_tpa_dates_path(@representative.id), multipart: true do
+              = file_field_tag :file, class: 'form-control'
+              br
+              = submit_tag "Import TPA Dates", class: 'form-control btn btn-primary'
         /!
           | <div class="col-md-4"
           | <h5>Create Group Rating Zip</h5
@@ -151,7 +159,7 @@
             h5 View Group Rating Zip
             = link_to "View Zip", @representative.zip_file.url, class: 'btn btn-default'
       - if @representative.matrix?
-        .row.form-group
+        .row.form-group style="margin-top: 15px;"
           .col-sm-4
             h5 Signature Image
             = image_tag(@representative.signature.url, width: '100%') if @representative.signature
@@ -171,7 +179,6 @@
           .col-sm-4
             h5 Experience Date
             p = l @representative.experience_date if @representative.experience_date.present?
-
 
       br
       hr
