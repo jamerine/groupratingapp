@@ -29,7 +29,7 @@ class MatrixGroupRetroQuote < MatrixPdfReport
     inline_text "#{@account.city.titleize}, #{@account.state.upcase} #{@account.zip_code}", size: 12, style: :bold
     move_down 20
     inline_text "We are pleased to invite you to participate in our Group Retrospective Rating Program for the #{@representative.quote_year} rate year.  Please keep in mind the annual Matrix fee includes all association dues as well as our top-notch claims management.", size: 13
-    move_down 35
+    move_down 25
 
     display_data_table
     move_down 15
@@ -46,15 +46,15 @@ class MatrixGroupRetroQuote < MatrixPdfReport
       bullet_list(["BWC U-153 Employer Statement for Group Retro Rating Program", "Group Retro Rating Safety Assessment", "Matrix Group Rating Agreement (2 pages)"], true)
     else
       bullet_list([
-                    "BWC AC-26 Employer Statement for Group Experience Rating Program",
-                    "Group Rating Enrollment Questionnaire",
+                    "BWC U-153 Employer Statement for Group Retro Rating Program",
                     "BWC AC-2 Permanent Authorization",
+                    "Group Retro Rating Safety Assessment",
                     "Matrix Group Rating Agreement (2 pages)",
                     "Payment of #{price(@group_fees)} service fee payable to Matrix Claims Management"
                   ], true)
     end
 
-    move_down 30
+    move_down 25
     faq_text @quote.client_packet? ? "Questions: Laurie Ritter, lritter@matrixtpa.com" : "Questions: Katie Jones, kjones@matrixtpa.com"
     move_down 15
     text "*Notes: This projection is based on current Ohio BWC data and may be altered or revoked if #{@representative.experience_date.strftime('%m/%d/%y')} experience data adversely affects your eligibility or Ohio BWC rules you ineligible. Your max assessment of 15% equates to #{price(@policy_calculation.total_assessments)}", size: 9

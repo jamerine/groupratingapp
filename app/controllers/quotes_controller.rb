@@ -99,6 +99,51 @@ class QuotesController < ApplicationController
               disposition: "inline"
   end
 
+  def test_retro_prospect_packet
+    @quote              = Quote.find(params[:id])
+    @account            = @quote.account
+    @representative     = @account.representative
+    @group_rating       = @representative.group_ratings.last
+    @program_types      = Quote.program_types
+    @type               = @program_types[@quote.program_type]
+    @policy_calculation = @account.policy_calculation
+
+    combine_pdf = CombinePDF.new
+
+    intro_pdf        = @representative.matrix? ? MatrixGroupRetroIntro.new(@quote, @account, @policy_calculation, view_context) : ArmGroupRetroIntro.new(@quote, @account, @policy_calculation, view_context)
+    intro_pdf_render = intro_pdf.render
+    combine_pdf << CombinePDF.parse(intro_pdf_render)
+
+    quote_pdf        = @representative.matrix? ? MatrixGroupRetroQuote.new(@quote, @account, @policy_calculation, view_context) : GroupRetroQuote.new(@quote, @account, @policy_calculation, view_context)
+    quote_pdf_render = quote_pdf.render
+    combine_pdf << CombinePDF.parse(quote_pdf_render)
+
+    u_153_pdf        = @representative.matrix? ? MatrixU153.new(@quote, @account, @policy_calculation, view_context) : U153.new(@quote, @account, @policy_calculation, view_context)
+    u_153_pdf_render = u_153_pdf.render
+    combine_pdf << CombinePDF.parse(u_153_pdf_render)
+
+    assessment_pdf        = @representative.matrix? ? MatrixGroupRetroAssessment.new(@quote, @account, @policy_calculation, view_context) : ArmGroupRetroAssessment.new(@quote, @account, @policy_calculation, view_context)
+    assessment_pdf_render = assessment_pdf.render
+    combine_pdf << CombinePDF.parse(assessment_pdf_render)
+
+    contract_pdf        = @representative.matrix? ? MatrixGroupRetroContract.new(@quote, @account, @policy_calculation, view_context) : ArmGroupRetroContract.new(@quote, @account, @policy_calculation, view_context)
+    contract_pdf_render = contract_pdf.render
+    combine_pdf << CombinePDF.parse(contract_pdf_render)
+
+    ac_2_pdf        = @representative.matrix? ? MatrixAc2.new(@quote, @account, @policy_calculation, view_context) : Ac2.new(@quote, @account, @policy_calculation, view_context)
+    ac_2_pdf_render = ac_2_pdf.render
+    combine_pdf << CombinePDF.parse(ac_2_pdf_render)
+
+    invoice_pdf        = @representative.matrix? ? MatrixGroupRatingInvoice.new(@quote, @account, @policy_calculation, view_context) : ArmGroupRatingInvoice.new(@quote, @account, @policy_calculation, view_context)
+    invoice_pdf_render = invoice_pdf.render
+    combine_pdf << CombinePDF.parse(invoice_pdf_render)
+
+    send_data combine_pdf.to_pdf,
+              filename:    "#{ @account.policy_number_entered }_quote_#{ @quote.id }.pdf",
+              type:        "application/pdf",
+              disposition: "inline"
+  end
+
   def test_prospect_packet
     @quote              = Quote.find(params[:id])
     @account            = @quote.account

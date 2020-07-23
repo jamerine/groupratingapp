@@ -21,7 +21,7 @@ class MatrixGroupRetroIntro < MatrixPdfReport
 
   def intro_page
     matrix_header true, true
-    move_down 45
+    move_down 25
     inline_text "Dear Group Retrospective Rated Employer: #{@account.name.titleize}"
     move_down 15
 
@@ -35,14 +35,15 @@ class MatrixGroupRetroIntro < MatrixPdfReport
       inline_text "As an additional benefit to our group rating program enrollees, Matrix is offering our premier safety services at a reduced rate this year. These services allow our clients to reduce claims and maximize savings. Please email Jessica Esterkamp at <color rgb='0563c1'><u><link href='mailto:jessica@matrixtpa.com'>jessica@matrixtpa.com</link></u></color> if you are interested in a safety assessment and recommendations."
       move_down 15
       inline_text 'We look forward to receiving your enrollment documents and continuing to serve you.'
+      move_down 45
     else
-      inline_text "Thank you for the opportunity to provide a #{@representative.quote_year} Group Rating program enrollment quote. We are confident that you will find our program and service offerings to be proactive and unique."
-      move_down 15
+      inline_text "Thank you for the opportunity to provide a #{@representative.quote_year} Group Retrospective Rating program enrollment quote. We are confident that you will find our program and service offerings to be proactive and unique."
+      move_down 10
       inline_text "Although comparing fees and percentage are an important part of selecting a partner, it is even more important that you evaluate the quality of the claims management in order to receive future savings. Here are a few reasons 98% of our clients remain loyal every year:"
-      move_down 15
+      move_down 10
       bullet_list([
                     'Matrix provides one point of management to handle claims from start to finish rather than having to talk to multiple people about one issue.',
-                    'Our group rating enrollment fee is all-inclusive, there are no additional membership or association dues to pay.',
+                    'Our enrollment fee is all-inclusive, there are no additional membership or association dues to pay.',
                     'Matrix takes a holistic approach to reducing your risk by offering in-house safety solutions, case management, and investigative services to reduce the frequency and severity of claims by an average of 22% for our clients.',
                     'Matrix leads the industry in the highest number of handicaps and settlements per client which offers significant cost savings to our clients.',
                     'Matrix provides attorney representation at hearings rather than hearing reps for the best chance of successful outcomes.',
@@ -50,9 +51,8 @@ class MatrixGroupRetroIntro < MatrixPdfReport
                   ])
       move_down 15
       inline_text 'Matrix has experienced rapid growth and recognition because of our model which makes every client feel important. As the founder and owner of Matrix, I stand behind what we promise and am confident you will be impressed.'
+      move_down 20
     end
-
-    move_down 45
 
     current_cursor = cursor
 
