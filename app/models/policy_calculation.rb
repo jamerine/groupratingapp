@@ -162,7 +162,7 @@ class PolicyCalculation < ActiveRecord::Base
       end
 
       @policy_total_four_year_payroll = self.manual_class_calculations.sum(:manual_class_four_year_period_payroll).round(0)
-      @policy_total_expected_losses   = self.manual_class_calculations.sum(:manual_class_expected_losses).round(0)
+      @policy_total_expected_losses   = self.manual_class_calculations.sum(:manual_class_expected_losses).round(0) # TODO: NEED NO ESTIMATED PAYROLL IN THIS CALCULATION
       @policy_total_current_payroll   = self.manual_class_calculations.sum(:manual_class_current_estimated_payroll).round(0)
 
       if @policy_total_expected_losses <= 2000
@@ -184,7 +184,7 @@ class PolicyCalculation < ActiveRecord::Base
         manual_class.calculate_limited_losses(@credibility_row.credibility_group)
       end
 
-      @policy_total_limited_losses = self.manual_class_calculations.sum(:manual_class_limited_losses).round(0)
+      @policy_total_limited_losses = self.manual_class_calculations.sum(:manual_class_limited_losses).round(0) # TODO: NEED NO ESTIMATED PAYROLL IN THIS CALCULATION
 
       self.claim_calculations.find_each do |claim|
         claim.recalculate_experience(@credibility_row.group_maximum_value)
