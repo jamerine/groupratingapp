@@ -44,6 +44,8 @@ class PayrollCalculation < ActiveRecord::Base
   validates :payroll_origin, :presence => true
   validates :data_source, :presence => true
 
+  scope :with_estimated_payroll, -> (with_estimated_payroll) { with_estimated_payroll ? where('1 = 1') : where.not(reporting_type: 'E') }
+
   # after_create :calculate
   # after_destroy :calculate
 

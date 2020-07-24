@@ -148,6 +148,30 @@ class ManualClassCalculation < ActiveRecord::Base
     end #end transaction
   end
 
+  def expected_losses_without_estimates
+    bwc_base_rate = BwcCodesBaseRatesExpLossRate.find_by(class_code: self.manual_number)
+    return 0 unless bwc_base_rate.present?
+    group_rating        = GroupRating.find_by(process_representative: self.representative_number)
+    policy_creation     = self.policy_calculation.policy_coverage_status_histories.order(:coverage_effective_date).where(coverage_status: 'ACTIV').first
+    policy_creation_dip = self.policy_calculation.policy_coverage_status_histories.find_by(coverage_status: 'DIP  ')
+
+    if policy_creation_dip && policy_creation
+      if policy_creation_dip.coverage_effective_date < policy_creation.coverage_effective_date
+        policy_creation = policy_creation_dip
+      end
+    end
+
+    policy_creation_date              = policy_creation.nil? ? self.policy_calculation.policy_coverage_status_histories.order(:coverage_effective_date).first.coverage_effective_date : policy_creation.coverage_effective_date
+    self_four_year_payroll_lower_date = policy_creation_date > group_rating.experience_period_lower_date ? policy_creation_date : group_rating.experience_period_lower_date
+    expected_loss_rate                = bwc_base_rate.expected_loss_rate || 0
+    manual_class_self_four_year_sum   = self.payroll_calculations.with_estimated_payroll(false).where("reporting_period_start_date BETWEEN :experience_period_lower_date and :experience_period_upper_date and (payroll_origin NOT IN ('partial_transfer', 'full_transfer', 'man_reclass_full_transfer', 'man_reclass_partial_transfer'))", experience_period_lower_date: self_four_year_payroll_lower_date, experience_period_upper_date: group_rating.experience_period_upper_date).sum(:manual_class_payroll).round(2)
+    manual_class_comb_four_year_sum   = self.payroll_calculations.with_estimated_payroll(false).where("(reporting_period_start_date BETWEEN :experience_period_lower_date and :experience_period_upper_date) and (payroll_origin IN ('partial_transfer', 'full_transfer', 'man_reclass_full_transfer', 'man_reclass_partial_transfer'))", experience_period_lower_date: group_rating.experience_period_lower_date, experience_period_upper_date: group_rating.experience_period_upper_date).sum(:manual_class_payroll).round(2)
+    manual_class_four_year_sum        = manual_class_self_four_year_sum + manual_class_comb_four_year_sum
+    manual_class_four_year_sum        = manual_class_four_year_sum < 0 ? 0 : manual_class_four_year_sum
+
+    ((expected_loss_rate * manual_class_four_year_sum) / 100).round(0)
+  end
+
   def calculate_limited_losses(credibility_group)
     self.transaction do
 
@@ -167,6 +191,13 @@ class ManualClassCalculation < ActiveRecord::Base
       )
 
     end # transaction end
+  end
+
+  def limited_losses_without_estimates(credibility_group)
+    limited_loss_rate_row = BwcCodesLimitedLossRatio.find_by(industry_group: self.manual_class_industry_group, credibility_group: credibility_group)
+    return 0 unless limited_loss_rate_row.present?
+    limited_loss_rate = (limited_loss_rate_row.limited_loss_ratio)
+    (expected_losses_without_estimates * limited_loss_rate).round(0)
   end
 
   def calculate_premium(policy_individual_experience_modified_rate, administrative_rate)

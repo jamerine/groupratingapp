@@ -164,8 +164,11 @@ class PolicyCalculation < ActiveRecord::Base
       end
 
       @policy_total_four_year_payroll = self.manual_class_calculations.sum(:manual_class_four_year_period_payroll).round(0)
-      @policy_total_expected_losses   = self.manual_class_calculations.sum(:manual_class_expected_losses).round(0) # TODO: NEED NO ESTIMATED PAYROLL IN THIS CALCULATION
-      @policy_total_current_payroll   = self.manual_class_calculations.sum(:manual_class_current_estimated_payroll).round(0)
+
+      # TODO: Really need to verify this once quarterly data comes in 7/24/2020
+      @policy_total_expected_losses = self.manual_class_calculations.map(&:expected_losses_without_estimates).compact.sum.round(0) # TODO: NEED NO ESTIMATED PAYROLL IN THIS CALCULATION
+
+      @policy_total_current_payroll = self.manual_class_calculations.sum(:manual_class_current_estimated_payroll).round(0)
 
       if @policy_total_expected_losses <= 2000
         @credibility_row                     = BwcCodesCredibilityMaxLoss.where("expected_losses >= :expected_losses", expected_losses: @policy_total_expected_losses).min
@@ -186,7 +189,7 @@ class PolicyCalculation < ActiveRecord::Base
         manual_class.calculate_limited_losses(@credibility_row.credibility_group)
       end
 
-      @policy_total_limited_losses = self.manual_class_calculations.sum(:manual_class_limited_losses).round(0) # TODO: NEED NO ESTIMATED PAYROLL IN THIS CALCULATION
+      @policy_total_limited_losses = self.manual_class_calculations.map { |manual| manual.limited_losses_without_estimates(@credibility_row.credibility_group) }.compact.sum.round(0) # TODO: NEED NO ESTIMATED PAYROLL IN THIS CALCULATION
 
       self.claim_calculations.find_each do |claim|
         claim.recalculate_experience(@credibility_row.group_maximum_value)

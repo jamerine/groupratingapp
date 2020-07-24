@@ -55,7 +55,7 @@ default: &default
 # Do not set this db to the same as development or production.
 development:
   <<: *default
-  database: groupratingapp_development
+  database: groupratingapp_production
   username: groupratingapp
   password: <%= ENV['GROUPRATINGAPP_DATABASE_PASSWORD'] %>
 
