@@ -56,10 +56,11 @@
         .col-md-4
           h5 abbreviated Name:
           h3 = @representative.abbreviated_name
+      - if current_user.admin?
+        .row style="margin-bottom: 10px;"
+          .col-sm-12 = link_to "Edit Representative", edit_representative_path(@representative.id), class: 'btn btn-primary'
       .row
-        = link_to "Edit Representative", edit_representative_path(@representative.id), class: 'btn btn-primary'
-      .row
-        = image_tag @representative.logo_url
+        .col-sm-6.col-sm-offset-3 = image_tag @representative.logo_url, style: 'max-width: 100%'
     hr
   .container.text-center
     - if policy(@representative).edit_global_dates?
@@ -129,8 +130,7 @@
       br
       hr
 
-
-  - if policy(@representative).fee_calculations?
+  - if policy(@representative).fee_calculations? && current_user.admin?
     .container.text-center
       .row
         h3 Quoting & Fees
@@ -141,6 +141,13 @@
         .col-md-4
           h5 Group Rating Quotes
           = link_to "Quote Process", quotes_path(representative_id: @representative.id), class: 'btn btn-default'
+        - if @representative.matrix?
+          .col-md-4
+            h5 Account TPA Dates
+            = form_tag representative_import_tpa_dates_path(@representative.id), multipart: true do
+              = file_field_tag :file, class: 'form-control'
+              br
+              = submit_tag "Import TPA Dates", class: 'form-control btn btn-primary'
         /!
           | <div class="col-md-4"
           | <h5>Create Group Rating Zip</h5
@@ -150,6 +157,27 @@
           - unless @representative.zip_file_url.nil?
             h5 View Group Rating Zip
             = link_to "View Zip", @representative.zip_file.url, class: 'btn btn-default'
+      - if @representative.matrix?
+        .row.form-group style="margin-top: 15px;"
+          .col-sm-4
+            h5 Signature Image
+            = image_tag(@representative.signature.url, width: '100%') if @representative.signature
+          .col-sm-4
+            h5 President Image
+            = image_tag(@representative.president.url, width: '100%') if @representative.president
+          .col-sm-4
+            h5 Footer Image
+            = image_tag(@representative.footer.url, width: '100%') if @representative.footer
+        .row
+          .col-sm-4
+            h5 Internal Quote Completion Date
+            p = l @representative.internal_quote_completion_date if @representative.internal_quote_completion_date.present?
+          .col-sm-4
+            h5 BWC Quote Completion Date
+            p = l @representative.bwc_quote_completion_date if @representative.bwc_quote_completion_date.present?
+          .col-sm-4
+            h5 Experience Date
+            p = l @representative.experience_date if @representative.experience_date.present?
 
       br
       hr
@@ -216,48 +244,49 @@
                 = link_to 'Remove', representatives_user_path(representative_id: @representative.id, user_id: user.id), method: :delete, class: 'btn btn-danger btn-sm'
 
     hr
-  .container.text-center
-    .row
-      .col
-        h3 Import Data
-        br
-    .row
-      .col-md-4.col-sm-offset-2
-        = form_tag representative_import_account_notes_process_path(@representative.id), multipart: true do
-          = file_field_tag :file, class: 'form-control'
-          br
-          = submit_tag "Import Account Notes", class: 'form-control btn btn-primary'
-      .col-md-4
-        = form_tag representative_import_claim_notes_process_path(@representative.id), multipart: true do
-          = file_field_tag :file, class: 'form-control'
-          br
-          = submit_tag "Import Claim Notes", class: 'form-control btn btn-primary'
-    br
-    - if policy(@representative).import_contact_process?
+  - if current_user.admin?
+    .container.text-center
       .row
-        .col-md-4
-          label
-            a href="https://s3.amazonaws.com/piarm/IMPORT_TEMPLATES/contacts_template.csv"  Insert Contacts
+        .col
+          h3 Import Data
           br
-          = form_tag representative_import_contact_process_path(@representative.id), multipart: true do
+      .row
+        .col-md-4.col-sm-offset-2
+          = form_tag representative_import_account_notes_process_path(@representative.id), multipart: true do
             = file_field_tag :file, class: 'form-control'
             br
-            = submit_tag "Import Contacts", class: 'form-control btn btn-primary'
+            = submit_tag "Import Account Notes", class: 'form-control btn btn-primary'
+        .col-md-4
+          = form_tag representative_import_claim_notes_process_path(@representative.id), multipart: true do
+            = file_field_tag :file, class: 'form-control'
+            br
+            = submit_tag "Import Claim Notes", class: 'form-control btn btn-primary'
+      br
+      - if policy(@representative).import_contact_process?
+        .row
+          .col-md-4
+            label
+              a href="https://s3.amazonaws.com/piarm/IMPORT_TEMPLATES/contacts_template.csv"  Insert Contacts
+            br
+            = form_tag representative_import_contact_process_path(@representative.id), multipart: true do
+              = file_field_tag :file, class: 'form-control'
+              br
+              = submit_tag "Import Contacts", class: 'form-control btn btn-primary'
 
-        .col-md-4
-          label
-            a href="https://s3.amazonaws.com/piarm/IMPORT_TEMPLATES/payroll_template.csv"  Insert Payroll
-          br
-          = form_tag representative_import_payroll_process_path(@representative.id), multipart: true do
-            = file_field_tag :file, class: 'form-control'
+          .col-md-4
+            label
+              a href="https://s3.amazonaws.com/piarm/IMPORT_TEMPLATES/payroll_template.csv"  Insert Payroll
             br
-            = submit_tag "Import Payroll", class: 'form-control btn btn-primary'
+            = form_tag representative_import_payroll_process_path(@representative.id), multipart: true do
+              = file_field_tag :file, class: 'form-control'
+              br
+              = submit_tag "Import Payroll", class: 'form-control btn btn-primary'
 
-        .col-md-4
-          label
-            a href="https://s3.amazonaws.com/piarm/IMPORT_TEMPLATES/claim_template.csv"  Insert Claims
-          br
-          = form_tag representative_import_claim_process_path(@representative.id), multipart: true do
-            = file_field_tag :file, class: 'form-control'
+          .col-md-4
+            label
+              a href="https://s3.amazonaws.com/piarm/IMPORT_TEMPLATES/claim_template.csv"  Insert Claims
             br
-            = submit_tag "Import Claim", class: 'form-control btn btn-primary'
+            = form_tag representative_import_claim_process_path(@representative.id), multipart: true do
+              = file_field_tag :file, class: 'form-control'
+              br
+              = submit_tag "Import Claim", class: 'form-control btn btn-primary'

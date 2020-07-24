@@ -115,6 +115,20 @@ class RepresentativesController < ApplicationController
     end
   end
 
+  def import_tpa_dates
+    @representative = Representative.find(params[:representative_id])
+
+    begin
+      CSV.foreach(params[:file].path, headers: true, encoding: 'ISO8859-1:utf-8') do |row|
+        tpa_hash = row.to_hash.transform_keys(&:parameterize).transform_keys(&:to_sym)
+        TPADatesImport.perform_async(tpa_hash, @representative.id)
+      end
+      redirect_to @representative, notice: "TPA Dates Imported."
+    rescue
+      redirect_to @representative, alert: "There was an error importing the file.  Please ensure file columns type are correct."
+    end
+  end
+
   def import_contact_process
     @representative = Representative.find(params[:representative_id])
     authorize @representative
@@ -183,7 +197,7 @@ class RepresentativesController < ApplicationController
     authorize @representative
     @representative.assign_attributes(representative_params)
     if @representative.save
-      redirect_to @representative, notice: 'Logo successfully added to Representative'
+      redirect_to @representative, notice: 'Representative Updated!'
     else
       redirect_to @representative, alert: 'Error adding logo to Representative'
     end
@@ -273,7 +287,11 @@ class RepresentativesController < ApplicationController
   private
 
   def representative_params
-    params.require(:representative).permit(:logo, :experience_period_lower_date, :experience_period_upper_date, :current_payroll_period_lower_date, :current_payroll_period_upper_date, :current_payroll_year, :program_year_lower_date, :program_year_upper_date, :program_year, :quote_year_lower_date, :quote_year_upper_date, :quote_year, :location_address_1, :location_address_2, :location_city, :location_state, :location_zip_code, :mailing_address_1, :mailing_address_2, :mailing_city, :mailing_state, :mailing_zip_code, :phone_number, :toll_free_number, :fax_number, :email_address, :president_first_name, :president_last_name)
+    params.require(:representative).permit(:logo, :experience_period_lower_date, :experience_period_upper_date, :current_payroll_period_lower_date, :current_payroll_period_upper_date,
+                                           :current_payroll_year, :program_year_lower_date, :program_year_upper_date, :program_year, :quote_year_lower_date, :quote_year_upper_date, :quote_year,
+                                           :location_address_1, :location_address_2, :location_city, :location_state, :location_zip_code, :mailing_address_1, :mailing_address_2, :mailing_city,
+                                           :mailing_state, :mailing_zip_code, :phone_number, :toll_free_number, :fax_number, :email_address, :president_first_name, :president_last_name,
+                                           :signature, :president, :footer, :experience_date, :bwc_quote_completion_date, :internal_quote_completion_date)
   end
 
 end

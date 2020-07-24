@@ -22,7 +22,7 @@ class Ac2 < PdfReport
   private
 
   def ac_2
-    text "PREMANENT AUTHORIZATION", style: :bold, align: :right, size: 12
+    text "PERMANENT AUTHORIZATION", style: :bold, align: :right, size: 12
     current_cursor = cursor
     bounding_box([0, current_cursor], :width => 225, :height => 200) do
         image "#{Rails.root}/app/assets/images/ohio7.png", height: 50

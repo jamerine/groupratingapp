@@ -1,8 +1,10 @@
 class AccountsController < ApplicationController
 
   def index
-    @statuses = Account.statuses
-    @accounts = Account.where(representative_id: @representatives)
+    @statuses        = Account.statuses
+    @policy_statuses = PolicyCalculation.current_coverage_statuses
+    @accounts        = Account.where(representative_id: @representatives).includes(:representative, :policy_calculation)
+
     if params[:search].present? && params[:representative_number].present?
       @representative = @representatives.find_by(representative_number: params[:representative_number])
       @accounts       = @accounts.where(representative_id: @representative.id).search(params[:search]).paginate(page: params[:page], per_page: 50)
@@ -19,7 +21,9 @@ class AccountsController < ApplicationController
     else
       @accounts = @accounts.all.paginate(page: params[:page], per_page: 50)
     end
+
     @accounts = @accounts.status(params[:status]) if params["status"].present?
+    @accounts = @accounts.by_policy_status(params[:policy_status]) if params["policy_status"].present?
 
     respond_to do |format|
       format.html
@@ -333,7 +337,7 @@ class AccountsController < ApplicationController
 
   def account_params
     params.require(:account).permit(:representative_id, :name, :policy_number_entered, :street_address, :street_address_2, :city, :state, :zip_code,
-                                    :business_contact_name, :business_phone_number, :business_email_address, :website_url, :group_rating_qualification,
+                                    :business_contact_name, :business_phone_number, :business_email_address, :website_url, :group_rating_qualification, :tpa_start_date, :tpa_end_date,
                                     :group_rating_tier, :group_fees, :user_override, :industry_group, :group_dues, :total_costs, :status, :federal_identification_number,
                                     :cycle_date, :request_date, :quarterly_request, :weekly_request, :ac3_approval, :fee_override, :account_type, :business_contact_name,
                                     affiliate_ids: [])

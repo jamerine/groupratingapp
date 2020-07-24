@@ -61,7 +61,7 @@
       </div>
       <br/>
 
-      <% if policy(@account).edit? %>
+      <% if policy(@account).edit? && current_user.admin? %>
         <%= link_to "Edit Account Info", edit_account_path(params[:id]), class: 'btn btn-primary' %>
       <% else %>
         <%= link_to "Edit Account Info", edit_account_path(params[:id]), class: 'btn btn-default disabled' %>

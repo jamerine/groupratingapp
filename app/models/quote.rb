@@ -65,9 +65,19 @@ class Quote < ActiveRecord::Base
 
   mount_uploader :quote_generated, QuoteUploader
 
+  delegate :status, to: :account, prefix: true, allow_nil: true
+
+  def client_packet?
+    self.account_status&.to_sym&.in?([:client, :new_account, :suspended]) || false
+  end
+
+  def prospect_packet?
+    !client_packet?
+  end
+
   def generate_invoice_number
     policy_year = self.quote_year
-    s = "#{self.account.policy_number_entered}-#{policy_year}-#{self.id}"
+    s           = "#{self.account.policy_number_entered}-#{policy_year}-#{self.id}"
     update_attributes(invoice_number: s)
   end
 

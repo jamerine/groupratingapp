@@ -77,5 +77,38 @@
       .form-group.col-md-6
         = f.label :president_last_name
         = f.text_field :president_last_name, class: 'form-control'
-      .form-group.col-md-12
-        = f.submit "Update", class: "btn btn-primary"
+    - if @representative.matrix?
+      h3.text-center Quote Information
+      .row.text-center
+        .form-group.col-md-4
+          = f.label :signature, 'Signature Image'
+          = f.file_field :signature, class: 'form-control'
+          = image_tag(@representative.signature.url, width: '100%') if @representative.signature
+        .form-group.col-md-4
+          = f.label :president, 'President Image'
+          = f.file_field :president, class: 'form-control'
+          = image_tag(@representative.president.url, width: '100%') if @representative.president
+        .form-group.col-md-4
+          = f.label :footer, 'Footer Image'
+          = f.file_field :footer, class: 'form-control'
+          = image_tag(@representative.footer.url, width: '100%') if @representative.footer
+      .row.text-center
+        .form-group.col-sm-4
+          = f.label :internal_quote_completion_date, 'Internal Quote Completion Date'
+          = f.text_field :internal_quote_completion_date, class: 'form-control quote-datepicker'
+        .form-group.col-sm-4
+          = f.label :bwc_quote_completion_date, 'BWC Quote Completion Date'
+          = f.text_field :bwc_quote_completion_date, class: 'form-control quote-datepicker'
+        .form-group.col-sm-4
+          = f.label :experience_date, 'Experience Date'
+          = f.text_field :experience_date, class: 'form-control quote-datepicker'
+
+    .text-center = f.submit "Update", class: "btn btn-primary"
+
+javascript:
+  $(function () {
+    $('.quote-datepicker').datetimepicker({
+      format:     'YYYY-MM-DD',
+      useCurrent: false
+    });
+  });

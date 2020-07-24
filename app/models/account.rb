@@ -35,6 +35,8 @@
 #  street_address                :string
 #  street_address_2              :string
 #  total_costs                   :float
+#  tpa_end_date                  :date
+#  tpa_start_date                :date
 #  user_override                 :boolean
 #  website_url                   :string
 #  weekly_request                :boolean
@@ -77,8 +79,8 @@ class Account < ActiveRecord::Base
 
   # Scopes
   scope :active_policy, -> { joins(:policy_calculation).where('policy_calculations.current_coverage_status IN (?)', ["ACTIV", "REINS", "LAPSE"]) }
-
   scope :status, -> (status) { where status: status }
+  scope :by_policy_status, -> (status) { joins(:policy_calculation).where('policy_calculations.current_coverage_status = ?', status.upcase) }
   scope :group_rating_tier, -> (group_rating_tier) { where group_rating_tier: group_rating_tier }
   scope :group_retro_tier, -> (group_retro_tier) { where group_retro_tier: group_retro_tier }
   # scope :policy_search, -> (policy_search) { self.search(policy_search)}
@@ -114,6 +116,14 @@ class Account < ActiveRecord::Base
   def self.search_name(search_name)
     search_name = search_name.downcase
     where("LOWER(name) LIKE ?", "%#{search_name}%")
+  end
+
+  def tpa_from_date
+    self.tpa_start_date || Date.new(self.representative.program_year, 12, 1)
+  end
+
+  def tpa_to_date
+    self.tpa_end_date || Date.new(self.representative.quote_year_upper_date.year, 3, 31)
   end
 
   def group_rating_calc(args = {})
