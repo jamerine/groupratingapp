@@ -25,8 +25,8 @@ class UsersController < ApplicationController
       flash[:success] = 'User Created!'
       redirect_to action: :index
     else
-      flash[:danger] = "Error Creating User!"
-      render :edit
+      flash[:danger] = "Error Creating User! #{@user.errors.full_messages.join('. ')}"
+      render :new
     end
   end
 
