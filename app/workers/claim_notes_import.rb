@@ -3,7 +3,7 @@ class ClaimNotesImport
 
   sidekiq_options queue: :import_file
 
-  def perform(notes_hash, representative_id)
+  def perform(notes_hash, representative_id, user_id)
     notes_hash      = notes_hash.with_indifferent_access
     @representative = Representative.find_by(id: representative_id)
 
@@ -19,6 +19,7 @@ class ClaimNotesImport
                                                      title:                 notes_hash[:title])
       @note.title                  ||= 'No Title'
       @note.claim_note_category_id = @category&.id
+      @note.user_id                = user_id
       @note.body                   = notes_hash[:body]
       @note.date                   = notes_hash[:updated_at]
 

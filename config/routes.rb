@@ -289,6 +289,10 @@
 #                                    quote_view_invoice GET        /quotes/:quote_id/view_invoice(.:format)                                       quotes#view_invoice
 #                                 quote_new_group_retro GET        /quotes/:quote_id/new_group_retro(.:format)                                    quotes#new_group_retro
 #                              quote_create_group_retro POST       /quotes/:quote_id/create_group_retro(.:format)                                 quotes#create_group_retro
+#                              test_client_packet_quote GET        /quotes/:id/test_client_packet(.:format)                                       quotes#test_client_packet
+#                            test_prospect_packet_quote GET        /quotes/:id/test_prospect_packet(.:format)                                     quotes#test_prospect_packet
+#                        test_retro_client_packet_quote GET        /quotes/:id/test_retro_client_packet(.:format)                                 quotes#test_retro_client_packet
+#                      test_retro_prospect_packet_quote GET        /quotes/:id/test_retro_prospect_packet(.:format)                               quotes#test_retro_prospect_packet
 #                                                quotes GET        /quotes(.:format)                                                              quotes#index
 #                                                       POST       /quotes(.:format)                                                              quotes#create
 #                                             new_quote GET        /quotes/new(.:format)                                                          quotes#new
@@ -305,6 +309,7 @@
 #                        representative_export_accounts GET        /representatives/:representative_id/export_accounts(.:format)                  representatives#export_accounts
 #              representative_export_159_request_weekly POST       /representatives/:representative_id/export_159_request_weekly(.:format)        representatives#export_159_request_weekly
 #       representative_filter_export_159_request_weekly GET        /representatives/:representative_id/filter_export_159_request_weekly(.:format) representatives#filter_export_159_request_weekly
+#                       representative_import_tpa_dates POST       /representatives/:representative_id/import_tpa_dates(.:format)                 representatives#import_tpa_dates
 #                 representative_import_contact_process POST       /representatives/:representative_id/import_contact_process(.:format)           representatives#import_contact_process
 #                 representative_import_payroll_process POST       /representatives/:representative_id/import_payroll_process(.:format)           representatives#import_payroll_process
 #                   representative_import_claim_process POST       /representatives/:representative_id/import_claim_process(.:format)             representatives#import_claim_process

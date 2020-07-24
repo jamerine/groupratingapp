@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200720155108) do
+ActiveRecord::Schema.define(version: 20200724143503) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -372,6 +372,7 @@ ActiveRecord::Schema.define(version: 20200720155108) do
     t.integer  "representative_number"
     t.integer  "policy_number"
     t.datetime "date"
+    t.integer  "user_id"
   end
 
   create_table "clicd_detail_records", force: :cascade do |t|

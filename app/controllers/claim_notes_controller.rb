@@ -12,7 +12,8 @@ class ClaimNotesController < ApplicationController
   end
 
   def create
-    @note = ClaimNote.new(permitted_params)
+    @note         = ClaimNote.new(permitted_params)
+    @note.user_id = current_user.id
 
     if @note.save
       redirect_to claim_calculation_path(@claim_calculation), notice: 'Note Added Successfully!'
@@ -41,7 +42,7 @@ class ClaimNotesController < ApplicationController
   private
 
   def permitted_params
-    params.require(:claim_note).permit(:title, :body, :claim_calculation_id, :claim_note_category_id, :claim_number, :policy_number, :representative_number)
+    params.require(:claim_note).permit(:title, :body, :claim_calculation_id, :claim_note_category_id, :claim_number, :policy_number, :representative_number, :user_id)
   end
 
   def set_claim_calculation

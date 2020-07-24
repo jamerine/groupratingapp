@@ -13,6 +13,7 @@
 #  updated_at             :datetime         not null
 #  claim_calculation_id   :integer
 #  claim_note_category_id :integer
+#  user_id                :integer
 #
 
 require 'rails_helper'
