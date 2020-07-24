@@ -35,6 +35,6 @@ class AccountPolicyExport
       csv.close
     end
 
-    PolicyExportMailer.policy_export(@user, @representative, csv_string).deliver
+    PolicyExportMailer.policy_export(@user, @representative, csv_string).deliver_later
   end
 end

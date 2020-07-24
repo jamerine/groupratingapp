@@ -321,4 +321,8 @@
                     td = @mira.total_indemnity_paid_amount
                   tr
                     td Total Indemnity Reserve Amount
-                    td = @mira.total_indemnity_reserve_amount 
+                    td = @mira.total_indemnity_reserve_amount
+.row
+  .col-md-12.text-right.text-small
+    small
+      em Mira Data Last Updated: #{l @mira.updated_at, format: :mira}
