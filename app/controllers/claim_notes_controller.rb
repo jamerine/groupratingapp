@@ -27,6 +27,8 @@ class ClaimNotesController < ApplicationController
 
   def update
     if @note.update_attributes(permitted_params)
+      @note.update_attribute(:user_id, current_user.id) if @note.user_id.nil?
+
       redirect_to claim_calculation_path(@claim_calculation), notice: 'Note Updated Successfully!'
     else
       render :edit
