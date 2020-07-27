@@ -28,7 +28,7 @@ class MatrixGroupRatingContract < MatrixPdfReport
     agreement_text "Matrix Claims Management, Inc., #{@representative.full_location_address}", align: :center
     agreement_text "(“Matrix”) hereby offers workers’ Compensation consulting services to:", align: :center
     move_down 15
-    text "<u><b>#{@account.name.titleize}, BWC POLICY #: #{@account.policy_number_entered}</b></u>, (“Client”) for the period beginning on <u><b>  #{@account.tpa_from_date.strftime('%m/%d/%Y')}  </b></u> and ending on <u><b>  #{@account.tpa_to_date.strftime('%m/%d/%Y')}  </b></u> and to renew as stipulated in this agreement.", inline_format: true, size: 10
+    text "<u><b>#{@account.name.titleize}, BWC POLICY #: #{@account.policy_number_entered}</b></u>, (“Client”) for the period beginning on <u><b>  #{@account.tpa_from_date&.strftime('%m/%d/%Y')}  </b></u> and ending on <u><b>  #{@account.tpa_to_date&.strftime('%m/%d/%Y')}  </b></u> and to renew as stipulated in this agreement.", inline_format: true, size: 10
     move_down 15
 
     current_cursor = cursor
@@ -172,8 +172,14 @@ class MatrixGroupRatingContract < MatrixPdfReport
   end
 
   def contract_table_data
+    image_data = if @representative.signature.present?
+                   { image: "#{Rails.env.development? ? 'public/' : '' }#{@representative.signature&.url}", image_height: 15 }
+                 else
+                   ''
+                 end
+
     [[{ content: '<b><u>Matrix Claims Management Inc.</u><b>', colspan: 2 }, '<b><u>Company Name:</u></b>', @account.name.titleize],
-     ['By:', { image: "#{Rails.env.development? ? 'public/' : '' }#{@representative.signature&.url}", image_height: 15 }, 'By:', ''],
+     ['By:', image_data, 'By:', ''],
      ['Printed:', @representative.president_full_name, 'Printed:', ''],
      ['Title:', 'CEO', 'Title:', ''],
      ['Date:', @current_date.strftime('%m/%d/%Y'), 'Date:', '']]

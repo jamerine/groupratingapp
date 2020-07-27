@@ -133,7 +133,7 @@ class MatrixGroupRatingInvoice < MatrixPdfReport
 
     move_down 15
 
-    text "* Note: The Group #{@quote.program_type.to_sym == :group_retro ? 'Retro' : 'Rating'} service fee is based on the most recent historical payroll and claims losses provided by the Ohio BWC and/or the above named employer. The fee may be adjusted pending any changes in payroll. This projection is based on current Ohio BWC data and could be altered or revoked in #{@representative.experience_date.strftime('%m/%d/%y')} experience.", size: 8
+    text "* Note: The Group #{@quote.program_type.to_sym == :group_retro ? 'Retro' : 'Rating'} service fee is based on the most recent historical payroll and claims losses provided by the Ohio BWC and/or the above named employer. The fee may be adjusted pending any changes in payroll. This projection is based on current Ohio BWC data and could be altered or revoked in #{@representative.experience_date&.strftime('%m/%d/%y')} experience.", size: 8
 
     matrix_footer
   end

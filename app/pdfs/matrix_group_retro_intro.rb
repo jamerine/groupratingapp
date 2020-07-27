@@ -57,10 +57,12 @@ class MatrixGroupRetroIntro < MatrixPdfReport
     current_cursor = cursor
 
     bounding_box([0, current_cursor], width: 100) do
-      if Rails.env.development?
-        image open('public/' + @representative.president&.url), width: 100
-      else
-        image open(@representative.president&.url), width: 100
+      if @representative.president.present?
+        if Rails.env.development?
+          image open('public/' + @representative.president&.url), width: 100
+        else
+          image open(@representative.president&.url), width: 100
+        end
       end
     end
 

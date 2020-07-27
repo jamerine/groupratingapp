@@ -40,7 +40,7 @@ class MatrixGroupRetroQuote < MatrixPdfReport
 
     move_down 20
 
-    faq_text "To enroll, complete and fax the following enclosed items by #{@representative.internal_quote_completion_date.strftime('%B %d, %Y')}."
+    faq_text "To enroll, complete and fax the following enclosed items by #{@representative.internal_quote_completion_date&.strftime('%B %d, %Y')}."
 
     if @quote.client_packet?
       bullet_list(["BWC U-153 Employer Statement for Group Retro Rating Program", "Group Retro Rating Safety Assessment", "Matrix Group Rating Agreement (2 pages)"], true)
@@ -57,7 +57,7 @@ class MatrixGroupRetroQuote < MatrixPdfReport
     move_down 25
     faq_text @quote.client_packet? ? "Questions: Laurie Ritter, lritter@matrixtpa.com" : "Questions: Katie Jones, kjones@matrixtpa.com"
     move_down 15
-    text "*Notes: This projection is based on current Ohio BWC data and may be altered or revoked if #{@representative.experience_date.strftime('%m/%d/%y')} experience data adversely affects your eligibility or Ohio BWC rules you ineligible. Your max assessment of 15% equates to #{price(@policy_calculation.total_assessments)}", size: 9
+    text "*Notes: This projection is based on current Ohio BWC data and may be altered or revoked if #{@representative.experience_date&.strftime('%m/%d/%y')} experience data adversely affects your eligibility or Ohio BWC rules you ineligible. Your max assessment of 15% equates to #{price(@policy_calculation.total_assessments)}", size: 9
     matrix_footer
   end
 
