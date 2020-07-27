@@ -97,6 +97,7 @@ class PolicyCalculation < ActiveRecord::Base
   has_many :claim_calculations, dependent: :destroy
   has_many :policy_coverage_status_histories, dependent: :destroy
   has_many :policy_program_histories, dependent: :destroy
+  has_many :payroll_calculations, through: :manual_class_calculations
   belongs_to :representative
   belongs_to :account
 
