@@ -83,15 +83,15 @@
         .form-group.col-md-4
           = f.label :signature, 'Signature Image'
           = f.file_field :signature, class: 'form-control'
-          = image_tag(@representative.signature.url, width: '100%') if @representative.signature
+          = image_tag(@representative.signature&.url, width: '100%') if @representative.signature
         .form-group.col-md-4
           = f.label :president, 'President Image'
           = f.file_field :president, class: 'form-control'
-          = image_tag(@representative.president.url, width: '100%') if @representative.president
+          = image_tag(@representative.president&.url, width: '100%') if @representative.president
         .form-group.col-md-4
           = f.label :footer, 'Footer Image'
           = f.file_field :footer, class: 'form-control'
-          = image_tag(@representative.footer.url, width: '100%') if @representative.footer
+          = image_tag(@representative.footer&.url, width: '100%') if @representative.footer
       .row.text-center
         .form-group.col-sm-4
           = f.label :internal_quote_completion_date, 'Internal Quote Completion Date'

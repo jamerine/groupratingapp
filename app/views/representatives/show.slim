@@ -161,13 +161,13 @@
         .row.form-group style="margin-top: 15px;"
           .col-sm-4
             h5 Signature Image
-            = image_tag(@representative.signature.url, width: '100%') if @representative.signature
+            = image_tag(@representative.signature&.url, width: '100%') if @representative.signature
           .col-sm-4
             h5 President Image
-            = image_tag(@representative.president.url, width: '100%') if @representative.president
+            = image_tag(@representative.president&.url, width: '100%') if @representative.president
           .col-sm-4
             h5 Footer Image
-            = image_tag(@representative.footer.url, width: '100%') if @representative.footer
+            = image_tag(@representative.footer&.url, width: '100%') if @representative.footer
         .row
           .col-sm-4
             h5 Internal Quote Completion Date

@@ -66,9 +66,9 @@ class MatrixPdfReport < PdfReport
 
     bounding_box([bounds.right - 150, 20], width: 150, height: 50) do
       if Rails.env.development?
-        image open('public/' + @representative.footer.url), width: 150
+        image open('public/' + @representative.footer&.url), width: 150
       else
-        image open(@representative.footer.url), width: 150
+        image open(@representative.footer&.url), width: 150
       end
 
       transparent(0) { stroke_bounds }
@@ -108,9 +108,9 @@ class MatrixPdfReport < PdfReport
 
   def signature_image
     if Rails.env.development?
-      image open('public/' + @representative.signature.url), height: 50
+      image open('public/' + @representative.signature&.url), height: 50
     else
-      image open(@representative.signature.url), height: 50
+      image open(@representative.signature&.url), height: 50
     end
   end
 end

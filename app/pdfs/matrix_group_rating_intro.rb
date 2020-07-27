@@ -55,9 +55,9 @@ class MatrixGroupRatingIntro < MatrixPdfReport
 
     bounding_box([0, current_cursor], width: 100) do
       if Rails.env.development?
-        image open('public/' + @representative.president.url), width: 100
+        image open('public/' + @representative.president&.url), width: 100
       else
-        image open(@representative.president.url), width: 100
+        image open(@representative.president&.url), width: 100
       end
     end
 
