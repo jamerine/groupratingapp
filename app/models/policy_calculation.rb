@@ -185,7 +185,6 @@ class PolicyCalculation < ActiveRecord::Base
         @credibility_row = BwcCodesCredibilityMaxLoss.find_by(credibility_group: (@credibility_row.credibility_group - 1))
       end
 
-
       self.manual_class_calculations.find_each do |manual_class|
         manual_class.calculate_limited_losses(@credibility_row.credibility_group)
       end

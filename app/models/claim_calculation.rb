@@ -110,8 +110,7 @@ class ClaimCalculation < ActiveRecord::Base
   end
 
   def comp_awarded
-    (((claim_mira_reducible_indemnity_paid + claim_mira_non_reducible_indemnity_paid) * (1 - claim_subrogation_percent) - (claim_mira_non_reducible_indemnity_paid)) * (1 - claim_handicap_percent) + (claim_mira_non_reducible_indemnity_paid)
-    ) * claim_group_multiplier
+    (((claim_mira_reducible_indemnity_paid + claim_mira_non_reducible_indemnity_paid) * (1 - claim_subrogation_percent) - (claim_mira_non_reducible_indemnity_paid)) * (1 - claim_handicap_percent) + (claim_mira_non_reducible_indemnity_paid)) * claim_group_multiplier
   end
 
   def medical_paid
@@ -173,6 +172,8 @@ class ClaimCalculation < ActiveRecord::Base
     @claim_modified_losses_group_reduced = @claim_group_reduced_amount * (1 - @claim_subrogation_percent)
 
     @claim_modified_losses_individual_reduced = (@claim_individual_reduced_amount * (1 - @claim_subrogation_percent))
+
+    # TODO: ACCOUNT FOR ECP HERE
 
     update_attributes(policy_individual_maximum_claim_value: group_maximum_value, claim_individual_multiplier: @claim_individual_multiplier, claim_group_reduced_amount: @claim_group_reduced_amount, claim_individual_reduced_amount: @claim_individual_reduced_amount, claim_modified_losses_individual_reduced: @claim_modified_losses_individual_reduced, claim_group_multiplier: @claim_group_multiplier, claim_subrogation_percent: @claim_subrogation_percent, claim_modified_losses_group_reduced: @claim_modified_losses_group_reduced)
   end
