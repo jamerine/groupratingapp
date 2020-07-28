@@ -22,5 +22,10 @@ Sidekiq.configure_server do |config|
     url: ENV['REDISCLOUD_URL']
   }
 
+  config.logger.level = ::Logger::INFO
+
+  Rails.logger = Sidekiq::Logging.logger
+  ActiveRecord::Base.logger = Sidekiq::Logging.logger
+
   config.error_handlers << Proc.new { |exception, context_hash| SidekiqErrorNotifier.notify(exception, context_hash) }
 end
