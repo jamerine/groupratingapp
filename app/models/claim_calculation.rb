@@ -91,10 +91,14 @@ class ClaimCalculation < ActiveRecord::Base
     weekly_mira_detail_record || MiraDetailRecord.where('mira_detail_records.claim_number IN (?)', [claim_number, claim_number&.strip, "#{claim_number} "]).where(representative_number: representative_number, policy_number: policy_number).order(updated_at: :desc)&.first
   end
 
+  def democ_detail_records
+    DemocDetailRecord.filter_by(representative_number).where('democ_detail_records.claim_number IN (?)', ["#{self.claim_number} ", self.claim_number]).where(policy_number: self.policy_number)
+  end
+
   def democ_detail_record
     return @democ_detail_record if @democ_detail_record.present?
 
-    @democ_detail_record = DemocDetailRecord.find_by(claim_number: "#{claim_number} ", representative_number: representative_number)
+    @democ_detail_record = democ_detail_records.last
   end
 
   def claim_notes
@@ -119,6 +123,10 @@ class ClaimCalculation < ActiveRecord::Base
 
   def mira_reserve
     ((1 - claim_handicap_percent) * (claim_mira_medical_reserve_amount + (claim_mira_indemnity_reserve_amount)) * claim_group_multiplier * (1 - claim_subrogation_percent))
+  end
+
+  def ecp_enabled?
+    democ_detail_record&.enhanced_care_program_indicator == 'Y'
   end
 
   def representative_name_and_abbreviation
@@ -173,7 +181,9 @@ class ClaimCalculation < ActiveRecord::Base
 
     @claim_modified_losses_individual_reduced = (@claim_individual_reduced_amount * (1 - @claim_subrogation_percent))
 
-    # TODO: ACCOUNT FOR ECP HERE
+    # ECP Addition - 7/28/2020
+    @claim_modified_losses_group_reduced      = ecp_enabled? ? (@claim_modified_losses_group_reduced / 2) : @claim_modified_losses_group_reduced
+    @claim_modified_losses_individual_reduced = ecp_enabled? ? (@claim_modified_losses_individual_reduced / 2) : @claim_modified_losses_individual_reduced
 
     update_attributes(policy_individual_maximum_claim_value: group_maximum_value, claim_individual_multiplier: @claim_individual_multiplier, claim_group_reduced_amount: @claim_group_reduced_amount, claim_individual_reduced_amount: @claim_individual_reduced_amount, claim_modified_losses_individual_reduced: @claim_modified_losses_individual_reduced, claim_group_multiplier: @claim_group_multiplier, claim_subrogation_percent: @claim_subrogation_percent, claim_modified_losses_group_reduced: @claim_modified_losses_group_reduced)
   end

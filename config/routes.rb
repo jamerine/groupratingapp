@@ -506,8 +506,10 @@ Rails.application.routes.draw do
       delete :destroy
       post :import_miras
       post :import_clicds
+      post :import_democs
       post :import_all_miras
       post :import_all_clicds
+      post :import_all_democs
     end
   end
 

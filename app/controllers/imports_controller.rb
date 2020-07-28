@@ -93,6 +93,15 @@ class ImportsController < ApplicationController
     redirect_to imports_path, notice: "Files to be imported and parse have been queued."
   end
 
+  def import_democs
+    require 'open-uri'
+    @representative = Representative.find(import_params[:representative_id])
+
+    ImportDemocProcess.perform_async(@representative.representative_number, @representative.abbreviated_name)
+
+    redirect_to imports_path, notice: "Files to be imported and parse have been queued."
+  end
+
   def import_clicds
     @representative = Representative.find(import_params[:representative_id])
 
@@ -104,6 +113,14 @@ class ImportsController < ApplicationController
   def import_all_miras
     Representative.all.find_each do |representative|
       ImportMiraFilesProcess.perform_async(representative.representative_number, representative.abbreviated_name)
+    end
+
+    redirect_to imports_path, notice: "Files to be imported and parse have been queued."
+  end
+
+  def import_all_democs
+    Representative.all.find_each do |representative|
+      ImportDemocProcess.perform_async(representative.representative_number, representative.abbreviated_name)
     end
 
     redirect_to imports_path, notice: "Files to be imported and parse have been queued."
