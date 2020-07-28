@@ -10,6 +10,17 @@
 
 .container style=("margin-top: 50px;")
   .jumbotron.text-center
+    h1 Import Democ Process
+    = simple_form_for @import, url: import_democs_imports_path do |f|
+      .form-group.row
+        .col-sm-offset-4.col-sm-4
+          = f.input :representative_id, label: 'Process Representative', collection: @representatives, value_method: :id, label_method: :abbreviated_name
+      .row
+        .col-sm-6 = f.submit 'Start Import', class: 'btn btn-info'
+        .col-sm-6 = link_to 'Import All Democs', import_all_democs_imports_path, class: 'btn btn-success', remote: true, method: :post
+
+.container style=("margin-top: 50px;")
+  .jumbotron.text-center
     h1 Import Miras Process
     = simple_form_for @import, url: import_miras_imports_path do |f|
       .form-group.row
