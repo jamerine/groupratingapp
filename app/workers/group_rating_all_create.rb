@@ -214,7 +214,8 @@ class GroupRatingAllCreate
                         reporting_type: payroll_transaction.reporting_type,
                         number_of_employees: payroll_transaction.number_of_employees,
                         payroll_origin: payroll_transaction.payroll_origin,
-                        data_source: payroll_transaction.data_source
+                        data_source: payroll_transaction.data_source,
+                        recently_updated: true
                       )
                     end
                   end
@@ -254,7 +255,8 @@ class GroupRatingAllCreate
                           reporting_type: term_payroll.reporting_type,
                           number_of_employees: term_payroll.number_of_employees,
                           payroll_origin: term_payroll.payroll_origin,
-                          data_source: term_payroll.data_source
+                          data_source: term_payroll.data_source,
+                          recently_updated: true
                       )
                     end
                   end
@@ -302,7 +304,8 @@ class GroupRatingAllCreate
                   reporting_type: payroll_transaction.reporting_type,
                   number_of_employees: payroll_transaction.number_of_employees,
                   payroll_origin: payroll_transaction.payroll_origin,
-                  data_source: payroll_transaction.data_source
+                  data_source: payroll_transaction.data_source,
+                  recently_updated: true
                 )
               end
             end
