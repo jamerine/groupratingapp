@@ -115,7 +115,7 @@ class Account < ActiveRecord::Base
 
   def self.search_name(search_name)
     search_name = search_name.downcase
-    where("LOWER(name) LIKE ?", "%#{search_name}%")
+    joins(:policy_calculation).where("LOWER(accounts.name) LIKE ? OR LOWER(policy_calculations.trading_as_name) LIKE ?", "%#{search_name}%", "%#{search_name}%")
   end
 
   def tpa_from_date
