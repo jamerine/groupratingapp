@@ -14,6 +14,7 @@
 #  policy_number                                                 :integer
 #  policy_transferred                                            :integer
 #  policy_type                                                   :string
+#  recently_updated                                              :boolean          default(FALSE)
 #  reporting_period_end_date                                     :date
 #  reporting_period_start_date                                   :date
 #  reporting_type                                                :string

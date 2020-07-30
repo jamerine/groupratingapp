@@ -1112,10 +1112,11 @@ ActiveRecord::Schema.define(version: 202004020223665) do
     t.integer  "process_payroll_all_transactions_breakdown_by_manual_class_id"
     t.string   "payroll_origin"
     t.string   "data_source"
-    t.datetime "created_at",                                                    null: false
-    t.datetime "updated_at",                                                    null: false
+    t.datetime "created_at",                                                                    null: false
+    t.datetime "updated_at",                                                                    null: false
     t.float    "manual_class_rate"
     t.integer  "manual_class_transferred"
+    t.boolean  "recently_updated",                                              default: false
   end
 
   add_index "payroll_calculations", ["manual_class_calculation_id"], name: "index_payroll_calculations_on_manual_class_calculation_id", using: :btree

@@ -1,8 +1,5 @@
 # == Route Map
 #
-# **************************************************
-# ⛔️ WARNING: Sidekiq testing API enabled, but this is not the test environment.  Your jobs will not go to Redis.
-# **************************************************
 #                                                Prefix Verb       URI Pattern                                                                    Controller#Action
 #                                new_admin_user_session GET        /admin/login(.:format)                                                         active_admin/devise/sessions#new
 #                                    admin_user_session POST       /admin/login(.:format)                                                         active_admin/devise/sessions#create
@@ -168,8 +165,10 @@
 #                                               imports DELETE     /imports(.:format)                                                             imports#destroy
 #                                  import_miras_imports POST       /imports/import_miras(.:format)                                                imports#import_miras
 #                                 import_clicds_imports POST       /imports/import_clicds(.:format)                                               imports#import_clicds
+#                                 import_democs_imports POST       /imports/import_democs(.:format)                                               imports#import_democs
 #                              import_all_miras_imports POST       /imports/import_all_miras(.:format)                                            imports#import_all_miras
 #                             import_all_clicds_imports POST       /imports/import_all_clicds(.:format)                                           imports#import_all_clicds
+#                             import_all_democs_imports POST       /imports/import_all_democs(.:format)                                           imports#import_all_democs
 #                                                       GET        /imports(.:format)                                                             imports#index
 #                                                       POST       /imports(.:format)                                                             imports#create
 #                                            new_import GET        /imports/new(.:format)                                                         imports#new
