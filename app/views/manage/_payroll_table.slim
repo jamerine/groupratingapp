@@ -13,7 +13,6 @@
     tbody
       - @payroll.each do |payroll|
         tr
-          / PolicyCalculation.select(:id).find_by_policy_number(payroll.policy_number).id)
           td = link_to 'View Policy', policy_calculation_path(payroll.policy_calculation), target: '_blank'
           - @payroll_names.each do |name|
             td = payroll.send(name)
@@ -39,7 +38,7 @@ javascript:
       }],
       responsive:   true,
       initComplete: function () {
-        this.api().columns([1, 2, 3, 4, 5, 6, 8, 9, 10, 12]).every(function () {
+        this.api().columns([1, 2, 3, 4, 5, 7, 8, 9, 10, 12]).every(function () {
           var column = this;
           var select = $('<select class="form-control"><option value="">Filter</option></select>')
             .appendTo($(column.footer()).empty())
