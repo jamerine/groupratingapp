@@ -111,6 +111,13 @@
 class WeeklyMiraDetailRecord < ActiveRecord::Base
   scope :filter_by, -> (representative_number) { where(representative_number: representative_number) }
 
+  def self.update_or_create(attributes)
+    obj = first || new
+    obj.assign_attributes(attributes)
+    obj.save
+    obj
+  end
+
   def age_at_injury
     self.claimant_age_at_injury || (claim_injury_date - claimant_date_of_birth)
   end

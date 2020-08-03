@@ -1,18 +1,17 @@
 class ImportMiraData
+  require 'progress_bar/core_ext/enumerable_with_progress'
   include Sidekiq::Worker
   sidekiq_options queue: :import_mira_data, retry: 3
 
-  def perform(representative_number)
-    Mira.by_representative(representative_number).by_record_type.each do |mira|
-      record = MiraDetailRecord.find_or_create_by({ representative_number:    mira.representative_number,
-                                                    record_type:              mira.record_type,
-                                                    requestor_number:         mira.requestor_number,
-                                                    policy_number:            mira.policy_number,
-                                                    claim_number:             mira.claim_number,
-                                                    business_sequence_number: mira.business_sequence_number
-                                                  })
-      record.update_attributes(gather_attributes(mira))
-    end
+  def perform(mira_attributes)
+    mira = Mira.new(mira_attributes)
+    MiraDetailRecord.where({ representative_number:    mira.representative_number,
+                             record_type:              mira.record_type,
+                             requestor_number:         mira.requestor_number,
+                             policy_number:            mira.policy_number,
+                             claim_number:             mira.claim_number,
+                             business_sequence_number: mira.business_sequence_number
+                           }).update_or_create(gather_attributes(mira))
   end
 
   def gather_attributes(mira)

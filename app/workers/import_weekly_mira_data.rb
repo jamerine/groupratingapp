@@ -1,18 +1,17 @@
 class ImportWeeklyMiraData
+  require 'progress_bar/core_ext/enumerable_with_progress'
   include Sidekiq::Worker
   sidekiq_options queue: :import_weekly_mira_data, retry: 3
 
-  def perform(representative_number)
-    WeeklyMira.by_representative(representative_number).by_record_type.each do |mira|
-      record = WeeklyMiraDetailRecord.find_or_create_by({ representative_number:    mira.representative_number,
-                                                          record_type:              mira.record_type,
-                                                          claim_number:             mira.claim_number,
-                                                          requestor_number:         mira.requestor_number,
-                                                          policy_number:            mira.policy_number,
-                                                          business_sequence_number: mira.business_sequence_number
-                                                        })
-      record.update_attributes(gather_attributes(mira))
-    end
+  def perform(mira_attributes)
+    mira = WeeklyMira.new(mira_attributes)
+    WeeklyMiraDetailRecord.where({ representative_number:    mira.representative_number,
+                                   record_type:              mira.record_type,
+                                   claim_number:             mira.claim_number,
+                                   requestor_number:         mira.requestor_number,
+                                   policy_number:            mira.policy_number,
+                                   business_sequence_number: mira.business_sequence_number
+                                 }).update_or_create(gather_attributes(mira))
   end
 
   def gather_attributes(mira)

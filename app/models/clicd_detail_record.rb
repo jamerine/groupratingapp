@@ -29,6 +29,13 @@
 class ClicdDetailRecord < ActiveRecord::Base
   scope :filter_by, -> (representative_number) { where(representative_number: representative_number) }
 
+  def self.update_or_create(attributes)
+    obj = first || new
+    obj.assign_attributes(attributes)
+    obj.save
+    obj
+  end
+
   def icd_status_display
     case self.icd_status
     when "AG"
