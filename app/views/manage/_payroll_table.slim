@@ -7,15 +7,19 @@
   table.table.table-striped.datatable style="display: none;"
     thead
       tr
+        th
         - @payroll_names.each do |name|
           th = name.to_s.titleize
     tbody
       - @payroll.each do |payroll|
         tr
+          / PolicyCalculation.select(:id).find_by_policy_number(payroll.policy_number).id)
+          td = link_to 'View Policy', policy_calculation_path(payroll.policy_calculation), target: '_blank'
           - @payroll_names.each do |name|
             td = payroll.send(name)
     tfoot
       tr
+        th
         - @payroll_names.count.times do
           th style="padding: 10px 5px 6px 5px"
 
@@ -27,10 +31,15 @@ scss:
 javascript:
   $(function () {
     $('.datatable').DataTable({
-      order:        [[0, 'asc']],
+      order:        [[1, 'asc']],
+      columnDefs:   [{
+        targets:    0,
+        orderable:  false,
+        searchable: false,
+      }],
       responsive:   true,
       initComplete: function () {
-        this.api().columns([0, 1, 2, 3, 4, 6, 7, 8, 9, 11]).every(function () {
+        this.api().columns([1, 2, 3, 4, 5, 6, 8, 9, 10, 12]).every(function () {
           var column = this;
           var select = $('<select class="form-control"><option value="">Filter</option></select>')
             .appendTo($(column.footer()).empty())

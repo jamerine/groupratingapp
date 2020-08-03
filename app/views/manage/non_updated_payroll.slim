@@ -3,6 +3,7 @@
     .col-sm-12
       h1 style="margin-bottom: 0;"
         ' #{@representative&.abbreviated_name || ''} Non Updated Payroll
+        small style="font-size: 85%" (within the last two years)
         small.pull-right style="margin-top: 10px;" = link_to 'View Recently Updated Payroll', payroll_manage_path(representative_number: params[:representative_number]), style: 'font-size: 75%'
       hr
   .row style="margin-bottom: 15px;"

@@ -38,6 +38,7 @@
 class PayrollCalculation < ActiveRecord::Base
 
   belongs_to :manual_class_calculation
+  has_one :policy_calculation, foreign_key: :policy_number, primary_key: :policy_number
 
   validates :reporting_period_start_date, :presence => true
   validates :reporting_period_end_date, :presence => true
