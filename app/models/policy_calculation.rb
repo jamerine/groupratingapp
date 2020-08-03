@@ -327,6 +327,10 @@ class PolicyCalculation < ActiveRecord::Base
 
       self.manual_class_calculations.each do |manual|
         unless self.policy_total_individual_premium.nil?
+          if manual.manual_class_estimated_individual_premium.nil? # recalculate premium just in case
+            manual.calculate_premium(self.policy_individual_adjusted_experience_modified_rate + 1, @administrative_rate)
+          end
+
           manual.update_attributes(manual_class_industry_group_premium_percentage: (manual.manual_class_estimated_individual_premium / @policy_total_individual_premium).round(4))
         end
       end
