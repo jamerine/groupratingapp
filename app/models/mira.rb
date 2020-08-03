@@ -448,6 +448,11 @@ class Mira < ActiveRecord::Base
 
   def determine_date(string)
     date_integer = string.to_i || 0
-    date_integer > 0 ? date_integer.to_s.to_date : nil
+
+    begin
+      date_integer > 0 ? date_integer.to_s.to_date : nil
+    rescue
+      nil
+    end
   end
 end

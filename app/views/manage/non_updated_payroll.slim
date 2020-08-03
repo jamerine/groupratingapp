@@ -1,0 +1,20 @@
+.container-fluid
+  .row
+    .col-sm-12
+      h1 style="margin-bottom: 0;"
+        ' #{@representative&.abbreviated_name || ''} Non Updated Payroll
+        small.pull-right style="margin-top: 10px;" = link_to 'View Recently Updated Payroll', payroll_manage_path(representative_number: params[:representative_number]), style: 'font-size: 75%'
+      hr
+  .row style="margin-bottom: 15px;"
+    .col-sm-12 = select_tag(:representative_number, options_from_collection_for_select(@representatives.order(:abbreviated_name), :representative_number, :abbreviated_name, params[:representative_number]), include_blank: "Select Representative", class: 'dropdown-toggle form-control representative')
+
+  - if @representative.present?
+    .row
+      .col-sm-12 style="min-height: 350px" = render 'payroll_table'
+
+javascript:
+  $(function () {
+    $('.representative').change(function () {
+      window.location.href = '/manage/non_updated_payroll?representative_number=' + $(this).val();
+    });
+  });

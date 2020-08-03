@@ -1,0 +1,59 @@
+.spinner.center-center#spinner
+  h2
+    ' Loading...
+    i.fa.fa-cog.fa-spin
+
+.table-responsive
+  table.table.table-striped.datatable style="display: none;"
+    thead
+      tr
+        - @payroll_names.each do |name|
+          th = name.to_s.titleize
+    tbody
+      - @payroll.each do |payroll|
+        tr
+          - @payroll_names.each do |name|
+            td = payroll.send(name)
+    tfoot
+      tr
+        - @payroll_names.count.times do
+          th style="padding: 10px 5px 6px 5px"
+
+scss:
+  .select2-container--bootstrap {
+    display: inline-block !important;
+  }
+
+javascript:
+  $(function () {
+    $('.datatable').DataTable({
+      order:        [[0, 'asc']],
+      responsive:   true,
+      initComplete: function () {
+        this.api().columns([0, 1, 2, 3, 4, 6, 7, 8, 9, 11]).every(function () {
+          var column = this;
+          var select = $('<select class="form-control"><option value="">Filter</option></select>')
+            .appendTo($(column.footer()).empty())
+            .on('change', function () {
+              var val = $.fn.dataTable.util.escapeRegex(
+                $(this).val()
+              );
+
+              column
+                .search(val ? '^' + val + '$' : '', true, false)
+                .draw();
+            });
+
+          column.data().unique().sort().each(function (d, j) {
+            select.append('<option value="' + d + '">' + d + '</option>')
+          });
+        });
+
+        $('#spinner').fadeOut();
+        $('table.table').fadeIn();
+        $("select").select2({
+          theme: "bootstrap"
+        });
+      }
+    });
+  });

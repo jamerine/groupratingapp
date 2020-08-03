@@ -12,17 +12,17 @@
  *
  */
 
-$grid-float-breakpoint: 1285px;
+$grid-float-breakpoint:  1285px;
 
-@import 'trix';
-@import 'normalize';
-@import 'bootstrap-sprockets';
-@import 'bootstrap';
-@import 'font-awesome';
-@import 'bootstrap-datetimepicker';
-@import 'animate';
-@import 'select2';
-@import 'select2-bootstrap';
+@import "trix";
+@import "normalize";
+@import "bootstrap-sprockets";
+@import "bootstrap";
+@import "font-awesome";
+@import "bootstrap-datetimepicker";
+@import "animate";
+@import "select2";
+@import "select2-bootstrap";
 
 .table td, th {
   text-align: center;
@@ -38,15 +38,15 @@ $grid-float-breakpoint: 1285px;
 
 .navbar-default .navbar-header .brand-logo {
   background-position: center;
-  background-size: contain;
-  background-repeat: no-repeat;
-  width: 150px;
-  margin-left: 25px;
+  background-size:     contain;
+  background-repeat:   no-repeat;
+  width:               150px;
+  margin-left:         25px;
 }
 
 .navbar-default .navbar-header .mmhr-brand-logo {
-  background: image-url("minute_men_hr_logo.jpg") center / contain no-repeat;
-  width: 150px;
+  background:  image-url("minute_men_hr_logo.jpg") center / contain no-repeat;
+  width:       150px;
   margin-left: 25px;
 }
 
@@ -69,7 +69,7 @@ $grid-float-breakpoint: 1285px;
 @media (max-width: 1285px) {
   ul.nav.navbar-nav {
     background-color: white;
-    text-align: center;
+    text-align:       center;
   }
 }
 
@@ -86,16 +86,16 @@ html, body {
 
 main {
   padding-top: 115px;
-  min-height: calc(100% - 51px);
+  min-height:  calc(100% - 51px);
 }
 
 .account-header {
-  margin-top: 50px;
-  text-align: center;
+  margin-top:     50px;
+  text-align:     center;
   padding-bottom: 15px;
 
   .account-text {
-    color: rgb(204, 204, 204);
+    color:       rgb(204, 204, 204);
     padding-top: 15px;
   }
 
@@ -130,7 +130,7 @@ main {
 }
 
 .retention-nav, .retention-nav:hover {
-  color: #9d9d9d;
+  color:           #9D9D9D;
   text-decoration: none;
 }
 
@@ -143,8 +143,8 @@ trix-editor {
 }
 
 .invalid-feedback {
-  color: $brand-danger;
-  font-size: 85%;
+  color:      $brand-danger;
+  font-size:  85%;
   font-style: italic;
 }
 
@@ -157,11 +157,11 @@ trix-editor {
 }
 
 $search-results-boarder: 1px solid rgb(204, 204, 204);
-$radius: 4px;
+$radius:                 4px;
 
 #search-claim, #search-policy {
-  margin: 8px 4px;
-  width: auto;
+  margin:    8px 4px;
+  width:     auto;
   max-width: 150px;
 
   @media(max-width: 1440px) {
@@ -169,28 +169,28 @@ $radius: 4px;
   }
 
   #claim-search-wrapper, #policy-search-wrapper {
-    position: absolute;
-    top: 36px;
-    left: 0;
-    background-color: #FFF;
-    min-height: 50px;
-    width: 250%;
-    border: $search-results-boarder;
-    border-radius: $radius;
+    position:         absolute;
+    top:              36px;
+    left:             0;
+    background-color: #FFFFFF;
+    min-height:       50px;
+    width:            250%;
+    border:           $search-results-boarder;
+    border-radius:    $radius;
   }
 
   #claim-search-results, #policy-search-results {
     list-style-type: none;
-    max-height: 500px;
-    overflow-y: auto;
-    overflow-x: hidden;
-    padding: 0;
-    margin: 0;
-    z-index: 999;
+    max-height:      500px;
+    overflow-y:      auto;
+    overflow-x:      hidden;
+    padding:         0;
+    margin:          0;
+    z-index:         999;
 
     ul {
-      width: 100%;
-      list-style: none;
+      width:        100%;
+      list-style:   none;
       padding-left: 0;
 
       li:nth-of-type(even) {
@@ -198,8 +198,8 @@ $radius: 4px;
       }
 
       .claimant-name, .account-name {
-        color: rgb(154, 154, 154);
-        font-size: 12px;
+        color:       rgb(154, 154, 154);
+        font-size:   12px;
         white-space: normal;
       }
 
@@ -207,30 +207,30 @@ $radius: 4px;
         padding: 0 8px;
 
         a {
-          padding: 4px 0;
+          padding:     4px 0;
           white-space: nowrap;
-          width: 100%;
+          width:       100%;
         }
       }
     }
   }
 
   #search-spinner, #policy-search-spinner {
-    position: absolute;
-    top: 50%;
-    left: 50%;
+    position:  absolute;
+    top:       50%;
+    left:      50%;
     transform: translate(-50%, -50%);
 
     i {
-      color: rgb(204, 204, 204);
+      color:     rgb(204, 204, 204);
       font-size: 36px;
     }
   }
 }
 
 .navbar-master {
-  height: 49px;
-  z-index: 1031;
+  height:        49px;
+  z-index:       1031;
   margin-bottom: 0;
 }
 
@@ -247,27 +247,27 @@ $radius: 4px;
     border-color: $brand-primary;
 
     .panel-heading {
-      padding: 10px 0 0;
-      border-bottom: none;
-      background-color: #222;
-      position: relative;
+      padding:          10px 0 0;
+      border-bottom:    none;
+      background-color: #222222;
+      position:         relative;
 
       .claim-number {
-        position: absolute;
-        color: white;
+        position:    absolute;
+        color:       white;
         font-weight: 700;
-        top: 10px;
-        right: 15px;
-        font-size: 18px;
+        top:         10px;
+        right:       15px;
+        font-size:   18px;
       }
 
       ul.nav-tabs {
-        padding: 0 10px;
+        padding:             0 10px;
         border-bottom-color: $brand-primary;
 
         li {
           a {
-            border-color: $brand-primary;
+            border-color:  $brand-primary;
             border-bottom: none;
           }
         }
@@ -275,7 +275,7 @@ $radius: 4px;
         li:not(.active) {
           a {
             background-color: $brand-primary;
-            color: white;
+            color:            white;
           }
         }
       }
@@ -289,7 +289,7 @@ $radius: 4px;
 
         th, td {
           padding-left: 15px;
-          text-align: left;
+          text-align:   left;
         }
       }
     }
@@ -297,18 +297,18 @@ $radius: 4px;
 
 
   dl {
-    width: 100%;
+    width:  100%;
     margin: 0 0 3px;
 
     dt {
-      width: 60%;
+      width:      60%;
       text-align: left;
     }
 
     dd {
       margin-left: calc(60% + 20px);
-      width: auto;
-      text-align: right;
+      width:       auto;
+      text-align:  right;
     }
   }
 
@@ -324,23 +324,30 @@ $radius: 4px;
 }
 
 footer {
-  padding: 15px 0;
-  background-color: #f8f8f8;
-  border-top: 1px solid #e7e7e7;
+  padding:          15px 0;
+  background-color: #F8F8F8;
+  border-top:       1px solid #E7E7E7;
 }
 
 .btn.btn-transparent {
   background-color: transparent;
-  padding: 5px;
-  border: none;
+  padding:          5px;
+  border:           none;
 }
 
 .manage-container {
   .btn-lg {
-    padding-top: 1.5em;
+    padding-top:    1.5em;
     padding-bottom: 1.5em;
-    font-size: 32px;
-    margin-bottom: 30px;
-    white-space: normal;
+    font-size:      32px;
+    margin-bottom:  30px;
+    white-space:    normal;
   }
+}
+
+.center-center {
+  position:  absolute;
+  top:       50%;
+  left:      50%;
+  transform: translate(-50%, -50%);
 }

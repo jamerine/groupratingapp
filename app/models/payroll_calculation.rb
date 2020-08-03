@@ -46,6 +46,10 @@ class PayrollCalculation < ActiveRecord::Base
   validates :data_source, :presence => true
 
   scope :with_estimated_payroll, -> (with_estimated_payroll) { with_estimated_payroll ? where('1 = 1') : where.not(reporting_type: 'E') }
+  scope :recently_updated, -> { where(recently_updated: true) }
+  scope :not_recently_updated, -> { where(recently_updated: false) }
+  scope :by_representative, -> (rep_number) { where(representative_number: rep_number) }
+  scope :within_two_years, -> { where('payroll_calculations.updated_at >= ?', 2.years.ago) }
 
   # after_create :calculate
   # after_destroy :calculate

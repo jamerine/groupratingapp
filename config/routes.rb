@@ -622,6 +622,8 @@ Rails.application.routes.draw do
   resources :welcome
 
   scope :manage do
+    get :payroll, to: 'manage#payroll', as: :payroll_manage
+    get :non_updated_payroll, to: 'manage#non_updated_payroll', as: :non_updated_payroll_manage
     resources :rates
     resources :claim_note_categories
     resources :note_categories
