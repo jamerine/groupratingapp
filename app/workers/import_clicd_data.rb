@@ -5,7 +5,7 @@ class ImportClicdData
 
   def perform(clicd_attributes)
     clicd = Clicd.new(clicd_attributes)
-    ClicdDetailRecord.find_or_create_by({ representative_number:    clicd.representative_number,
+    ClicdDetailRecord.where({ representative_number:    clicd.representative_number,
                                           record_type:              clicd.record_type,
                                           requestor_number:         clicd.requestor_number,
                                           business_sequence_number: clicd.business_sequence_number,
