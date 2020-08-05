@@ -103,6 +103,8 @@ class PolicyCalculation < ActiveRecord::Base
 
   delegate :name, to: :account, prefix: true, allow_nil: false
 
+  scope :by_representative, -> (rep_number) { where(representative_number: rep_number) }
+  scope :updated_this_week, -> { where('updated_at >= ?', 1.week.ago) }
   scope :current_coverage_statuses, -> { all.select(:current_coverage_status).map(&:current_coverage_status).reject(&:blank?).uniq }
 
   def representative_name
