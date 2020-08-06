@@ -38,6 +38,11 @@ class GroupRatingMarkComplete
       end
     end
 
+    Representative.all.find_each do |representative|
+      ImportClicdFilesProcess.perform_async(representative.representative_number, representative.abbreviated_name)
+      ImportMiraFilesProcess.perform_async(representative.representative_number, representative.abbreviated_name)
+    end
+
     # No other files to process, finish up with the Manual Policy Updates (September 2019)
     # HandleManualPolicyCalculations.perform_async(@group_rating.representative&.representative_number)
   end

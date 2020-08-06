@@ -49,8 +49,8 @@ class ImportProcess
     ProcessPolicyCombinePartialToFullLease.where(data_source: 'bwc').delete_all
     ProcessPolicyCombinePartialTransferNoLease.where(data_source: 'bwc').delete_all
     ProcessPolicyCoverageStatusHistory.where(data_source: 'bwc').delete_all
-    ImportMiraFilesProcess.perform_async(representative_number, representative_abbreviated_name)
-    ImportClicdFilesProcess.perform_async(representative_number, representative_abbreviated_name)
+    # ImportMiraFilesProcess.perform_async(representative_number, representative_abbreviated_name)
+    # ImportClicdFilesProcess.perform_async(representative_number, representative_abbreviated_name)
     ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/DEMOCFILE", "democs", import_id, group_rating_id, all_process, import_only)
     ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/MRCLSFILE", "mrcls", import_id, group_rating_id, all_process, import_only)
     ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/MREMPFILE", "mremps", import_id, group_rating_id, all_process, import_only)
