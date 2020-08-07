@@ -199,7 +199,7 @@ class MatrixGroupRetroContract < MatrixPdfReport
                  end
 
     [[{ content: '<b><u>Matrix Claims Management Inc.</u><b>', colspan: 2 }, '<b><u>Company Name:</u></b>', @account.name.titleize],
-     ['By:', image_data, 'By:', ''],
+     ['By:', '', 'By:', ''],
      ['Printed:', @representative.president_full_name, 'Printed:', ''],
      ['Title:', 'CEO', 'Title:', ''],
      ['Date:', @current_date.strftime('%m/%d/%Y'), 'Date:', '']]
