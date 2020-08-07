@@ -190,13 +190,13 @@ class MatrixGroupRetroContract < MatrixPdfReport
   end
 
   def contract_table_data
-    require "open-uri"
+    # require "open-uri"
 
-    image_data = if @representative.signature.present?
-                   { image: "#{Rails.env.development? ? "public/#{@representative.signature&.url}" : open(@representative.signature&.url)}", image_height: 15 }
-                 else
-                   ''
-                 end
+    # image_data = if @representative.signature.present?
+    #                { image: "#{Rails.env.development? ? "public/#{@representative.signature&.url}" : open(@representative.signature&.url)}", image_height: 15 }
+    #              else
+    #                ''
+    #              end
 
     [[{ content: '<b><u>Matrix Claims Management Inc.</u><b>', colspan: 2 }, '<b><u>Company Name:</u></b>', @account.name.titleize],
      ['By:', '', 'By:', ''],
