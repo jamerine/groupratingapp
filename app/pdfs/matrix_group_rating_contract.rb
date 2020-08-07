@@ -173,7 +173,7 @@ class MatrixGroupRatingContract < MatrixPdfReport
 
   def contract_table_data
     image_data = if @representative.signature.present?
-                   { image: "#{Rails.env.development? ? 'public/' : '' }#{@representative.signature&.url}", image_height: 15 }
+                   { image: signature_image, image_height: 15 }
                  else
                    ''
                  end
