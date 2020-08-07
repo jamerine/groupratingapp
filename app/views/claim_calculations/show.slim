@@ -64,7 +64,7 @@
           .panel-body
             dl.dl-horizontal
               dt Percentage:
-              dd = number_to_percentage(@claim_calculation&.claim_subrogation_percent * 100, precision: 0)
+              dd = number_to_percentage((@claim_calculation&.claim_subrogation_percent || 0) * 100, precision: 0)
               dt Amount:
               dd = number_to_currency(@claim_calculation&.claim_total_subrogation_collected, precision: 0)
       .col-md-4
