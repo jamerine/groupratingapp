@@ -190,8 +190,10 @@ class MatrixGroupRetroContract < MatrixPdfReport
   end
 
   def contract_table_data
+    require "open-uri"
+
     image_data = if @representative.signature.present?
-                   { image: "#{Rails.env.development? ? 'public/' : '' }#{@representative.signature&.url}", image_height: 15 }
+                   { image: "#{Rails.env.development? ? "public/#{@representative.signature&.url}" : open(@representative.signature&.url)}", image_height: 15 }
                  else
                    ''
                  end
