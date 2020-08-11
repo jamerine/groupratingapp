@@ -24,7 +24,12 @@ class NotesController < ApplicationController
 
     if @note.save
       flash[:notice] = "Notes was created successfully"
-      redirect_to account_path(@account, group: @note.is_group, retention: @note.is_retention)
+
+      if !@note.is_group? && !@note.is_retention?
+        redirect_to policy_calculation_path(@account.policy_calculation, group: @note.is_group, retention: @note.is_retention)
+      else
+        redirect_to account_path(@account, group: @note.is_group, retention: @note.is_retention)
+      end
     else
       flash[:alert] = "There was an error creating note. Please try again."
       render :new
