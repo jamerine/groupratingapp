@@ -624,6 +624,9 @@ Rails.application.routes.draw do
   scope :manage do
     get :payroll, to: 'manage#payroll', as: :payroll_manage
     get :non_updated_payroll, to: 'manage#non_updated_payroll', as: :non_updated_payroll_manage
+    get :payroll_diff, to: 'manage#payroll_diff', as: :payroll_diff
+    get :payroll_diff_ids, to: 'manage#payroll_diff_ids', as: :payroll_diff_ids
+    get :claim_diff, to: 'manage#claim_diff', as: :claim_diff
     resources :rates
     resources :claim_note_categories
     resources :note_categories

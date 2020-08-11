@@ -51,6 +51,7 @@ class PayrollCalculation < ActiveRecord::Base
   scope :not_recently_updated, -> { where(recently_updated: false) }
   scope :by_representative, -> (rep_number) { where(representative_number: rep_number) }
   scope :within_two_years, -> { where('payroll_calculations.updated_at >= ?', 2.years.ago) }
+  scope :with_policy_updated_in_quarterly_report, -> { joins(:policy_calculation).where('policy_calculations.updated_at >= ?', Date.parse('2020-07-30')).distinct }
 
   # after_create :calculate
   # after_destroy :calculate
@@ -60,6 +61,18 @@ class PayrollCalculation < ActiveRecord::Base
     obj.assign_attributes(attributes)
     obj.save
     obj
+  end
+
+  def self.to_csv
+    require 'csv'
+
+    CSV.generate do |csv|
+      csv << csv_column_headers
+
+      all.each do |record|
+        csv << csv_formatted_attributes(record)
+      end
+    end
   end
 
   # def self.assign_or_new(attributes)
@@ -74,6 +87,29 @@ class PayrollCalculation < ActiveRecord::Base
     self.manual_class_calculation.policy_calculation.calculate_experience
     self.manual_class_calculation.policy_calculation.calculate_premium
     self.manual_class_calculation.policy_calculation.account.group_rating
+  end
+
+  def self.csv_column_headers
+    %w[id policy_number manual_class_type manual_number reporting_period_start_date reporting_period_end_date manual_class_payroll reporting_type policy_transferred transfer_creation_date data_source manual_class_rate manual_class_transferred updated_at]
+  end
+
+  def self.csv_formatted_attributes(record)
+    [
+      record.id,
+      record.policy_number,
+      record.manual_class_type,
+      record.manual_number,
+      record.reporting_period_start_date,
+      record.reporting_period_end_date,
+      record.manual_class_payroll,
+      record.reporting_type,
+      record.policy_transferred,
+      record.transfer_creation_date,
+      record.data_source,
+      record.manual_class_rate,
+      record.manual_class_transferred,
+      I18n.l(record.updated_at)
+    ]
   end
 
 end

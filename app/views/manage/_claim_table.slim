@@ -8,18 +8,18 @@
     thead
       tr
         th
-        - @payroll_names.each do |name|
+        - @claim_names.each do |name|
           th = name.to_s.titleize
     tbody
-      - @payroll.each do |payroll|
+      - @claims.each do |claim|
         tr
-          td = link_to 'View Policy', policy_calculation_path(payroll.policy_calculation), target: '_blank'
-          - @payroll_names.each do |name|
-            td = payroll.send(name)
+          td = link_to 'View Claim', claim_calculation_path(claim), target: '_blank'
+          - @claim_names.each do |name|
+            td = claim.send(name)
     tfoot
       tr
         th
-        - @payroll_names.count.times do
+        - @claim_names.count.times do
           th style="padding: 10px 5px 6px 5px"
 
 scss:

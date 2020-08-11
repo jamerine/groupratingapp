@@ -6,13 +6,13 @@ class ImportClicdData
   def perform(clicd_attributes)
     clicd = Clicd.new(clicd_attributes)
     ClicdDetailRecord.where({ representative_number:    clicd.representative_number,
-                                          record_type:              clicd.record_type,
-                                          requestor_number:         clicd.requestor_number,
-                                          business_sequence_number: clicd.business_sequence_number,
-                                          policy_number:            clicd.policy_number,
-                                          claim_number:             clicd.claim_number,
-                                          icd_code:                 clicd.icd_code
-                                        }).update_or_create(gather_attributes(clicd))
+                              record_type:              clicd.record_type,
+                              requestor_number:         clicd.requestor_number,
+                              business_sequence_number: clicd.business_sequence_number,
+                              policy_number:            clicd.policy_number,
+                              claim_number:             clicd.claim_number,
+                              icd_code:                 clicd.icd_code
+                            }).update_or_create(gather_attributes(clicd))
   end
 
   def gather_attributes(clicd)

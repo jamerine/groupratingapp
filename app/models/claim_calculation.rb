@@ -63,12 +63,25 @@ class ClaimCalculation < ActiveRecord::Base
   belongs_to :policy_calculation
 
   attr_accessor :comp_awarded, :medical_paid, :mira_reserve, :address_id
+  scope :by_representative, -> (rep_number) { where(representative_number: rep_number) }
 
   def self.update_or_create(attributes)
     obj = first || new
     obj.assign_attributes(attributes)
     obj.save
     obj
+  end
+
+  def self.to_csv
+    require 'csv'
+
+    CSV.generate do |csv|
+      csv << csv_column_headers
+
+      all.each do |record|
+        csv << csv_formatted_attributes(record)
+      end
+    end
   end
 
   def representative_name
@@ -92,7 +105,7 @@ class ClaimCalculation < ActiveRecord::Base
   end
 
   def democ_detail_records
-    DemocDetailRecord.filter_by(representative_number).where('democ_detail_records.claim_number IN (?)', ["#{self.claim_number} ", self.claim_number]).where(policy_number: self.policy_number)
+    DemocDetailRecord.filter_by(representative_number).where('democ_detail_records.claim_number IN (?)', ["#{self.claim_number} ", self.claim_number, self.claim_number.strip]).where(policy_number: self.policy_number)
   end
 
   def democ_detail_record
@@ -209,5 +222,28 @@ class ClaimCalculation < ActiveRecord::Base
 
   def max_value
     self.policy_calculation.policy_maximum_claim_value&.round(0)
+  end
+
+  private
+
+  def self.csv_column_headers
+    %w[id claim_combined claim_manual_number claim_number claim_status claim_type claimant_name combined_into_claim_number data_source policy_number policy_type updated_at]
+  end
+
+  def self.csv_formatted_attributes(record)
+    [
+      record.id,
+      record.claim_combined,
+      record.claim_manual_number,
+      record.claim_number,
+      record.claim_status,
+      record.claim_type,
+      record.claimant_name,
+      record.combined_into_claim_number,
+      record.data_source,
+      record.policy_number,
+      record.policy_type,
+      I18n.l(record.updated_at)
+    ]
   end
 end

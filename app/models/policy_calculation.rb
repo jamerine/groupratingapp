@@ -103,6 +103,9 @@ class PolicyCalculation < ActiveRecord::Base
 
   delegate :name, to: :account, prefix: true, allow_nil: false
 
+  scope :by_representative, -> (rep_number) { where(representative_number: rep_number) }
+  scope :updated_in_quarterly_report, -> { where('policy_calculations.updated_at >= ?', Date.parse('2020-07-30')) }
+  scope :not_recently_updated_payroll, -> { joins(manual_class_calculations: :payroll_calculations).where(payroll_calculations: { recently_updated: false }).distinct }
   scope :current_coverage_statuses, -> { all.select(:current_coverage_status).map(&:current_coverage_status).reject(&:blank?).uniq }
 
   def representative_name
