@@ -3,7 +3,7 @@ class ManageController < ApplicationController
 
   EXCLUDED_NAMES = [:id, :policy_type, :process_payroll_all_transactions_breakdown_by_manual_class_id, :number_of_employees, :payroll_origin, :manual_class_calculation_id, :representative_number, :recently_updated, :created_at, :updated_at].freeze
 
-  before_action :set_payroll_names
+  before_action :set_payroll_names, :set_claim_names
 
   def index
   end
@@ -13,32 +13,65 @@ class ManageController < ApplicationController
     @payroll        = get_payroll.recently_updated if @representative.present?
   end
 
-  def payroll_diff
+  def payroll_diff_ids
     require 'open-uri'
 
     @representative = Representative.find_by(representative_number: 1740) # Matrix
-    # Rate.delete_all
-    # import_file(Rails.root.join('app', 'assets', 'documents', 'RATEFILE.txt'), 'rates')
-    #
-    # Pcomb.delete_all
-    # import_file(Rails.root.join('app', 'assets', 'documents', 'PCOMBFILE.txt'), 'pcombs')
+    payroll_ids     = File.read(Rails.root.join('app', 'assets', 'documents', 'payroll_ids.txt')).split(',')
+    @payroll        = PayrollCalculation.includes(:policy_calculation).where('id IN (?)', payroll_ids)
+    @payroll_count  = @payroll.count
 
     respond_to do |format|
       format.html
-      format.js do
-        payroll = PayrollCalculation.by_representative(1740).not_recently_updated.with_policy_updated_in_quarterly_report
-        # pcomb_lines    = File.readlines(Rails.root.join('app', 'assets', 'documents', 'PCOMBFILE.txt'))
-        #     rate_lines     = File.readlines(Rails.root.join('app', 'assets', 'documents', 'RATEFILE.txt'))
-        #     @pcomb_lines   = prepare_pcomb_lines(pcomb_lines)
-        #     @rate_lines    = prepare_rate_lines(rate_lines)
-        payroll        = check_rates(payroll).compact
-        @payroll       = check_pcombs(payroll).compact # Returns payroll that doesnt match
-        @payroll       = @payroll.uniq
-        @payroll_count = @payroll.count
+      format.csv { send_data @payroll.to_csv }
+    end
+  end
 
-        render partial: 'manage/payroll_table'
-        # render json: { success: true, html: (render_to_string 'manage/_payroll_table', layout: false) }
-      end
+  # def payroll_diff
+  #   require 'open-uri'
+  #
+  #   @representative = Representative.find_by(representative_number: 1740) # Matrix
+  #   # Rate.delete_all
+  #   # import_file(Rails.root.join('app', 'assets', 'documents', 'RATEFILE.txt'), 'rates')
+  #   #
+  #   # Pcomb.delete_all
+  #   # import_file(Rails.root.join('app', 'assets', 'documents', 'PCOMBFILE.txt'), 'pcombs')
+  #
+  #   respond_to do |format|
+  #     format.html
+  #     format.js do
+  #       payroll = PayrollCalculation.by_representative(1740).not_recently_updated.with_policy_updated_in_quarterly_report
+  #       # pcomb_lines    = File.readlines(Rails.root.join('app', 'assets', 'documents', 'PCOMBFILE.txt'))
+  #       #     rate_lines     = File.readlines(Rails.root.join('app', 'assets', 'documents', 'RATEFILE.txt'))
+  #       #     @pcomb_lines   = prepare_pcomb_lines(pcomb_lines)
+  #       #     @rate_lines    = prepare_rate_lines(rate_lines)
+  #       payroll        = check_rates(payroll).compact
+  #       @payroll       = check_pcombs(payroll).compact # Returns payroll that doesnt match
+  #       @payroll       = @payroll.uniq
+  #       @payroll_count = @payroll.count
+  #
+  #       render partial: 'manage/payroll_table'
+  #       # render json: { success: true, html: (render_to_string 'manage/_payroll_table', layout: false) }
+  #     end
+  #   end
+  # end
+
+  def claim_diff
+    require 'open-uri'
+
+    @representative = Representative.find_by(representative_number: 1740) # Matrix
+    # Democ.delete_all
+    # DemocDetailRecord.filter_by(1740).delete_all
+    # import_file(Rails.root.join('app', 'assets', 'documents', 'DEMOCFILE.txt'), 'democs')
+
+    @representative = Representative.find_by(representative_number: 1740) # Matrix
+    claim_ids       = File.readlines(Rails.root.join('app', 'assets', 'documents', 'claim_ids.txt')).map(&:strip)
+    @claims         = ClaimCalculation.where('id IN (?)', claim_ids)
+    @claim_count    = @claims.count
+
+    respond_to do |format|
+      format.html
+      format.csv { send_data @claims.to_csv }
     end
   end
 
@@ -51,6 +84,10 @@ class ManageController < ApplicationController
 
   def set_payroll_names
     @payroll_names = PayrollCalculation.attribute_names.map { |name| name.to_sym unless name.to_sym.in?(EXCLUDED_NAMES) }.compact
+  end
+
+  def set_claim_names
+    @claim_names = ClaimCalculation.attribute_names.map { |name| name.to_sym unless name.to_sym.in?(EXCLUDED_NAMES) }.compact
   end
 
   def get_payroll

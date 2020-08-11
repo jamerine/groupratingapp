@@ -1,0 +1,21 @@
+.container-fluid
+  .row
+    .col-sm-12
+      h1 style="margin-bottom: 15px;"
+        ' #{@representative&.abbreviated_name || ''} Claim Differences
+        small.text-small
+          ' (Claims in system but not BWC file)
+      hr
+  / .row style="margin-bottom: 15px;"
+  /   .col-sm-12 = select_tag(:representative_number, options_from_collection_for_select(@representatives.order(:abbreviated_name), :representative_number, :abbreviated_name, params[:representative_number]), include_blank: "Select Representative", class: 'dropdown-toggle form-control representative')
+
+  - if @representative.present?
+    .row
+      #payroll-placeholder.col-sm-12 style="min-height: 350px" = render 'claim_table'
+
+javascript:
+  $(function () {
+    $('.representative').change(function () {
+      window.location.href = '/manage/payroll?representative_number=' + $(this).val();
+    });
+  });

@@ -1,0 +1,85 @@
+.spinner.center-center#spinner
+  h2
+    ' Loading...
+    i.fa.fa-cog.fa-spin
+
+.table-responsive
+  table.table.table-striped.datatable style="display: none;"
+    thead
+      tr
+        th
+        - @claim_names.each do |name|
+          th = name.to_s.titleize
+    tbody
+      - @claims.each do |claim|
+        tr
+          td = link_to 'View Claim', claim_calculation_path(claim), target: '_blank'
+          - @claim_names.each do |name|
+            td = claim.send(name)
+    tfoot
+      tr
+        th
+        - @claim_names.count.times do
+          th style="padding: 10px 5px 6px 5px"
+
+scss:
+  .select2-container--bootstrap {
+    display: inline-block !important;
+  }
+
+  a.buttons-collection {
+    margin-left: 1em;
+  }
+
+javascript:
+  $(function () {
+    $('.datatable').DataTable({
+      order:        [[1, 'asc']],
+      columnDefs:   [{
+        targets:    0,
+        orderable:  false,
+        searchable: false,
+      }],
+      dom:          'Bfrtip',
+      buttons:      [
+        {
+          extend:  'collection',
+          text:    'Export',
+          buttons: [
+            'copy',
+            'excel',
+            'csv',
+            'pdf',
+            'print'
+          ]
+        }
+      ],
+      responsive:   true,
+      initComplete: function () {
+        this.api().columns([1, 2, 3, 4, 5, 7, 8, 9, 10, 12]).every(function () {
+          var column = this;
+          var select = $('<select class="form-control"><option value="">Filter</option></select>')
+            .appendTo($(column.footer()).empty())
+            .on('change', function () {
+              var val = $.fn.dataTable.util.escapeRegex(
+                $(this).val()
+              );
+
+              column
+                .search(val ? '^' + val + '$' : '', true, false)
+                .draw();
+            });
+
+          column.data().unique().sort().each(function (d, j) {
+            select.append('<option value="' + d + '">' + d + '</option>')
+          });
+        });
+
+        $('#spinner').fadeOut();
+        $('table.table').fadeIn();
+        $("select").select2({
+          theme: "bootstrap"
+        });
+      }
+    });
+  });
