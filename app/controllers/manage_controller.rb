@@ -14,14 +14,32 @@ class ManageController < ApplicationController
   end
 
   def payroll_diff
+    require 'open-uri'
+
     @representative = Representative.find_by(representative_number: 1740) # Matrix
-    @payroll        = PolicyCalculation.includes(:payroll_calculations).by_representative(@representative.representative_number).updated_this_week.limit(5).flat_map { |policy| policy.payroll_calculations.not_recently_updated }.uniq
-    # @payroll    = []
-    pcomb_lines    = File.readlines(Rails.root.join('app', 'assets', 'documents', 'PCOMBFILE.txt'))
-    rate_lines     = File.readlines(Rails.root.join('app', 'assets', 'documents', 'RATEFILE.txt'))
-    @payroll       = check_pcombfile(pcomb_lines) #returns payroll that doesnt match
-    @payroll_count = @payroll.count
-    @payroll       = @payroll.compact
+    # Rate.delete_all
+    # import_file(Rails.root.join('app', 'assets', 'documents', 'RATEFILE.txt'), 'rates')
+    #
+    # Pcomb.delete_all
+    # import_file(Rails.root.join('app', 'assets', 'documents', 'PCOMBFILE.txt'), 'pcombs')
+
+    respond_to do |format|
+      format.html
+      format.js do
+        payroll = PayrollCalculation.by_representative(1740).not_recently_updated.with_policy_updated_in_quarterly_report
+        # pcomb_lines    = File.readlines(Rails.root.join('app', 'assets', 'documents', 'PCOMBFILE.txt'))
+        #     rate_lines     = File.readlines(Rails.root.join('app', 'assets', 'documents', 'RATEFILE.txt'))
+        #     @pcomb_lines   = prepare_pcomb_lines(pcomb_lines)
+        #     @rate_lines    = prepare_rate_lines(rate_lines)
+        payroll        = check_rates(payroll).compact
+        @payroll       = check_pcombs(payroll).compact # Returns payroll that doesnt match
+        @payroll       = @payroll.uniq
+        @payroll_count = @payroll.count
+
+        render partial: 'manage/payroll_table'
+        # render json: { success: true, html: (render_to_string 'manage/_payroll_table', layout: false) }
+      end
+    end
   end
 
   def non_updated_payroll
@@ -39,20 +57,80 @@ class ManageController < ApplicationController
     PayrollCalculation.by_representative(@representative.representative_number).includes(:policy_calculation)
   end
 
-  def check_pcombfile(lines)
-    records = []
-
-    @payroll.map do |payroll|
-      payroll unless in_pcomb_file(lines, payroll.policy_number, payroll.manual_class_payroll, payroll.manual_number)
-    end
+  def prepare_pcomb_lines(lines)
+    lines.map { |line| [line[0, 6]&.to_i, line[14, 8]&.to_i, line[101, 13]&.to_f, line[77, 5]&.to_i] }.uniq
   end
 
-  def in_pcomb_file(lines, policy_number, manual_class_payroll, manual_number)
-    true.in?(lines.map do |line|
-      line[0, 6]&.to_i == 1740 &&
-        line[14, 8]&.to_i == policy_number &&
-        line[101, 13]&.to_f == manual_class_payroll &&
-        line[77, 5]&.to_i == manual_number
-    end.uniq)
+  def prepare_rate_lines(lines)
+    lines.map do |line|
+      line_parts = line.split('|')
+      [line_parts[1]&.to_i, line_parts[3]&.to_i, line_parts[22]&.to_f, line_parts[11]&.to_i]
+    end.uniq
+  end
+
+  def check_file(payroll, lines)
+    require 'progress_bar/core_ext/enumerable_with_progress'
+
+    payroll.with_progress.select { |payroll_item| !in_file(lines, payroll_item.policy_number, payroll_item.manual_class_payroll, payroll_item.manual_number) }
+  end
+
+  def check_rates(payroll)
+    require 'progress_bar/core_ext/enumerable_with_progress'
+
+    payroll.select { |payroll_item| !RateDetailRecord.exists?(representative_number: 1740, payroll: payroll_item.manual_class_payroll, policy_number: payroll_item.policy_number, manual_class: payroll_item.manual_number) }
+  end
+
+  def check_pcombs(payroll)
+    require 'progress_bar/core_ext/enumerable_with_progress'
+
+    payroll.select { |payroll_item| !PcombDetailRecord.exists?(representative_number: 1740, manual_payroll: payroll_item.manual_class_payroll, policy_number: payroll_item.policy_number, ncci_manual_number: payroll_item.manual_number) }
+  end
+
+  def in_file(lines, policy_number, manual_class_payroll, manual_number)
+    [1740, policy_number, manual_class_payroll, manual_number].in? lines
+  end
+
+  def import_file(url, table_name)
+    begin
+      time1 = Time.new
+      puts "Start Time: " + time1.inspect
+      conn = ActiveRecord::Base.connection
+      rc   = conn.raw_connection
+      if table_name == 'rates'
+        rc.exec("COPY " + table_name + " (single_rec) FROM STDIN WITH DELIMITER AS '~'")
+      else
+        rc.exec("COPY " + table_name + " (single_rec) FROM STDIN WITH DELIMITER AS '|'")
+      end
+
+      file = open(url)
+
+      while !file.eof?
+        # Add row to copy data
+        line = file.readline
+        if line[40, 4] == "0000"
+          #puts "incorrect characters"
+        else
+          rc.put_copy_data(line)
+        end
+      end
+
+
+      # We are done adding copy data
+      rc.put_copy_end
+      # Display any error messages
+      while res = rc.get_result
+        if e_message = res.error_message
+          p e_message
+        end
+      end
+
+    rescue OpenURI::HTTPError => e
+      rc.put_copy_end unless rc.nil?
+      # The CLICD File doesn't exist
+      puts "Skipped File..."
+    end
+
+    result = ActiveRecord::Base.connection.execute("SELECT public.proc_process_flat_" + table_name + "()")
+    result.clear
   end
 end

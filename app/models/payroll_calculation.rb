@@ -51,6 +51,7 @@ class PayrollCalculation < ActiveRecord::Base
   scope :not_recently_updated, -> { where(recently_updated: false) }
   scope :by_representative, -> (rep_number) { where(representative_number: rep_number) }
   scope :within_two_years, -> { where('payroll_calculations.updated_at >= ?', 2.years.ago) }
+  scope :with_policy_updated_in_quarterly_report, -> { joins(:policy_calculation).where('policy_calculations.updated_at >= ?', Date.parse('2020-07-30')).distinct }
 
   # after_create :calculate
   # after_destroy :calculate

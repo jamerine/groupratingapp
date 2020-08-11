@@ -31,4 +31,5 @@
 #
 
 class RateDetailRecord < ActiveRecord::Base
+  scope :filter_by, -> (representative_number) { where(representative_number: representative_number) }
 end
