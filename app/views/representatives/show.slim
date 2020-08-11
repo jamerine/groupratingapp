@@ -130,7 +130,7 @@
       br
       hr
 
-  - if policy(@representative).fee_calculations? && current_user.admin?
+  - if current_user.manager?
     .container.text-center
       .row
         h3 Quoting & Fees

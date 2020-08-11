@@ -36,7 +36,7 @@
               <%= raw(note.description) %>
           </div>
           <div class="col col-md-1 vcenter">
-            <% if current_user.admin? %>
+            <% if current_user.manager? %>
              <%= link_to 'Edit', edit_account_note_path(account_id: note.account.id, id: note.id) %> |
             <% end %>
              <%= link_to 'View', account_note_path(account_id: note.account.id, id: note.id) %>

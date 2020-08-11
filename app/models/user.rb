@@ -38,7 +38,7 @@ class User < ActiveRecord::Base
 
   validates_presence_of :role, :first_name, :last_name
 
-  enum role: [:admin, :client, :general, :read_only]
+  enum role: [:admin, :client, :manager, :general, :read_only]
 
   def full_name
     "#{first_name} #{last_name}"
