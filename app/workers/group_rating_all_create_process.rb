@@ -16,5 +16,4 @@ class GroupRatingAllCreateProcess
 
     GroupRatingMarkComplete.perform_async(@group_rating.id, all_process)
   end
-
 end
