@@ -19,7 +19,7 @@
         <td><%= link_to "#{claim.claim_number}", claim_calculation_path(claim), target: '_blank' %></td>
         <td><%= claim.claimant_name&.slice(0..20) %></td>
         <td><%= claim.claim_injury_date&.strftime("%m/%d/%y") %></td>
-        <td><%= number_to_percentage(claim.claim_handicap_percent * 100, precision: 0) %></td>
+        <td><%= number_to_percentage((claim.claim_handicap_percent || 0) * 100, precision: 0) %></td>
         <td><%= number_to_currency(claim.comp_awarded, precision: 0) %></td>
         <td><%= number_to_currency(claim.medical_paid, precision: 0) %></td>
         <td><%= number_to_currency(claim.mira_reserve, precision: 0) %></td>
