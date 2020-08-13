@@ -130,7 +130,7 @@
       br
       hr
 
-  - if current_user.manager?
+  - if current_user.admin_or_manager?
     .container.text-center
       .row
         h3 Quoting & Fees

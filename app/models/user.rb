@@ -52,6 +52,10 @@ class User < ActiveRecord::Base
     representative_to_use.logo_url
   end
 
+  def admin_or_manager?
+    self.role.to_sym.in? [:admin, :manager]
+  end
+
   private
 
   def representative_to_use
