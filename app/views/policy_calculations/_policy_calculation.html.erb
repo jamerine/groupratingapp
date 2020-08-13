@@ -154,7 +154,7 @@
   <% original_modifier_as_percent = (original_modifier.to_f * 100.00).to_f %>
   <% min_modifier = original_modifier_as_percent.to_i - 4 %>
   <% max_modifier = original_modifier_as_percent.to_i + 4 %>
-  <% if @policy_calculation.policy_credibility_percent&.zero? || @policy_calculation.policy_total_limited_losses&.zero? %>
+  <% if @policy_calculation.policy_credibility_percent.nil? || @policy_calculation.policy_credibility_percent&.zero? || @policy_calculation.policy_total_limited_losses.nil? || @policy_calculation.policy_total_limited_losses&.zero? %>
     <% ntm = 0.0 %>
   <% else %>
     <% ntm = ((0.01 / @policy_calculation.policy_credibility_percent) * @policy_calculation.policy_total_limited_losses).round(0) %>
