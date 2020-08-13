@@ -14,6 +14,7 @@ production:
   - import_clicd_data
   - import_mira_data
   - import_weekly_mira_data
+  - all_representatives_process
   - parse_file
   - group_rating_step_one
   - group_rating_step_two
