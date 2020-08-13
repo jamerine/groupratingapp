@@ -145,7 +145,7 @@ class PolicyCalculation < ActiveRecord::Base
   end
 
   def adjusted_total_modifier(policy_individual_total_modifier = self.policy_individual_total_modifier)
-    experience_modifier = policy_individual_total_modifier + 1
+    experience_modifier = (policy_individual_total_modifier || 0) + 1
 
     if experience_modifier > 2.00
       experience_modifier = (experience_modifier * 1.05).round(2)
