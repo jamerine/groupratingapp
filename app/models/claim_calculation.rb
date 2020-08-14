@@ -159,7 +159,7 @@ class ClaimCalculation < ActiveRecord::Base
     @policy_calculation = self.policy_calculation
 
     @claim_group_multiplier =
-      if self.claim_unlimited_limited_loss < 250000
+      if self.claim_unlimited_limited_loss.nil? || self.claim_unlimited_limited_loss < 250000
         1
       else
         (250000 / self.claim_unlimited_limited_loss)

@@ -194,7 +194,7 @@ class PolicyCalculation < ActiveRecord::Base
 
       @policy_total_limited_losses = self.manual_class_calculations.map { |manual| manual.limited_losses_without_estimates(@credibility_row.credibility_group) }.compact.sum.round(0) # TODO: NEED NO ESTIMATED PAYROLL IN THIS CALCULATION
 
-      self.claim_calculations.find_each do |claim|
+      self.claim_calculations.each_with_progress do |claim|
         claim.recalculate_experience(@credibility_row.group_maximum_value)
       end
 
