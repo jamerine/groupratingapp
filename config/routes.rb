@@ -1,5 +1,8 @@
 # == Route Map
 #
+# **************************************************
+# ⛔️ WARNING: Sidekiq testing API enabled, but this is not the test environment.  Your jobs will not go to Redis.
+# **************************************************
 #                                                Prefix Verb       URI Pattern                                                                    Controller#Action
 #                                new_admin_user_session GET        /admin/login(.:format)                                                         active_admin/devise/sessions#new
 #                                    admin_user_session POST       /admin/login(.:format)                                                         active_admin/devise/sessions#create
@@ -386,6 +389,11 @@
 #                                                       PATCH      /welcome/:id(.:format)                                                         welcome#update
 #                                                       PUT        /welcome/:id(.:format)                                                         welcome#update
 #                                                       DELETE     /welcome/:id(.:format)                                                         welcome#destroy
+#                                        payroll_manage GET        /manage/payroll(.:format)                                                      manage#payroll
+#                            non_updated_payroll_manage GET        /manage/non_updated_payroll(.:format)                                          manage#non_updated_payroll
+#                                          payroll_diff GET        /manage/payroll_diff(.:format)                                                 manage#payroll_diff
+#                                      payroll_diff_ids GET        /manage/payroll_diff_ids(.:format)                                             manage#payroll_diff_ids
+#                                            claim_diff GET        /manage/claim_diff(.:format)                                                   manage#claim_diff
 #                                                 rates GET        /manage/rates(.:format)                                                        rates#index
 #                                                       POST       /manage/rates(.:format)                                                        rates#create
 #                                              new_rate GET        /manage/rates/new(.:format)                                                    rates#new

@@ -310,18 +310,18 @@ ActiveRecord::Schema.define(version: 202004020223665) do
     t.integer  "policy_calculation_id"
     t.string   "claim_number"
     t.date     "claim_injury_date"
-    t.float    "claim_handicap_percent"
+    t.float    "claim_handicap_percent",                    default: 0.0
     t.date     "claim_handicap_percent_effective_date"
     t.date     "claimant_date_of_death"
     t.date     "claimant_date_of_birth"
     t.string   "claimant_name"
     t.integer  "claim_manual_number"
-    t.float    "claim_medical_paid"
-    t.float    "claim_mira_medical_reserve_amount"
-    t.float    "claim_mira_non_reducible_indemnity_paid"
-    t.float    "claim_mira_reducible_indemnity_paid"
-    t.float    "claim_mira_indemnity_reserve_amount"
-    t.float    "claim_mira_non_reducible_indemnity_paid_2"
+    t.float    "claim_medical_paid",                        default: 0.0
+    t.float    "claim_mira_medical_reserve_amount",         default: 0.0
+    t.float    "claim_mira_non_reducible_indemnity_paid",   default: 0.0
+    t.float    "claim_mira_reducible_indemnity_paid",       default: 0.0
+    t.float    "claim_mira_indemnity_reserve_amount",       default: 0.0
+    t.float    "claim_mira_non_reducible_indemnity_paid_2", default: 0.0
     t.float    "claim_total_subrogation_collected"
     t.float    "claim_unlimited_limited_loss"
     t.float    "policy_individual_maximum_claim_value"
@@ -329,12 +329,12 @@ ActiveRecord::Schema.define(version: 202004020223665) do
     t.float    "claim_individual_multiplier"
     t.float    "claim_group_reduced_amount"
     t.float    "claim_individual_reduced_amount"
-    t.float    "claim_subrogation_percent"
+    t.float    "claim_subrogation_percent",                 default: 0.0
     t.float    "claim_modified_losses_group_reduced"
     t.float    "claim_modified_losses_individual_reduced"
     t.string   "data_source"
-    t.datetime "created_at",                                null: false
-    t.datetime "updated_at",                                null: false
+    t.datetime "created_at",                                              null: false
+    t.datetime "updated_at",                                              null: false
     t.string   "claim_combined"
     t.string   "combined_into_claim_number"
     t.string   "claim_rating_plan_indicator"
