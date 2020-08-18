@@ -18,6 +18,10 @@ class Clicd < ActiveRecord::Base
     ClicdDetailRecord.find_by(representative_number: representative_number, policy_number: policy_number, claim_number: claim_number)
   end
 
+  def claim_calculation
+    ClaimCalculation.find_by(representative_number: representative_number, policy_number: policy_number, claim_number: claim_number)
+  end
+
   def representative_number
     self.single_rec[0, 6]&.to_i
   end

@@ -20,7 +20,7 @@ namespace :heroku do
         # Flat files
         if @import.save
           ImportProcess.perform_async(@import.process_representative, @import.id, @representative.abbreviated_name, @new_group_rating.id, false, 1)
-          AllRepresentativesProcess.perform_in(4.hours)
+          AllRepresentativesProcess.perform_in(2.hours)
         end
       end
     end

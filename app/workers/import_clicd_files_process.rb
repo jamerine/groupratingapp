@@ -8,17 +8,20 @@ class ImportClicdFilesProcess
 
     import_file("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/CLICDFILE", 'clicds')
 
-    Clicd.by_representative(representative_number).by_record_type.each_with_progress do |clicd|
-      # ImportClicdData.perform_async(clicd.attributes)
-      ClicdDetailRecord.where({ representative_number:    clicd.representative_number,
-                                record_type:              clicd.record_type,
-                                requestor_number:         clicd.requestor_number,
-                                business_sequence_number: clicd.business_sequence_number,
-                                policy_number:            clicd.policy_number,
-                                claim_number:             clicd.claim_number,
-                                icd_code:                 clicd.icd_code
-                              }).update_or_create(gather_attributes(clicd))
-    end
+    result = ActiveRecord::Base.connection.execute("SELECT public.proc_process_flat_clicds()")
+    result.clear
+
+    # Clicd.by_representative(representative_number).by_record_type.each_with_progress do |clicd|
+    #   # ImportClicdData.perform_async(clicd.attributes)
+    #   ClicdDetailRecord.where({ representative_number:    clicd.representative_number,
+    #                             record_type:              clicd.record_type,
+    #                             requestor_number:         clicd.requestor_number,
+    #                             business_sequence_number: clicd.business_sequence_number,
+    #                             policy_number:            clicd.policy_number,
+    #                             claim_number:             clicd.claim_number,
+    #                             icd_code:                 clicd.icd_code
+    #                           }).update_or_create(gather_attributes(clicd))
+    # end
   end
 
   def gather_attributes(clicd)

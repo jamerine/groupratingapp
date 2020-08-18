@@ -5,6 +5,9 @@ class ImportClicdData
 
   def perform(clicd_attributes)
     clicd = Clicd.new(clicd_attributes)
+
+
+
     ClicdDetailRecord.where({ representative_number:    clicd.representative_number,
                               record_type:              clicd.record_type,
                               requestor_number:         clicd.requestor_number,
