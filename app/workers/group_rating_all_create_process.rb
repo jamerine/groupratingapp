@@ -1,4 +1,5 @@
 class GroupRatingAllCreateProcess
+  require 'progress_bar/core_ext/enumerable_with_progress'
   include Sidekiq::Worker
 
   sidekiq_options queue: :group_rating_all_create_process, retry: 1
@@ -10,7 +11,7 @@ class GroupRatingAllCreateProcess
 
     all_policy_numbers = (FinalEmployerDemographicsInformation.all.pluck(:policy_number) + ProcessPayrollAllTransactionsBreakdownByManualClass.pluck(:policy_number).uniq).uniq
 
-    all_policy_numbers.each do |policy|
+    all_policy_numbers.each_with_progress do |policy|
       GroupRatingAllCreate.perform_async(@group_rating.id, @group_rating.experience_period_lower_date, @group_rating.process_representative, @group_rating.representative_id, policy)
     end
 
