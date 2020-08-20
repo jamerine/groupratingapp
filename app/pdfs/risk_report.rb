@@ -687,7 +687,7 @@ class RiskReport < PdfReport
     # Group Rating
     @group_rating_eligibility = (@account.group_rating_qualification == 'accept' ? 'Yes' : 'No')
     if @group_rating_eligibility == 'Yes'
-      @group_rating_projected_premium = @account.group_premium
+      @group_rating_projected_premium = @account.group_premium || 0
       @group_rating_costs             = 0
       @group_rating_maximum_risk      = 0
       @group_rating_total_cost        = @group_rating_projected_premium - @group_rating_costs
