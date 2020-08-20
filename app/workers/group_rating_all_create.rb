@@ -1,7 +1,7 @@
 class GroupRatingAllCreate
   include Sidekiq::Worker
 
-  sidekiq_options queue: :group_rating_all_create, retry: 5
+  sidekiq_options queue: :group_rating_all_create, retry: 10
 
   def perform(group_rating_id, experience_period_lower_date, process_representative, representative_id, policy_number)
 
