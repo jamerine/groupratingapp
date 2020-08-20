@@ -172,17 +172,21 @@ class ClaimCalculation < ActiveRecord::Base
         group_maximum_value / self.claim_unlimited_limited_loss
       end
 
-    @claim_group_reduced_amount =
-      (((self.claim_mira_non_reducible_indemnity_paid + self.claim_mira_non_reducible_indemnity_paid_2) * @claim_group_multiplier) + ((self.claim_medical_paid + self.claim_mira_medical_reserve_amount + self.claim_mira_reducible_indemnity_paid + self.claim_mira_indemnity_reserve_amount) * @claim_group_multiplier * (1 - self.claim_handicap_percent)))
+    @claim_group_reduced_amount      = 0
+    @claim_individual_reduced_amount = 0
 
-    @claim_individual_reduced_amount =
-      (((self.claim_mira_non_reducible_indemnity_paid +
-        self.claim_mira_non_reducible_indemnity_paid_2) * @claim_individual_multiplier) +
-        (
-        (self.claim_medical_paid +
-          self.claim_mira_medical_reserve_amount +
-          self.claim_mira_reducible_indemnity_paid +
-          self.claim_mira_indemnity_reserve_amount) * @claim_individual_multiplier * (1 - self.claim_handicap_percent)))
+    if self.claim_handicap_percent.present? && self.claim_subrogation_percent.present? && self.claim_group_multiplier.present?
+      @claim_group_reduced_amount = (((self.claim_mira_non_reducible_indemnity_paid + self.claim_mira_non_reducible_indemnity_paid_2) * @claim_group_multiplier) + ((self.claim_medical_paid + self.claim_mira_medical_reserve_amount + self.claim_mira_reducible_indemnity_paid + self.claim_mira_indemnity_reserve_amount) * @claim_group_multiplier * (1 - self.claim_handicap_percent)))
+
+      @claim_individual_reduced_amount =
+        (((self.claim_mira_non_reducible_indemnity_paid +
+          self.claim_mira_non_reducible_indemnity_paid_2) * @claim_individual_multiplier) +
+          (
+          (self.claim_medical_paid +
+            self.claim_mira_medical_reserve_amount +
+            self.claim_mira_reducible_indemnity_paid +
+            self.claim_mira_indemnity_reserve_amount) * @claim_individual_multiplier * (1 - self.claim_handicap_percent)))
+    end
 
     @claim_subrogation_percent =
       if self.claim_total_subrogation_collected.nil? || self.claim_total_subrogation_collected == 0.0
