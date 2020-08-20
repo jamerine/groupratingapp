@@ -10,7 +10,8 @@ class FilterClaimsProcess
 
     @representative = Representative.find_by(id: @group_rating.representative_id)
 
-    result = ActiveRecord::Base.connection.exec_query("DELETE FROM claim_calculations claims
+    result = ActiveRecord::Base.connection.exec_query("SELECT claims.id
+                                                      FROM claim_calculations claims
                                                       LEFT JOIN policy_calculations policies
                                                       ON 	policies.policy_number = claims.policy_number AND policies.representative_number = #{@representative.representative_number}
                                                       WHERE claims.representative_number = #{@representative.representative_number}
@@ -26,7 +27,8 @@ class FilterClaimsProcess
                                                                   FROM democ_detail_records democs
                                                                   WHERE democs.policy_number = policies.policy_number
                                                                     AND democs.representative_number = #{@representative.representative_number})")
-    result.clear
+
+    ClaimCalculation.where('claim_calculations.id IN (?)', result.rows.flatten.map(&:to_i)).delete_all
 
     GroupRatingMarkComplete.perform_async(group_rating_id, all_process)
   end

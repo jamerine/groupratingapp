@@ -10,6 +10,7 @@ production:
   - import_process
   - import_mira_files_process
   - import_clicd_files_process
+  - filter_claims_process
   - import_democ_process
   - import_clicd_data
   - import_mira_data
