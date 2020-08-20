@@ -127,17 +127,17 @@ class ClaimCalculation < ActiveRecord::Base
   end
 
   def comp_awarded
-    return 0 unless claim_handicap_percent.present? && claim_subrogation_percent.present?
+    return 0 unless claim_handicap_percent.present? && claim_subrogation_percent.present? && claim_group_multiplier.present?
     (((claim_mira_reducible_indemnity_paid + claim_mira_non_reducible_indemnity_paid) * (1 - claim_subrogation_percent) - (claim_mira_non_reducible_indemnity_paid)) * (1 - claim_handicap_percent) + (claim_mira_non_reducible_indemnity_paid)) * claim_group_multiplier
   end
 
   def medical_paid
-    return 0 unless claim_medical_paid.present? && claim_subrogation_percent.present?
+    return 0 unless claim_medical_paid.present? && claim_subrogation_percent.present? && claim_group_multiplier.present?
     (((claim_medical_paid + claim_mira_non_reducible_indemnity_paid_2) * (1 - claim_subrogation_percent) - claim_mira_non_reducible_indemnity_paid_2) * (1 - claim_handicap_percent) + claim_mira_non_reducible_indemnity_paid_2) * claim_group_multiplier
   end
 
   def mira_reserve
-    return 0 unless claim_handicap_percent.present? && claim_subrogation_percent.present?
+    return 0 unless claim_handicap_percent.present? && claim_subrogation_percent.present? && claim_group_multiplier.present?
     ((1 - claim_handicap_percent) * (claim_mira_medical_reserve_amount + (claim_mira_indemnity_reserve_amount)) * claim_group_multiplier * (1 - claim_subrogation_percent))
   end
 
