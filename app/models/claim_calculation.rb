@@ -36,6 +36,7 @@
 #  claimant_name                             :string
 #  combined_into_claim_number                :string
 #  data_source                               :string
+#  enhanced_care_program_indicator           :string           default("Y")
 #  indemnity_settlement_date                 :date
 #  maximum_medical_improvement_date          :date
 #  medical_settlement_date                   :date
@@ -142,7 +143,7 @@ class ClaimCalculation < ActiveRecord::Base
   end
 
   def ecp_enabled?
-    democ_detail_record&.enhanced_care_program_indicator == 'Y'
+    self.enhanced_care_program_indicator == 'Y'
   end
 
   def representative_name_and_abbreviation

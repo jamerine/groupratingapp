@@ -113,6 +113,7 @@ class GroupRatingAllCreate
           indemnity_settlement_date:                 claim.indemnity_settlement_date,
           maximum_medical_improvement_date:          claim.maximum_medical_improvement_date,
           claim_mira_ncci_injury_type:               claim.claim_mira_ncci_injury_type,
+          enhanced_care_program_indicator:           claim.enhanced_care_program_indicator,
           data_source:                               claim.data_source)
       end
 
