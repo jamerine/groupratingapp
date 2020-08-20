@@ -1090,7 +1090,20 @@ class RiskReport < PdfReport
 
 
     @data = [["Claim #", "Claimant", "DOI", "Man Num", "Comp Award", "Med. Paid", "MIRA Res.", "GTML", "ITML", "SI Total", "HC", "Code"]]
-    @data += claims_array.map { |e| [e.claim_number, e.claimant_name.titleize, e.claim_injury_date.in_time_zone("America/New_York").strftime("%m/%d/%y"), e.claim_manual_number, "#{round((((e.claim_mira_reducible_indemnity_paid + e.claim_mira_non_reducible_indemnity_paid) * (1 - e.claim_subrogation_percent) - (e.claim_mira_non_reducible_indemnity_paid)) * (1 - e.claim_handicap_percent) + (e.claim_mira_non_reducible_indemnity_paid)) * e.claim_group_multiplier, 0)}", "#{round((((e.claim_medical_paid + e.claim_mira_non_reducible_indemnity_paid_2) * (1 - e.claim_subrogation_percent) - e.claim_mira_non_reducible_indemnity_paid_2) * (1 - e.claim_handicap_percent) + e.claim_mira_non_reducible_indemnity_paid_2) * e.claim_group_multiplier, 0)}", "#{round((1 - e.claim_handicap_percent) * (e.claim_mira_medical_reserve_amount + (e.claim_mira_indemnity_reserve_amount)) * e.claim_group_multiplier * (1 - e.claim_subrogation_percent), 0)}", round(e.claim_modified_losses_group_reduced, 0), round(e.claim_modified_losses_individual_reduced, 0), "#{round(e.claim_unlimited_limited_loss - e.claim_total_subrogation_collected, 0)}", percent(e.claim_handicap_percent), "#{claim_code_calc(e)}"] }
+
+    @data += claims_array.map do |e|
+      comp_awarded = "0"
+      medical_paid = "0"
+      mira_res     = "0"
+
+      if e.claim_handicap_percent.present? && e.claim_subrogation_percent.present? && e.claim_group_multiplier.present?
+        comp_awarded = "#{round((((e.claim_mira_reducible_indemnity_paid + e.claim_mira_non_reducible_indemnity_paid) * (1 - e.claim_subrogation_percent) - (e.claim_mira_non_reducible_indemnity_paid)) * (1 - e.claim_handicap_percent) + (e.claim_mira_non_reducible_indemnity_paid)) * e.claim_group_multiplier, 0)}"
+        medical_paid = "#{round((((e.claim_medical_paid + e.claim_mira_non_reducible_indemnity_paid_2) * (1 - e.claim_subrogation_percent) - e.claim_mira_non_reducible_indemnity_paid_2) * (1 - e.claim_handicap_percent) + e.claim_mira_non_reducible_indemnity_paid_2) * e.claim_group_multiplier, 0)}"
+        mira_res     = "#{round((1 - e.claim_handicap_percent) * (e.claim_mira_medical_reserve_amount + (e.claim_mira_indemnity_reserve_amount)) * e.claim_group_multiplier * (1 - e.claim_subrogation_percent), 0)}"
+      end
+
+      [e.claim_number, e.claimant_name.titleize, e.claim_injury_date.in_time_zone("America/New_York").strftime("%m/%d/%y"), e.claim_manual_number, comp_awarded, medical_paid, mira_res, round(e.claim_modified_losses_group_reduced, 0), round(e.claim_modified_losses_individual_reduced, 0), "#{round((e.claim_unlimited_limited_loss || 0) - (e.claim_total_subrogation_collected || 0), 0)}", percent(e.claim_handicap_percent), "#{claim_code_calc(e)}"] }
+    end
     @data += [[{ :content => "Totals", :colspan => 4 }, "#{round(comp_total, 0)}", "#{round(med_paid_total, 0)}", "#{round(mira_res_total, 0)}", "#{round(claims_array.sum(:claim_modified_losses_group_reduced), 0)}", "#{round(claims_array.sum(:claim_modified_losses_individual_reduced), 0)}", "#{round(claims_array.sum(:claim_unlimited_limited_loss) - claims_array.sum(:claim_total_subrogation_collected), 0)}", "", ""]]
   end
 
