@@ -1,5 +1,5 @@
 Rails.application.configure do
-  # require 'sidekiq/testing/inline'
+  require 'sidekiq/testing/inline'
 
   config.cache_classes                         = false
   config.eager_load                            = false
