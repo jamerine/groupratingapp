@@ -1,6 +1,63 @@
 class ClaimCalculationsController < ApplicationController
+  before_action :set_account_and_policy, only: [:new, :create, :edit, :update, :destroy]
+  before_action :set_claim, only: [:edit, :update, :destroy]
+
   def index
     @claim_calculations = ClaimCalculation.all.paginate(page: params[:page], per_page: 100)
+  end
+
+  def new
+    @claim_calculation = @policy_calculation.claim_calculations.new({
+                                                                      representative_number: @policy_calculation.representative_number,
+                                                                      policy_number:         @policy_calculation.policy_number,
+                                                                      data_source:           'user'
+                                                                    })
+  end
+
+  def create
+    @claim_calculation = @policy_calculation.claim_calculations.new(claim_params)
+
+    if @claim_calculation.save
+      begin
+        @claim_calculation.calculate_unlimited_limited_loss
+        @claim_calculation.recalculate_experience(@policy_calculation.policy_maximum_claim_value)
+        flash[:success] = 'Claim successfully added!'
+        redirect_to policy_calculation_path(@policy_calculation)
+      rescue
+        flash[:error] = 'Claim Added, but something went wrong calculating the experience!'
+        redirect_to edit_policy_calculation_claim_calculation_path(@policy_calculation, @claim_calculation)
+      end
+    else
+      flash[:error] = 'Something went wrong, please try again!'
+      render :new
+    end
+
+  end
+
+  def edit
+  end
+
+  def update
+    if @claim_calculation.update_attributes(claim_params)
+      begin
+        @claim_calculation.calculate_unlimited_limited_loss
+        @claim_calculation.recalculate_experience(@policy_calculation.policy_maximum_claim_value)
+        flash[:success] = 'Claim Successfully Updated!'
+        redirect_to policy_calculation_path(@policy_calculation)
+      rescue => e
+        Logger.debug(e)
+        flash[:error] = 'Claim updated, but something went wrong calculating the experience!'
+        redirect_to edit_policy_calculation_claim_calculation_path(@policy_calculation, @claim_calculation)
+      end
+    else
+      flash[:error] = 'Something went wrong, please try again!'
+      render :new
+    end
+  end
+
+  def destroy
+    flash[:success] = 'Claim Successfully Deleted!' if @claim_calculation.destroy
+    redirect_to policy_calculation_path(@policy_calculation)
   end
 
   def show
@@ -48,7 +105,31 @@ class ClaimCalculationsController < ApplicationController
 
   private
 
+  def claim_params
+    params.require(:claim_calculation).permit(:claim_activity_status, :claim_activity_status_effective_date, :claim_combined, :claim_group_multiplier, :claim_group_reduced_amount,
+                                              :claim_handicap_percent, :claim_handicap_percent_effective_date, :claim_individual_multiplier, :claim_individual_reduced_amount,
+                                              :claim_injury_date, :claim_manual_number, :claim_medical_paid, :claim_mira_indemnity_reserve_amount, :claim_mira_medical_reserve_amount,
+                                              :claim_mira_ncci_injury_type, :claim_mira_non_reducible_indemnity_paid, :claim_mira_non_reducible_indemnity_paid_2, :claim_mira_reducible_indemnity_paid,
+                                              :claim_modified_losses_group_reduced, :claim_modified_losses_individual_reduced, :claim_number, :claim_rating_plan_indicator,
+                                              :claim_status, :claim_status_effective_date, :claim_subrogation_percent, :claim_total_subrogation_collected, :claim_type,
+                                              :claim_unlimited_limited_loss, :claimant_date_of_birth, :claimant_date_of_death, :claimant_name, :combined_into_claim_number,
+                                              :data_source, :enhanced_care_program_indicator, :indemnity_settlement_date, :maximum_medical_improvement_date,
+                                              :medical_settlement_date, :policy_individual_maximum_claim_value, :policy_number,
+                                              :policy_type, :representative_number, :settled_claim, :settlement_type, :created_at, :updated_at, :policy_calculation_id)
+  end
+
   def address_params
     params.require(:claim_calculation).permit(:address_id, :address)
+  end
+
+  def set_account_and_policy
+    @policy_calculation = PolicyCalculation.find_by(id: params[:policy_calculation_id])
+    @account            = Account.find_by(id: @policy_calculation&.account_id)
+    page_not_found unless @account.present?
+  end
+
+  def set_claim
+    @claim_calculation = ClaimCalculation.find_by(policy_number: @policy_calculation.policy_number, id: params[:id])
+    page_not_found unless @claim_calculation.present?
   end
 end

@@ -1,29 +1,27 @@
 <%= content_tag_for :div, @policy_calculation do %>
   <div class="container">
-    <%= render partial: "shared/account_navbar", locals: { object: @account } %>
+    <%= render "shared/account_navbar", object: @account %>
   </div>
 
   <!-- <%= link_to 'Return to Account', account_path(@account.id), class: 'btn btn-default' %> -->
-  <div class="container">
-    <%= render partial: 'policy_calculations/policy_calculation' %>
-  </div>
+  <%= render 'policy_calculations/policy_calculation' %>
 
-  <%= render partial: 'manual_class_calculations/manual_classes', locals: { manual_class_calculations: @manual_class_calculations, policy_calculation: @policy_calculation } %>
+  <%= render 'manual_class_calculations/manual_classes', manual_class_calculations: @manual_class_calculations, policy_calculation: @policy_calculation %>
 
-  <div class="container-fluid text-center">
+  <div class="container text-center">
     <div class="row">
-      <div class="col-sm-10 col-sm-offset-1">
+      <div class="col-sm-12">
         <h2><%= pluralize_without_count(@claim_calculations.count, 'BWC Claim') %></h2>
         <div id="claim-calculations">
-          <%= render partial: 'claim_calculations/claims', locals: { claims: @claim_calculations } %>
+          <%= render 'claim_calculations/claims', claims: @claim_calculations %>
         </div>
         <%= will_paginate @claim_calculations %>
       </div>
     </div>
   </div>
 
-  <%= render partial: 'policy_coverage_status_histories/policy_coverage_status_histories', locals: { status_histories: @policy_calculation.policy_coverage_status_histories } %>
-  <%= render partial: 'policy_program_histories/policy_program_histories', locals: { program_histories: @policy_calculation.policy_program_histories } %>
+  <%= render 'policy_coverage_status_histories/policy_coverage_status_histories', status_histories: @policy_calculation.policy_coverage_status_histories %>
+  <%= render 'policy_program_histories/policy_program_histories', program_histories: @policy_calculation.policy_program_histories %>
 
   <div class="container" style="margin-bottom: 50px">
     <div class="row">

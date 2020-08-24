@@ -6,12 +6,12 @@
 #  claim_activity_status                     :string
 #  claim_activity_status_effective_date      :date
 #  claim_combined                            :string
-#  claim_group_multiplier                    :float
-#  claim_group_reduced_amount                :float
+#  claim_group_multiplier                    :float            default(0.0)
+#  claim_group_reduced_amount                :float            default(0.0)
 #  claim_handicap_percent                    :float            default(0.0)
 #  claim_handicap_percent_effective_date     :date
-#  claim_individual_multiplier               :float
-#  claim_individual_reduced_amount           :float
+#  claim_individual_multiplier               :float            default(0.0)
+#  claim_individual_reduced_amount           :float            default(0.0)
 #  claim_injury_date                         :date
 #  claim_manual_number                       :integer
 #  claim_medical_paid                        :float            default(0.0)
@@ -21,16 +21,16 @@
 #  claim_mira_non_reducible_indemnity_paid   :float            default(0.0)
 #  claim_mira_non_reducible_indemnity_paid_2 :float            default(0.0)
 #  claim_mira_reducible_indemnity_paid       :float            default(0.0)
-#  claim_modified_losses_group_reduced       :float
-#  claim_modified_losses_individual_reduced  :float
+#  claim_modified_losses_group_reduced       :float            default(0.0)
+#  claim_modified_losses_individual_reduced  :float            default(0.0)
 #  claim_number                              :string
 #  claim_rating_plan_indicator               :string
 #  claim_status                              :string
 #  claim_status_effective_date               :date
 #  claim_subrogation_percent                 :float            default(0.0)
-#  claim_total_subrogation_collected         :float
+#  claim_total_subrogation_collected         :float            default(0.0)
 #  claim_type                                :string
-#  claim_unlimited_limited_loss              :float
+#  claim_unlimited_limited_loss              :float            default(0.0)
 #  claimant_date_of_birth                    :date
 #  claimant_date_of_death                    :date
 #  claimant_name                             :string
@@ -40,7 +40,7 @@
 #  indemnity_settlement_date                 :date
 #  maximum_medical_improvement_date          :date
 #  medical_settlement_date                   :date
-#  policy_individual_maximum_claim_value     :float
+#  policy_individual_maximum_claim_value     :float            default(0.0)
 #  policy_number                             :integer
 #  policy_type                               :string
 #  representative_number                     :integer
@@ -66,6 +66,8 @@ class ClaimCalculation < ActiveRecord::Base
   attr_accessor :comp_awarded, :medical_paid, :mira_reserve, :address_id
   scope :by_representative, -> (rep_number) { where(representative_number: rep_number) }
 
+  validates_presence_of :representative_number, :policy_number, :data_source, :claim_number, :claim_injury_date, :claimant_date_of_birth, :claimant_name
+
   def self.update_or_create(attributes)
     obj = first || new
     obj.assign_attributes(attributes)
@@ -83,6 +85,10 @@ class ClaimCalculation < ActiveRecord::Base
         csv << csv_formatted_attributes(record)
       end
     end
+  end
+
+  def added_by_user?
+    self.data_source == 'user'
   end
 
   def representative_name
@@ -230,6 +236,10 @@ class ClaimCalculation < ActiveRecord::Base
 
   def max_value
     self.policy_calculation.policy_maximum_claim_value&.round(0)
+  end
+
+  def calculate_unlimited_limited_loss
+    self.claim_unlimited_limited_loss = (self.claim_medical_paid + self.claim_mira_medical_reserve_amount + self.claim_mira_non_reducible_indemnity_paid + self.claim_mira_reducible_indemnity_paid + self.claim_mira_indemnity_reserve_amount + self.claim_mira_non_reducible_indemnity_paid_2)
   end
 
   private

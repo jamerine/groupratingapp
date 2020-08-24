@@ -322,16 +322,16 @@ ActiveRecord::Schema.define(version: 202004020223665) do
     t.float    "claim_mira_reducible_indemnity_paid",       default: 0.0
     t.float    "claim_mira_indemnity_reserve_amount",       default: 0.0
     t.float    "claim_mira_non_reducible_indemnity_paid_2", default: 0.0
-    t.float    "claim_total_subrogation_collected"
-    t.float    "claim_unlimited_limited_loss"
-    t.float    "policy_individual_maximum_claim_value"
-    t.float    "claim_group_multiplier"
-    t.float    "claim_individual_multiplier"
-    t.float    "claim_group_reduced_amount"
-    t.float    "claim_individual_reduced_amount"
+    t.float    "claim_total_subrogation_collected",         default: 0.0
+    t.float    "claim_unlimited_limited_loss",              default: 0.0
+    t.float    "policy_individual_maximum_claim_value",     default: 0.0
+    t.float    "claim_group_multiplier",                    default: 0.0
+    t.float    "claim_individual_multiplier",               default: 0.0
+    t.float    "claim_group_reduced_amount",                default: 0.0
+    t.float    "claim_individual_reduced_amount",           default: 0.0
     t.float    "claim_subrogation_percent",                 default: 0.0
-    t.float    "claim_modified_losses_group_reduced"
-    t.float    "claim_modified_losses_individual_reduced"
+    t.float    "claim_modified_losses_group_reduced",       default: 0.0
+    t.float    "claim_modified_losses_individual_reduced",  default: 0.0
     t.string   "data_source"
     t.datetime "created_at",                                              null: false
     t.datetime "updated_at",                                              null: false
