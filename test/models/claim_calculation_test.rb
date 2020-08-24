@@ -6,12 +6,12 @@
 #  claim_activity_status                     :string
 #  claim_activity_status_effective_date      :date
 #  claim_combined                            :string
-#  claim_group_multiplier                    :float
-#  claim_group_reduced_amount                :float
+#  claim_group_multiplier                    :float            default(0.0)
+#  claim_group_reduced_amount                :float            default(0.0)
 #  claim_handicap_percent                    :float            default(0.0)
 #  claim_handicap_percent_effective_date     :date
-#  claim_individual_multiplier               :float
-#  claim_individual_reduced_amount           :float
+#  claim_individual_multiplier               :float            default(0.0)
+#  claim_individual_reduced_amount           :float            default(0.0)
 #  claim_injury_date                         :date
 #  claim_manual_number                       :integer
 #  claim_medical_paid                        :float            default(0.0)
@@ -21,16 +21,16 @@
 #  claim_mira_non_reducible_indemnity_paid   :float            default(0.0)
 #  claim_mira_non_reducible_indemnity_paid_2 :float            default(0.0)
 #  claim_mira_reducible_indemnity_paid       :float            default(0.0)
-#  claim_modified_losses_group_reduced       :float
-#  claim_modified_losses_individual_reduced  :float
+#  claim_modified_losses_group_reduced       :float            default(0.0)
+#  claim_modified_losses_individual_reduced  :float            default(0.0)
 #  claim_number                              :string
 #  claim_rating_plan_indicator               :string
 #  claim_status                              :string
 #  claim_status_effective_date               :date
 #  claim_subrogation_percent                 :float            default(0.0)
-#  claim_total_subrogation_collected         :float
+#  claim_total_subrogation_collected         :float            default(0.0)
 #  claim_type                                :string
-#  claim_unlimited_limited_loss              :float
+#  claim_unlimited_limited_loss              :float            default(0.0)
 #  claimant_date_of_birth                    :date
 #  claimant_date_of_death                    :date
 #  claimant_name                             :string
@@ -40,7 +40,7 @@
 #  indemnity_settlement_date                 :date
 #  maximum_medical_improvement_date          :date
 #  medical_settlement_date                   :date
-#  policy_individual_maximum_claim_value     :float
+#  policy_individual_maximum_claim_value     :float            default(0.0)
 #  policy_number                             :integer
 #  policy_type                               :string
 #  representative_number                     :integer

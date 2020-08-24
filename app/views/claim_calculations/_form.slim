@@ -1,0 +1,62 @@
+= simple_form_for [@policy_calculation, @claim_calculation] do |f|
+  = f.input :representative_number, as: :hidden
+  = f.input :policy_number, as: :hidden
+  = f.input :data_source, as: :hidden
+  = f.input :policy_calculation_id, as: :hidden
+
+  .row
+    .col-sm-3 = f.input :claim_number
+    .col-sm-3 = f.input :claim_activity_status
+    .col-sm-3 = f.input :claim_activity_status_effective_date
+    .col-sm-3 = f.input :claim_combined
+    .col-sm-3 = f.input :claim_group_multiplier
+  .row
+    .col-sm-3 = f.input :claim_group_reduced_amount
+    .col-sm-3 = f.input :claim_handicap_percent
+    .col-sm-3 = f.input :claim_handicap_percent_effective_date
+    .col-sm-3 = f.input :claim_individual_multiplier
+  .row
+    .col-sm-3 = f.input :claim_individual_reduced_amount
+    .col-sm-3 = f.input :claim_injury_date
+    .col-sm-3 = f.input :claim_manual_number
+    .col-sm-3 = f.input :claim_medical_paid
+  .row
+    .col-sm-3 = f.input :claim_mira_indemnity_reserve_amount
+    .col-sm-3 = f.input :claim_mira_medical_reserve_amount
+    .col-sm-3 = f.input :claim_mira_ncci_injury_type
+    .col-sm-3 = f.input :claim_mira_non_reducible_indemnity_paid
+  .row
+    .col-sm-3 = f.input :claim_mira_non_reducible_indemnity_paid_2
+    .col-sm-3 = f.input :claim_mira_reducible_indemnity_paid
+    .col-sm-3 = f.input :claim_modified_losses_group_reduced
+    .col-sm-3 = f.input :claim_modified_losses_individual_reduced
+  .row
+    .col-sm-3 = f.input :claim_rating_plan_indicator
+    .col-sm-3 = f.input :claim_status
+    .col-sm-3 = f.input :claim_status_effective_date
+  .row
+    .col-sm-3 = f.input :claim_subrogation_percent
+    .col-sm-3 = f.input :claim_total_subrogation_collected
+    .col-sm-3 = f.input :claim_type
+    .col-sm-3 = f.input :claim_unlimited_limited_loss
+  .row
+    .col-sm-3 = f.input :claimant_date_of_birth
+    .col-sm-3 = f.input :claimant_date_of_death
+    .col-sm-3 = f.input :claimant_name
+    .col-sm-3 = f.input :combined_into_claim_number
+  .row
+    .col-sm-3 = f.input :enhanced_care_program_indicator
+    .col-sm-3 = f.input :indemnity_settlement_date
+    .col-sm-3 = f.input :maximum_medical_improvement_date
+    .col-sm-3 = f.input :medical_settlement_date
+  .row
+    .col-sm-3 = f.input :policy_individual_maximum_claim_value
+    .col-sm-3 = f.input :policy_type
+    .col-sm-3 = f.input :settled_claim
+    .col-sm-3 = f.input :settlement_type
+
+  .row style="margin-bottom: 100px;"
+    .col-sm-12.text-right
+      = link_to 'Cancel', policy_calculation_path(@policy_calculation), class: 'btn btn-danger'
+      ' &nbsp;
+      = f.submit 'Save Claim', class: 'btn btn-success'
