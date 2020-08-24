@@ -1,8 +1,8 @@
 .container = render "shared/account_navbar", object: @account
 .container-fluid
   .row
-    .col-sm-10.col-sm-offset-1
+    .col-lg-10.col-lg-offset-1
       h1 style="margin-bottom: 0;" New Claim for #{@policy_calculation.account_name&.titleize} (#{@policy_calculation.policy_number})
       hr style="margin-top: 5px;"
   .row
-    .col-sm-10.col-sm-offset-1 = render 'form'
+    .col-lg-10.col-lg-offset-1 = render 'form'
