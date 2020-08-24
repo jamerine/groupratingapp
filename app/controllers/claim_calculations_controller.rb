@@ -1,5 +1,6 @@
 class ClaimCalculationsController < ApplicationController
   before_action :set_account_and_policy, only: [:new, :create, :edit, :update, :destroy]
+  before_action :set_claim, only: [:edit, :update, :destroy]
 
   def index
     @claim_calculations = ClaimCalculation.all.paginate(page: params[:page], per_page: 100)
@@ -15,11 +16,11 @@ class ClaimCalculationsController < ApplicationController
 
   def create
     @claim_calculation = @policy_calculation.claim_calculations.new(claim_params)
-    @claim_calculation.calculate_unlimited_limited_loss
 
     if @claim_calculation.save
       begin
-        @claim_calculation.recalculate_experience(policy_calculation.policy_maximum_claim_value)
+        @claim_calculation.calculate_unlimited_limited_loss
+        @claim_calculation.recalculate_experience(@policy_calculation.policy_maximum_claim_value)
         flash[:success] = 'Claim successfully added!'
         redirect_to policy_calculation_path(@policy_calculation)
       rescue
@@ -34,15 +35,29 @@ class ClaimCalculationsController < ApplicationController
   end
 
   def edit
-
   end
 
   def update
-
+    if @claim_calculation.update_attributes(claim_params)
+      begin
+        @claim_calculation.calculate_unlimited_limited_loss
+        @claim_calculation.recalculate_experience(@policy_calculation.policy_maximum_claim_value)
+        flash[:success] = 'Claim Successfully Updated!'
+        redirect_to policy_calculation_path(@policy_calculation)
+      rescue => e
+        Logger.debug(e)
+        flash[:error] = 'Claim updated, but something went wrong calculating the experience!'
+        redirect_to edit_policy_calculation_claim_calculation_path(@policy_calculation, @claim_calculation)
+      end
+    else
+      flash[:error] = 'Something went wrong, please try again!'
+      render :new
+    end
   end
 
   def destroy
-
+    flash[:success] = 'Claim Successfully Deleted!' if @claim_calculation.destroy
+    redirect_to policy_calculation_path(@policy_calculation)
   end
 
   def show
@@ -111,5 +126,10 @@ class ClaimCalculationsController < ApplicationController
     @policy_calculation = PolicyCalculation.find_by(id: params[:policy_calculation_id])
     @account            = Account.find_by(id: @policy_calculation&.account_id)
     page_not_found unless @account.present?
+  end
+
+  def set_claim
+    @claim_calculation = ClaimCalculation.find_by(policy_number: @policy_calculation.policy_number, id: params[:id])
+    page_not_found unless @claim_calculation.present?
   end
 end

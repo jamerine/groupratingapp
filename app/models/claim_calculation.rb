@@ -66,6 +66,8 @@ class ClaimCalculation < ActiveRecord::Base
   attr_accessor :comp_awarded, :medical_paid, :mira_reserve, :address_id
   scope :by_representative, -> (rep_number) { where(representative_number: rep_number) }
 
+  validates_presence_of :representative_number, :policy_number, :data_source, :claim_number, :claim_injury_date, :claimant_date_of_birth, :claimant_name
+
   def self.update_or_create(attributes)
     obj = first || new
     obj.assign_attributes(attributes)
@@ -83,6 +85,10 @@ class ClaimCalculation < ActiveRecord::Base
         csv << csv_formatted_attributes(record)
       end
     end
+  end
+
+  def added_by_user?
+    self.data_source == 'user'
   end
 
   def representative_name

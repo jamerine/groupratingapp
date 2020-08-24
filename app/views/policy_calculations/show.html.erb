@@ -4,9 +4,7 @@
   </div>
 
   <!-- <%= link_to 'Return to Account', account_path(@account.id), class: 'btn btn-default' %> -->
-  <div class="container">
-    <%= render 'policy_calculations/policy_calculation' %>
-  </div>
+  <%= render 'policy_calculations/policy_calculation' %>
 
   <%= render 'manual_class_calculations/manual_classes', manual_class_calculations: @manual_class_calculations, policy_calculation: @policy_calculation %>
 

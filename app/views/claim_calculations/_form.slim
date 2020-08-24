@@ -5,58 +5,74 @@
   = f.input :policy_calculation_id, as: :hidden
 
   .row
-    .col-sm-3 = f.input :claim_number
-    .col-sm-3 = f.input :claim_activity_status
-    .col-sm-3 = f.input :claim_activity_status_effective_date
-    .col-sm-3 = f.input :claim_combined
-    .col-sm-3 = f.input :claim_group_multiplier
+    .col-sm-3 = f.input :claimant_name, label: 'Claimant Name', required: true
+    .col-sm-3 = f.input :claim_number, label: 'Claim Number', required: true
+    .col-sm-3 = f.input :claim_injury_date, input_html: { class: 'datepicker' }, label: 'Claim Injury Date', required: true
+    .col-sm-3 = f.input :claimant_date_of_birth, input_html: { class: 'datepicker' }, label: 'Claimant DOB', required: true
+  hr style="margin-top: 7px;"
   .row
-    .col-sm-3 = f.input :claim_group_reduced_amount
-    .col-sm-3 = f.input :claim_handicap_percent
-    .col-sm-3 = f.input :claim_handicap_percent_effective_date
-    .col-sm-3 = f.input :claim_individual_multiplier
+    .col-sm-3 = f.input :claim_manual_number, as: :string, label: 'Claimant Manual Number'
+    .col-sm-3 = f.input :claim_medical_paid, label: 'Claim Medical Paid'
+    .col-sm-3 = f.input :claim_type, label: 'Claim Type'
+    .col-sm-3 = f.input :enhanced_care_program_indicator, collection: %w[Y N], allow_empty: 'Select One', label: 'ECP Indicator'
   .row
-    .col-sm-3 = f.input :claim_individual_reduced_amount
-    .col-sm-3 = f.input :claim_injury_date
-    .col-sm-3 = f.input :claim_manual_number
-    .col-sm-3 = f.input :claim_medical_paid
+    .col-sm-4 = f.input :claimant_date_of_death, input_html: { class: 'datepicker' }, label: 'Claimant Date of Death'
+    .col-sm-4 = f.input :claim_rating_plan_indicator, collection: %w[E R], allow_empty: 'Select One', label: 'Claim Rating Plan Indicator'
   .row
-    .col-sm-3 = f.input :claim_mira_indemnity_reserve_amount
-    .col-sm-3 = f.input :claim_mira_medical_reserve_amount
-    .col-sm-3 = f.input :claim_mira_ncci_injury_type
-    .col-sm-3 = f.input :claim_mira_non_reducible_indemnity_paid
+    .col-sm-4 = f.input :claim_combined, collection: %w[Y N], allow_empty: 'Select One', label: 'Claim Combined?'
+    .col-sm-4 = f.input :combined_into_claim_number, label: 'Claim Number Combined Into'
   .row
-    .col-sm-3 = f.input :claim_mira_non_reducible_indemnity_paid_2
-    .col-sm-3 = f.input :claim_mira_reducible_indemnity_paid
-    .col-sm-3 = f.input :claim_modified_losses_group_reduced
-    .col-sm-3 = f.input :claim_modified_losses_individual_reduced
+    .col-sm-3 = f.input :claim_status, collection: %w[AL DA DS DP AG AA NC HR], allow_empty: 'Select One', label: 'Claim Status'
+    .col-sm-3 = f.input :claim_status_effective_date, input_html: { class: 'datepicker' }, label: 'Claim Status Effective Date'
+    .col-sm-3 = f.input :claim_activity_status, label: 'Claim Activity Status'
+    .col-sm-3 = f.input :claim_activity_status_effective_date, input_html: { class: 'datepicker' }, label: 'Claim Activity Status Effective Date'
   .row
-    .col-sm-3 = f.input :claim_rating_plan_indicator
-    .col-sm-3 = f.input :claim_status
-    .col-sm-3 = f.input :claim_status_effective_date
+    .col-sm-4 = f.input :claim_individual_multiplier, label: 'Claim Individual Multiplier'
+    .col-sm-4 = f.input :claim_group_multiplier, label: 'Claim Group Multiplier'
   .row
-    .col-sm-3 = f.input :claim_subrogation_percent
-    .col-sm-3 = f.input :claim_total_subrogation_collected
-    .col-sm-3 = f.input :claim_type
-    .col-sm-3 = f.input :claim_unlimited_limited_loss
+    .col-sm-4 = f.input :claim_handicap_percent, label: 'Handicap Percent'
+    .col-sm-4 = f.input :claim_handicap_percent_effective_date, input_html: { class: 'datepicker' }, label: 'Handicap Percent Effective Date'
   .row
-    .col-sm-3 = f.input :claimant_date_of_birth
-    .col-sm-3 = f.input :claimant_date_of_death
-    .col-sm-3 = f.input :claimant_name
-    .col-sm-3 = f.input :combined_into_claim_number
+    .col-sm-4 = f.input :claim_individual_reduced_amount, label: 'Individual Reduced Amount'
+    .col-sm-4 = f.input :claim_group_reduced_amount, label: 'Group Reduced Amount'
   .row
-    .col-sm-3 = f.input :enhanced_care_program_indicator
-    .col-sm-3 = f.input :indemnity_settlement_date
-    .col-sm-3 = f.input :maximum_medical_improvement_date
-    .col-sm-3 = f.input :medical_settlement_date
+    .col-sm-4 = f.input :claim_subrogation_percent, label: 'Subrogation Percent'
+    .col-sm-4 = f.input :claim_total_subrogation_collected, label: 'Total Subrogation Collected'
   .row
-    .col-sm-3 = f.input :policy_individual_maximum_claim_value
-    .col-sm-3 = f.input :policy_type
-    .col-sm-3 = f.input :settled_claim
-    .col-sm-3 = f.input :settlement_type
+    .col-sm-4 = f.input :claim_mira_indemnity_reserve_amount, label: 'Mira Indemnity Reserve Amount'
+    .col-sm-4 = f.input :claim_mira_medical_reserve_amount, label: 'Mira Medical Reserve Amount'
+    .col-sm-4 = f.input :claim_mira_ncci_injury_type, label: 'Mira NCCI Injury Type'
+  .row
+    .col-sm-4 = f.input :claim_mira_reducible_indemnity_paid, label: 'Mira Reducible Indemnity Paid'
+    .col-sm-4 = f.input :claim_mira_non_reducible_indemnity_paid_2, label: 'Mira Non-Reducible Indemnity Paid'
+  .row
+    .col-sm-4 = f.input :claim_modified_losses_group_reduced, label: 'Claim Modified Losses Group Reduced'
+    .col-sm-4 = f.input :claim_modified_losses_individual_reduced, label: 'Claim Modified Losses Individual Reduced'
+  .row
+    .col-sm-3 = f.input :indemnity_settlement_date, input_html: { class: 'datepicker' }, label: 'Indemnity Settlement Date'
+    .col-sm-3 = f.input :medical_settlement_date, input_html: { class: 'datepicker' }, label: 'Medical Settlement Date'
+    .col-sm-3 = f.input :settled_claim, collection: %w[Y N], allow_empty: 'Select One', label: 'Settled Claim?'
+    .col-sm-3 = f.input :settlement_type, collection: %w[B I M], allow_empty: 'Select One', label: 'Settlement Type'
+  .row
+    .col-sm-4 = f.input :maximum_medical_improvement_date, input_html: { class: 'datepicker' }, label: 'Maximum Medical Improvement Date'
+    .col-sm-4 = f.input :policy_individual_maximum_claim_value, label: 'Policy Individual Maximum Claim Value'
+    .col-sm-4 = f.input :claim_unlimited_limited_loss, label: 'Claim Unlimited Limited Loss'
 
   .row style="margin-bottom: 100px;"
     .col-sm-12.text-right
       = link_to 'Cancel', policy_calculation_path(@policy_calculation), class: 'btn btn-danger'
       ' &nbsp;
       = f.submit 'Save Claim', class: 'btn btn-success'
+
+javascript:
+  $(function () {
+    $('.datepicker').datetimepicker({
+      format:     'YYYY-MM-DD',
+      useCurrent: false
+    });
+  });
+
+scss:
+  #ui-datepicker-div {
+    display: none !important;
+  }
