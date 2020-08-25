@@ -45,7 +45,7 @@ class ClaimCalculationsController < ApplicationController
         flash[:success] = 'Claim Successfully Updated!'
         redirect_to policy_calculation_path(@policy_calculation)
       rescue => e
-        Logger.debug(e)
+        puts e
         flash[:error] = 'Claim updated, but something went wrong calculating the experience!'
         redirect_to edit_policy_calculation_claim_calculation_path(@policy_calculation, @claim_calculation)
       end
