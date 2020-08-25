@@ -46,7 +46,7 @@ class ClaimCalculationsController < ApplicationController
         redirect_to policy_calculation_path(@policy_calculation)
       rescue => e
         puts e
-        flash[:error] = 'Claim updated, but something went wrong calculating the experience!'
+        flash[:error] = 'Claim updated, but something went wrong calculating the experience, please make sure the default values are in place in the form!'
         redirect_to edit_policy_calculation_claim_calculation_path(@policy_calculation, @claim_calculation)
       end
     else
