@@ -349,7 +349,7 @@ ActiveRecord::Schema.define(version: 202004020223665) do
     t.date     "indemnity_settlement_date"
     t.date     "maximum_medical_improvement_date"
     t.string   "claim_mira_ncci_injury_type"
-    t.string   "enhanced_care_program_indicator",           default: "Y"
+    t.string   "enhanced_care_program_indicator",           default: "N"
   end
 
   add_index "claim_calculations", ["policy_calculation_id"], name: "index_claim_calculations_on_policy_calculation_id", using: :btree
@@ -555,7 +555,7 @@ ActiveRecord::Schema.define(version: 202004020223665) do
     t.date     "indemnity_settlement_date"
     t.date     "maximum_medical_improvement_date"
     t.string   "claim_mira_ncci_injury_type"
-    t.string   "enhanced_care_program_indicator",           default: "Y"
+    t.string   "enhanced_care_program_indicator",           default: "N"
   end
 
   add_index "final_claim_cost_calculation_tables", ["policy_number", "representative_number"], name: "index_cl_pol_num_and_rep", using: :btree
