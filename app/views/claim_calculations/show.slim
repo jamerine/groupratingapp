@@ -90,6 +90,10 @@
               dt Effective Date:
               dd = @claim_calculation&.claim_handicap_percent_effective_date&.strftime("%b %d, %Y")
     br
+    .row
+      .col-sm-12.text-right
+        small.text-small.text-italic
+          em Data Source: #{@claim_calculation.data_source}
 
     - if @mira.present?
       = render partial: 'mira_data'
