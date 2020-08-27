@@ -15,6 +15,8 @@ class AccountsController < ApplicationController
       @accounts = @accounts.search(params[:search]).paginate(page: params[:page], per_page: 50)
     elsif params[:search_name].present?
       @accounts = @accounts.search_name(params[:search_name]).paginate(page: params[:page], per_page: 50)
+    elsif params[:search_affiliate].present?
+      @accounts = @accounts.search_affiliate(params[:search_affiliate]).paginate(page: params[:page], per_page: 50)
     elsif params[:representative_number].present?
       @representative = @representatives.find_by(representative_number: params[:representative_number])
       @accounts       = @accounts.where(representative_id: @representative.id).paginate(page: params[:page], per_page: 50)

@@ -118,6 +118,11 @@ class Account < ActiveRecord::Base
     joins(:policy_calculation).where("LOWER(accounts.name) LIKE ? OR LOWER(policy_calculations.trading_as_name) LIKE ?", "%#{search_name}%", "%#{search_name}%")
   end
 
+  def self.search_affiliate(search_name)
+    search_name = search_name.downcase
+    joins(:affiliates).where("LOWER(affiliates.first_name) LIKE ? OR LOWER(affiliates.last_name) LIKE ?", "%#{search_name}%", "%#{search_name}%")
+  end
+
   def tpa_from_date
     self.tpa_start_date || Date.new(self.representative.program_year, 12, 1)
   end
