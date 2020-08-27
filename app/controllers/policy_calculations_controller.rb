@@ -40,7 +40,7 @@ class PolicyCalculationsController < ApplicationController
 
   def search
     @search_value          = params[:search_value]
-    @policy_search_results = PolicyCalculation.joins(:account).where("policy_calculations.policy_number::text ILIKE :search_value OR REPLACE(policy_calculations.policy_number::text, '-', '') ILIKE :search_value OR accounts.name ILIKE :search_value", search_value: "%#{@search_value}%").uniq.order(:policy_number)
+    @policy_search_results = PolicyCalculation.joins(:account).where("policy_calculations.policy_number::text ILIKE :search_value OR REPLACE(policy_calculations.policy_number::text, '-', '') ILIKE :search_value OR accounts.name ILIKE :search_value OR accounts.business_contact_name ILIKE :search_value", search_value: "%#{@search_value}%").uniq.order(:policy_number)
 
     render json: { matchingPoliciesList: render_to_string('policy_calculations/_search-results', layout: false) }
   end
