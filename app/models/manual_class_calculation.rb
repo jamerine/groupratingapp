@@ -243,7 +243,7 @@ class ManualClassCalculation < ActiveRecord::Base
   def calculate_potential_standard_premium(new_mod_rate)
     payroll_amount     = (self.manual_class_estimated_individual_premium / self.manual_class_individual_total_rate)
     payroll_amount     = payroll_amount.nan? ? 0.0 : payroll_amount
-    estimated_mod_rate = (self.manual_class_base_rate * (new_mod_rate + 1)).round(2)
+    estimated_mod_rate = ((self.manual_class_base_rate || 0) * (new_mod_rate + 1)).round(2)
     ((estimated_mod_rate * payroll_amount) / 100).round(2)
   end
 end
