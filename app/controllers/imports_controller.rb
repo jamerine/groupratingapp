@@ -102,6 +102,15 @@ class ImportsController < ApplicationController
     redirect_to imports_path, notice: "Files to be imported and parse have been queued."
   end
 
+  def import_pdemos
+    require 'open-uri'
+    @representative = Representative.find(import_params[:representative_id])
+
+    ImportPdemoProcess.perform_async(@representative.representative_number, @representative.abbreviated_name)
+
+    redirect_to imports_path, notice: "Files to be imported and parse have been queued."
+  end
+
   def import_clicds
     @representative = Representative.find(import_params[:representative_id])
 

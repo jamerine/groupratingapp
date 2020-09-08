@@ -4,8 +4,6 @@ class GroupRatingAllCreate
   sidekiq_options queue: :group_rating_all_create, retry: 10
 
   def perform(group_rating_id, experience_period_lower_date, process_representative, representative_id, policy_number)
-
-
     @policy_demographic = FinalEmployerDemographicsInformation.find_by(policy_number: policy_number, representative_number: process_representative)
     # @policy_demographic = FinalEmployerDemographicsInformation.find_by(policy_number: 1740451, representative_number: 1740).nil? ? PolicyCalculation.find_by(policy_number: 1740451, representative_number: 1740) : FinalEmployerDemographicsInformation.find_by(policy_number: 1740451, representative_number: 1740)
     # @policy_demographic = FinalEmployerDemographicsInformation.find_by(policy_number: 1283284)
@@ -172,7 +170,6 @@ class GroupRatingAllCreate
       end
 
       unless FinalManualClassFourYearPayrollAndExpLoss.where(representative_number: @policy_calculation.representative_number, policy_number: @policy_calculation.policy_number).empty?
-
         FinalManualClassFourYearPayrollAndExpLoss.where(representative_number: @policy_calculation.representative_number, policy_number: @policy_calculation.policy_number).find_each do |man_class_exp|
           @manual_class_calculation = ManualClassCalculation.where(policy_calculation_id: @policy_calculation.id, manual_number: man_class_exp.manual_number).update_or_create(
             representative_number:       man_class_exp.representative_number,
@@ -263,12 +260,12 @@ class GroupRatingAllCreate
           end
         end
       end
+
       @account.policy_calculation.calculate_experience
       @account.policy_calculation.calculate_premium
       @account.group_rating
       @account.group_retro
     else
-
       # PREDECESSOR PAYROLL FIX - 9/5/2017
       @policy_demographic = PolicyCalculation.find_by(policy_number: policy_number, representative_number: process_representative)
       # @policy_demographic = PolicyCalculation.find_by(policy_number: 1740451, representative_number: 1740)
@@ -318,5 +315,4 @@ class GroupRatingAllCreate
       end
     end
   end
-
 end

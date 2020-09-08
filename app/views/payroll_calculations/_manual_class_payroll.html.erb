@@ -12,7 +12,7 @@
     <div class="col-md-1 col-sm-4 col-xs-6 hidden-sm hidden-xs">
       <h5>Reporting Type</h5>
     </div>
-    <div class="col-md-2 col-sm-4 col-xs-6 hidden-sm hidden-xs">
+    <div class="col-md-1 col-sm-4 col-xs-6 hidden-sm hidden-xs">
       <h5>Payroll Origin</h5>
     </div>
     <div class="col-md-1 col-sm-4 col-xs-6 hidden-sm hidden-xs">
@@ -23,6 +23,9 @@
     </div>
     <div class="col-md-1 col-sm-4 col-xs-6 hidden-sm hidden-xs">
       <h5>Manual Class Transfered</h5>
+    </div>
+    <div class="col-md-1 col-sm-4 col-xs-6 hidden-sm hidden-xs">
+      <h5>Transfer Creation Date</h5>
     </div>
     <div class="col-md-1 col-sm-4 col-xs-6 hidden-sm hidden-xs">
       <h5>Action</h5>
@@ -46,7 +49,7 @@
         <h5 class="hidden-md hidden-lg">Reporting Type</h5>
         <p> <%= payroll_calculation.reporting_type %></p>
       </div>
-      <div class="col-md-2 col-sm-6 col-xs-6">
+      <div class="col-md-1 col-sm-6 col-xs-6">
         <h5 class="hidden-md hidden-lg">Payroll Origin</h5>
         <p> <%= payroll_calculation.payroll_origin.truncate(30) %></p>
       </div>
@@ -62,6 +65,10 @@
         <h5 class="hidden-md hidden-lg">Manual Class Transfered</h5>
         <p> <%= payroll_calculation.manual_class_transferred || 'none' %></p>
       </div>
+    <div class="col-md-1 col-sm-6 col-xs-6">
+      <h5 class="hidden-md hidden-lg">Transfer Creation Date</h5>
+      <p> <%= payroll_calculation.transfer_creation_date&.strftime("%B %e, %Y") || 'none' %></p>
+    </div>
 
       <div class="col-md-1 col-sm-12 col-xs-12">
         <h5 class="hidden-md hidden-lg hidden-sm hidden-xs">Action</h5>

@@ -23,11 +23,13 @@ class ImportFile
         line = file.readline
         if line[40, 4] == "0000"
           #puts "incorrect characters"
+        elsif table_name == 'pdemos' && line.include?('|')
+          new_line = line.gsub('|', ' ')
+          rc.put_copy_data(new_line)
         else
           rc.put_copy_data(line)
         end
       end
-
 
       # We are done adding copy data
       rc.put_copy_end

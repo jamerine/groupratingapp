@@ -25,13 +25,17 @@ class GroupRatingStepThreeB1
         new_positive_transferred_payroll["policy_transferred"]       = pcomb_array[0]
         new_positive_transferred_payroll["manual_class_transferred"] = payroll.manual_number
 
+        # TODO: When the account policy status is dead or the last policy coverage history date is before the payroll period end date, set the payroll amount to 0
+        # When the active status date, first date active is not entering payroll if the start date is before active status date (should be end date before active status date)
+
+
         #insert positive transfer payroll to array
         transferred_payroll_array << new_positive_transferred_payroll
 
         #create negative transfer payroll to successor
         new_negative_transferred_payroll                             = payroll.dup
         new_negative_transferred_payroll                             = new_negative_transferred_payroll.attributes.except("id")
-        new_negative_transferred_payroll["manual_class_payroll"]     = -payroll.manual_class_payroll
+        new_negative_transferred_payroll["manual_class_payroll"]     = -(payroll.manual_class_payroll || 0)
         new_negative_transferred_payroll["reporting_type"]           = 'A'
         new_negative_transferred_payroll["payroll_origin"]           = 'full_transfer'
         new_negative_transferred_payroll["policy_transferred"]       = pcomb_array[1]

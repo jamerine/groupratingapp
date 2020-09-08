@@ -166,7 +166,6 @@ class Account < ActiveRecord::Base
         group_rating_rows  = BwcCodesIndustryGroupSavingsRatioCriterium.where("market_rate >= :group_rating_tier and industry_group = :industry_group", group_rating_tier: @group_rating_tier, industry_group: @industry_group)
       end
 
-
       if !group_rating_rows.empty?
         administrative_rate        = BwcCodesConstantValue.find_by("name = 'administrative_rate' and completed_date is null").rate
         @group_rating_tier         = group_rating_rows.min.market_rate
