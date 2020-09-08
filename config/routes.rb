@@ -1,8 +1,5 @@
 # == Route Map
 #
-# **************************************************
-# ⛔️ WARNING: Sidekiq testing API enabled, but this is not the test environment.  Your jobs will not go to Redis.
-# **************************************************
 #                                                Prefix Verb       URI Pattern                                                                       Controller#Action
 #                                new_admin_user_session GET        /admin/login(.:format)                                                            active_admin/devise/sessions#new
 #                                    admin_user_session POST       /admin/login(.:format)                                                            active_admin/devise/sessions#create
@@ -47,6 +44,7 @@
 #                                    account_roc_report GET        /accounts/:account_id/roc_report(.:format)                                        accounts#roc_report
 #                      account_group_rating_calculation POST       /accounts/:account_id/group_rating_calculation(.:format)                          accounts#group_rating_calculation
 #                        account_note_remove_attachment DELETE     /accounts/:account_id/notes/:note_id/remove_attachment(.:format)                  notes#remove_attachment
+#                            update_pinned_account_note PATCH      /accounts/:account_id/notes/:id/update_pinned(.:format)                           notes#update_pinned
 #                                         account_notes GET        /accounts/:account_id/notes(.:format)                                             notes#index
 #                                                       POST       /accounts/:account_id/notes(.:format)                                             notes#create
 #                                      new_account_note GET        /accounts/:account_id/notes/new(.:format)                                         notes#new
@@ -169,6 +167,7 @@
 #                                  import_miras_imports POST       /imports/import_miras(.:format)                                                   imports#import_miras
 #                                 import_clicds_imports POST       /imports/import_clicds(.:format)                                                  imports#import_clicds
 #                                 import_democs_imports POST       /imports/import_democs(.:format)                                                  imports#import_democs
+#                                 import_pdemos_imports POST       /imports/import_pdemos(.:format)                                                  imports#import_pdemos
 #                              import_all_miras_imports POST       /imports/import_all_miras(.:format)                                               imports#import_all_miras
 #                             import_all_clicds_imports POST       /imports/import_all_clicds(.:format)                                              imports#import_all_clicds
 #                             import_all_democs_imports POST       /imports/import_all_democs(.:format)                                              imports#import_all_democs

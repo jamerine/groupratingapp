@@ -26,7 +26,6 @@ class GroupRatingStepThreeB1
         new_positive_transferred_payroll["manual_class_transferred"] = payroll.manual_number
 
         # TODO: When the account policy status is dead or the last policy coverage history date is before the payroll period end date, set the payroll amount to 0
-        # When the active status date, first date active is not entering payroll if the start date is before active status date (should be end date before active status date)
 
 
         #insert positive transfer payroll to array
