@@ -8,6 +8,7 @@
 #  date         :datetime
 #  description  :text
 #  is_group     :boolean          default(FALSE)
+#  is_pinned    :boolean          default(FALSE)
 #  is_retention :boolean          default(FALSE)
 #  title        :string
 #  created_at   :datetime         not null
@@ -41,11 +42,12 @@ class Note < ActiveRecord::Base
   mount_uploader :attachment, NoteUploader
   validate :attachment_size_validation
 
-  scope :user_filter, -> (user) { where user: user }
-  scope :category_filter, -> (category) { where category: category }
-  scope :retention_notes, -> { where(is_retention: true) }
-  scope :group_notes, -> { where(is_group: true) }
-  scope :policy_notes, -> { where(is_retention: false, is_group: false) }
+  scope :user_filter, -> (user) { where(user: user) }
+  scope :category_filter, -> (category) { where(category: category) }
+  scope :pinned, -> { order(is_pinned: :asc) }
+  scope :retention_notes, -> { pinned.where(is_retention: true) }
+  scope :group_notes, -> { pinned.where(is_group: true) }
+  scope :policy_notes, -> { pinned.where(is_retention: false, is_group: false) }
 
   def order_date
     self.date || self.created_at

@@ -463,6 +463,10 @@ Rails.application.routes.draw do
 
     resources :notes do
       delete :remove_attachment
+
+      member do
+        patch :update_pinned
+      end
     end
 
     resources :affiliates

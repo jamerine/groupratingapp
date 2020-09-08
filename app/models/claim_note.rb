@@ -6,6 +6,7 @@
 #  body                   :text             default("")
 #  claim_number           :string
 #  date                   :datetime
+#  is_pinned              :boolean          default(FALSE)
 #  policy_number          :integer
 #  representative_number  :integer
 #  title                  :string

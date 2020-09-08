@@ -322,7 +322,7 @@
   <div class="container">
     <div class="row">
       <div class="row">
-        <%= render 'notes/recent_account_notes', notes: @account.notes.group_notes.sort_by { |note| note.order_date }.reverse, group: true, retention: false %>
+        <%= render 'notes/recent_account_notes', notes: @account.notes.group_notes.sort_by { |note| note.is_pinned ? 0 : 1 }.sort_by { |note| !note.order_date }, group: true, retention: false %>
       </div>
     </div>
   </div>

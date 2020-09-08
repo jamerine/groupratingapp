@@ -44,7 +44,7 @@ class ClaimNotesController < ApplicationController
   private
 
   def permitted_params
-    params.require(:claim_note).permit(:title, :body, :claim_calculation_id, :claim_note_category_id, :claim_number, :policy_number, :representative_number, :user_id)
+    params.require(:claim_note).permit(:title, :body, :claim_calculation_id, :claim_note_category_id, :claim_number, :policy_number, :representative_number, :user_id, :is_pinned)
   end
 
   def set_claim_calculation

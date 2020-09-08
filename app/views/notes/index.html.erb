@@ -50,7 +50,7 @@
       </div>
     </div>
     <div id="filter_notes">
-      <%= render 'notes', notes: @notes.sort_by { |note| note.order_date }.reverse %>
+      <%= render 'notes', notes: @notes.sort_by { |note| note.is_pinned ? 0 : 1 }.sort_by { |note| !note.order_date } %>
     </div>
   </div>
 </div>

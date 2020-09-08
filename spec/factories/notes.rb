@@ -8,6 +8,7 @@
 #  date         :datetime
 #  description  :text
 #  is_group     :boolean          default(FALSE)
+#  is_pinned    :boolean          default(FALSE)
 #  is_retention :boolean          default(FALSE)
 #  title        :string
 #  created_at   :datetime         not null

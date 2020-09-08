@@ -6,6 +6,7 @@
 
   <%= f.input :title %>
   <%= f.association :claim_note_category, label: 'Category', collection: ClaimNoteCategory.all, value_method: :id, label_method: :title, prompt: 'Choose One' %>
+  <%= f.input :is_pinned, label: 'Pin Note?' %>
   <%= f.input :body, as: :trix_editor %>
 
   <div class="form-group text-right">

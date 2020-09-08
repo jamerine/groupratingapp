@@ -6,12 +6,16 @@
   </div>
 
   <div class="row">
-    <div class="col-sm-3">
+    <div class="col-sm-2">
       <%= f.input :is_group, label: ' Group Note', input_html: { checked: @group } %>
     </div>
 
-    <div class="col-sm-3">
+    <div class="col-sm-2">
       <%= f.input :is_retention, label: ' Retention Note', input_html: { checked: @retention } %>
+    </div>
+
+    <div class="col-sm-2">
+      <%= f.input :is_pinned, label: ' Pin Note?', input_html: { checked: @note.is_pinned? } %>
     </div>
   </div>
 

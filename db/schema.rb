@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200827002621) do
+ActiveRecord::Schema.define(version: 20200908131753) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -366,13 +366,14 @@ ActiveRecord::Schema.define(version: 20200827002621) do
     t.integer  "claim_note_category_id"
     t.text     "body",                   default: ""
     t.integer  "claim_calculation_id"
-    t.datetime "created_at",                          null: false
-    t.datetime "updated_at",                          null: false
+    t.datetime "created_at",                             null: false
+    t.datetime "updated_at",                             null: false
     t.string   "claim_number"
     t.integer  "representative_number"
     t.integer  "policy_number"
     t.datetime "date"
     t.integer  "user_id"
+    t.boolean  "is_pinned",              default: false
   end
 
   create_table "clicd_detail_records", force: :cascade do |t|
@@ -1091,6 +1092,7 @@ ActiveRecord::Schema.define(version: 20200827002621) do
     t.datetime "date"
     t.boolean  "is_group",     default: false
     t.boolean  "is_retention", default: false
+    t.boolean  "is_pinned",    default: false
   end
 
   add_index "notes", ["account_id"], name: "index_notes_on_account_id", using: :btree

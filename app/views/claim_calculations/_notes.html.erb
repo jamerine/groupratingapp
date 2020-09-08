@@ -12,11 +12,12 @@
                 <th style="text-align: left;">Note</th>
                 <th style="text-align: left;">User</th>
                 <th style="text-align: center;">Last Updated</th>
+                <th style="text-align: center;">Pinned</th>
                 <th width="15%" style="text-align: right;"><%= link_to 'Add Note', new_claim_calculation_claim_note_path(@claim_calculation), class: 'btn btn-success btn-sm' %></th>
               </tr>
             </thead>
             <tbody>
-              <% @claim_calculation.claim_notes.order(date: :desc).each do |note| %>
+              <% @claim_calculation.claim_notes.order(is_pinned: :desc, date: :desc, updated_at: :desc).each do |note| %>
                 <tr>
                   <td style="text-align: left;"><%= note.title %></td>
                   <td style="text-align: left;"><%= note.claim_note_category&.title %></td>
@@ -25,6 +26,14 @@
                   </td>
                   <td style="text-align: left;"><%= note.user_email %></td>
                   <td class="trix-content" data-sort="<%= note.date || note.updated_at %>" style="text-align: center;"><%= l(note.date || note.updated_at) %></td>
+                  <td style="text-align: center" data-sort="<%= note.is_pinned? ? 1 : 0 %>">
+                    <%= simple_form_for [@claim_calculation, note] do |f| %>
+                      <%= f.input :is_pinned, as: :hidden, input_html: { value: !note.is_pinned? } %>
+                      <%= button_tag class: "btn btn-transparent text-danger #{'pinned' if note.is_pinned?}", type: :submit, name: :save_pinned do %>
+                        <i class="fa fa-lg fa-thumb-tack"></i>
+                      <% end %>
+                    <% end %>
+                  </td>
                   <td width="15%" style="text-align: right;">
                     <%= link_to edit_claim_calculation_claim_note_path(@claim_calculation, note), class: 'btn btn-primary btn-sm' do %>
                       <i class="fa fa-edit"></i>
@@ -45,3 +54,9 @@
     </div>
   </div>
 </div>
+
+<style>
+  .pinned {
+    transform: rotate(-45deg)
+  }
+</style>

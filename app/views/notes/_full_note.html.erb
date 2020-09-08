@@ -1,56 +1,68 @@
-
-  <div class="panel panel-default">
-      <div class="panel-heading panel-note">
-        <a class="collapsed panel-link" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse<%= note.id %>" aria-expanded="false" aria-controls="collapse<%= note.id %>">
-        <div class="row panel-heading-text text-center">
-          <div class="col col-sm-1">
-
-            <% if note.attachment_url %>
-              <i class="fa fa-plus" aria-hidden="true"></i> &nbsp; <i class="fa fa-paperclip" aria-hidden="true"></i>
-            <% else %>
-              <i class="fa fa-plus" aria-hidden="true"></i>
-            <% end %>
-          </div>
-          <div class="col col-sm-2">
-            <b><%= note.note_category&.title %></b>
-          </div>
-          <div class="col col-sm-3">
-            <b><%= note.title&.titleize %></b>
-          </div>
-          <div class="col col-sm-3">
-            <b><%= note.user.email %></b>
-          </div>
-          <div class="col col-sm-3">
-            <b><%= l (note.date || note.created_at), format: :note_time %></b>
-          </div>
+<div class="panel panel-default">
+  <div class="panel-heading panel-note">
+    <div class="row panel-heading-text text-center">
+      <a class="collapsed panel-link" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse<%= note.id %>" aria-expanded="false" aria-controls="collapse<%= note.id %>">
+        <div class="col col-sm-1">
+          <% if note.attachment_url %>
+            <i class="fa fa-plus" aria-hidden="true"></i> &nbsp; <i class="fa fa-paperclip" aria-hidden="true"></i>
+          <% else %>
+            <i class="fa fa-plus" aria-hidden="true"></i>
+          <% end %>
+        </div>
+        <div class="col col-sm-2">
+          <b><%= note.note_category&.title %></b>
+        </div>
+        <div class="col col-sm-3">
+          <b><%= note.title&.titleize %></b>
+        </div>
+        <div class="col col-sm-2">
+          <b><%= note.user.email %></b>
+        </div>
+        <div class="col col-sm-2">
+          <b><%= l (note.date || note.created_at), format: :note_time %></b>
         </div>
       </a>
-      </div>
-    <div id="collapse<%= note.id %>" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading<%= note.id %>">
-      <div class="panel-body">
-        <div class="row">
-          <div class="col col-md-1 col-md-offset-1 vcenter">
-              <label>Description:</label>
-          </div>
-          <div class="col col-md-9 vcenter">
-              <%= raw(note.description) %>
-          </div>
-          <div class="col col-md-1 vcenter">
-            <% if current_user.admin_or_manager? %>
-             <%= link_to 'Edit', edit_account_note_path(account_id: note.account.id, id: note.id) %> |
-            <% end %>
-             <%= link_to 'View', account_note_path(account_id: note.account.id, id: note.id) %>
-          </div>
-        </div>
-        <% if note.attachment_url %>
-          <div class="row">
-            <div class="col col-md-12 text-center">
-                <%= link_to 'View Attachment', note.attachment_url, class:'btn btn-primary', target: '_blank' %>
-            </div>
-          </div>
+      <div class="col col-sm-2">
+        <%= simple_form_for [@account, note], url: update_pinned_account_note_path(@account, note) do |f| %>
+          <%= f.input :is_pinned, as: :hidden, input_html: { value: !note.is_pinned? } %>
+          <%= f.input :is_group, as: :hidden %>
+          <%= f.input :is_retention, as: :hidden %>
+          <%= button_tag class: "btn btn-transparent text-danger #{'pinned' if note.is_pinned?}", type: :submit, name: :save_pinned do %>
+            <i class="fa fa-lg fa-thumb-tack"></i>
+          <% end %>
         <% end %>
-
-
       </div>
     </div>
   </div>
+  <div id="collapse<%= note.id %>" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading<%= note.id %>">
+    <div class="panel-body">
+      <div class="row">
+        <div class="col col-md-1 col-md-offset-1 vcenter">
+          <label>Description:</label>
+        </div>
+        <div class="col col-md-9 vcenter">
+          <%= raw(note.description) %>
+        </div>
+        <div class="col col-md-1 vcenter">
+          <% if current_user.admin_or_manager? %>
+            <%= link_to 'Edit', edit_account_note_path(account_id: note.account.id, id: note.id) %> |
+          <% end %>
+          <%= link_to 'View', account_note_path(account_id: note.account.id, id: note.id) %>
+        </div>
+      </div>
+      <% if note.attachment_url %>
+        <div class="row">
+          <div class="col col-md-12 text-center">
+            <%= link_to 'View Attachment', note.attachment_url, class: 'btn btn-primary', target: '_blank' %>
+          </div>
+        </div>
+      <% end %>
+
+    </div>
+  </div>
+</div>
+<style>
+  .pinned {
+    transform: rotate(-45deg)
+  }
+</style>
