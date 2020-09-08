@@ -60,9 +60,9 @@
 
   .row style="margin-bottom: 100px;"
     .col-sm-12.text-right
-      = link_to 'Cancel', policy_calculation_path(@policy_calculation), class: 'btn btn-danger'
+      = link_to 'Cancel', policy_calculation_path(@policy_calculation), class: 'btn btn-danger', data: { confirm: 'Are you sure you want to cancel saving this claim?' }
       ' &nbsp;
-      = f.submit 'Save Claim', class: 'btn btn-success'
+      = f.submit 'Save Claim', class: 'btn btn-success', data: { confirm: 'Are you sure you want to save this claim?' }
 
 javascript:
   $(function () {
