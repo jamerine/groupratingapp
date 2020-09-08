@@ -21,7 +21,7 @@
   </div>
   <%= f.input :description, as: :trix_editor %>
   <%= f.input :attachment, as: :file, onchange: 'validateFiles(this);', input_html: { data: { max_file_size: 1.megabytes } } %>
-  <%= f.submit 'Submit', class: 'btn btn-info' %>
+  <%= f.submit 'Submit', class: 'btn btn-info', data: { confirm: 'Are you sure you want to save this note?' } %>
 <% end %>
 
 

@@ -10,6 +10,6 @@
 
   <div class="form-group text-right">
     <%= link_to 'Cancel', claim_calculation_path(@claim_calculation), class: 'btn btn-danger' %>
-    <%= f.submit 'Save', class: 'btn btn-success' %>
+    <%= f.submit 'Save', class: 'btn btn-success', data: { confirm: 'Are you sure you want to save this note?' } %>
   </div>
 <% end %>
