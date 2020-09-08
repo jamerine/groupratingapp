@@ -69,7 +69,7 @@ class Representative < ActiveRecord::Base
   scope :default_representative, -> { find(1) }
 
   def self.options_for_select
-    order('LOWER(abbreviated_name)').map { |e| [e.abbreviated_name, e.id] }
+    order('LOWER(representatives.abbreviated_name)').map { |e| [e.abbreviated_name, e.id] }
   end
 
   def full_location_address
