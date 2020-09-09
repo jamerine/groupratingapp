@@ -67,10 +67,7 @@ class Representative < ActiveRecord::Base
   mount_uploader :footer, FooterUploader
 
   scope :default_representative, -> { find(1) }
-
-  def self.options_for_select
-    order('LOWER(representatives.abbreviated_name)').map { |e| [e.abbreviated_name, e.id] }
-  end
+  scope :options_for_select, -> { order('LOWER(representatives.abbreviated_name)').map { |e| [e.abbreviated_name, e.id] } }
 
   def full_location_address
     "#{self.location_address_1} #{self.location_city} #{self.location_state.upcase} #{self.location_zip_code}"

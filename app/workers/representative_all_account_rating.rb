@@ -7,8 +7,8 @@ class RepresentativeAllAccountRating
   def perform(representative_id)
     representative = Representative.find_by(id: representative_id)
 
-    representative.accounts.each_with_progress do |account|
-      GroupRatingCalculation.new(account).calculate
+    representative.accounts.pluck(:id).each_with_progress do |account_id|
+      GroupRatingCalculate.perform_async(account_id)
     end
   end
 end

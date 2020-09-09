@@ -14,6 +14,7 @@ production:
   - import_democ_process
   - import_pdemo_process
   - import_clicd_data
+  - group_rating_calculate
   - import_mira_data
   - import_weekly_mira_data
   - all_representatives_process
