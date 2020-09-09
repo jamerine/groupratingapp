@@ -32,12 +32,12 @@ class FilterClaimsProcess
 
     ClaimCalculation.where('claim_calculations.id IN (?)', result.rows.flatten.map(&:to_i)).delete_all
 
-    @representative.accounts.where('accounts.policy_number_entered IN (?)', policy_numbers).each do |account|
-      account.policy_calculation.calculate_experience
-      account.policy_calculation.calculate_premium
-      account.group_rating
-      account.group_retro
-    end
+    # @representative.accounts.where('accounts.policy_number_entered IN (?)', policy_numbers).each do |account|
+    #   account.policy_calculation.calculate_experience
+    #   account.policy_calculation.calculate_premium
+    #   account.group_rating
+    #   account.group_retro
+    # end
 
     GroupRatingMarkComplete.perform_async(group_rating_id, all_process)
   end

@@ -17,6 +17,7 @@ production:
   - import_mira_data
   - import_weekly_mira_data
   - all_representatives_process
+  - representative_all_account_rating
   - parse_file
   - group_rating_step_one
   - group_rating_step_two
