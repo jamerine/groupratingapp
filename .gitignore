@@ -29,3 +29,4 @@
 .byebug_history
 public/.DS_Store
 latest.dump
+app/assets/documents/*
