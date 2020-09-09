@@ -28,7 +28,7 @@ class FilterClaimsProcess
                                                                   WHERE democs.policy_number = policies.policy_number
                                                                     AND democs.representative_number = #{@representative.representative_number})")
 
-    policy_numbers = ClaimCalculation.where('claim_calculations.id IN (?)', result.rows.flatten.map(&:to_i)).pluck(:policy_number)
+    # policy_numbers = ClaimCalculation.where('claim_calculations.id IN (?)', result.rows.flatten.map(&:to_i)).pluck(:policy_number)
 
     ClaimCalculation.where('claim_calculations.id IN (?)', result.rows.flatten.map(&:to_i)).delete_all
 
