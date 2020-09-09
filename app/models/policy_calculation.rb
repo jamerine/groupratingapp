@@ -102,6 +102,7 @@ class PolicyCalculation < ActiveRecord::Base
   belongs_to :account
 
   delegate :name, to: :account, prefix: true, allow_nil: false
+  delegate :status, to: :account, prefix: true, allow_nil: false
 
   scope :by_representative, -> (rep_number) { where(representative_number: rep_number) }
   scope :updated_in_quarterly_report, -> { where('policy_calculations.updated_at >= ?', Date.parse('2020-07-30')) }
@@ -114,6 +115,10 @@ class PolicyCalculation < ActiveRecord::Base
 
   # Add Papertrail as history tracking
   has_paper_trail :on => [:update]
+
+  def self.find_by_rep_and_policy(rep_number, policy_number)
+    find_by(representative_number: rep_number, policy_number: policy_number)
+  end
 
   def self.update_or_create(attributes)
     obj = first || new
