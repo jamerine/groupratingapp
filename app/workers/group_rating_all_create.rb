@@ -261,10 +261,11 @@ class GroupRatingAllCreate
         end
       end
 
-      @account.policy_calculation.calculate_experience
-      @account.policy_calculation.calculate_premium
-      @account.group_rating
-      @account.group_retro
+      # Don't need to do this here anymore since doing it in the all rep process
+      # @account.policy_calculation.calculate_experience
+      # @account.policy_calculation.calculate_premium
+      # @account.group_rating
+      # @account.group_retro
     else
       # PREDECESSOR PAYROLL FIX - 9/5/2017
       @policy_demographic = PolicyCalculation.find_by(policy_number: policy_number, representative_number: process_representative)
@@ -308,10 +309,12 @@ class GroupRatingAllCreate
             end
           end
         end
-        @account.policy_calculation.calculate_experience
-        @account.policy_calculation.calculate_premium
-        @account.group_rating
-        @account.group_retro
+
+        # Don't need to do this here anymore since doing it in the all rep process
+        # @account.policy_calculation.calculate_experience
+        # @account.policy_calculation.calculate_premium
+        # @account.group_rating
+        # @account.group_retro
       end
     end
   end
