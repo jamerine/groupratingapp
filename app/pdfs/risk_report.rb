@@ -151,10 +151,13 @@ class RiskReport < PdfReport
     @out_of_experience_mira_medical_reserve_total = 0
 
     @out_of_experience_year_claims.each do |e|
-      @out_of_experience_comp_total                 += (((e.claim_mira_reducible_indemnity_paid + e.claim_mira_non_reducible_indemnity_paid) * (1 - e.claim_subrogation_percent) - (e.claim_mira_non_reducible_indemnity_paid)) * (1 - e.claim_handicap_percent) + (e.claim_mira_non_reducible_indemnity_paid)) * e.claim_group_multiplier
-      @out_of_experience_medical_total              += (((e.claim_medical_paid + e.claim_mira_non_reducible_indemnity_paid_2) * (1 - e.claim_subrogation_percent) - e.claim_mira_non_reducible_indemnity_paid_2) * (1 - e.claim_handicap_percent) + e.claim_mira_non_reducible_indemnity_paid_2) * e.claim_group_multiplier
-      @out_of_experience_mira_medical_reserve_total += (1 - e.claim_handicap_percent) * (e.claim_mira_medical_reserve_amount + (e.claim_mira_indemnity_reserve_amount)) * e.claim_group_multiplier * (1 - e.claim_subrogation_percent)
+      if e.claim_handicap_percent.present? && e.claim_subrogation_percent.present? && e.claim_group_multiplier.present?
+        @out_of_experience_comp_total                 += (((e.claim_mira_reducible_indemnity_paid + e.claim_mira_non_reducible_indemnity_paid) * (1 - e.claim_subrogation_percent) - (e.claim_mira_non_reducible_indemnity_paid)) * (1 - e.claim_handicap_percent) + (e.claim_mira_non_reducible_indemnity_paid)) * e.claim_group_multiplier
+        @out_of_experience_medical_total              += (((e.claim_medical_paid + e.claim_mira_non_reducible_indemnity_paid_2) * (1 - e.claim_subrogation_percent) - e.claim_mira_non_reducible_indemnity_paid_2) * (1 - e.claim_handicap_percent) + e.claim_mira_non_reducible_indemnity_paid_2) * e.claim_group_multiplier
+        @out_of_experience_mira_medical_reserve_total += (1 - e.claim_handicap_percent) * (e.claim_mira_medical_reserve_amount + (e.claim_mira_indemnity_reserve_amount)) * e.claim_group_multiplier * (1 - e.claim_subrogation_percent)
+      end
     end
+
     @out_of_experience_group_modified_losses_total      = @out_of_experience_year_claims.sum(:claim_modified_losses_group_reduced)
     @out_of_experience_individual_modified_losses_total = @out_of_experience_year_claims.sum(:claim_modified_losses_individual_reduced)
     @out_of_experience_individual_reduced_total         = @out_of_experience_year_claims.sum(:claim_individual_reduced_amount)
