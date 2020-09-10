@@ -15,14 +15,16 @@ namespace :heroku do
       @group_rating                            = GroupRating.where(representative_id: @representative.id).destroy_all
       @new_group_rating.status                 = 'Queuing'
       @new_group_rating.process_representative = @representative.representative_number
+
       if @new_group_rating.save
         @import = Import.new(process_representative: @representative.representative_number, representative_id: @new_group_rating.representative_id, group_rating_id: @new_group_rating.id, import_status: 'Queuing', parse_status: 'Queuing')
         # Flat files
         if @import.save
           ImportProcess.perform_async(@import.process_representative, @import.id, @representative.abbreviated_name, @new_group_rating.id, false, 1)
-          AllRepresentativesProcess.perform_in(4.hours)
         end
       end
+
+      AllRepresentativesProcess.perform_in(4.hours)
     end
     puts "done."
   end
