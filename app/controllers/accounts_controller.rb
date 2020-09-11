@@ -148,9 +148,9 @@ class AccountsController < ApplicationController
 
   def group_rating_calculation
     @account = Account.find(params[:account_id])
-    GroupRatingCalculation.new(@account).calculate
+    GroupRatingCalculate.perform_async(@account.id)
 
-    flash[:notice] = "Account Group Rating Calculation Completed."
+    flash[:notice] = "Account Group Rating Calculation Queued."
     redirect_to @account
   end
 

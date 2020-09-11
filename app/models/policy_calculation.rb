@@ -165,7 +165,6 @@ class PolicyCalculation < ActiveRecord::Base
 
   def calculate_experience
     self.transaction do
-
       @group_rating = GroupRating.find_by(process_representative: self.representative_number)
 
       self.manual_class_calculations.find_each do |manual_class|
