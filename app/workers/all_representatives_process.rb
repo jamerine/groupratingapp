@@ -9,7 +9,7 @@ class AllRepresentativesProcess
       # Go ahead and redo calculations since sometimes they aren't accurate
       RepresentativeAllAccountRating.perform_async(representative.id)
 
-      ImportMiraFilesProcess.perform_in((5 * representative.id).minutes, representative.representative_number, representative.abbreviated_name)
+      # ImportMiraFilesProcess.perform_in((5 * representative.id).minutes, representative.representative_number, representative.abbreviated_name)
       # ImportClicdFilesProcess.perform_async(representative.representative_number, representative.abbreviated_name)
     end
   end

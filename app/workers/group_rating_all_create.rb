@@ -262,6 +262,7 @@ class GroupRatingAllCreate
       end
 
       # Don't need to do this here anymore since doing it in the all rep process
+      @account.calculate
       # @account.policy_calculation.calculate_experience
       # @account.policy_calculation.calculate_premium
       # @account.group_rating
@@ -311,6 +312,7 @@ class GroupRatingAllCreate
         end
 
         # Don't need to do this here anymore since doing it in the all rep process
+        @account.calculate
         # @account.policy_calculation.calculate_experience
         # @account.policy_calculation.calculate_premium
         # @account.group_rating

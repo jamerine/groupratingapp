@@ -795,4 +795,13 @@ class Account < ActiveRecord::Base
     self.policy_calculation.manual_class_calculations.each { |mc| premiums << mc.calculate_estimated_premium(market_rate) }
     premiums.sum.round(2)
   end
+
+  def calculate
+    policy = self.policy_calculation || PolicyCalculation.find_by_rep_and_policy(self.representative&.representative_number, self.policy_number_entered)
+
+    policy&.calculate_experience
+    policy&.calculate_premium
+    group_rating
+    group_retro
+  end
 end
