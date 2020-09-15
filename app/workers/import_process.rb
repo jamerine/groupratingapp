@@ -49,23 +49,30 @@ class ImportProcess
     ProcessPolicyCombinePartialToFullLease.where(data_source: 'bwc').delete_all
     ProcessPolicyCombinePartialTransferNoLease.where(data_source: 'bwc').delete_all
     ProcessPolicyCoverageStatusHistory.where(data_source: 'bwc').delete_all
+
+
+    PayrollCalculation.where(data_source: 'bwc', representative_number: representative_number).delete_all
+
+
     # ImportMiraFilesProcess.perform_async(representative_number, representative_abbreviated_name)
     # ImportClicdFilesProcess.perform_async(representative_number, representative_abbreviated_name)
     ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/DEMOCFILE", "democs", import_id, group_rating_id, all_process, import_only)
     ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/MRCLSFILE", "mrcls", import_id, group_rating_id, all_process, import_only)
     ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/MREMPFILE", "mremps", import_id, group_rating_id, all_process, import_only)
-    ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/PCOMBFILE", "pcombs", import_id, group_rating_id, all_process, import_only)
+    # ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/PCOMBFILE", "pcombs", import_id, group_rating_id, all_process, import_only)
+    ImportFile.perform_async(Rails.root.join('app', 'assets', 'documents', 'PCOMBFILE.txt'), "pcombs", import_id, group_rating_id, all_process, import_only)
     ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/PHMGNFILE", "phmgns", import_id, group_rating_id, all_process, import_only)
     # ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/SC220FILE", "sc220s", import_id, group_rating_id)
     ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/SC230FILE", "sc230s", import_id, group_rating_id, all_process, import_only)
-    ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/RATEFILE", "rates", import_id, group_rating_id, all_process, import_only)
+    # ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/RATEFILE", "rates", import_id, group_rating_id, all_process, import_only)
+    ImportFile.perform_async(Rails.root.join('app', 'assets', 'documents', 'RATEFILE.txt'), "rates", import_id, group_rating_id, all_process, import_only)
     ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/PDEMOFILE", "pdemos", import_id, group_rating_id, all_process, import_only)
     ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/PEMHSFILE", "pemhs", import_id, group_rating_id, all_process, import_only)
     ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/PCOVGFILE", "pcovgs", import_id, group_rating_id, all_process, import_only)
-      # ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/MIRA2FILE", "miras", import_id, group_rating_id, all_process, import_only)
-      # ImportMiraData.perform_async(representative_number)
-      # ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/MIRA2FILW", "weekly_miras", import_id, group_rating_id, all_process, import_only)
-      # ImportWeeklyMiraData.perform_async(representative_number)
-      # ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/CLICDFILE", "clicds", import_id, group_rating_id, all_process, import_only)
+    # ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/MIRA2FILE", "miras", import_id, group_rating_id, all_process, import_only)
+    # ImportMiraData.perform_async(representative_number)
+    # ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/MIRA2FILW", "weekly_miras", import_id, group_rating_id, all_process, import_only)
+    # ImportWeeklyMiraData.perform_async(representative_number)
+    # ImportFile.perform_async("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/CLICDFILE", "clicds", import_id, group_rating_id, all_process, import_only)
   end
 end
