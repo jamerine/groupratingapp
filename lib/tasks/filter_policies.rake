@@ -13,10 +13,6 @@ namespace :db do
       policies_to_remove = policies.where.not(id: policy_to_keep.id)
 
       policies_to_remove.each do |policy|
-        policy.claim_calculations.each do |claim|
-          policy_to_keep.claim_calculations << claim unless policy_to_keep.claim_calculations.where(claim_number: claim.claim_number).any?
-        end
-
         policy.policy_coverage_status_histories.each do |history|
           policy_to_keep.policy_coverage_status_histories << history unless policy_to_keep.policy_coverage_status_histories.where(coverage_effective_date: history.coverage_effective_date, coverage_status: history.coverage_status).any?
         end
@@ -31,7 +27,7 @@ namespace :db do
 
         policy_to_keep.save
         policy.destroy
-        GroupRatingCalculate.perform_async(policy_to_keep.account_id)
+        policy_to_keep.account&.calculate
       end
     end
   end

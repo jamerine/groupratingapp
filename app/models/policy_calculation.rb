@@ -94,6 +94,7 @@
 
 class PolicyCalculation < ActiveRecord::Base
   has_many :manual_class_calculations, dependent: :destroy
+  has_many :claim_calculations, dependent: :destroy
   has_many :policy_coverage_status_histories, dependent: :destroy
   has_many :policy_program_histories, dependent: :destroy
   has_many :payroll_calculations, through: :manual_class_calculations
@@ -120,9 +121,9 @@ class PolicyCalculation < ActiveRecord::Base
     find_by(representative_number: rep_number, policy_number: policy_number)
   end
 
-  def claim_calculations
-    ClaimCalculation.by_representative(self.representative_number).where(policy_number: self.policy_number)
-  end
+  # def claim_calculations
+  #   ClaimCalculation.by_representative(self.representative_number).where(policy_number: self.policy_number)
+  # end
 
   # def manual_class_calculations
   #   ManualClassCalculation.by_representative(self.representative_number).where(policy_number: self.policy_number)
