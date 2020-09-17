@@ -22,13 +22,6 @@ class GroupRatingStepThreeB1
         new_positive_transferred_payroll[:policy_transferred]       = policy_array[0]
         new_positive_transferred_payroll[:manual_class_transferred] = payroll.manual_number
 
-        # When the account policy status is dead or the last policy coverage history date is before the payroll period start date, set the payroll amount to 0 - Doug 9/8/2020
-        # if policy.present? && (policy.account_status == 'dead' || (payroll.reporting_period_start_date.present? && policy.coverage_status_effective_date < payroll.reporting_period_start_date))
-        #   new_positive_transferred_payroll[:manual_class_payroll] = 0
-        # end
-
-        # TODO: NOT GETTING INTO SUCCESSOR
-
         #insert positive transfer payroll to array
         transferred_payroll_array << new_positive_transferred_payroll
 
