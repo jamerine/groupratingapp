@@ -94,7 +94,6 @@
 
 class PolicyCalculation < ActiveRecord::Base
   has_many :manual_class_calculations, dependent: :destroy
-  has_many :claim_calculations, dependent: :destroy
   has_many :policy_coverage_status_histories, dependent: :destroy
   has_many :policy_program_histories, dependent: :destroy
   has_many :payroll_calculations, through: :manual_class_calculations
@@ -110,6 +109,8 @@ class PolicyCalculation < ActiveRecord::Base
   scope :current_coverage_statuses, -> { all.select(:current_coverage_status).map(&:current_coverage_status).reject(&:blank?).uniq }
   scope :bwc, -> { where(data_source: 'bwc') }
 
+  before_destroy :delete_claims
+
   def representative_name
     representative.abbreviated_name
   end
@@ -121,9 +122,9 @@ class PolicyCalculation < ActiveRecord::Base
     find_by(representative_number: rep_number, policy_number: policy_number)
   end
 
-  # def claim_calculations
-  #   ClaimCalculation.by_representative(self.representative_number).where(policy_number: self.policy_number)
-  # end
+  def claim_calculations
+    ClaimCalculation.by_representative(self.representative_number).where(policy_number: self.policy_number)
+  end
 
   # def manual_class_calculations
   #   ManualClassCalculation.by_representative(self.representative_number).where(policy_number: self.policy_number)
@@ -417,5 +418,9 @@ class PolicyCalculation < ActiveRecord::Base
     # else
     #   405750 + (((total_standard_premium || 0) - 500000) * 0.75)
     # end
+  end
+
+  def delete_claims
+    self.claim_calculations.destroy_all
   end
 end

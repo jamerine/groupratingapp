@@ -76,11 +76,6 @@ class ClaimCalculation < ActiveRecord::Base
     obj
   end
 
-  ManualClassCalculation.by_representative(1740).bwc.destroy_all
-  PayrollCalculation.by_representative(1740).bwc.destroy_all
-  ClaimCalculation.by_representative(1740).bwc.delete_all
-
-
   def self.to_csv
     require 'csv'
 
