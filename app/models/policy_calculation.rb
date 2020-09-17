@@ -94,7 +94,6 @@
 
 class PolicyCalculation < ActiveRecord::Base
   has_many :manual_class_calculations, dependent: :destroy
-  has_many :claim_calculations, dependent: :destroy
   has_many :policy_coverage_status_histories, dependent: :destroy
   has_many :policy_program_histories, dependent: :destroy
   has_many :payroll_calculations, through: :manual_class_calculations
@@ -108,6 +107,7 @@ class PolicyCalculation < ActiveRecord::Base
   scope :updated_in_quarterly_report, -> { where('policy_calculations.updated_at >= ?', Date.parse('2020-07-30')) }
   scope :not_recently_updated_payroll, -> { joins(manual_class_calculations: :payroll_calculations).where(payroll_calculations: { recently_updated: false }).distinct }
   scope :current_coverage_statuses, -> { all.select(:current_coverage_status).map(&:current_coverage_status).reject(&:blank?).uniq }
+  scope :bwc, -> { where(data_source: 'bwc') }
 
   def representative_name
     representative.abbreviated_name
@@ -119,6 +119,14 @@ class PolicyCalculation < ActiveRecord::Base
   def self.find_by_rep_and_policy(rep_number, policy_number)
     find_by(representative_number: rep_number, policy_number: policy_number)
   end
+
+  def claim_calculations
+    ClaimCalculation.by_representative(self.representative_number).where(policy_number: self.policy_number)
+  end
+
+  # def manual_class_calculations
+  #   ManualClassCalculation.by_representative(self.representative_number).where(policy_number: self.policy_number)
+  # end
 
   def self.update_or_create(attributes)
     obj = first || new

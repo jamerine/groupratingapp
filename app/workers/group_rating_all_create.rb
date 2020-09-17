@@ -9,7 +9,7 @@ class GroupRatingAllCreate
     # @policy_demographic = FinalEmployerDemographicsInformation.find_by(policy_number: 1283284)
 
     unless @policy_demographic.nil?
-      @account = Account.find_by(policy_number_entered: @policy_demographic.policy_number, representative_id: representative_id)
+      @account = Account.where(policy_number_entered: @policy_demographic.policy_number, representative_id: representative_id).order(created_at: :desc).first
       # @account = Account.find_by(policy_number_entered: 1283284)
 
       if @account.nil?
@@ -22,51 +22,53 @@ class GroupRatingAllCreate
         @account.update_attributes(policy_number_entered: @policy_demographic.policy_number, representative_id: representative_id, name: @policy_demographic.business_name, street_address: @policy_demographic.mailing_address_line_1, street_address_2: @policy_demographic.mailing_address_line_2, city: @policy_demographic.mailing_city, state: @policy_demographic.mailing_state, zip_code: @policy_demographic.mailing_zip_code, status: 2)
       end
 
-      @policy_calculation = PolicyCalculation.where(account_id: @account.id).update_or_create(
-        representative_number:                         @policy_demographic.representative_number,
-        policy_number:                                 @account.policy_number_entered,
-        currently_assigned_representative_number:      @policy_demographic.currently_assigned_representative_number,
-        valid_policy_number:                           @policy_demographic.valid_policy_number,
-        current_coverage_status:                       @policy_demographic.current_coverage_status.strip,
-        coverage_status_effective_date:                @policy_demographic.coverage_status_effective_date,
-        policy_creation_date:                          @policy_demographic.policy_creation_date,
-        federal_identification_number:                 @policy_demographic.federal_identification_number,
-        business_name:                                 @policy_demographic.business_name,
-        trading_as_name:                               @policy_demographic.trading_as_name,
-        valid_mailing_address:                         @policy_demographic.valid_mailing_address,
-        mailing_address_line_1:                        @policy_demographic.mailing_address_line_1,
-        mailing_address_line_2:                        @policy_demographic.mailing_address_line_2,
-        mailing_city:                                  @policy_demographic.mailing_city,
-        mailing_state:                                 @policy_demographic.mailing_state,
-        mailing_zip_code:                              @policy_demographic.mailing_zip_code,
-        mailing_zip_code_plus_4:                       @policy_demographic.mailing_zip_code_plus_4,
-        mailing_country_code:                          @policy_demographic.mailing_country_code,
-        mailing_county:                                @policy_demographic.mailing_county,
-        valid_location_address:                        @policy_demographic.valid_location_address,
-        location_address_line_1:                       @policy_demographic.location_address_line_1,
-        location_address_line_2:                       @policy_demographic.location_address_line_2,
-        location_city:                                 @policy_demographic.location_city,
-        location_state:                                @policy_demographic.location_state,
-        location_zip_code:                             @policy_demographic.location_zip_code,
-        location_zip_code_plus_4:                      @policy_demographic.location_zip_code_plus_4,
-        location_country_code:                         @policy_demographic.location_country_code,
-        location_county:                               @policy_demographic.location_county,
-        currently_assigned_clm_representative_number:  @policy_demographic.currently_assigned_clm_representative_number,
-        currently_assigned_risk_representative_number: @policy_demographic.currently_assigned_risk_representative_number,
-        currently_assigned_erc_representative_number:  @policy_demographic.currently_assigned_erc_representative_number,
-        currently_assigned_grc_representative_number:  @policy_demographic.currently_assigned_grc_representative_number,
-        immediate_successor_policy_number:             @policy_demographic.immediate_successor_policy_number,
-        immediate_successor_business_sequence_number:  @policy_demographic.immediate_successor_business_sequence_number,
-        ultimate_successor_policy_number:              @policy_demographic.ultimate_successor_policy_number,
-        ultimate_successor_business_sequence_number:   @policy_demographic.ultimate_successor_business_sequence_number,
-        employer_type:                                 @policy_demographic.employer_type,
-        coverage_type:                                 @policy_demographic.coverage_type,
-        policy_coverage_type:                          @policy_demographic.policy_coverage_type,
-        policy_employer_type:                          @policy_demographic.policy_employer_type,
-        data_source:                                   @policy_demographic.data_source,
-        representative_id:                             @account.representative_id,
-        account_id:                                    @account.id
-      )
+      @policy_calculation = PolicyCalculation.where(policy_number:         @account.policy_number_entered,
+                                                    representative_number: @policy_demographic.representative_number)
+                            .order(created_at: :desc)
+                            .update_or_create(
+                              policy_number:                                 @account.policy_number_entered,
+                              representative_number:                         @policy_demographic.representative_number,
+                              account_id:                                    @account.id,
+                              currently_assigned_representative_number:      @policy_demographic.currently_assigned_representative_number,
+                              valid_policy_number:                           @policy_demographic.valid_policy_number,
+                              current_coverage_status:                       @policy_demographic.current_coverage_status.strip,
+                              coverage_status_effective_date:                @policy_demographic.coverage_status_effective_date,
+                              policy_creation_date:                          @policy_demographic.policy_creation_date,
+                              federal_identification_number:                 @policy_demographic.federal_identification_number,
+                              business_name:                                 @policy_demographic.business_name,
+                              trading_as_name:                               @policy_demographic.trading_as_name,
+                              valid_mailing_address:                         @policy_demographic.valid_mailing_address,
+                              mailing_address_line_1:                        @policy_demographic.mailing_address_line_1,
+                              mailing_address_line_2:                        @policy_demographic.mailing_address_line_2,
+                              mailing_city:                                  @policy_demographic.mailing_city,
+                              mailing_state:                                 @policy_demographic.mailing_state,
+                              mailing_zip_code:                              @policy_demographic.mailing_zip_code,
+                              mailing_zip_code_plus_4:                       @policy_demographic.mailing_zip_code_plus_4,
+                              mailing_country_code:                          @policy_demographic.mailing_country_code,
+                              mailing_county:                                @policy_demographic.mailing_county,
+                              valid_location_address:                        @policy_demographic.valid_location_address,
+                              location_address_line_1:                       @policy_demographic.location_address_line_1,
+                              location_address_line_2:                       @policy_demographic.location_address_line_2,
+                              location_city:                                 @policy_demographic.location_city,
+                              location_state:                                @policy_demographic.location_state,
+                              location_zip_code:                             @policy_demographic.location_zip_code,
+                              location_zip_code_plus_4:                      @policy_demographic.location_zip_code_plus_4,
+                              location_country_code:                         @policy_demographic.location_country_code,
+                              location_county:                               @policy_demographic.location_county,
+                              currently_assigned_clm_representative_number:  @policy_demographic.currently_assigned_clm_representative_number,
+                              currently_assigned_risk_representative_number: @policy_demographic.currently_assigned_risk_representative_number,
+                              currently_assigned_erc_representative_number:  @policy_demographic.currently_assigned_erc_representative_number,
+                              currently_assigned_grc_representative_number:  @policy_demographic.currently_assigned_grc_representative_number,
+                              immediate_successor_policy_number:             @policy_demographic.immediate_successor_policy_number,
+                              immediate_successor_business_sequence_number:  @policy_demographic.immediate_successor_business_sequence_number,
+                              ultimate_successor_policy_number:              @policy_demographic.ultimate_successor_policy_number,
+                              ultimate_successor_business_sequence_number:   @policy_demographic.ultimate_successor_business_sequence_number,
+                              employer_type:                                 @policy_demographic.employer_type,
+                              coverage_type:                                 @policy_demographic.coverage_type,
+                              policy_coverage_type:                          @policy_demographic.policy_coverage_type,
+                              policy_employer_type:                          @policy_demographic.policy_employer_type,
+                              data_source:                                   @policy_demographic.data_source
+                            )
 
       FinalClaimCostCalculationTable.where(representative_number: @policy_calculation.representative_number, policy_number: @policy_calculation.policy_number).each do |claim|
         ClaimCalculation.where(representative_number: claim.representative_number, policy_number: claim.policy_number, claim_number: claim.claim_number).update_or_create(
@@ -171,15 +173,18 @@ class GroupRatingAllCreate
 
       unless FinalManualClassFourYearPayrollAndExpLoss.where(representative_number: @policy_calculation.representative_number, policy_number: @policy_calculation.policy_number).empty?
         FinalManualClassFourYearPayrollAndExpLoss.where(representative_number: @policy_calculation.representative_number, policy_number: @policy_calculation.policy_number).find_each do |man_class_exp|
-          @manual_class_calculation = ManualClassCalculation.where(policy_calculation_id: @policy_calculation.id, manual_number: man_class_exp.manual_number).update_or_create(
-            representative_number:       man_class_exp.representative_number,
-            policy_number:               man_class_exp.policy_number,
-            policy_calculation_id:       @policy_calculation.id,
-            manual_number:               man_class_exp.manual_number,
-            manual_class_type:           man_class_exp.manual_class_type,
-            manual_class_base_rate:      man_class_exp.manual_class_base_rate,
-            manual_class_industry_group: man_class_exp.manual_class_industry_group,
-            data_source:                 man_class_exp.data_source)
+          @manual_class_calculation = ManualClassCalculation.where(policy_number:         @policy_calculation.policy_number,
+                                                                   representative_number: @policy_calculation.representative_number,
+                                                                   manual_number:         man_class_exp.manual_number)
+                                      .update_or_create(
+                                        representative_number:       man_class_exp.representative_number,
+                                        policy_number:               man_class_exp.policy_number,
+                                        policy_calculation_id:       @policy_calculation.id,
+                                        manual_number:               man_class_exp.manual_number,
+                                        manual_class_type:           man_class_exp.manual_class_type,
+                                        manual_class_base_rate:      man_class_exp.manual_class_base_rate,
+                                        manual_class_industry_group: man_class_exp.manual_class_industry_group,
+                                        data_source:                 man_class_exp.data_source)
 
 
           ProcessPayrollAllTransactionsBreakdownByManualClass.where("reporting_period_start_date >= :reporting_period_start_date and representative_number = :representative_number and manual_number = :manual_number and policy_number = :policy_number", reporting_period_start_date: experience_period_lower_date, representative_number: process_representative, manual_number: @manual_class_calculation.manual_number, policy_number: @manual_class_calculation.policy_number).find_each do |payroll_transaction|
@@ -269,7 +274,7 @@ class GroupRatingAllCreate
       # @account.group_retro
     else
       # PREDECESSOR PAYROLL FIX - 9/5/2017
-      @policy_demographic = PolicyCalculation.find_by(policy_number: policy_number, representative_number: process_representative)
+      @policy_demographic = PolicyCalculation.find_by_rep_and_policy(process_representative, policy_number)
       # @policy_demographic = PolicyCalculation.find_by(policy_number: 1740451, representative_number: 1740)
       unless @policy_demographic.nil?
         @account = Account.find_by(policy_number_entered: @policy_demographic.policy_number, representative_id: representative_id)

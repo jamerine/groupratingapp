@@ -39,11 +39,13 @@
 #
 
 class ManualClassCalculation < ActiveRecord::Base
-
   belongs_to :policy_calculation
   has_many :payroll_calculations, dependent: :destroy
   has_one :account, through: :policy_calculation
   has_one :representative, through: :account
+
+  scope :by_representative, -> (rep_number) { where(representative_number: rep_number) }
+  scope :bwc, -> { where(data_source: 'bwc') }
 
   def self.update_or_create(attributes)
     obj = first || new
@@ -69,6 +71,10 @@ class ManualClassCalculation < ActiveRecord::Base
       end
     end
   end
+
+  # def payroll_calculations
+  #   PayrollCalculation.by_representative(self.representative_number).where(policy_number: self.policy_number, manual_number: self.manual_number)
+  # end
 
   def calculate_payroll(plus_one_year = nil)
     self.transaction do

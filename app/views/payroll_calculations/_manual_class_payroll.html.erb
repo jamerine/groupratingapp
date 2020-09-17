@@ -1,9 +1,6 @@
 <ul class="list-group">
   <div class="row list-group-item active hidden-sm hidden-xs ">
-    <div class="col-md-1 col-sm-4 col-xs-6 hidden-sm hidden-xs">
-      <h5>Id</h5>
-    </div>
-    <div class="col-md-1 col-sm-4 col-xs-6 hidden-sm hidden-xs">
+    <div class="col-md-2 col-sm-4 col-xs-6 hidden-sm hidden-xs">
       <h5>Date Range</h5>
     </div>
     <div class="col-md-1 col-sm-4 col-xs-6 hidden-sm hidden-xs">
@@ -36,11 +33,7 @@
   </div>
   <% payroll_calculations.order("reporting_period_start_date desc").each do |payroll_calculation| %>
     <div class="row text-center list-group-item">
-      <div class="col-md-1 col-sm-6 col-xs-6">
-        <h5 class="hidden-md hidden-lg">Id</h5>
-        <p> <%= payroll_calculation.id %></p>
-      </div>
-      <div class="col-md-1 col-sm-6 col-xs-6">
+      <div class="col-md-2 col-sm-6 col-xs-6">
         <h5 class="hidden-md hidden-lg">Date Range</h5>
         <p> <%= payroll_calculation.reporting_period_start_date.strftime('%-m/%-d/%y') %> - <%= payroll_calculation.reporting_period_end_date.strftime('%-m/%-d/%y') %></p>
       </div>
