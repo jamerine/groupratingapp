@@ -6,7 +6,7 @@ class GroupRatingAllCreateProcess
 
   def perform(group_rating_id, all_process = nil)
     @group_rating        = GroupRating.find_by(id: group_rating_id)
-    @group_rating.status = "Combined Updated Process"
+    @group_rating.status = "Creating/Updating Claims and Payroll"
     @group_rating.save
 
     all_policy_numbers = (FinalEmployerDemographicsInformation.all.pluck(:policy_number) + ProcessPayrollAllTransactionsBreakdownByManualClass.pluck(:policy_number).uniq).uniq

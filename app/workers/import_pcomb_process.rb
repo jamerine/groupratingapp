@@ -1,22 +1,12 @@
-class ImportMiraFilesProcess
-  require 'progress_bar/core_ext/enumerable_with_progress'
+class ImportPcombProcess
   include Sidekiq::Worker
-  sidekiq_options queue: :import_mira_files_process, retry: 3
+  sidekiq_options queue: :import_pcomb_process, retry: 3
 
   def perform(representative_number, representative_abbreviated_name)
-    Mira.by_representative(representative_number).delete_all
-    WeeklyMira.by_representative(representative_number).delete_all
+    Pcomb.delete_all
+    PcombDetailRecord.filter_by(representative_number).delete_all
 
-    import_file("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/MIRA2FILE", 'miras')
-    import_file("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/MIRA2FILW", 'weekly_miras')
-
-    Mira.by_representative(representative_number).by_record_type.each_with_progress do |mira|
-      ImportMiraData.perform_async(mira.attributes)
-    end
-
-    WeeklyMira.by_representative(representative_number).by_record_type.each_with_progress do |mira|
-      ImportWeeklyMiraData.perform_async(mira.attributes)
-    end
+    import_file("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/PCOMBFILE", 'pcombs')
   end
 
   def import_file(url, table_name)
@@ -33,8 +23,11 @@ class ImportMiraFilesProcess
       until file.eof?
         # Add row to copy data
         line = file.readline
-        if table_name == 'democs' && line[40, 4] == "0000"
-          #puts "incorrect characters"
+        # if line[40, 4] == "0000"
+        #   puts "incorrect characters"
+        if line.include?('|')
+          new_line = line.gsub('|', ' ')
+          rc.put_copy_data(new_line)
         else
           puts 'Reading....'
           rc.put_copy_data(line)
@@ -55,6 +48,9 @@ class ImportMiraFilesProcess
 
       puts "Skipped File..."
     end
+
+    result = ActiveRecord::Base.connection.execute("SELECT public.proc_process_flat_pcombs()")
+    result.clear
 
     puts "End Time: " + Time.new.inspect
   end

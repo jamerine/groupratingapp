@@ -53,7 +53,7 @@ class ImportClicdFilesProcess
       until file.eof?
         # Add row to copy data
         line = file.readline
-        if line[40, 4] == "0000"
+        if table_name == 'democs' && line[40, 4] == "0000"
           #puts "incorrect characters"
         else
           puts 'Reading....'

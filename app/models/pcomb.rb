@@ -10,7 +10,12 @@ class Pcomb < ActiveRecord::Base
   require 'activerecord-import'
   require 'open-uri'
 
-  attr_accessor :representative_number, :policy_number, :manual_class_payroll, :manual_number
+  attr_accessor :representative_number,
+                :policy_number,
+                :manual_class_payroll,
+                :manual_number,
+                :predecessor_policy_number,
+                :successor_policy_number
 
   def self.import_file(url)
     time1 = Time.new
@@ -39,4 +44,11 @@ class Pcomb < ActiveRecord::Base
     self.single_rec[101, 13]&.to_f
   end
 
+  def predecessor_policy_number
+    self.single_rec[28, 8]&.to_i
+  end
+
+  def successor_policy_number
+    self.single_rec[40, 8]&.to_i
+  end
 end

@@ -526,6 +526,7 @@ Rails.application.routes.draw do
       post :import_clicds
       post :import_democs
       post :import_pdemos
+      post :import_pcombs
       post :import_all_miras
       post :import_all_clicds
       post :import_all_democs

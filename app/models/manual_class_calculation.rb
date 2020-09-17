@@ -39,11 +39,13 @@
 #
 
 class ManualClassCalculation < ActiveRecord::Base
-
   belongs_to :policy_calculation
   has_many :payroll_calculations, dependent: :destroy
   has_one :account, through: :policy_calculation
   has_one :representative, through: :account
+
+  scope :by_representative, -> (rep_number) { where(representative_number: rep_number) }
+  scope :bwc, -> { where(data_source: 'bwc') }
 
   def self.update_or_create(attributes)
     obj = first || new
@@ -70,82 +72,90 @@ class ManualClassCalculation < ActiveRecord::Base
     end
   end
 
+  # def payroll_calculations
+  #   PayrollCalculation.by_representative(self.representative_number).where(policy_number: self.policy_number, manual_number: self.manual_number)
+  # end
+
   def calculate_payroll(plus_one_year = nil)
-    self.transaction do
-      @group_rating = GroupRating.find_by(process_representative: self.representative_number)
+    @group_rating = GroupRating.find_by(process_representative: self.representative_number)
 
-      unless plus_one_year.nil?
-        @group_rating.assign_attributes(current_payroll_period_lower_date: (@group_rating.current_payroll_period_lower_date + 1.years), current_payroll_period_upper_date: (@group_rating.current_payroll_period_upper_date + 1.years))
+    unless plus_one_year.nil?
+      @group_rating.assign_attributes(current_payroll_period_lower_date: (@group_rating.current_payroll_period_lower_date + 1.years), current_payroll_period_upper_date: (@group_rating.current_payroll_period_upper_date + 1.years))
+    end
+
+    @policy_creation = self.policy_calculation.policy_coverage_status_histories.order(:coverage_effective_date).where(coverage_status: 'ACTIV').first
+
+    @policy_creation_dip = self.policy_calculation.policy_coverage_status_histories.find_by(coverage_status: 'DIP  ')
+
+    if @policy_creation_dip && @policy_creation
+      if @policy_creation_dip.coverage_effective_date < @policy_creation.coverage_effective_date
+        @policy_creation = @policy_creation_dip
       end
+    end
 
-      @policy_creation = self.policy_calculation.policy_coverage_status_histories.order(:coverage_effective_date).where(coverage_status: 'ACTIV').first
+    if @policy_creation.nil?
+      @policy_creation_date = self.policy_calculation.policy_coverage_status_histories.order(:coverage_effective_date).first.coverage_effective_date
+    else
+      @policy_creation_date = @policy_creation.coverage_effective_date
+    end
 
-      @policy_creation_dip = self.policy_calculation.policy_coverage_status_histories.find_by(coverage_status: 'DIP  ')
+    @self_four_year_payroll_lower_date = @policy_creation_date < @group_rating.experience_period_lower_date ? @policy_creation_date : @group_rating.experience_period_lower_date
 
-      if @policy_creation_dip && @policy_creation
-        if @policy_creation_dip.coverage_effective_date < @policy_creation.coverage_effective_date
-          @policy_creation = @policy_creation_dip
-        end
+    # CHANGE as of 06/20/2017 changed the four year sum calculations
+
+    @manual_class_self_four_year_sum = self.payroll_calculations.where("reporting_period_start_date BETWEEN :experience_period_lower_date AND :experience_period_upper_date AND (payroll_origin NOT IN ('partial_transfer', 'full_transfer', 'man_reclass_full_transfer', 'man_reclass_partial_transfer'))",
+                                                                       experience_period_lower_date: @self_four_year_payroll_lower_date,
+                                                                       experience_period_upper_date: @group_rating.experience_period_upper_date)
+                                       .sum(:manual_class_payroll).round(2)
+    @manual_class_comb_four_year_sum = self.payroll_calculations.where("(reporting_period_start_date BETWEEN :experience_period_lower_date and :experience_period_upper_date) and (payroll_origin IN ('partial_transfer', 'full_transfer', 'man_reclass_full_transfer', 'man_reclass_partial_transfer'))",
+                                                                       experience_period_lower_date: @self_four_year_payroll_lower_date,
+                                                                       experience_period_upper_date: @group_rating.experience_period_upper_date)
+                                       .sum(:manual_class_payroll).round(2)
+    @manual_class_four_year_sum      = @manual_class_self_four_year_sum + @manual_class_comb_four_year_sum
+    @manual_class_four_year_sum      = @manual_class_four_year_sum < 0 ? 0 : @manual_class_four_year_sum
+    @manual_class_current_payroll    = self.payroll_calculations.where("reporting_period_start_date >= :current_payroll_period_lower_date and reporting_period_start_date < :current_payroll_period_upper_date",
+                                                                       current_payroll_period_lower_date: @self_four_year_payroll_lower_date,
+                                                                       current_payroll_period_upper_date: @group_rating.current_payroll_period_upper_date)
+                                       .sum(:manual_class_payroll).round(2)
+
+    # Added Prorated payroll for entire year ( ie. extrapolated out for entire year projection [Multiplied out by the inverse of how long the period was for a year.] )
+    if self.policy_calculation.policy_creation_date.present? && self.policy_calculation.policy_creation_date >= @group_rating.current_payroll_period_lower_date && plus_one_year.nil?
+      current_payroll = self.payroll_calculations.where("reporting_period_start_date >= :current_payroll_period_lower_date and reporting_period_start_date < :current_payroll_period_upper_date",
+                                                        current_payroll_period_lower_date: @group_rating.current_payroll_period_lower_date,
+                                                        current_payroll_period_upper_date: @group_rating.current_payroll_period_upper_date)
+                        .order(reporting_period_start_date: :asc).first
+
+      if current_payroll.nil?
+        @manual_class_current_payroll = 0
+      elsif current_payroll.reporting_period_start_date > @group_rating.current_payroll_period_lower_date
+        diff_ratio = 1 / ((@group_rating.current_payroll_period_upper_date - self.policy_calculation.policy_creation_date) / (@group_rating.current_payroll_period_upper_date - @group_rating.current_payroll_period_lower_date))
+
+        @manual_class_current_payroll = @manual_class_current_payroll * diff_ratio
       end
+    end
+
+    @manual_class_current_payroll = @manual_class_current_payroll < 0 ? 0 : @manual_class_current_payroll
+
+    @bwc_base_rate = BwcCodesBaseRatesExpLossRate.find_by(class_code: self.manual_number)
+
+    if @bwc_base_rate.nil?
+      @manual_class_expected_losses    = 0
+      @manual_class_expected_loss_rate = 0
+      @manual_class_base_rate          = 0
+    else
+      expected_loss_rate               = @bwc_base_rate.expected_loss_rate || 0
+      @manual_class_expected_losses    = ((expected_loss_rate * @manual_class_four_year_sum) / 100).round(0)
+      @manual_class_expected_loss_rate = expected_loss_rate
+      @manual_class_base_rate          = @bwc_base_rate.base_rate || 0
+    end
 
 
-      if @policy_creation.nil?
-        @policy_creation_date = self.policy_calculation.policy_coverage_status_histories.order(:coverage_effective_date).first.coverage_effective_date
-      else
-        @policy_creation_date = @policy_creation.coverage_effective_date
-      end
-
-      @self_four_year_payroll_lower_date = @policy_creation_date > @group_rating.experience_period_lower_date ? @policy_creation_date : @group_rating.experience_period_lower_date
-
-
-      # CHANGE as of 06/20/2017 changed the four year sum calculations
-
-      @manual_class_self_four_year_sum = self.payroll_calculations.where("reporting_period_start_date BETWEEN :experience_period_lower_date and :experience_period_upper_date and (payroll_origin NOT IN ('partial_transfer', 'full_transfer', 'man_reclass_full_transfer', 'man_reclass_partial_transfer'))", experience_period_lower_date: @self_four_year_payroll_lower_date, experience_period_upper_date: @group_rating.experience_period_upper_date).sum(:manual_class_payroll).round(2)
-
-      @manual_class_comb_four_year_sum = self.payroll_calculations.where("(reporting_period_start_date BETWEEN :experience_period_lower_date and :experience_period_upper_date) and (payroll_origin IN ('partial_transfer', 'full_transfer', 'man_reclass_full_transfer', 'man_reclass_partial_transfer'))", experience_period_lower_date: @group_rating.experience_period_lower_date, experience_period_upper_date: @group_rating.experience_period_upper_date).sum(:manual_class_payroll).round(2)
-
-      @manual_class_four_year_sum = @manual_class_self_four_year_sum + @manual_class_comb_four_year_sum
-
-      @manual_class_four_year_sum = @manual_class_four_year_sum < 0 ? 0 : @manual_class_four_year_sum
-
-      @manual_class_current_payroll = self.payroll_calculations.where("reporting_period_start_date >= :current_payroll_period_lower_date and reporting_period_start_date < :current_payroll_period_upper_date", current_payroll_period_lower_date: @group_rating.current_payroll_period_lower_date, current_payroll_period_upper_date: @group_rating.current_payroll_period_upper_date).sum(:manual_class_payroll).round(2)
-
-      # Added Prorated payroll for entire year ( ie. extrapolated out for entire year projection [Multiplied out by the inverse of how long the period was for a year.] )
-      if self.policy_calculation.policy_creation_date.present? && self.policy_calculation.policy_creation_date >= @group_rating.current_payroll_period_lower_date && plus_one_year.nil?
-        current_payroll = self.payroll_calculations.where("reporting_period_start_date >= :current_payroll_period_lower_date and reporting_period_start_date < :current_payroll_period_upper_date", current_payroll_period_lower_date: @group_rating.current_payroll_period_lower_date, current_payroll_period_upper_date: @group_rating.current_payroll_period_upper_date).order(reporting_period_start_date: :asc).first
-
-        if current_payroll.nil?
-          @manual_class_current_payroll = 0
-        elsif current_payroll.reporting_period_start_date > @group_rating.current_payroll_period_lower_date
-          diff_ratio = 1 / ((@group_rating.current_payroll_period_upper_date - self.policy_calculation.policy_creation_date) / (@group_rating.current_payroll_period_upper_date - @group_rating.current_payroll_period_lower_date))
-
-          @manual_class_current_payroll = @manual_class_current_payroll * diff_ratio
-        end
-      end
-
-      @manual_class_current_payroll = @manual_class_current_payroll < 0 ? 0 : @manual_class_current_payroll
-
-      @bwc_base_rate = BwcCodesBaseRatesExpLossRate.find_by(class_code: self.manual_number)
-
-      if @bwc_base_rate.nil?
-        @manual_class_expected_losses    = 0
-        @manual_class_expected_loss_rate = 0
-        @manual_class_base_rate          = 0
-      else
-        expected_loss_rate               = @bwc_base_rate.expected_loss_rate || 0
-        @manual_class_expected_losses    = ((expected_loss_rate * @manual_class_four_year_sum) / 100).round(0)
-        @manual_class_expected_loss_rate = expected_loss_rate
-        @manual_class_base_rate          = @bwc_base_rate.base_rate || 0
-      end
-
-
-      self.update_attributes(manual_class_current_estimated_payroll: @manual_class_current_payroll,
-                             manual_class_four_year_period_payroll:  @manual_class_four_year_sum,
-                             manual_class_expected_losses:           @manual_class_expected_losses,
-                             manual_class_expected_loss_rate:        @manual_class_expected_loss_rate,
-                             manual_class_base_rate:                 @manual_class_base_rate
-      )
-    end #end transaction
+    self.update_attributes(manual_class_current_estimated_payroll: @manual_class_current_payroll,
+                           manual_class_four_year_period_payroll:  @manual_class_four_year_sum,
+                           manual_class_expected_losses:           @manual_class_expected_losses,
+                           manual_class_expected_loss_rate:        @manual_class_expected_loss_rate,
+                           manual_class_base_rate:                 @manual_class_base_rate
+    )
   end
 
   def expected_losses_without_estimates
@@ -162,7 +172,7 @@ class ManualClassCalculation < ActiveRecord::Base
     end
 
     policy_creation_date              = policy_creation.nil? ? self.policy_calculation.policy_coverage_status_histories.order(:coverage_effective_date).first.coverage_effective_date : policy_creation.coverage_effective_date
-    self_four_year_payroll_lower_date = policy_creation_date > group_rating.experience_period_lower_date ? policy_creation_date : group_rating.experience_period_lower_date
+    self_four_year_payroll_lower_date = policy_creation_date < group_rating.experience_period_lower_date ? policy_creation_date : group_rating.experience_period_lower_date
     expected_loss_rate                = bwc_base_rate.expected_loss_rate || 0
     manual_class_self_four_year_sum   = self.payroll_calculations.with_estimated_payroll(false).where("reporting_period_start_date BETWEEN :experience_period_lower_date and :experience_period_upper_date and (payroll_origin NOT IN ('partial_transfer', 'full_transfer', 'man_reclass_full_transfer', 'man_reclass_partial_transfer'))", experience_period_lower_date: self_four_year_payroll_lower_date, experience_period_upper_date: group_rating.experience_period_upper_date).sum(:manual_class_payroll).round(2)
     manual_class_comb_four_year_sum   = self.payroll_calculations.with_estimated_payroll(false).where("(reporting_period_start_date BETWEEN :experience_period_lower_date and :experience_period_upper_date) and (payroll_origin IN ('partial_transfer', 'full_transfer', 'man_reclass_full_transfer', 'man_reclass_partial_transfer'))", experience_period_lower_date: group_rating.experience_period_lower_date, experience_period_upper_date: group_rating.experience_period_upper_date).sum(:manual_class_payroll).round(2)
