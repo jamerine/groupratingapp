@@ -5,12 +5,9 @@ class GroupRatingAllCreate
 
   def perform(group_rating_id, experience_period_lower_date, process_representative, representative_id, policy_number)
     @policy_demographic = FinalEmployerDemographicsInformation.find_by(policy_number: policy_number, representative_number: process_representative)
-    # @policy_demographic = FinalEmployerDemographicsInformation.find_by(policy_number: 1740451, representative_number: 1740).nil? ? PolicyCalculation.find_by(policy_number: 1740451, representative_number: 1740) : FinalEmployerDemographicsInformation.find_by(policy_number: 1740451, representative_number: 1740)
-    # @policy_demographic = FinalEmployerDemographicsInformation.find_by(policy_number: 1283284)
 
     unless @policy_demographic.nil?
       @account = Account.where(policy_number_entered: @policy_demographic.policy_number, representative_id: representative_id).order(created_at: :desc).first
-      # @account = Account.find_by(policy_number_entered: 1283284)
 
       if @account.nil?
         @account = Account.create(policy_number_entered: @policy_demographic.policy_number, representative_id: representative_id, status: 4, name: @policy_demographic.business_name, street_address: @policy_demographic.mailing_address_line_1, street_address_2: @policy_demographic.mailing_address_line_2, city: @policy_demographic.mailing_city, state: @policy_demographic.mailing_state, zip_code: @policy_demographic.mailing_zip_code, weekly_request: true)
@@ -187,7 +184,11 @@ class GroupRatingAllCreate
                                         data_source:                 man_class_exp.data_source)
 
 
-          ProcessPayrollAllTransactionsBreakdownByManualClass.where("reporting_period_start_date >= :reporting_period_start_date and representative_number = :representative_number and manual_number = :manual_number and policy_number = :policy_number", reporting_period_start_date: experience_period_lower_date, representative_number: process_representative, manual_number: @manual_class_calculation.manual_number, policy_number: @manual_class_calculation.policy_number).find_each do |payroll_transaction|
+          ProcessPayrollAllTransactionsBreakdownByManualClass.where("reporting_period_start_date >= :reporting_period_start_date and representative_number = :representative_number and manual_number = :manual_number and policy_number = :policy_number",
+                                                                    reporting_period_start_date: experience_period_lower_date,
+                                                                    representative_number:       process_representative,
+                                                                    manual_number:               @manual_class_calculation.manual_number,
+                                                                    policy_number:               @manual_class_calculation.policy_number).find_each do |payroll_transaction|
             unless @manual_class_calculation.nil? || payroll_transaction.id.nil? || payroll_transaction.manual_number == 0
               PayrollCalculation.where(representative_number:       payroll_transaction.representative_number,
                                        policy_number:               payroll_transaction.policy_number,
@@ -266,7 +267,6 @@ class GroupRatingAllCreate
         end
       end
 
-      # Don't need to do this here anymore since doing it in the all rep process
       @account.calculate
       # @account.policy_calculation.calculate_experience
       # @account.policy_calculation.calculate_premium
@@ -316,7 +316,6 @@ class GroupRatingAllCreate
           end
         end
 
-        # Don't need to do this here anymore since doing it in the all rep process
         @account.calculate
         # @account.policy_calculation.calculate_experience
         # @account.policy_calculation.calculate_premium

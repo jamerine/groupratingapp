@@ -4,10 +4,7 @@ class FilterClaimsProcess
   sidekiq_options queue: :filter_claims_process, retry: 1
 
   def perform(group_rating_id, all_process = nil)
-    @group_rating        = GroupRating.find_by(id: group_rating_id)
-    @group_rating.status = "Preparing to Filter Claims"
-    @group_rating.save
-
+    @group_rating   = GroupRating.find_by(id: group_rating_id)
     @representative = Representative.find_by(id: @group_rating.representative_id)
 
     result = ActiveRecord::Base.connection.exec_query("SELECT claims.id

@@ -39,7 +39,7 @@ class GroupRatingsController < ApplicationController
         end
       end
 
-      RepresentativeAllAccountRating.perform_in(1.hours, @representative.id)
+      RepresentativeAllAccountRating.perform_in(30.minutes, @representative.id)
     end
   end
 
