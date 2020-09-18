@@ -9,7 +9,7 @@ class RocReport < PdfReport
     @view = view
 
 
-    @account = Account.includes(policy_calculation: [:claim_calculations, :policy_coverage_status_histories, :policy_program_histories, { manual_class_calculations: :payroll_calculations }]).find(@account.id)
+    @account = Account.includes(policy_calculation: [:policy_coverage_status_histories, :policy_program_histories, { manual_class_calculations: :payroll_calculations }]).find(@account.id)
 
     @current_policy_program = @account.policy_calculation.policy_program_histories.order(reporting_period_start_date: :desc).first
 
