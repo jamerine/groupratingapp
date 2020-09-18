@@ -148,7 +148,7 @@ class Account < ActiveRecord::Base
     @industry_group = policy_calculation.policy_industry_group
     if @group_rating_qualification == "accept"
 
-      group_rating_calc = GroupRating.find_by(representative_id: policy_calculation.representative_id)
+      group_rating_calc = GroupRating.find_by(representative_id: self.representative_id)
 
       if (args["group_rating_tier"].empty? && args["industry_group"].empty?) || args.empty? || (args["group_rating_tier"].nil? && args["industry_group"].nil?)
         @group_ratio      = policy_calculation.policy_group_ratio
@@ -221,7 +221,7 @@ class Account < ActiveRecord::Base
       @industry_group = policy_calculation.policy_industry_group
 
       if @group_rating_qualification == "accept"
-        group_rating_calc = GroupRating.find_by(process_representative: self.representative_number)
+        group_rating_calc = GroupRating.find_by(representative_id: self.representative_id)
 
         group_rating_rows = BwcCodesIndustryGroupSavingsRatioCriterium.where("ratio_criteria >= :group_ratio and industry_group = :industry_group", group_ratio: policy_calculation.policy_group_ratio, industry_group: @industry_group)
 
