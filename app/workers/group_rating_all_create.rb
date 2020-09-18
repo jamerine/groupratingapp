@@ -25,6 +25,7 @@ class GroupRatingAllCreate
                             .update_or_create(
                               policy_number:                                 @account.policy_number_entered,
                               representative_number:                         @policy_demographic.representative_number,
+                              representative_id:                             @account.representative_id,
                               account_id:                                    @account.id,
                               currently_assigned_representative_number:      @policy_demographic.currently_assigned_representative_number,
                               valid_policy_number:                           @policy_demographic.valid_policy_number,
