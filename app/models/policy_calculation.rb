@@ -112,7 +112,7 @@ class PolicyCalculation < ActiveRecord::Base
   before_destroy :delete_claims
 
   def representative_name
-    representative.abbreviated_name
+    representative&.abbreviated_name
   end
 
   # Add Papertrail as history tracking

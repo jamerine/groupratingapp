@@ -23,8 +23,6 @@ namespace :heroku do
           ImportProcess.perform_async(@import.process_representative, @import.id, @representative.abbreviated_name, @new_group_rating.id, false, 1)
         end
       end
-
-      AllRepresentativesProcess.perform_in(4.hours)
     end
     puts "done."
   end

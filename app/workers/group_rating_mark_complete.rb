@@ -35,6 +35,8 @@ class GroupRatingMarkComplete
             end
           end
         end
+      else
+        AllRepresentativesProcess.perform_async
       end
     end
   end
