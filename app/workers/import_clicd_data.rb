@@ -5,9 +5,6 @@ class ImportClicdData
 
   def perform(clicd_attributes)
     clicd = Clicd.new(clicd_attributes)
-
-
-
     ClicdDetailRecord.where({ representative_number:    clicd.representative_number,
                               record_type:              clicd.record_type,
                               requestor_number:         clicd.requestor_number,
@@ -30,6 +27,13 @@ class ImportClicdData
       icd_status_effective_date:            clicd.icd_status_effective_date,
       icd_injury_location_code:             clicd.icd_injury_location_code,
       icd_digit_tooth_number:               clicd.icd_digit_tooth_number,
-      primary_icd:                          clicd.primary_icd }
+      primary_icd:                          clicd.primary_icd,
+      representative_number:                clicd.representative_number,
+      record_type:                          clicd.record_type,
+      requestor_number:                     clicd.requestor_number,
+      business_sequence_number:             clicd.business_sequence_number,
+      policy_number:                        clicd.policy_number,
+      claim_number:                         clicd.claim_number,
+      icd_code:                             clicd.icd_code }
   end
 end

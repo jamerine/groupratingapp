@@ -16,6 +16,7 @@ production:
   - import_pcomb_process
   - import_clicd_data
   - group_rating_calculate
+  - mira_clicd_process
   - import_mira_data
   - import_weekly_mira_data
   - all_representatives_process

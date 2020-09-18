@@ -15,7 +15,13 @@ class ImportWeeklyMiraData
   end
 
   def gather_attributes(mira)
-    { valid_policy_number:                                    mira.valid_policy_number,
+    { representative_number:                                  mira.representative_number,
+      record_type:                                            mira.record_type,
+      claim_number:                                           mira.claim_number,
+      requestor_number:                                       mira.requestor_number,
+      policy_number:                                          mira.policy_number,
+      business_sequence_number:                               mira.business_sequence_number,
+      valid_policy_number:                                    mira.valid_policy_number,
       claim_indicator:                                        mira.claim_indicator,
       claim_injury_date:                                      mira.claim_injury_date,
       claim_filing_date:                                      mira.claim_filing_date,

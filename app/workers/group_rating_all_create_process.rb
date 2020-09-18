@@ -15,6 +15,6 @@ class GroupRatingAllCreateProcess
       GroupRatingAllCreate.perform_async(@group_rating.id, @group_rating.experience_period_lower_date, @group_rating.process_representative, @group_rating.representative_id, policy)
     end
 
-    FilterClaimsProcess.perform_in(10.minutes, @group_rating.id, all_process)
+    FilterClaimsProcess.perform_async(@group_rating.id, all_process)
   end
 end
