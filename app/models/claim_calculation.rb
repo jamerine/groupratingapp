@@ -101,19 +101,24 @@ class ClaimCalculation < ActiveRecord::Base
   end
 
   def clicd_detail_records
-    ClicdDetailRecord.where('clicd_detail_records.claim_number IN (?)', [claim_number, claim_number&.strip, "#{claim_number} "]).where(representative_number: representative_number, policy_number: policy_number)
+    ClicdDetailRecord.where('clicd_detail_records.claim_number LIKE ?', "%#{claim_number.strip}%").where(representative_number: representative_number, policy_number: policy_number)
   end
 
   def weekly_mira_detail_record
-    WeeklyMiraDetailRecord.where('weekly_mira_detail_records.claim_number IN (?)', [claim_number, claim_number&.strip, "#{claim_number} "]).where(representative_number: representative_number, policy_number: policy_number).order(updated_at: :desc)&.first
+    WeeklyMiraDetailRecord.where('weekly_mira_detail_records.claim_number LIKE ?', "%#{claim_number.strip}%").where(representative_number: representative_number, policy_number: policy_number).order(updated_at: :desc)&.first
+  end
+
+  def daily_mira_detail_record
+    MiraDetailRecord.where('mira_detail_records.claim_number LIKE ?', "%#{claim_number.strip}%").where(representative_number: representative_number, policy_number: policy_number).order(updated_at: :desc)&.first
   end
 
   def mira_detail_record
-    weekly_mira_detail_record || MiraDetailRecord.where('mira_detail_records.claim_number IN (?)', [claim_number, claim_number&.strip, "#{claim_number} "]).where(representative_number: representative_number, policy_number: policy_number).order(updated_at: :desc)&.first
+    # weekly_mira_detail_record || daily_mira_detail_record
+    daily_mira_detail_record
   end
 
   def democ_detail_records
-    DemocDetailRecord.filter_by(representative_number).where('democ_detail_records.claim_number IN (?)', ["#{self.claim_number} ", self.claim_number, self.claim_number.strip]).where(policy_number: self.policy_number)
+    DemocDetailRecord.filter_by(representative_number).where('democ_detail_records.claim_number LIKE ?', "%#{self.claim_number.strip}%").where(policy_number: self.policy_number)
   end
 
   def democ_detail_record

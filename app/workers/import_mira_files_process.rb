@@ -5,7 +5,7 @@ class ImportMiraFilesProcess
 
   def perform(representative_number, representative_abbreviated_name, weekly = false)
     if weekly
-      WeeklyMira.by_representative(representative_number).delete_all if weekly
+      WeeklyMira.by_representative(representative_number).delete_all
       import_file("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/MIRA2FILW", 'weekly_miras')
       WeeklyMira.by_representative(representative_number).by_record_type.each_with_progress do |mira|
         ImportWeeklyMiraData.perform_async(mira.attributes)

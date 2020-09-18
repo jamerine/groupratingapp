@@ -7,9 +7,6 @@ class ImportClicdFilesProcess
     Clicd.by_representative(representative_number).delete_all
     import_file("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/CLICDFILE", 'clicds')
 
-    result = ActiveRecord::Base.connection.execute("SELECT public.proc_process_flat_clicds()")
-    result.clear
-
     Clicd.by_representative(representative_number).by_record_type.each_with_progress do |clicd|
       ImportClicdData.perform_async(clicd.attributes)
     end
