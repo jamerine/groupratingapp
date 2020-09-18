@@ -146,6 +146,14 @@ class MatrixGroupRatingContract < MatrixPdfReport
     agreement_text 'In witness whereof, the parties have executed this agreement:'
     move_down 10
 
+    current_cursor = cursor
+
+    if Rails.env.development?
+      image open('public/' + @representative.signature&.url), height: 25, at: [75, current_cursor - 15]
+    else
+      image open(@representative.signature&.url), height: 25, at: [75, current_cursor - 15]
+    end
+
     table contract_table_data do
       self.width              = 490
       self.position           = :center
@@ -172,14 +180,6 @@ class MatrixGroupRatingContract < MatrixPdfReport
   end
 
   def contract_table_data
-    # require "open-uri"
-    #
-    # image_data = if @representative.signature.present?
-    #                { image: "#{Rails.env.development? ? "public/#{@representative.signature&.url}" : open(@representative.signature&.url)}", image_height: 15 }
-    #              else
-    #                ''
-    #              end
-
     [[{ content: '<b><u>Matrix Claims Management Inc.</u><b>', colspan: 2 }, '<b><u>Company Name:</u></b>', @account.name.titleize],
      ['By:', '', 'By:', ''],
      ['Printed:', @representative.president_full_name, 'Printed:', ''],
