@@ -20,7 +20,8 @@ class GroupRatingAllCreate
       end
 
       @policy_calculation = PolicyCalculation.where(policy_number:         @account.policy_number_entered,
-                                                    representative_number: @policy_demographic.representative_number)
+                                                    representative_number: @policy_demographic.representative_number,
+                                                    account_id:            @account.id)
                             .order(created_at: :desc)
                             .update_or_create(
                               policy_number:                                 @account.policy_number_entered,
@@ -269,10 +270,6 @@ class GroupRatingAllCreate
       end
 
       @account.calculate
-      # @account.policy_calculation.calculate_experience
-      # @account.policy_calculation.calculate_premium
-      # @account.group_rating
-      # @account.group_retro
     else
       # PREDECESSOR PAYROLL FIX - 9/5/2017
       @policy_demographic = PolicyCalculation.find_by_rep_and_policy(process_representative, policy_number)
@@ -318,10 +315,6 @@ class GroupRatingAllCreate
         end
 
         @account.calculate
-        # @account.policy_calculation.calculate_experience
-        # @account.policy_calculation.calculate_premium
-        # @account.group_rating
-        # @account.group_retro
       end
     end
   end
