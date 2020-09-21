@@ -50,6 +50,6 @@ namespace :db do
       end
     end
 
-    policies_to_be_removed
+    policies_to_be_removed.destroy_all
   end
 end
