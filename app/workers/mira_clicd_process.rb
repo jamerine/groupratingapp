@@ -6,7 +6,7 @@ class MiraClicdProcess
     Representative.all.find_each do |representative|
       ImportMiraFilesProcess.perform_async(representative.representative_number, representative.abbreviated_name)
       ImportMiraFilesProcess.perform_async(representative.representative_number, representative.abbreviated_name, true)
-      ImportClicdFilesProcess.perform_async(representative.representative_number, representative.abbreviated_name)
+      # ImportClicdFilesProcess.perform_async(representative.representative_number, representative.abbreviated_name)
     end
   end
 end

@@ -114,7 +114,7 @@ class ManualClassCalculation < ActiveRecord::Base
     @manual_class_four_year_sum      = @manual_class_self_four_year_sum + @manual_class_comb_four_year_sum
     @manual_class_four_year_sum      = @manual_class_four_year_sum < 0 ? 0 : @manual_class_four_year_sum
     @manual_class_current_payroll    = self.payroll_calculations.where("reporting_period_start_date >= :current_payroll_period_lower_date and reporting_period_start_date < :current_payroll_period_upper_date",
-                                                                       current_payroll_period_lower_date: @self_four_year_payroll_lower_date,
+                                                                       current_payroll_period_lower_date: @group_rating.current_payroll_period_lower_date,
                                                                        current_payroll_period_upper_date: @group_rating.current_payroll_period_upper_date)
                                        .sum(:manual_class_payroll).round(2)
 
@@ -175,7 +175,7 @@ class ManualClassCalculation < ActiveRecord::Base
     self_four_year_payroll_lower_date = policy_creation_date < group_rating.experience_period_lower_date ? policy_creation_date : group_rating.experience_period_lower_date
     expected_loss_rate                = bwc_base_rate.expected_loss_rate || 0
     manual_class_self_four_year_sum   = self.payroll_calculations.with_estimated_payroll(false).where("reporting_period_start_date BETWEEN :experience_period_lower_date and :experience_period_upper_date and (payroll_origin NOT IN ('partial_transfer', 'full_transfer', 'man_reclass_full_transfer', 'man_reclass_partial_transfer'))", experience_period_lower_date: self_four_year_payroll_lower_date, experience_period_upper_date: group_rating.experience_period_upper_date).sum(:manual_class_payroll).round(2)
-    manual_class_comb_four_year_sum   = self.payroll_calculations.with_estimated_payroll(false).where("(reporting_period_start_date BETWEEN :experience_period_lower_date and :experience_period_upper_date) and (payroll_origin IN ('partial_transfer', 'full_transfer', 'man_reclass_full_transfer', 'man_reclass_partial_transfer'))", experience_period_lower_date: group_rating.experience_period_lower_date, experience_period_upper_date: group_rating.experience_period_upper_date).sum(:manual_class_payroll).round(2)
+    manual_class_comb_four_year_sum   = self.payroll_calculations.with_estimated_payroll(false).where("(reporting_period_start_date BETWEEN :experience_period_lower_date and :experience_period_upper_date) and (payroll_origin IN ('partial_transfer', 'full_transfer', 'man_reclass_full_transfer', 'man_reclass_partial_transfer'))", experience_period_lower_date: self_four_year_payroll_lower_date, experience_period_upper_date: group_rating.experience_period_upper_date).sum(:manual_class_payroll).round(2)
     manual_class_four_year_sum        = manual_class_self_four_year_sum + manual_class_comb_four_year_sum
     manual_class_four_year_sum        = manual_class_four_year_sum < 0 ? 0 : manual_class_four_year_sum
 
