@@ -1310,8 +1310,8 @@ class RiskReport < PdfReport
     @view.number_with_precision(num, precision: prec)
   end
 
-  def percent(num = 0)
-    num = num * 100
+  def percent(num)
+    num = (num || 0) * 100
     @view.number_to_percentage(num, precision: 0)
   end
 
