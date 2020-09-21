@@ -38,8 +38,6 @@ class GroupRatingsController < ApplicationController
           redirect_to group_ratings_path, notice: "Import, processing and group rating have been queued. Please refresh your page to view progress"
         end
       end
-
-      RepresentativeAllAccountRating.perform_in(30.minutes, @representative.id)
     end
   end
 
