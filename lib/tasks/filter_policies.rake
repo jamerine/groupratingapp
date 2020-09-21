@@ -6,7 +6,7 @@ namespace :db do
     # policy_numbers = [0, 76996, 275065, 442253, 634498, 768676, 823657, 830243, 855826, 878653, 889482, 930448, 1014673, 1170697, 1179483, 1220574, 1262815, 1292501, 1292502, 1299046, 1300728, 1303987, 1310429, 1369901, 1396452, 1487625, 1496557, 1498012, 1525505, 1531660, 1551358, 1567744, 1613544, 1669164, 1669552, 1694611, 80023759, 80052019, 80055667, 80071107]
     # policy_numbers = [457380, 616016, 646587, 948364, 1012925, 1033236, 1042645, 1232685, 1494121, 1569910, 1580128, 1666741, 1668099, 1710728, 1747004, 1752679, 80035397, 80037049, 80048134, 80048369, 80050230, 80051425, 80055756, 80071642, 80072633, 80074930]
 
-    result         = ActiveRecord::Base.connection.exec_query("SELECT DISTINCT policy_number
+    result                 = ActiveRecord::Base.connection.exec_query("SELECT DISTINCT policy_number
                                                        FROM policy_calculations
                                                        WHERE policy_number IN (
                                                           SELECT policy_number
@@ -18,8 +18,8 @@ namespace :db do
                                                           WHERE dups.Row > 1)
                                                           AND representative_number = 1740
                                                        ORDER BY policy_number")
-    policy_numbers = result.rows.flatten.map(&:to_i)
-
+    policy_numbers         = result.rows.flatten.map(&:to_i)
+    policies_to_be_removed = []
     policy_numbers.each_with_progress do |policy_number|
       policies = PolicyCalculation.where(representative_number: 1740, policy_number: policy_number) #MATRIX
 
@@ -45,9 +45,11 @@ namespace :db do
         end
 
         policy_to_keep.save
-        policy.destroy
+        policies_to_be_removed << policy
         policy_to_keep.account&.calculate
       end
     end
+
+    policies_to_be_removed
   end
 end
