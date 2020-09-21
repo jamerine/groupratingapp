@@ -38,7 +38,7 @@ class GroupRatingMarkComplete
       else
         AllRepresentativesProcess.perform_async
       end
-    elsif all_process == false
+    elsif all_process
       # Only do this if not all process
       RepresentativeAllAccountRating.perform_in(15.minutes, @group_rating.representative_id)
     end
