@@ -70,7 +70,7 @@ class GroupRatingAllCreate
                             )
 
       FinalClaimCostCalculationTable.where(representative_number: @policy_calculation.representative_number, policy_number: @policy_calculation.policy_number).each do |claim|
-        ClaimCalculation.where(representative_number: claim.representative_number, policy_number: claim.policy_number, claim_number: claim.claim_number).update_or_create(
+        ClaimCalculation.by_rep_and_policy(claim.representative_number, claim.policy_number).where(claim_number: claim.claim_number).order(created_at: :asc).update_or_create(
           representative_number:                     claim.representative_number,
           policy_number:                             claim.policy_number,
           policy_calculation_id:                     @policy_calculation.id,

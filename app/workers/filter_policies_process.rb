@@ -7,6 +7,7 @@ class FilterPoliciesProcess
     @group_rating   = GroupRating.find_by(id: group_rating_id)
     @representative = Representative.find_by(id: @group_rating.representative_id)
 
+    # Merge/Remove duplicate policies
     result                 = ActiveRecord::Base.connection.exec_query("SELECT DISTINCT policy_number
                                                        FROM policy_calculations
                                                        WHERE policy_number IN (

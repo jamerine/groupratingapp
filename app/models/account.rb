@@ -93,6 +93,10 @@ class Account < ActiveRecord::Base
     obj
   end
 
+  def self.find_by_rep_and_policy(rep_id, policy_number)
+    find_by(policy_number_entered: policy_number, representative_id: rep_id)
+  end
+
   def build_or_assign_policy_calculation(attributes)
     if self.policy_calculation.policy_number == attributes[:policy_number]
       obj = self.policy_calculation.assign_attributes(attributes)

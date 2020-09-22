@@ -65,6 +65,7 @@ class ClaimCalculation < ActiveRecord::Base
 
   attr_accessor :comp_awarded, :medical_paid, :mira_reserve, :address_id
   scope :by_representative, -> (rep_number) { where(representative_number: rep_number) }
+  scope :by_rep_and_policy, -> (rep_number, policy_number) { by_representative(rep_number).where(policy_number: policy_number) }
   scope :bwc, -> { where(data_source: 'bwc') }
 
   validates_presence_of :representative_number, :policy_number, :data_source, :claim_number, :claim_injury_date, :claimant_date_of_birth, :claimant_name
