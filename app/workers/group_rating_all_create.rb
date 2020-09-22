@@ -20,12 +20,12 @@ class GroupRatingAllCreate
       end
 
       @policy_calculation = PolicyCalculation.where(policy_number:         @account.policy_number_entered,
-                                                    representative_number: @policy_demographic.representative_number,
+                                                    representative_number: process_representative,
                                                     account_id:            @account.id)
                             .order(created_at: :desc)
                             .update_or_create(
                               policy_number:                                 @account.policy_number_entered,
-                              representative_number:                         @policy_demographic.representative_number,
+                              representative_number:                         process_representative,
                               representative_id:                             @account.representative_id,
                               account_id:                                    @account.id,
                               currently_assigned_representative_number:      @policy_demographic.currently_assigned_representative_number,

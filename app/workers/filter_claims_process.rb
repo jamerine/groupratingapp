@@ -7,7 +7,7 @@ class FilterClaimsProcess
     @group_rating   = GroupRating.find_by(id: group_rating_id)
     @representative = Representative.find_by(id: @group_rating.representative_id)
 
-    # Per Doug delete claims we don't actually use more than 10 years old
+    # Part One: Per Doug delete claims we don't actually use more than 10 years old
     result = ActiveRecord::Base.connection.exec_query("SELECT claims.id
                                                       FROM claim_calculations claims
                                                       LEFT JOIN policy_calculations policies
@@ -28,7 +28,7 @@ class FilterClaimsProcess
 
     ClaimCalculation.where('claim_calculations.id IN (?)', result.rows.flatten.map(&:to_i)).delete_all
 
-    # Remove duplicate claims
+    # Part Two: Remove duplicate claims
     result               = ActiveRecord::Base.connection.exec_query("SELECT TRIM(BOTH FROM claim_number), policy_number
                                                                     FROM claim_calculations
                                                                     WHERE representative_number = #{@representative.representative_number}
@@ -52,6 +52,25 @@ class FilterClaimsProcess
 
     claims_to_be_removed.flatten.each(&:destroy)
     policies.each { |policy_number| Account.find_by_rep_and_policy(@representative.id, policy_number)&.calculate }
+
+    # Part Three: Reassign incorrect policy_calculations on claims
+    claims                  = ClaimCalculation.joins(:policy_calculation).where('policy_calculations.representative_number != claim_calculations.representative_number')
+    policies_to_recalculate = []
+    claims_to_remove        = []
+
+    claims.each do |claim|
+      correct_policy = PolicyCalculation.find_by_rep_and_policy(claim.representative_number, claim.policy_number)
+
+      if correct_policy.present?
+        claim.update_attribute(:policy_calculation_id, correct_policy.id)
+        policies_to_recalculate << correct_policy
+      else
+        claims_to_remove << claim
+      end
+    end
+
+    claims_to_remove.each(&:destroy)
+    policies_to_recalculate.uniq.each { |policy| policy.account&.calculate }
 
     GroupRatingMarkComplete.perform_async(group_rating_id, all_process)
   end
