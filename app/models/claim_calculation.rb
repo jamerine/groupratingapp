@@ -115,7 +115,7 @@ class ClaimCalculation < ActiveRecord::Base
 
   def mira_detail_record
     # weekly_mira_detail_record || daily_mira_detail_record
-    daily_mira_detail_record
+    daily_mira_detail_record || weekly_mira_detail_record
   end
 
   def democ_detail_records
@@ -129,11 +129,11 @@ class ClaimCalculation < ActiveRecord::Base
   end
 
   def claim_notes
-    ClaimNote.where(representative_number: self.representative_number, policy_number: self.policy_number).where('claim_number IN (?)', [self.claim_number, self.claim_number.strip, "#{self.claim_number} "])
+    ClaimNote.where(representative_number: self.representative_number, policy_number: self.policy_number).where('claim_number LIKE (?)', "%#{self.claim_number.strip}%")
   end
 
   def address
-    ClaimAddress.find_by(claim_number: claim_number, representative_number: representative_number, policy_number: policy_number)
+    ClaimAddress.where('claim_number LIKE ? ', "%#{claim_number.strip}%").find_by(representative_number: representative_number, policy_number: policy_number)
   end
 
   def program_type

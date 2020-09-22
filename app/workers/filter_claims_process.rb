@@ -29,20 +29,12 @@ class FilterClaimsProcess
     ClaimCalculation.where('claim_calculations.id IN (?)', result.rows.flatten.map(&:to_i)).delete_all
 
     # Remove duplicate claims
-    result               = ActiveRecord::Base.connection.exec_query("SELECT DISTINCT claim_number, policy_number
-                                                      FROM claim_calculations
-                                                      WHERE claim_number IN (
-                                                        SELECT claim_number
-                                                        FROM (
-                                                               SELECT claim_number,
-                                                                      ROW_NUMBER() OVER (PARTITION BY claim_number, policy_number ORDER BY claim_number) AS row
-                                                               FROM claim_calculations
-                                                               WHERE representative_number = #{@representative.representative_number}
-                                                                 AND trim(claim_number) <> ''
-                                                             ) dups
-                                                        WHERE dups.row > 1)
-                                                        AND representative_number = #{@representative.representative_number}
-                                                      ORDER BY claim_number")
+    result               = ActiveRecord::Base.connection.exec_query("SELECT TRIM(BOTH FROM claim_number), policy_number
+                                                                    FROM claim_calculations
+                                                                    WHERE representative_number = #{@representative.representative_number}
+                                                                    GROUP BY TRIM(BOTH FROM claim_number), policy_number
+                                                                    HAVING COUNT(*) > 1
+                                                                    ORDER BY policy_number, TRIM(BOTH FROM claim_number)")
     claim_policies       = result.rows.map { |claim, policy| [claim, policy&.to_i] }
     policies             = claim_policies.map(&:last)
     claims_to_be_removed = []

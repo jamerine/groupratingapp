@@ -29,7 +29,7 @@ namespace :db do
 
       policies_to_remove.each do |policy|
         policy.claim_calculations.each do |claim|
-          unless policy_to_keep.claim_calculations.where(claim_number: claim.claim_number).any?
+          unless policy_to_keep.claim_calculations.where('claim_number LIKE ?', "%#{claim.claim_number.strip}%").any?
             claim.update_attribute(:policy_calculation_id, policy_to_keep.id)
           end
         end

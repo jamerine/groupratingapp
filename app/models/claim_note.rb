@@ -28,6 +28,6 @@ class ClaimNote < ActiveRecord::Base
 
   def claim_calculation
     ClaimCalculation.find_by(claim_number: claim_number, policy_number: policy_number, representative_number: representative_number) ||
-      ClaimCalculation.find_by(claim_number: "#{claim_number} ", policy_number: policy_number, representative_number: representative_number)
+      ClaimCalculation.by_rep_and_policy(representative_number, policy_number).where('claim_number LIKE ?', "%#{claim_number}%").order(created_at: :asc).first
   end
 end
