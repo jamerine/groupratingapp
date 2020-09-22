@@ -98,7 +98,7 @@ class MatrixGroupRetroQuote < MatrixPdfReport
     @data += [["Individual Premium", price(@policy_calculation.policy_total_individual_premium)]]
     @data += [["Adjusted Premium", price(@policy_calculation.policy_adjusted_individual_premium)]]
     @data += [["Standard Premium", price(@policy_calculation.policy_adjusted_standard_premium)]]
-    @data += [["Net Premium", price(@account.group_premium)]]
+    @data += [["Net Premium", price(@account.group_retro_premium)]]
     @data += [["", ""]]
     @data += [["Group Retro Estimated Refund", price(@account.group_retro_savings)]]
     @data += [["", ""]]
