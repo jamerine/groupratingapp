@@ -68,7 +68,8 @@ class ClaimCalculation < ActiveRecord::Base
   scope :by_rep_and_policy, -> (rep_number, policy_number) { by_representative(rep_number).where(policy_number: policy_number) }
   scope :bwc, -> { where(data_source: 'bwc') }
 
-  validates_presence_of :representative_number, :policy_number, :data_source, :claim_number, :claim_injury_date, :claimant_date_of_birth, :claimant_name
+  validates_presence_of :representative_number, :policy_number, :data_source, :claim_number, :claim_injury_date
+  validates_presence_of :claimant_date_of_birth, :claimant_name, unless: :data_source_bwc?
 
   def self.update_or_create(attributes)
     obj = first || new
@@ -87,6 +88,10 @@ class ClaimCalculation < ActiveRecord::Base
         csv << csv_formatted_attributes(record)
       end
     end
+  end
+
+  def data_source_bwc?
+    self.data_source == 'bwc'
   end
 
   def added_by_user?

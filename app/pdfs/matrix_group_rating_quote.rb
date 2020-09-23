@@ -88,7 +88,7 @@ class MatrixGroupRatingQuote < MatrixPdfReport
 
   def table_data
     @data = [["<color rgb='FFFFFF'>#{@account.representative.quote_year} ESTIMATED SAVINGS</color>", "<color rgb='FFFFFF'>#{percent(@account.group_rating_tier)} GROUP</color>"]]
-    @data += [["Individual Premium", price(@policy_calculation.policy_total_individual_premium)]]
+    @data += [["Individual Premium", price(@policy_calculation.policy_adjusted_individual_premium)]]
     @data += [["Net Premium", price(@account.group_premium)]]
     @data += [["Total Savings", price(@account.group_savings)]]
   end
