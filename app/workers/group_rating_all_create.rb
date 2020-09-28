@@ -70,8 +70,8 @@ class GroupRatingAllCreate
                             )
 
       FinalClaimCostCalculationTable.where(representative_number: @policy_calculation.representative_number, policy_number: @policy_calculation.policy_number).each do |claim|
-        ClaimCalculation.by_rep_and_policy(claim.representative_number, @policy_calculation.policy_number).where('claim_number LIKE ?', "%#{claim.claim_number.strip}%").order(created_at: :asc).update_or_create(
-          representative_number:                     claim.representative_number,
+        ClaimCalculation.by_rep_and_policy(@policy_calculation.representative_number, @policy_calculation.policy_number).where('claim_number LIKE ?', "%#{claim.claim_number.strip}%").order(created_at: :asc).update_or_create(
+          representative_number:                     @policy_calculation.representative_number,
           policy_number:                             claim.policy_number,
           policy_calculation_id:                     @policy_calculation.id,
           claim_number:                              claim.claim_number,
