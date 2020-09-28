@@ -1,0 +1,8 @@
+- if @process_is_running
+  div style=("position: absolute; top: 55px; left: 0; width: 100%;z-index:9999;")
+    .container
+      .alert.alert-dismissible.banner-alert.alert-info role="alert"
+        = button_tag type: :button, class: 'pull-right text-danger btn btn-danger btn-xs', data: { dismiss: :alert }, aria: { label: :close } do
+          i.fa.fa-times aria-hidden="true"
+        .container style=("text-align: center;")
+          h4 style=("margin: 0;") BWC Import and Calculation Process is current running, calculations may be incorrect.

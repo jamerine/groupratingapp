@@ -9,6 +9,7 @@ class ApplicationController < ActionController::Base
   # before_action :configure_permitted_parameters, if: :devise_controller?
   before_action :authenticate_user!, :set_paper_trail_whodunnit, except: :payroll_diff
   before_action :find_representatives
+  before_action :check_process_progress
 
   rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
 
@@ -29,9 +30,14 @@ class ApplicationController < ActionController::Base
 
   def find_representatives
     if current_user
-      @representatives_users = RepresentativesUser.where(user_id: current_user.id).pluck(:representative_id)
-      @representatives       = Representative.where(id: @representatives_users)
+      @representatives = current_user.representatives
     end
+  end
+
+  def check_process_progress
+    require 'sidekiq/api'
+    stats               = Sidekiq::Stats.new.fetch_stats!
+    @process_is_running = stats[:workers_size] > 0 || stats[:enqueued] > 0 || stats[:scheduled_size] > 0
   end
 
   # def configure_permitted_parameters
