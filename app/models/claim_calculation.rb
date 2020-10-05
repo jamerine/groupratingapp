@@ -62,6 +62,7 @@
 
 class ClaimCalculation < ActiveRecord::Base
   belongs_to :policy_calculation
+  belongs_to :representative, foreign_key: :representative_number, primary_key: :representative_number
 
   attr_accessor :comp_awarded, :medical_paid, :mira_reserve, :address_id
   scope :by_representative, -> (rep_number) { where(representative_number: rep_number) }
@@ -99,7 +100,7 @@ class ClaimCalculation < ActiveRecord::Base
   end
 
   def representative_name
-    Representative.find_by_representative_number(representative_number)&.abbreviated_name
+    self.representative&.abbreviated_name
   end
 
   def policy_name

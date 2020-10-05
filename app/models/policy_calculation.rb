@@ -113,7 +113,7 @@ class PolicyCalculation < ActiveRecord::Base
   before_destroy :delete_claims
 
   def representative_name
-    representative&.abbreviated_name
+    self.representative&.abbreviated_name
   end
 
   # Add Papertrail as history tracking
@@ -145,7 +145,7 @@ class PolicyCalculation < ActiveRecord::Base
   end
 
   def self.search(search)
-    where("policy_number = ?", "#{search}")
+    where("policy_number LIKE ?", "%#{search}%")
   end
 
   def self.to_csv
