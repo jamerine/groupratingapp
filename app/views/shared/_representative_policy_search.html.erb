@@ -9,7 +9,7 @@
     <%= select_tag(:policy_status, options_from_collection_for_select(@policy_statuses, lambda { |s| s.upcase }, lambda { |s| s.upcase }), include_blank: 'Policy Status', class: 'form-control') %>
   </div>
   <div class="form-group">
-    <%= text_field_tag :search, params[:search], placeholder: "Search Policy Number", class: 'form-control' %>
+    <%= text_field_tag :search, params[:search], placeholder: "Search Policy Number", class: 'form-control policy-number-search' %>
   </div>
   <div class="form-group">
     <%= text_field_tag :search_name, params[:search_name], placeholder: "Search Account Name", class: 'form-control' %>

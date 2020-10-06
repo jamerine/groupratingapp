@@ -20,6 +20,7 @@
 //= require bootstrap-datetimepicker
 //= require cocoon
 //= require select2
+//= require jquery.inputmask.min
 
 function validateFiles(inputFile) {
   var maxExceededMessage = "This file exceeds the maximum allowed file size (1 MB)";
@@ -52,4 +53,6 @@ $(function () {
   $("select").select2({
     theme: "bootstrap"
   });
+
+  $('#search.policy-number-search').inputmask({ mask: "9", repeat: 10 });
 });
