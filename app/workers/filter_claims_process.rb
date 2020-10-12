@@ -18,7 +18,7 @@ class FilterClaimsProcess
                                                       AND claims.data_source = 'bwc'
                                                       AND NOT EXISTS (SELECT 1
                                                                     FROM democ_detail_records democs
-                                                                    WHERE democs.claim_number = claims.claim_number
+                                                                    WHERE TRIM(BOTH FROM democs.claim_number) = TRIM(BOTH FROM claims.claim_number)
                                                                       AND democs.policy_number = claims.policy_number
                                                                       AND democs.representative_number = #{@representative.representative_number})
                                                       AND EXISTS (SELECT 1
