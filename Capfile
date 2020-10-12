@@ -5,7 +5,7 @@ require "capistrano/setup"
 require "capistrano/deploy"
 
 # Include slack notifications 
-# require 'capistrano/slackify'
+require 'capistrano/slackify'
 
 # Load the SCM plugin appropriate to your project:
 #
