@@ -3,7 +3,9 @@ ul
     - @claim_search_results.each do |matching_claim_calculation|
       li
         = link_to claim_calculation_path(matching_claim_calculation), target: '_blank', class: 'calc-link' do
-          .claim-number = matching_claim_calculation.claim_number.strip
+          .claim-number
+            = matching_claim_calculation.claim_number.strip
+            .pull-right = matching_claim_calculation.claim_injury_date.try(:strftime, "%b %d, %Y")
           span.policy-name style="display: block;" = matching_claim_calculation.policy_name.strip
           span.claimant-name = "#{matching_claim_calculation.claimant_name.strip} - #{matching_claim_calculation.representative_name}"
   - else
