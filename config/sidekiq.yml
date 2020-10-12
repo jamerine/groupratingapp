@@ -16,6 +16,12 @@ production:
   - import_ratefile_process
   - import_pdemo_process
   - import_pcomb_process
+  - import_mrcls_process
+  - import_mremps_process
+  - import_phmgns_process
+  - import_sc230_process
+  - import_pemhs_process
+  - import_pcovgs_process
   - import_clicd_data
   - group_rating_calculate
   - mira_clicd_process
