@@ -2,11 +2,12 @@ class ImportDemocProcess
   include Sidekiq::Worker
   sidekiq_options queue: :import_democ_process, retry: 3
 
-  def perform(representative_number, representative_abbreviated_name)
+  def perform(representative_number, representative_abbreviated_name, file_url)
     Democ.delete_all
     DemocDetailRecord.filter_by(representative_number).delete_all
+    file_url ||= "https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/DEMOCFILE"
 
-    import_file("https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/DEMOCFILE", 'democs')
+    import_file(file_url, 'democs')
   end
 
   def import_file(url, table_name)

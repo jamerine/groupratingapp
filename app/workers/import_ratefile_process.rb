@@ -1,13 +1,13 @@
-class ImportPdemoProcess
+class ImportRatefileProcess
   include Sidekiq::Worker
-  sidekiq_options queue: :import_pdemo_process, retry: 3
+  sidekiq_options queue: :import_ratefile_process, retry: 3
 
   def perform(representative_number, representative_abbreviated_name, file_url = nil)
-    Pdemo.delete_all
-    PdemoDetailRecord.filter_by(representative_number).delete_all
-    file_url ||= "https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/PDEMOFILE"
+    Rate.delete_all
+    RateDetailRecord.filter_by(representative_number).delete_all
+    file_url ||= "https://s3.amazonaws.com/piarm/#{representative_abbreviated_name}/RATEFILE"
 
-    import_file(file_url, 'pdemos')
+    import_file(file_url, 'rates')
   end
 
   def import_file(url, table_name)
@@ -17,22 +17,15 @@ class ImportPdemoProcess
       puts "Start Time: " + Time.new.inspect
       conn = ActiveRecord::Base.connection
       rc   = conn.raw_connection
-      rc.exec("COPY " + table_name + " (single_rec) FROM STDIN WITH DELIMITER AS '|'")
+      rc.exec("COPY " + table_name + " (single_rec) FROM STDIN WITH DELIMITER AS '~'")
 
       file = open(url)
 
       until file.eof?
         # Add row to copy data
         line = file.readline
-        if table_name == 'democs' && line[40, 4] == "0000"
-          #puts "incorrect characters"
-        elsif line.include?('|')
-          new_line = line.gsub('|', ' ')
-          rc.put_copy_data(new_line)
-        else
-          puts 'Reading....'
-          rc.put_copy_data(line)
-        end
+        puts 'Reading....'
+        rc.put_copy_data(line)
       end
 
       # We are done adding copy data
@@ -50,7 +43,7 @@ class ImportPdemoProcess
       puts "Skipped File..."
     end
 
-    result = ActiveRecord::Base.connection.execute("SELECT public.proc_process_flat_pdemos()")
+    result = ActiveRecord::Base.connection.execute("SELECT public.proc_process_flat_rates()")
     result.clear
 
     puts "End Time: " + Time.new.inspect

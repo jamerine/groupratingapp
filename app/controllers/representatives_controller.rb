@@ -211,6 +211,37 @@ class RepresentativesController < ApplicationController
     redirect_to quotes_path(representative_id: @representative.id), notice: 'The Group Rating Quoting Process has successfully started.  Please allow a few for this process to complete.'
   end
 
+  def start_process
+    @representative = Representative.find(params[:representative_id])
+    authorize @representative
+
+    @new_group_rating = GroupRating.new(experience_period_lower_date:      @representative.experience_period_lower_date,
+                                        experience_period_upper_date:      @representative.experience_period_upper_date,
+                                        current_payroll_period_lower_date: @representative.current_payroll_period_lower_date,
+                                        current_payroll_period_upper_date: @representative.current_payroll_period_upper_date,
+                                        current_payroll_year:              @representative.current_payroll_year,
+                                        program_year_lower_date:           @representative.program_year_lower_date,
+                                        program_year_upper_date:           @representative.program_year_upper_date,
+                                        program_year:                      @representative.program_year,
+                                        quote_year_lower_date:             @representative.quote_year_lower_date,
+                                        quote_year_upper_date:             @representative.quote_year_upper_date,
+                                        quote_year:                        @representative.quote_year,
+                                        representative_id:                 @representative.id)
+    if @new_group_rating.save
+      GroupRatingStepOne.perform_async("1",
+                                       @group_rating.process_representative,
+                                       @group_rating.experience_period_lower_date,
+                                       @group_rating.experience_period_upper_date,
+                                       @group_rating.current_payroll_period_lower_date,
+                                       @group_rating.current_payroll_period_upper_date,
+                                       @group_rating.id)
+
+      redirect_to @representative, notice: 'Representative Process Started!'
+    else
+      redirect_to @representative, error: 'Something went wrong!'
+    end
+  end
+
   def zip_file
     @representative = Representative.find(params[:representative_id])
     authorize @representative

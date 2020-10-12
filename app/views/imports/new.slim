@@ -1,64 +1,30 @@
 .container
-  .jumbotron.text-center
-    h1 Begin Import Process
-    = simple_form_for @import do |f|
-      .form-group.row
-        .col-sm-offset-4.col-sm-4
-          = f.input :representative_id, label: 'Process Representative', collection: @representatives, value_method: :id, label_method: :abbreviated_name
-
-      = f.submit 'Import Files', class: 'btn btn-info'
-
-.container style=("margin-top: 50px;")
-  .jumbotron.text-center
-    h1 Import Pdemo Process
-    = simple_form_for @import, url: import_pdemos_imports_path do |f|
-      .form-group.row
-        .col-sm-offset-4.col-sm-4
-          = f.input :representative_id, label: 'Process Representative', collection: @representatives, value_method: :id, label_method: :abbreviated_name
-      .row
-        .col-sm-offset-4.col-sm-4 = f.submit 'Start Import', class: 'btn btn-info'
-        / .col-sm-6 = link_to 'Import All Democs', import_all_democs_imports_path, class: 'btn btn-success', remote: true, method: :post
-
-.container style=("margin-top: 50px;")
-  .jumbotron.text-center
-    h1 Import Pcomb Process
-    = simple_form_for @import, url: import_pcombs_imports_path do |f|
-      .form-group.row
-        .col-sm-offset-4.col-sm-4
-          = f.input :representative_id, label: 'Process Representative', collection: @representatives, value_method: :id, label_method: :abbreviated_name
-      .row
-        .col-sm-offset-4.col-sm-4 = f.submit 'Start Import', class: 'btn btn-info'
-          / .col-sm-6 = link_to 'Import All Democs', import_all_democs_imports_path, class: 'btn btn-success', remote: true, method: :post
-
-.container style=("margin-top: 50px;")
-  .jumbotron.text-center
-    h1 Import Democ Process
-    = simple_form_for @import, url: import_democs_imports_path do |f|
-      .form-group.row
-        .col-sm-offset-4.col-sm-4
-          = f.input :representative_id, label: 'Process Representative', collection: @representatives, value_method: :id, label_method: :abbreviated_name
-      .row
-        .col-sm-6 = f.submit 'Start Import', class: 'btn btn-info'
-        .col-sm-6 = link_to 'Import All Democs', import_all_democs_imports_path, class: 'btn btn-success', remote: true, method: :post
-
-.container style=("margin-top: 50px;")
-  .jumbotron.text-center
-    h1 Import Miras Process
-    = simple_form_for @import, url: import_miras_imports_path do |f|
-      .form-group.row
-        .col-sm-offset-4.col-sm-4
-          = f.input :representative_id, label: 'Process Representative', collection: @representatives, value_method: :id, label_method: :abbreviated_name
-      .row
-        .col-sm-6 = f.submit 'Start Import', class: 'btn btn-info'
-        .col-sm-6 = link_to 'Import All Miras', import_all_miras_imports_path, class: 'btn btn-success', remote: true, method: :post
-
-.container style=("margin-top: 50px;")
-  .jumbotron.text-center
-    h1 Import Clicds Process
-    = simple_form_for @import, url: import_clicds_imports_path do |f|
-      .form-group.row
-        .col-sm-offset-4.col-sm-4
-          = f.input :representative_id, label: 'Process Representative', collection: @representatives, value_method: :id, label_method: :abbreviated_name
-      .row
-        .col-sm-6 = f.submit 'Start Import', class: 'btn btn-info'
-        .col-sm-6 = link_to 'Import All Clicds', import_all_clicds_imports_path, class: 'btn btn-success', remote: true, method: :post
+  .row
+    .col-sm-6.col-sm-offset-3
+      .jumbotron.text-center
+        h1 Import All Files
+        = simple_form_for @import do |f|
+          .form-group.row
+            .col-sm-offset-3.col-sm-6 = f.input :representative_id, label: 'Process Representative', collection: @representatives, value_method: :id, label_method: :abbreviated_name, prompt: 'Select One', required: true
+          .row
+            .col-sm-4.col-sm-offset-4 = f.submit 'Import Files', class: 'btn btn-info btn-block'
+  .row
+    .col-sm-6
+      .jumbotron.text-center
+        h1 Import File
+        = simple_form_for @import, url: import_file_imports_path do |f|
+          .form-group.row
+            .col-sm-6 = f.input :import_type, label: 'Import Type', collection: import_types, value_method: :first, label_method: :last, prompt: 'Select One', required: true
+            .col-sm-6 = f.input :representative_id, label: 'Process Representative', collection: @representatives, value_method: :id, label_method: :abbreviated_name, required: true, prompt: 'Select One'
+          .row
+            .col-sm-10.col-sm-offset-1 = f.input :custom_file, as: :file, label: 'Custom File'
+          .row
+            .col-sm-4.col-sm-offset-4 = f.submit 'Start Import', class: 'btn btn-info btn-block'
+    .col-sm-6
+      .jumbotron.text-center style="padding-left: 5px; padding-right:5px;"
+        h1 All Reps Import
+        = simple_form_for @import, url: import_files_imports_path do |f|
+          .form-group.row
+            .col-sm-offset-3.col-sm-6 = f.input :import_type, label: 'Import Type', collection: import_types, value_method: :first, label_method: :last, prompt: 'Select One', required: true
+          .row
+            .col-sm-4.col-sm-offset-4 = f.submit 'Start Import', class: 'btn btn-info btn-block'

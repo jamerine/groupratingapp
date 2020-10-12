@@ -61,4 +61,6 @@ class Import < ActiveRecord::Base
   belongs_to :representative
   belongs_to :group_rating
 
+  attr_accessor :import_type, :custom_file
+
 end

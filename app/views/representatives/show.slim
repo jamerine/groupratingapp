@@ -127,6 +127,10 @@
         .col-md-4
           h5 Run Group Rating For All Accounts
           = link_to "All #{@representative.abbreviated_name} Accounts Group Rating", representative_all_account_group_rating_path(representative_id: @representative.id), class: 'btn btn-default'
+        - if current_user.email == 'amoyer@switchboxinc.com'
+          .col-md-4
+            h5 Run Group Rating Process Starting At Step One
+            = link_to "Start Process At Step One", representative_start_process_path(representative_id: @representative.id), class: 'btn btn-default'
       br
       hr
 

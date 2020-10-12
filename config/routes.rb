@@ -522,14 +522,8 @@ Rails.application.routes.draw do
   resources :imports do
     collection do
       delete :destroy
-      post :import_miras
-      post :import_clicds
-      post :import_democs
-      post :import_pdemos
-      post :import_pcombs
-      post :import_all_miras
-      post :import_all_clicds
-      post :import_all_democs
+      post :import_file
+      post :import_files
     end
   end
 
@@ -602,6 +596,7 @@ Rails.application.routes.draw do
 
   resources :representatives do
     get :all_account_group_rating
+    get :start_process
     get :users_management
     post :fee_calculations
     get :export_manual_classes

@@ -27,6 +27,7 @@ class ImportsController < ApplicationController
     Sc230.delete_all
     Mira.delete_all
     @import = Import.find(params[:id])
+
     if @import.destroy
       flash[:notice] = "Import was deleted successfully."
       redirect_to imports_path
@@ -43,118 +44,98 @@ class ImportsController < ApplicationController
   end
 
   def create
-    @import                        = Import.new(import_params)
+    @import = Import.new(import_params)
+
+    unless @import.representative_id.present?
+      flash[:error] = 'No Representative selected, please try again.'
+      redirect_to new_import_path and return
+    end
+
     @representative                = Representative.find(@import.representative_id)
     @import.process_representative = @representative.representative_number
     @import.import_status          = 'Queuing'
     @import.parse_status           = 'Queuing'
+
     # Flat files
     if @import.save
       @new_group_rating                        = GroupRating.new(experience_period_lower_date: @representative.experience_period_lower_date, experience_period_upper_date: @representative.experience_period_upper_date, current_payroll_period_lower_date: @representative.current_payroll_period_lower_date, current_payroll_period_upper_date: @representative.current_payroll_period_upper_date, current_payroll_year: @representative.current_payroll_year, program_year_lower_date: @representative.program_year_lower_date, program_year_upper_date: @representative.program_year_upper_date, program_year: @representative.program_year, quote_year_lower_date: @representative.quote_year_lower_date, quote_year_upper_date: @representative.quote_year_upper_date, quote_year: @representative.quote_year, representative_id: @representative.id)
       @new_group_rating.status                 = 'Queuing'
       @new_group_rating.process_representative = @representative.representative_number
+
       if @new_group_rating.save
         ImportProcess.perform_async(@import.process_representative, @import.id, @representative.abbreviated_name, @new_group_rating.id, true)
       end
-      # Resque.enqueue(ParseProcess, @import.process_representative, @import.id)
 
       redirect_to imports_path, notice: "Files to be imported and parse have been queued."
     end
-    # Resque.enqueue(ImportProcess, process_representative_name)
-    # Democ.import_file("https://s3.amazonaws.com/grouprating/ARM/DEMOCFILE")
-    # Mrcl.import_file("https://s3.amazonaws.com/grouprating/ARM/MRCLSFILE")
-    # Mremp.import_file("https://s3.amazonaws.com/grouprating/ARM/MREMPFILE")
-    # Pcomb.import_file("https://s3.amazonaws.com/grouprating/ARM/PCOMBFILE")
-    # Phmgn.import_file("https://s3.amazonaws.com/grouprating/ARM/PHMGNFILE")
-    # Sc220.import_file("https://s3.amazonaws.com/grouprating/ARM/SC220FILE")
-    # Sc230.import_file("https://s3.amazonaws.com/grouprating/ARM/SC230FILE")
-
-    # BWC Support Tables
-    # BwcCodesBaseRatesExpLossRate.import_table('https://s3.amazonaws.com/grouprating/BwcSupportTables/bwc_expected_loss.csv')
-    # BwcCodesCredibilityMaxLoss.import_table('https://s3.amazonaws.com/grouprating/BwcSupportTables/bwc_credibility_max_loss.csv')
-    # BwcCodesIndustryGroupSavingsRatioCriterium.import_table('https://s3.amazonaws.com/grouprating/BwcSupportTables/Industry+Group+Savings+Ratio+Criteria.csv')
-    # BwcCodesLimitedLossRatio.import_table('https://s3.amazonaws.com/grouprating/BwcSupportTables/limited_loss_ratio.csv')
-    # BwcCodesNcciManualClass.import_table('https://s3.amazonaws.com/grouprating/BwcSupportTables/NCCI+Manual+Classes.csv')
-    # BwcCodesPolicyEffectiveDate.import_table('https://s3.amazonaws.com/grouprating/BwcSupportTables/BWC+History+with+Pol+and+Eff+Date.csv')
-    # BwcCodesPeoList.import_table('https://s3.amazonaws.com/grouprating/BwcSupportTables/peo_list.csv')
-    # BwcCodesConstantValue.import_table('https://s3.amazonaws.com/grouprating/BwcSupportTables/bwc_codes_constant_values.csv')
-
-    #   redirect_to imports_path, notice: "All files have been queued to import.  Please wait."
-    # time2 = Time.new
-    # puts "Process End Time: " + time2.inspect
-
   end
 
-  def import_miras
-    @representative = Representative.find(import_params[:representative_id])
+  def import_file
+    @import_type    = import_params[:import_type]&.to_sym
+    @representative = Representative.find_by(id: import_params[:representative_id])
 
-    ImportMiraFilesProcess.perform_async(@representative.representative_number, @representative.abbreviated_name)
-
-    redirect_to imports_path, notice: "Files to be imported and parse have been queued."
-  end
-
-  def import_democs
-    require 'open-uri'
-    @representative = Representative.find(import_params[:representative_id])
-
-    ImportDemocProcess.perform_async(@representative.representative_number, @representative.abbreviated_name)
-
-    redirect_to imports_path, notice: "Files to be imported and parse have been queued."
-  end
-
-  def import_pdemos
-    require 'open-uri'
-    @representative = Representative.find(import_params[:representative_id])
-
-    ImportPdemoProcess.perform_async(@representative.representative_number, @representative.abbreviated_name)
-
-    redirect_to imports_path, notice: "Files to be imported and parse have been queued."
-  end
-
-  def import_pcombs
-    require 'open-uri'
-    @representative = Representative.find(import_params[:representative_id])
-
-    ImportPcombProcess.new.perform(@representative.representative_number, @representative.abbreviated_name)
-
-    redirect_to imports_path, notice: "Files to be imported and parse have been queued."
-  end
-
-  def import_clicds
-    @representative = Representative.find(import_params[:representative_id])
-
-    ImportClicdFilesProcess.perform_async(@representative.representative_number, @representative.abbreviated_name)
-
-    redirect_to imports_path, notice: "Files to be imported and parse have been queued."
-  end
-
-  def import_all_miras
-    Representative.all.find_each do |representative|
-      ImportMiraFilesProcess.perform_async(representative.representative_number, representative.abbreviated_name)
+    unless @import_type.present? && @representative.present?
+      flash[:error] = 'No Import Type and/or Representative selected, please try again.'
+      redirect_to new_import_path and return
     end
 
-    redirect_to imports_path, notice: "Files to be imported and parse have been queued."
-  end
-
-  def import_all_democs
-    Representative.all.find_each do |representative|
-      ImportDemocProcess.perform_async(representative.representative_number, representative.abbreviated_name)
+    case @import_type
+    when :miras
+      ImportMiraFilesProcess.perform_async(@representative.representative_number, @representative.abbreviated_name, false, import_params[:custom_file])
+    when :weekly_miras
+      ImportMiraFilesProcess.perform_async(@representative.representative_number, @representative.abbreviated_name, true, import_params[:custom_file])
+    when :clicds
+      ImportClicdFilesProcess.perform_async(@representative.representative_number, @representative.abbreviated_name, import_params[:custom_file])
+    when :democs
+      ImportDemocProcess.perform_async(@representative.representative_number, @representative.abbreviated_name, import_params[:custom_file])
+    when :rates
+      ImportRatefileProcess.perform_async(@representative.representative_number, @representative.abbreviated_name, import_params[:custom_file])
+    when :pdemos
+      ImportPdemoProcess.perform_async(@representative.representative_number, @representative.abbreviated_name, import_params[:custom_file])
+    when :pcombs
+      ImportPcombProcess.perform_async(@representative.representative_number, @representative.abbreviated_name, import_params[:custom_file])
+    else
+      ''
     end
 
-    redirect_to imports_path, notice: "Files to be imported and parse have been queued."
+    flash[:success] = "Files to be imported and parse have been queued."
+    redirect_to new_import_path
   end
 
-  def import_all_clicds
-    Representative.all.find_each do |representative|
-      ImportClicdFilesProcess.perform_async(representative.representative_number, representative.abbreviated_name)
+  def import_files
+    @import_type = import_params[:import_type]&.to_sym
+
+    unless @import_type.present?
+      flash[:error] = 'No Import Type selected, please try again.'
+      redirect_to new_import_path and return
     end
 
-    redirect_to imports_path, notice: "Files to be imported and parse have been queued."
+    Representative.all.find_each do |representative|
+      case @import_type
+      when :miras
+        ImportMiraFilesProcess.perform_async(representative.representative_number, representative.abbreviated_name)
+      when :clicds
+        ImportClicdFilesProcess.perform_async(representative.representative_number, representative.abbreviated_name)
+      when :democs
+        ImportDemocProcess.perform_async(representative.representative_number, representative.abbreviated_name)
+      when :rates
+        ImportRatefileProcess.perform_async(representative.representative_number, representative.abbreviated_name)
+      when :pdemos
+        ImportPdemoProcess.perform_async(representative.representative_number, representative.abbreviated_name)
+      when :pcombs
+        ImportPcombProcess.perform_async(representative.representative_number, representative.abbreviated_name)
+      else
+        ''
+      end
+    end
+
+    flash[:success] = "Files to be imported and parse have been queued."
+    redirect_to new_import_path
   end
 
   private
 
   def import_params
-    params.require(:import).permit(:process_representative, :import_status, :parse_status, :representative_id, :group_rating_id)
+    params.require(:import).permit(:process_representative, :import_status, :parse_status, :representative_id, :group_rating_id, :import_type, :custom_file)
   end
 end
