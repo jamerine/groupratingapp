@@ -29,6 +29,8 @@
 class PhmgnDetailRecord < ActiveRecord::Base
   require 'activerecord-import'
 
+  scope :filter_by, -> (representative_number) { where(representative_number: representative_number) }
+
   def self.parse_table
     time1 = Time.new
       Resque.enqueue(ParseFile, "phmgn")

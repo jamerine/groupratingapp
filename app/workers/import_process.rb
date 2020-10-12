@@ -4,34 +4,35 @@ class ImportProcess
 
   def perform(representative_number, import_id, representative_abbreviated_name, group_rating_id, import_only, all_process = nil)
     Democ.delete_all
+    DemocDetailRecord.delete_all
     Mrcl.delete_all
-    Mremp.delete_all
-    Pcomb.delete_all
-    Phmgn.delete_all
-    Sc220.delete_all
-    Sc230.delete_all
-    Rate.delete_all
-    Pdemo.delete_all
-    Pemh.delete_all
-    Pcovg.delete_all
-    DemocDetailRecord.filter_by(representative_number).delete_all
     MrclDetailRecord.delete_all
+    Mremp.delete_all
     MrempEmployeeExperiencePolicyLevel.delete_all
     MrempEmployeeExperienceManualClassLevel.delete_all
     MrempEmployeeExperienceClaimLevel.delete_all
+    Pcomb.delete_all
     PcombDetailRecord.delete_all
+    Phmgn.delete_all
     PhmgnDetailRecord.delete_all
+    Sc220.delete_all
     Sc220Rec1EmployerDemographic.delete_all
     Sc220Rec2EmployerManualLevelPayroll.delete_all
     Sc220Rec3EmployerArTransaction.delete_all
     Sc220Rec4PolicyNotFound.delete_all
+    Sc230.delete_all
     Sc230EmployerDemographic.delete_all
     Sc230ClaimMedicalPayment.delete_all
     Sc230ClaimIndemnityAward.delete_all
+    Rate.delete_all
     RateDetailRecord.delete_all
+    Pdemo.delete_all
     PdemoDetailRecord.delete_all
+    Pemh.delete_all
     PemhDetailRecord.delete_all
+    Pcovg.delete_all
     PcovgDetailRecord.delete_all
+
     ExceptionTablePolicyCombinedRequestPayrollInfo.where(data_source: 'bwc').delete_all
     FinalClaimCostCalculationTable.where(data_source: 'bwc').delete_all
     FinalEmployerDemographicsInformation.where(data_source: 'bwc').delete_all

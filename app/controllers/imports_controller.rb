@@ -94,6 +94,18 @@ class ImportsController < ApplicationController
       ImportPdemoProcess.perform_async(@representative.representative_number, @representative.abbreviated_name, import_params[:custom_file]&.tempfile&.path)
     when :pcombs
       ImportPcombProcess.perform_async(@representative.representative_number, @representative.abbreviated_name, import_params[:custom_file]&.tempfile&.path)
+    when :mrcls
+      ImportMrclsProcess.perform_async(@representative.representative_number, @representative.abbreviated_name, import_params[:custom_file]&.tempfile&.path)
+    when :mremps
+      ImportMrempsProcess.perform_async(@representative.representative_number, @representative.abbreviated_name, import_params[:custom_file]&.tempfile&.path)
+    when :phmgns
+      ImportPhmgnsProcess.perform_async(@representative.representative_number, @representative.abbreviated_name, import_params[:custom_file]&.tempfile&.path)
+    when :sc230
+      ImportSc230Process.perform_async(@representative.representative_number, @representative.abbreviated_name, import_params[:custom_file]&.tempfile&.path)
+    when :pemhs
+      ImportPemhsProcess.perform_async(@representative.representative_number, @representative.abbreviated_name, import_params[:custom_file]&.tempfile&.path)
+    when :pcovgs
+      ImportPcovgsProcess.perform_async(@representative.representative_number, @representative.abbreviated_name, import_params[:custom_file]&.tempfile&.path)
     else
       ''
     end
