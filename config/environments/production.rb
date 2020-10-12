@@ -101,7 +101,7 @@ Rails.application.configure do
                                           },
                                           :slack => {
                                             :webhook_url           => "ENV['WEBHOOK_URL']",
-                                            :channel               => "#arm-errors",
+                                            :channel               => "#arm",
                                             :additional_parameters => {
                                               :icon_url => "http://img.timeinc.net/time/photoessays/2010/halloween_costumes/sad_keanu.jpg",
                                               :mrkdwn   => true
