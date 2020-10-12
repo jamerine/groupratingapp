@@ -81,19 +81,19 @@ class ImportsController < ApplicationController
 
     case @import_type
     when :miras
-      ImportMiraFilesProcess.perform_async(@representative.representative_number, @representative.abbreviated_name, false, import_params[:custom_file])
+      ImportMiraFilesProcess.perform_async(@representative.representative_number, @representative.abbreviated_name, false, import_params[:custom_file]&.tempfile&.path)
     when :weekly_miras
-      ImportMiraFilesProcess.perform_async(@representative.representative_number, @representative.abbreviated_name, true, import_params[:custom_file])
+      ImportMiraFilesProcess.perform_async(@representative.representative_number, @representative.abbreviated_name, true, import_params[:custom_file]&.tempfile&.path)
     when :clicds
-      ImportClicdFilesProcess.perform_async(@representative.representative_number, @representative.abbreviated_name, import_params[:custom_file])
+      ImportClicdFilesProcess.perform_async(@representative.representative_number, @representative.abbreviated_name, import_params[:custom_file]&.tempfile&.path)
     when :democs
-      ImportDemocProcess.perform_async(@representative.representative_number, @representative.abbreviated_name, import_params[:custom_file])
+      ImportDemocProcess.perform_async(@representative.representative_number, @representative.abbreviated_name, import_params[:custom_file]&.tempfile&.path)
     when :rates
-      ImportRatefileProcess.perform_async(@representative.representative_number, @representative.abbreviated_name, import_params[:custom_file])
+      ImportRatefileProcess.perform_async(@representative.representative_number, @representative.abbreviated_name, import_params[:custom_file]&.tempfile&.path)
     when :pdemos
-      ImportPdemoProcess.perform_async(@representative.representative_number, @representative.abbreviated_name, import_params[:custom_file])
+      ImportPdemoProcess.perform_async(@representative.representative_number, @representative.abbreviated_name, import_params[:custom_file]&.tempfile&.path)
     when :pcombs
-      ImportPcombProcess.perform_async(@representative.representative_number, @representative.abbreviated_name, import_params[:custom_file])
+      ImportPcombProcess.perform_async(@representative.representative_number, @representative.abbreviated_name, import_params[:custom_file]&.tempfile&.path)
     else
       ''
     end

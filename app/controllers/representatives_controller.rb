@@ -212,9 +212,7 @@ class RepresentativesController < ApplicationController
   end
 
   def start_process
-    @representative = Representative.find(params[:representative_id])
-    authorize @representative
-
+    @representative   = Representative.find(params[:representative_id])
     @new_group_rating = GroupRating.new(experience_period_lower_date:      @representative.experience_period_lower_date,
                                         experience_period_upper_date:      @representative.experience_period_upper_date,
                                         current_payroll_period_lower_date: @representative.current_payroll_period_lower_date,
@@ -226,15 +224,16 @@ class RepresentativesController < ApplicationController
                                         quote_year_lower_date:             @representative.quote_year_lower_date,
                                         quote_year_upper_date:             @representative.quote_year_upper_date,
                                         quote_year:                        @representative.quote_year,
+                                        process_representative:            @representative.representative_number,
                                         representative_id:                 @representative.id)
     if @new_group_rating.save
       GroupRatingStepOne.perform_async("1",
-                                       @group_rating.process_representative,
-                                       @group_rating.experience_period_lower_date,
-                                       @group_rating.experience_period_upper_date,
-                                       @group_rating.current_payroll_period_lower_date,
-                                       @group_rating.current_payroll_period_upper_date,
-                                       @group_rating.id)
+                                       @new_group_rating.process_representative,
+                                       @new_group_rating.experience_period_lower_date,
+                                       @new_group_rating.experience_period_upper_date,
+                                       @new_group_rating.current_payroll_period_lower_date,
+                                       @new_group_rating.current_payroll_period_upper_date,
+                                       @new_group_rating.id)
 
       redirect_to @representative, notice: 'Representative Process Started!'
     else
