@@ -6,7 +6,7 @@ set :slack_channel, '#arm'
 set :slack_username, 'Deploybot'
 set :slack_emoji, ':trollface:'
 set :slack_user, local_user.strip
-set :slack_url, 'https://hooks.slack.com/services/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'
+set :slack_url, ENV['SLACK_URL']
 set :slack_text, -> {
   elapsed = Integer(fetch(:time_finished) - fetch(:time_started))
   "Revision #{fetch(:current_revision, fetch(:branch))} of " \
@@ -19,8 +19,6 @@ set :slack_deploy_starting_text, -> {
 set :slack_deploy_failed_text, -> {
   "#{fetch(:stage)} deploy of #{fetch(:application)} with revision/branch `#{fetch(:current_revision, fetch(:branch))}` failed"
 }
-
-
 
 set :repo_url, "git@bitbucket.org:switchbox/arm-group-rating.git"
 
