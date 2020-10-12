@@ -1,7 +1,6 @@
 namespace :run do
   desc 'Task to open some sidekiq windows locally'
-  task startup_sidekiq: :environment do
-    puts execute('$PWD')
+  task sidekiq_locally: :environment do
     execute('osascript $PWD/lib/tasks/sidekiq/local_startup.scpt')
   end
 end
