@@ -79,36 +79,7 @@ class ImportsController < ApplicationController
       redirect_to new_import_path and return
     end
 
-    case @import_type
-    when :miras
-      ImportMiraFilesProcess.perform_async(@representative.representative_number, @representative.abbreviated_name, false, import_params[:custom_file]&.tempfile&.path)
-    when :weekly_miras
-      ImportMiraFilesProcess.perform_async(@representative.representative_number, @representative.abbreviated_name, true, import_params[:custom_file]&.tempfile&.path)
-    when :clicds
-      ImportClicdFilesProcess.perform_async(@representative.representative_number, @representative.abbreviated_name, import_params[:custom_file]&.tempfile&.path)
-    when :democs
-      ImportDemocProcess.perform_async(@representative.representative_number, @representative.abbreviated_name, import_params[:custom_file]&.tempfile&.path)
-    when :rates
-      ImportRatefileProcess.perform_async(@representative.representative_number, @representative.abbreviated_name, import_params[:custom_file]&.tempfile&.path)
-    when :pdemos
-      ImportPdemoProcess.perform_async(@representative.representative_number, @representative.abbreviated_name, import_params[:custom_file]&.tempfile&.path)
-    when :pcombs
-      ImportPcombProcess.perform_async(@representative.representative_number, @representative.abbreviated_name, import_params[:custom_file]&.tempfile&.path)
-    when :mrcls
-      ImportMrclsProcess.perform_async(@representative.representative_number, @representative.abbreviated_name, import_params[:custom_file]&.tempfile&.path)
-    when :mremps
-      ImportMrempsProcess.perform_async(@representative.representative_number, @representative.abbreviated_name, import_params[:custom_file]&.tempfile&.path)
-    when :phmgns
-      ImportPhmgnsProcess.perform_async(@representative.representative_number, @representative.abbreviated_name, import_params[:custom_file]&.tempfile&.path)
-    when :sc230
-      ImportSc230Process.perform_async(@representative.representative_number, @representative.abbreviated_name, import_params[:custom_file]&.tempfile&.path)
-    when :pemhs
-      ImportPemhsProcess.perform_async(@representative.representative_number, @representative.abbreviated_name, import_params[:custom_file]&.tempfile&.path)
-    when :pcovgs
-      ImportPcovgsProcess.perform_async(@representative.representative_number, @representative.abbreviated_name, import_params[:custom_file]&.tempfile&.path)
-    else
-      ''
-    end
+    import_based_on_type(@import_type, @representative, import_params[:custom_file]&.tempfile&.path)
 
     flash[:success] = "Files to be imported and parse have been queued."
     redirect_to new_import_path
@@ -123,22 +94,7 @@ class ImportsController < ApplicationController
     end
 
     Representative.all.find_each do |representative|
-      case @import_type
-      when :miras
-        ImportMiraFilesProcess.perform_async(representative.representative_number, representative.abbreviated_name)
-      when :clicds
-        ImportClicdFilesProcess.perform_async(representative.representative_number, representative.abbreviated_name)
-      when :democs
-        ImportDemocProcess.perform_async(representative.representative_number, representative.abbreviated_name)
-      when :rates
-        ImportRatefileProcess.perform_async(representative.representative_number, representative.abbreviated_name)
-      when :pdemos
-        ImportPdemoProcess.perform_async(representative.representative_number, representative.abbreviated_name)
-      when :pcombs
-        ImportPcombProcess.perform_async(representative.representative_number, representative.abbreviated_name)
-      else
-        ''
-      end
+      import_based_on_type(@import_type, representative, import_params[:custom_file]&.tempfile&.path)
     end
 
     flash[:success] = "Files to be imported and parse have been queued."
@@ -149,5 +105,38 @@ class ImportsController < ApplicationController
 
   def import_params
     params.require(:import).permit(:process_representative, :import_status, :parse_status, :representative_id, :group_rating_id, :import_type, :custom_file)
+  end
+
+  def import_based_on_type(import_type, representative, file_path)
+    case import_type
+    when :miras
+      ImportMiraFilesProcess.perform_async(representative.representative_number, representative.abbreviated_name, false, file_path)
+    when :weekly_miras
+      ImportMiraFilesProcess.perform_async(representative.representative_number, representative.abbreviated_name, true, file_path)
+    when :clicds
+      ImportClicdFilesProcess.perform_async(representative.representative_number, representative.abbreviated_name, file_path)
+    when :democs
+      ImportDemocProcess.perform_async(representative.representative_number, representative.abbreviated_name, file_path)
+    when :rates
+      ImportRatefileProcess.perform_async(representative.representative_number, representative.abbreviated_name, file_path)
+    when :pdemos
+      ImportPdemoProcess.perform_async(representative.representative_number, representative.abbreviated_name, file_path)
+    when :pcombs
+      ImportPcombProcess.perform_async(representative.representative_number, representative.abbreviated_name, file_path)
+    when :mrcls
+      ImportMrclsProcess.perform_async(representative.representative_number, representative.abbreviated_name, file_path)
+    when :mremps
+      ImportMrempsProcess.perform_async(representative.representative_number, representative.abbreviated_name, file_path)
+    when :phmgns
+      ImportPhmgnsProcess.perform_async(representative.representative_number, representative.abbreviated_name, file_path)
+    when :sc230
+      ImportSc230Process.perform_async(representative.representative_number, representative.abbreviated_name, file_path)
+    when :pemhs
+      ImportPemhsProcess.perform_async(representative.representative_number, representative.abbreviated_name, file_path)
+    when :pcovgs
+      ImportPcovgsProcess.perform_async(representative.representative_number, representative.abbreviated_name, file_path)
+    else
+      ''
+    end
   end
 end

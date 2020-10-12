@@ -1,55 +1,10 @@
 class ImportFile
   include Sidekiq::Worker
+  include ImportHelper
   sidekiq_options queue: :import_file, retry: 5
 
   def perform(url, table_name, import_id, group_rating_id, all_process = nil, import_only = false)
-    require 'open-uri'
-
-    begin
-      time1 = Time.new
-      puts "Start Time: " + time1.inspect
-      conn = ActiveRecord::Base.connection
-      rc   = conn.raw_connection
-      if table_name == 'rates'
-        rc.exec("COPY " + table_name + " (single_rec) FROM STDIN WITH DELIMITER AS '~'")
-      else
-        rc.exec("COPY " + table_name + " (single_rec) FROM STDIN WITH DELIMITER AS '|'")
-      end
-
-      file = open(url)
-
-      while !file.eof?
-        # Add row to copy data
-        line = file.readline
-        if table_name == 'democs' && line[40, 4] == "0000"
-          #puts "incorrect characters"
-        elsif table_name == 'pdemos' && line.include?('|')
-          new_line = line.gsub('|', ' ')
-          rc.put_copy_data(new_line)
-        else
-          rc.put_copy_data(line)
-        end
-      end
-
-      # We are done adding copy data
-      rc.put_copy_end
-      # Display any error messages
-      while res = rc.get_result
-        if e_message = res.error_message
-          p e_message
-        end
-      end
-
-    rescue OpenURI::HTTPError => e
-      rc.put_copy_end unless rc.nil?
-      # The CLICD File doesn't exist
-      puts "Skipped File..."
-    end
-
-    unless table_name.in?(%w[miras weekly_miras clicds])
-      result = ActiveRecord::Base.connection.execute("SELECT public.proc_process_flat_" + table_name + "()")
-      result.clear
-    end
+    import_single_file(url, table_name, table_name == 'rates' ? '~' : '|')
 
     @import               = Import.find_by(id: import_id)
     representative_number = @import.representative&.representative_number
@@ -106,18 +61,20 @@ class ImportFile
       @import.pcovgs_count               = Pcovg.count
       @import.pcovg_detail_records_count = PcovgDetailRecord.count
       @import.import_status              = "#{table_name} Completed"
-    when "miras"
-      @import.miras_count               = Mira.count
-      @import.mira_detail_records_count = MiraDetailRecord.filter_by(representative_number).count
-      @import.import_status             = "#{table_name} Completed"
-    when "weekly_miras"
-      @import.weekly_miras_count                = WeeklyMira.count
-      @import.weekly_mira_details_records_count = WeeklyMiraDetailRecord.filter_by(representative_number).count
-      @import.import_status                     = "#{table_name} Completed"
-    when "clicds"
-      @import.clicds_count               = Clicd.count
-      @import.clicd_detail_records_count = ClicdDetailRecord.filter_by(representative_number).count
-      @import.import_status              = "#{table_name} Completed"
+    else
+      ""
+      # when "miras"
+      #   @import.miras_count               = Mira.count
+      #   @import.mira_detail_records_count = MiraDetailRecord.filter_by(representative_number).count
+      #   @import.import_status             = "#{table_name} Completed"
+      # when "weekly_miras"
+      #   @import.weekly_miras_count                = WeeklyMira.count
+      #   @import.weekly_mira_details_records_count = WeeklyMiraDetailRecord.filter_by(representative_number).count
+      #   @import.import_status                     = "#{table_name} Completed"
+      # when "clicds"
+      #   @import.clicds_count               = Clicd.count
+      #   @import.clicd_detail_records_count = ClicdDetailRecord.filter_by(representative_number).count
+      #   @import.import_status              = "#{table_name} Completed"
     end
 
     @import.save
@@ -127,8 +84,7 @@ class ImportFile
       # (!@import.sc220s_count.nil? || !@import.sc220_rec1_employer_demographics_count.nil? || !@import.sc220_rec2_employer_manual_level_payrolls_count.nil? ||    !@import.sc220_rec3_employer_ar_transactions_count.nil?) &&
       (!@import.democs_count.nil? || !@import.democ_detail_records_count.nil?) &&
       (!@import.mrcls_count.nil? || !@import.mrcl_detail_records_count.nil?) &&
-      (!@import.mremps_count.nil? || !@import.mremp_employee_experience_policy_levels_count.nil? || !@import.mremp_employee_experience_manual_class_levels_count.nil? ||
-        !@import.mremp_employee_experience_claim_levels_count.nil?) &&
+      (!@import.mremps_count.nil? || !@import.mremp_employee_experience_policy_levels_count.nil? || !@import.mremp_employee_experience_manual_class_levels_count.nil? || !@import.mremp_employee_experience_claim_levels_count.nil?) &&
       (!@import.pcombs_count.nil? || !@import.pcomb_detail_records_count.nil?) &&
       (!@import.phmgns_count.nil? || !@import.phmgn_detail_records_count.nil?) &&
       (!@import.rates_count.nil? || !@import.rate_detail_records_count.nil?) &&
