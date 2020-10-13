@@ -173,11 +173,12 @@ class GroupRatingAllCreate
       unless FinalManualClassFourYearPayrollAndExpLoss.where(representative_number: @policy_calculation.representative_number, policy_number: @policy_calculation.policy_number).empty?
         FinalManualClassFourYearPayrollAndExpLoss.where(representative_number: @policy_calculation.representative_number, policy_number: @policy_calculation.policy_number).find_each do |man_class_exp|
           @manual_class_calculation = ManualClassCalculation.where(policy_number:         @policy_calculation.policy_number,
+                                                                   policy_calculation_id: @policy_calculation.id,
                                                                    representative_number: @policy_calculation.representative_number,
                                                                    manual_number:         man_class_exp.manual_number)
                                       .update_or_create(
-                                        representative_number:       man_class_exp.representative_number,
-                                        policy_number:               man_class_exp.policy_number,
+                                        representative_number:       @policy_calculation.representative_number,
+                                        policy_number:               @policy_calculation.policy_number,
                                         policy_calculation_id:       @policy_calculation.id,
                                         manual_number:               man_class_exp.manual_number,
                                         manual_class_type:           man_class_exp.manual_class_type,
