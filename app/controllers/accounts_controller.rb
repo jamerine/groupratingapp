@@ -118,7 +118,6 @@ class AccountsController < ApplicationController
       @account.update_attributes(fee_override: args[:fee_override])
       @account.group_rating(user_override: true)
       flash[:notice] = "Account's automatic group rating calculation was successful."
-      @acount
       redirect_to @account
     else
       args[:user_override] = true
