@@ -25,6 +25,8 @@
 .generators
 .rakeTasks
 
+/config/environment.yml
+
 .vscode/
 .byebug_history
 public/.DS_Store
