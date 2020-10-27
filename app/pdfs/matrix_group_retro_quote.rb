@@ -95,8 +95,8 @@ class MatrixGroupRetroQuote < MatrixPdfReport
 
   def table_data
     @data = [["<color rgb='FFFFFF'>#{@account.representative.quote_year} ESTIMATED SAVINGS</color>", "<color rgb='FFFFFF'>#{percent(@account.group_retro_tier)} GROUP RETRO</color>"]]
-    @data += [["Total Premium", price(@policy_calculation.policy_adjusted_standard_premium)]]
-    @data += [["Adjusted Premium", price(@policy_calculation.policy_total_standard_premium)]]
+    @data += [["Adjusted Premium", price(@policy_calculation.policy_adjusted_individual_premium)]]
+    @data += [["Standard Premium", price(@policy_calculation.policy_adjusted_standard_premium)]]
     # @data += [["", ""]]
     # @data += [["Net Premium", price(@account.group_retro_premium)]]
     # @data += [["", ""]]
