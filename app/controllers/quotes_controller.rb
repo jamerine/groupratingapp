@@ -534,6 +534,7 @@ class QuotesController < ApplicationController
     @quote              = Quote.find(params[:quote_id])
     @account            = @quote.account
     @policy_calculation = @account.policy_calculation
+    @representative = @account.representative
 
     respond_to do |format|
       format.html
@@ -541,7 +542,6 @@ class QuotesController < ApplicationController
         combine_pdf = CombinePDF.new
 
         if @representative.matrix?
-          @representative = @account.representative
           @group_rating   = @representative.group_ratings.last
           @program_types  = Quote.program_types
 
