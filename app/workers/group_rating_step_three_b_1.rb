@@ -17,7 +17,7 @@ class GroupRatingStepThreeB1
         new_positive_transferred_payroll = payroll.dup.attributes.except(:id)
 
         new_positive_transferred_payroll[:policy_number]            = policy_array[1]
-        new_positive_transferred_payroll[:reporting_type]           = 'A'
+        new_positive_transferred_payroll[:reporting_type]           = payroll.reporting_type
         new_positive_transferred_payroll[:payroll_origin]           = 'full_transfer'
         new_positive_transferred_payroll[:policy_transferred]       = policy_array[0]
         new_positive_transferred_payroll[:manual_class_transferred] = payroll.manual_number
@@ -29,7 +29,7 @@ class GroupRatingStepThreeB1
         new_negative_transferred_payroll = payroll.dup.attributes.except(:id)
 
         new_negative_transferred_payroll[:manual_class_payroll]     = -(payroll.manual_class_payroll || 0)
-        new_negative_transferred_payroll[:reporting_type]           = 'A'
+        new_negative_transferred_payroll[:reporting_type]           = payroll.reporting_type
         new_negative_transferred_payroll[:payroll_origin]           = 'full_transfer'
         new_negative_transferred_payroll[:policy_transferred]       = policy_array[1]
         new_negative_transferred_payroll[:manual_class_transferred] = payroll.manual_number

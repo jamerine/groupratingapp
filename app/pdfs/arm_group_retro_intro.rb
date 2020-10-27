@@ -111,7 +111,7 @@ class ArmGroupRetroIntro < PdfReport
   end
 
   def percent(num)
-    num = num * 100
+    num = (num || 0) * 100
     @view.number_to_percentage(num, precision: 0)
   end
 
