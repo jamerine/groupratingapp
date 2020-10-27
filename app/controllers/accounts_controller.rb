@@ -1,4 +1,5 @@
 class AccountsController < ApplicationController
+  before_action :get_details, only: :show
 
   def index
     @statuses        = Account.statuses
@@ -86,7 +87,6 @@ class AccountsController < ApplicationController
   end
 
   def show
-    get_details
     @account_name = "Account #{@account.name&.titleize}"
   end
 
@@ -326,7 +326,9 @@ class AccountsController < ApplicationController
   private
 
   def get_details
-    @account                 = Account.includes(:group_rating_rejections, :group_rating_exceptions, :policy_calculation, :affiliates, :contacts, :quotes, :account_programs).find(params[:id] || params[:account_id])
+    @account = Account.includes(:group_rating_rejections, :group_rating_exceptions, :policy_calculation, :affiliates, :contacts, :quotes, :account_programs).find_by(id: params[:id] || params[:account_id])
+    redirect_to page_not_found_path and return unless @account.present?
+
     @account_changes         = @account.versions.map { |v| [v.created_at, v.changeset] }
     @statuses                = Account.statuses
     @representative          = Representative.find(@account.representative_id)
@@ -334,6 +336,8 @@ class AccountsController < ApplicationController
     @new_payroll_calculation = PayrollCalculation.new
     @group_rating_rejections = @account.group_rating_rejections.where(program_type: 'group_rating')
     @group_retro_rejections  = @account.group_rating_rejections.where(program_type: 'group_retro')
+
+    redirect_to page_not_found_path unless @account.policy_calculation.present?
   end
 
   def account_params

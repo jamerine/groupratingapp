@@ -131,11 +131,11 @@ class ClaimCalculationsController < ApplicationController
   def set_account_and_policy
     @policy_calculation = PolicyCalculation.find_by(id: params[:policy_calculation_id])
     @account            = Account.find_by(id: @policy_calculation&.account_id)
-    page_not_found unless @account.present?
+    redirect_to page_not_found_path unless @account.present?
   end
 
   def set_claim
     @claim_calculation = ClaimCalculation.find_by(policy_number: @policy_calculation.policy_number, id: params[:id])
-    page_not_found unless @claim_calculation.present?
+    redirect_to page_not_found_path unless @claim_calculation.present?
   end
 end

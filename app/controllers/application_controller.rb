@@ -13,14 +13,6 @@ class ApplicationController < ActionController::Base
 
   rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
 
-  def page_not_found
-    respond_to do |format|
-      format.html { render :file => "#{Rails.root}/public/404", layout: false, status: :not_found }
-      format.xml { head :not_found }
-      format.any { head :not_found }
-    end
-  end
-
   private
 
   def user_not_authorized(exception)

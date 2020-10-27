@@ -15,15 +15,19 @@ class PolicyCalculationsController < ApplicationController
   end
 
   def show
-    @policy_calculation        = PolicyCalculation.find(params[:id])
-    @account                   = Account.find(@policy_calculation.account_id)
+    @policy_calculation = PolicyCalculation.find_by(id: params[:id])
+    redirect_to page_not_found_path and return unless @policy_calculation.present?
+
+    @account = Account.find_by(id: @policy_calculation.account_id)
+    redirect_to page_not_found_path and return unless @account.present? && @policy_calculation.account.present?
+
     @policy_demographics       = FinalEmployerDemographicsInformation.find_by(policy_number: @policy_calculation.policy_number)
     @manual_class_calculations = @policy_calculation.manual_class_calculations
     @page                      = params[:page]
     @claim_calculations        = @policy_calculation.claim_calculations.order(claim_injury_date: :desc)
     @representative            = Representative.find(@policy_calculation.representative_id)
     @new_payroll_calculation   = PayrollCalculation.new
-    @policy_number             = "Policy: #{@policy_calculation.policy_number} - #{@policy_calculation&.account&.name&.titleize}"
+    @policy_number             = "Policy: #{@policy_calculation.policy_number} - #{@policy_calculation.account.name.titleize}"
   end
 
   def new
