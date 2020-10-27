@@ -74,20 +74,20 @@ class MatrixGroupRetroQuote < MatrixPdfReport
         self.cells[0, 1].border_color     = MATRIX_COLOR
         self.cells[1, 1].border_top_color = MATRIX_COLOR
 
-        [*0..7].each do |row|
+        [*0..4].each do |row|
           self.cells[row, 0].border_right_width = 0
           self.cells[row, 1].border_left_width  = 0
         end
-        self.row_colors                = [MATRIX_COLOR, nil, nil, nil, nil, 'b4c6e7', nil, 'b4c6e7']
-        row(1..7).padding              = [5, 30, 5, 30]
+        self.row_colors                = [MATRIX_COLOR, nil, nil, nil, 'b4c6e7']
+        row(1..4).padding              = [5, 30, 5, 30]
         row(0).font_style              = :bold
         row(0).height                  = 30
-        row(5).height                  = 25
-        row(7).height                  = 25
+        # row(3).height                  = 25
+        # row(7).height                  = 25
         row(0).size                    = 18
-        row(1..7).size                 = 12
-        row(0..7).column(0).font_style = :bold
-        row(0..7).column(1).align      = :right
+        row(1..4).size                 = 12
+        row(0..4).column(0).font_style = :bold
+        row(0..4).column(1).align      = :right
         column(1).width                = 215
       end
     end
@@ -97,8 +97,9 @@ class MatrixGroupRetroQuote < MatrixPdfReport
     @data = [["<color rgb='FFFFFF'>#{@account.representative.quote_year} ESTIMATED SAVINGS</color>", "<color rgb='FFFFFF'>#{percent(@account.group_retro_tier)} GROUP RETRO</color>"]]
     @data += [["Total Premium", price(@policy_calculation.policy_adjusted_standard_premium)]]
     @data += [["Adjusted Premium", price(@policy_calculation.policy_total_standard_premium)]]
-    @data += [["Net Premium", price(@account.group_retro_premium)]]
-    @data += [["", ""]]
+    # @data += [["", ""]]
+    # @data += [["Net Premium", price(@account.group_retro_premium)]]
+    # @data += [["", ""]]
     @data += [["Group Retro Estimated Refund", price(@account.group_retro_savings)]]
     @data += [["", ""]]
   end

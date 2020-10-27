@@ -534,93 +534,155 @@ class QuotesController < ApplicationController
     @quote              = Quote.find(params[:quote_id])
     @account            = @quote.account
     @policy_calculation = @account.policy_calculation
+
     respond_to do |format|
       format.html
       format.pdf do
         combine_pdf = CombinePDF.new
 
-        intro_pdf        = ArmGroupRatingIntro.new(@quote, @account, @policy_calculation, view_context)
-        intro_pdf_render = intro_pdf.render
-        combine_pdf      = CombinePDF.parse(intro_pdf_render)
+        if @representative.matrix?
+          @representative = @account.representative
+          @group_rating   = @representative.group_ratings.last
+          @program_types  = Quote.program_types
 
-        quote_pdf        = GroupRatingQuote.new(@quote, @account, @policy_calculation, view_context)
-        quote_pdf_render = quote_pdf.render
-        combine_pdf << CombinePDF.parse(quote_pdf_render)
+          intro_pdf        = MatrixGroupRatingIntro.new(@quote, @account, @policy_calculation, view_context)
+          intro_pdf_render = intro_pdf.render
+          combine_pdf << CombinePDF.parse(intro_pdf_render)
 
-        ac_26_pdf        = Ac26.new(@quote, @account, @policy_calculation, view_context)
-        ac_26_pdf_render = ac_26_pdf.render
-        combine_pdf << CombinePDF.parse(ac_26_pdf_render)
+          quote_pdf        = MatrixGroupRatingQuote.new(@quote, @account, @policy_calculation, view_context)
+          quote_pdf_render = quote_pdf.render
+          combine_pdf << CombinePDF.parse(quote_pdf_render)
 
-        ac_2_pdf        = Ac2.new(@quote, @account, @policy_calculation, view_context)
-        ac_2_pdf_render = ac_2_pdf.render
-        combine_pdf << CombinePDF.parse(ac_2_pdf_render)
+          ac_26_pdf        = MatrixAc26.new(@quote, @account, @policy_calculation, view_context)
+          ac_26_pdf_render = ac_26_pdf.render
+          combine_pdf << CombinePDF.parse(ac_26_pdf_render)
 
-        # contract_pdf = ArmContract.new(@quote, @account, @policy_calculation, view_context)
-        # contract_pdf_render = contract_pdf.render
-        # combine_pdf << CombinePDF.parse(contract_pdf_render)
+          ac_2_pdf        = MatrixAc2.new(@quote, @account, @policy_calculation, view_context)
+          ac_2_pdf_render = ac_2_pdf.render
+          combine_pdf << CombinePDF.parse(ac_2_pdf_render)
 
-        # questionnaire_pdf = ArmQuestionnaire.new(@quote, @account, @policy_calculation, view_context)
-        # questionnaire_pdf_render = questionnaire_pdf.render
-        # combine_pdf << CombinePDF.parse(questionnaire_pdf_render)
+          contract_pdf        = MatrixGroupRatingContract.new(@quote, @account, @policy_calculation, view_context)
+          contract_pdf_render = contract_pdf.render
+          combine_pdf << CombinePDF.parse(contract_pdf_render)
 
-        # invoice_pdf = ArmInvoice.new(@quote, @account, @policy_calculation, view_context)
-        # invoice_pdf_render = invoice_pdf.render
-        # combine_pdf << CombinePDF.parse(invoice_pdf_render)
+          questionnaire_pdf        = MatrixGroupRatingQuestionnaire.new(@quote, @account, @policy_calculation, view_context)
+          questionnaire_pdf_render = questionnaire_pdf.render
+          combine_pdf << CombinePDF.parse(questionnaire_pdf_render)
 
+          invoice_pdf        = MatrixGroupRatingInvoice.new(@quote, @account, @policy_calculation, view_context)
+          invoice_pdf_render = invoice_pdf.render
+          combine_pdf << CombinePDF.parse(invoice_pdf_render)
+
+          faq_pdf        = MatrixFAQ.new(@quote, @account, @policy_calculation, view_context)
+          faq_pdf_render = faq_pdf.render
+          combine_pdf << CombinePDF.parse(faq_pdf_render)
+
+          if @quote.prospect_packet?
+            testimonial_pdf        = MatrixTestimonials.new(@quote, @account, @policy_calculation, view_context)
+            testimonial_pdf_render = testimonial_pdf.render
+            combine_pdf << CombinePDF.parse(testimonial_pdf_render)
+          end
+        else
+          intro_pdf        = ArmGroupRatingIntro.new(@quote, @account, @policy_calculation, view_context)
+          intro_pdf_render = intro_pdf.render
+          combine_pdf      = CombinePDF.parse(intro_pdf_render)
+
+          quote_pdf        = GroupRatingQuote.new(@quote, @account, @policy_calculation, view_context)
+          quote_pdf_render = quote_pdf.render
+          combine_pdf << CombinePDF.parse(quote_pdf_render)
+
+          ac_26_pdf        = Ac26.new(@quote, @account, @policy_calculation, view_context)
+          ac_26_pdf_render = ac_26_pdf.render
+          combine_pdf << CombinePDF.parse(ac_26_pdf_render)
+
+          ac_2_pdf        = Ac2.new(@quote, @account, @policy_calculation, view_context)
+          ac_2_pdf_render = ac_2_pdf.render
+          combine_pdf << CombinePDF.parse(ac_2_pdf_render)
+        end
 
         send_data combine_pdf.to_pdf, filename: "#{ @account.policy_number_entered }_quote_#{ @quote.id }.pdf",
                   type:                         "application/pdf",
                   disposition:                  "inline"
-        # pdf.render_file "app/reports/#{ @account.policy_number_entered }_quote_#{ @quote.id }.pdf"
       end
     end
-    # redirect_to edit_quote_path(@quote), notice: "Quote Generated"
   end
 
   def view_group_retro_quote
+    @program_types      = Quote.program_types
     @quote              = Quote.find(params[:quote_id])
     @account            = @quote.account
+    @representative     = @account.representative
     @policy_calculation = @account.policy_calculation
+    @group_rating       = @representative.group_ratings.last
+
     respond_to do |format|
       format.html
       format.pdf do
         combine_pdf = CombinePDF.new
 
-        intro_pdf        = ArmGroupRetroIntro.new(@quote, @account, @policy_calculation, view_context)
-        intro_pdf_render = intro_pdf.render
-        combine_pdf << CombinePDF.parse(intro_pdf_render)
+        if @representative.matrix?
+          intro_pdf        = MatrixGroupRetroIntro.new(@quote, @account, @policy_calculation, view_context)
+          intro_pdf_render = intro_pdf.render
+          combine_pdf << CombinePDF.parse(intro_pdf_render)
 
-        quote_pdf        = GroupRetroQuote.new(@quote, @account, @policy_calculation, view_context)
-        quote_pdf_render = quote_pdf.render
-        combine_pdf << CombinePDF.parse(quote_pdf_render)
+          quote_pdf        = MatrixGroupRetroQuote.new(@quote, @account, @policy_calculation, view_context)
+          quote_pdf_render = quote_pdf.render
+          combine_pdf << CombinePDF.parse(quote_pdf_render)
 
-        u_153_pdf        = U153.new(@quote, @account, @policy_calculation, view_context)
-        u_153_pdf_render = u_153_pdf.render
-        combine_pdf << CombinePDF.parse(u_153_pdf_render)
+          u_153_pdf        = MatrixU153.new(@quote, @account, @policy_calculation, view_context)
+          u_153_pdf_render = u_153_pdf.render
+          combine_pdf << CombinePDF.parse(u_153_pdf_render)
 
-        ac_2_pdf        = Ac2.new(@quote, @account, @policy_calculation, view_context)
-        ac_2_pdf_render = ac_2_pdf.render
-        combine_pdf << CombinePDF.parse(ac_2_pdf_render)
+          ac_2_pdf        = MatrixAc2.new(@quote, @account, @policy_calculation, view_context)
+          ac_2_pdf_render = ac_2_pdf.render
+          combine_pdf << CombinePDF.parse(ac_2_pdf_render)
 
-        contract_pdf        = ArmGroupRetroContract.new(@quote, @account, @policy_calculation, view_context)
-        contract_pdf_render = contract_pdf.render
-        combine_pdf << CombinePDF.parse(contract_pdf_render)
+          contract_pdf        = MatrixGroupRetroContract.new(@quote, @account, @policy_calculation, view_context)
+          contract_pdf_render = contract_pdf.render
+          combine_pdf << CombinePDF.parse(contract_pdf_render)
 
-        assessment_pdf        = ArmGroupRetroAssessment.new(@quote, @account, @policy_calculation, view_context)
-        assessment_pdf_render = assessment_pdf.render
-        combine_pdf << CombinePDF.parse(assessment_pdf_render)
+          assessment_pdf        = MatrixGroupRetroAssessment.new(@quote, @account, @policy_calculation, view_context)
+          assessment_pdf_render = assessment_pdf.render
+          combine_pdf << CombinePDF.parse(assessment_pdf_render)
 
-        invoice_pdf        = ArmGroupRetroInvoice.new(@quote, @account, @policy_calculation, view_context)
-        invoice_pdf_render = invoice_pdf.render
-        combine_pdf << CombinePDF.parse(invoice_pdf_render)
+          invoice_pdf        = MatrixGroupRatingInvoice.new(@quote, @account, @policy_calculation, view_context)
+          invoice_pdf_render = invoice_pdf.render
+          combine_pdf << CombinePDF.parse(invoice_pdf_render)
+        else
+          intro_pdf        = ArmGroupRetroIntro.new(@quote, @account, @policy_calculation, view_context)
+          intro_pdf_render = intro_pdf.render
+          combine_pdf << CombinePDF.parse(intro_pdf_render)
+
+          quote_pdf        = GroupRetroQuote.new(@quote, @account, @policy_calculation, view_context)
+          quote_pdf_render = quote_pdf.render
+          combine_pdf << CombinePDF.parse(quote_pdf_render)
+
+          u_153_pdf        = U153.new(@quote, @account, @policy_calculation, view_context)
+          u_153_pdf_render = u_153_pdf.render
+          combine_pdf << CombinePDF.parse(u_153_pdf_render)
+
+          ac_2_pdf        = Ac2.new(@quote, @account, @policy_calculation, view_context)
+          ac_2_pdf_render = ac_2_pdf.render
+          combine_pdf << CombinePDF.parse(ac_2_pdf_render)
+
+          contract_pdf        = ArmGroupRetroContract.new(@quote, @account, @policy_calculation, view_context)
+          contract_pdf_render = contract_pdf.render
+          combine_pdf << CombinePDF.parse(contract_pdf_render)
+
+          assessment_pdf        = ArmGroupRetroAssessment.new(@quote, @account, @policy_calculation, view_context)
+          assessment_pdf_render = assessment_pdf.render
+          combine_pdf << CombinePDF.parse(assessment_pdf_render)
+
+          invoice_pdf        = ArmGroupRetroInvoice.new(@quote, @account, @policy_calculation, view_context)
+          invoice_pdf_render = invoice_pdf.render
+          combine_pdf << CombinePDF.parse(invoice_pdf_render)
+        end
 
         send_data combine_pdf.to_pdf, filename: "#{ @account.policy_number_entered }_quote_#{ @quote.id }.pdf",
                   type:                         "application/pdf",
                   disposition:                  "inline"
-        # pdf.render_file "app/reports/#{ @account.policy_number_entered }_quote_#{ @quote.id }.pdf"
       end
     end
-    # redirect_to edit_quote_path(@quote), notice: "Quote Generated"
   end
 
   private
