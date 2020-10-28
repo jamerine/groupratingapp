@@ -57,7 +57,8 @@ class MatrixGroupRetroQuote < MatrixPdfReport
     move_down 25
     faq_text @quote.client_packet? ? "Questions: Laurie Ritter, lritter@matrixtpa.com" : "Questions: Katie Jones, kjones@matrixtpa.com"
     move_down 15
-    text "*Notes: This projection is based on current Ohio BWC data and may be altered or revoked if #{@representative.experience_date&.strftime('%m/%d/%y')} experience data adversely affects your eligibility or Ohio BWC rules you ineligible. Your max assessment of 15% equates to #{price(@policy_calculation.total_assessments)}", size: 9
+    text "*Notes: This projection is based on current Ohio BWC data and may be altered or revoked if #{@representative.experience_date&.strftime('%m/%d/%y')}" +
+           " experience data adversely affects your eligibility or Ohio BWC rules you ineligible. Your max assessment of 15% equates to #{price(@policy_calculation.max_assessment)}", size: 9
     matrix_footer
   end
 
@@ -78,10 +79,10 @@ class MatrixGroupRetroQuote < MatrixPdfReport
           self.cells[row, 0].border_right_width = 0
           self.cells[row, 1].border_left_width  = 0
         end
-        self.row_colors                = [MATRIX_COLOR, nil, nil, nil, 'b4c6e7']
-        row(1..4).padding              = [5, 30, 5, 30]
-        row(0).font_style              = :bold
-        row(0).height                  = 30
+        self.row_colors   = [MATRIX_COLOR, nil, nil, nil, 'b4c6e7']
+        row(1..4).padding = [5, 30, 5, 30]
+        row(0).font_style = :bold
+        row(0).height     = 30
         # row(3).height                  = 25
         # row(7).height                  = 25
         row(0).size                    = 18

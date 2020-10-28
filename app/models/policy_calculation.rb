@@ -365,6 +365,10 @@ class PolicyCalculation < ActiveRecord::Base
     policy_total_individual_premium - policy_total_standard_premium
   end
 
+  def max_assessment
+    (self.policy_adjusted_standard_premium || 0) * 0.15
+  end
+
   def calculate_premium_for_risk(new_mod_rate)
     administrative_rate = BwcCodesConstantValue.find_by(name: 'administrative_rate', completed_date: nil).rate
 
