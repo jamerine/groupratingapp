@@ -77,7 +77,7 @@ class AccountsController < ApplicationController
     @statuses = Account.statuses
     @account.assign_attributes(account_params)
     if @account.save
-      @policy_calculation = PolicyCalculation.where(policy_number: @account.policy_number_entered).update_or_create(policy_number: @account.policy_number_entered, representative_id: @account.representative.id, representative_number: Representative.find(@account.representative.id).representative_number, account_id: @account.id)
+      # @policy_calculation = PolicyCalculation.find_by_rep_and_policy(policy_number: @account.policy_number_entered).update_or_create(policy_number: @account.policy_number_entered, representative_id: @account.representative.id, representative_number: Representative.find(@account.representative.id).representative_number, account_id: @account.id)
       flash[:notice]      = "Account was updated successfully"
       redirect_to @account
     else

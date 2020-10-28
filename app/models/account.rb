@@ -86,6 +86,8 @@ class Account < ActiveRecord::Base
   # scope :policy_search, -> (policy_search) { self.search(policy_search)}
   scope :fee_change_percent, -> (fee_change_percent) { where("fee_change >= ?", (fee_change_percent)) }
 
+  delegate :representative_number, to: :representative, prefix: false, allow_nil: false
+
   def self.update_or_create(attributes)
     obj = first || new
     obj.assign_attributes(attributes)
