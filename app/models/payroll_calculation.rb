@@ -40,6 +40,8 @@ class PayrollCalculation < ActiveRecord::Base
   belongs_to :manual_class_calculation
   has_one :policy_calculation, foreign_key: :policy_number, primary_key: :policy_number
 
+  TRANSFER_PAYROLL_ORIGINS = %w[partial_transfer full_transfer man_reclass_full_transfer man_reclass_partial_transfer]
+
   validates :reporting_period_start_date, :presence => true
   validates :reporting_period_end_date, :presence => true
   validates :manual_class_payroll, :presence => true
