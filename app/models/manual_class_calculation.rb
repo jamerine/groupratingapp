@@ -105,25 +105,21 @@ class ManualClassCalculation < ActiveRecord::Base
 
     @manual_class_self_four_year_sum = self.payroll_calculations.where("reporting_period_start_date BETWEEN :experience_period_lower_date AND :experience_period_upper_date AND (payroll_origin NOT IN ('partial_transfer', 'full_transfer', 'man_reclass_full_transfer', 'man_reclass_partial_transfer'))",
                                                                        experience_period_lower_date: @self_four_year_payroll_lower_date,
-                                                                       experience_period_upper_date: @group_rating.experience_period_upper_date)
-                                       .sum(:manual_class_payroll).round(2)
+                                                                       experience_period_upper_date: @group_rating.experience_period_upper_date).sum(:manual_class_payroll).round(2)
     @manual_class_comb_four_year_sum = self.payroll_calculations.where("(reporting_period_start_date BETWEEN :experience_period_lower_date and :experience_period_upper_date) and (payroll_origin IN ('partial_transfer', 'full_transfer', 'man_reclass_full_transfer', 'man_reclass_partial_transfer'))",
                                                                        experience_period_lower_date: @self_four_year_payroll_lower_date,
-                                                                       experience_period_upper_date: @group_rating.experience_period_upper_date)
-                                       .sum(:manual_class_payroll).round(2)
+                                                                       experience_period_upper_date: @group_rating.experience_period_upper_date).sum(:manual_class_payroll).round(2)
     @manual_class_four_year_sum      = @manual_class_self_four_year_sum + @manual_class_comb_four_year_sum
     @manual_class_four_year_sum      = @manual_class_four_year_sum < 0 ? 0 : @manual_class_four_year_sum
     @manual_class_current_payroll    = self.payroll_calculations.where("reporting_period_start_date >= :current_payroll_period_lower_date and reporting_period_start_date < :current_payroll_period_upper_date",
                                                                        current_payroll_period_lower_date: @group_rating.current_payroll_period_lower_date,
-                                                                       current_payroll_period_upper_date: @group_rating.current_payroll_period_upper_date)
-                                       .sum(:manual_class_payroll).round(2)
+                                                                       current_payroll_period_upper_date: @group_rating.current_payroll_period_upper_date).sum(:manual_class_payroll).round(2)
 
     # Added Prorated payroll for entire year ( ie. extrapolated out for entire year projection [Multiplied out by the inverse of how long the period was for a year.] )
     if self.policy_calculation.policy_creation_date.present? && self.policy_calculation.policy_creation_date >= @group_rating.current_payroll_period_lower_date && plus_one_year.nil?
       current_payroll = self.payroll_calculations.where("reporting_period_start_date >= :current_payroll_period_lower_date and reporting_period_start_date < :current_payroll_period_upper_date",
                                                         current_payroll_period_lower_date: @group_rating.current_payroll_period_lower_date,
-                                                        current_payroll_period_upper_date: @group_rating.current_payroll_period_upper_date)
-                        .order(reporting_period_start_date: :asc).first
+                                                        current_payroll_period_upper_date: @group_rating.current_payroll_period_upper_date).order(reporting_period_start_date: :asc).first
 
       if current_payroll.nil?
         @manual_class_current_payroll = 0
@@ -148,7 +144,6 @@ class ManualClassCalculation < ActiveRecord::Base
       @manual_class_expected_loss_rate = expected_loss_rate
       @manual_class_base_rate          = @bwc_base_rate.base_rate || 0
     end
-
 
     self.update_attributes(manual_class_current_estimated_payroll: @manual_class_current_payroll,
                            manual_class_four_year_period_payroll:  @manual_class_four_year_sum,
@@ -218,8 +213,10 @@ class ManualClassCalculation < ActiveRecord::Base
       @manual_class_individual_total_rate        = ((@manual_class_modification_rate * administrative_rate)).round(4) / 100
       @manual_class_estimated_individual_premium = (self.manual_class_current_estimated_payroll * @manual_class_individual_total_rate).round(2)
 
-      self.update_attributes(manual_class_individual_total_rate: @manual_class_individual_total_rate,
-                             manual_class_standard_premium:      @manual_class_standard_premium, manual_class_modification_rate: @manual_class_modification_rate, manual_class_estimated_individual_premium: @manual_class_estimated_individual_premium)
+      self.update_attributes(manual_class_individual_total_rate:        @manual_class_individual_total_rate,
+                             manual_class_standard_premium:             @manual_class_standard_premium,
+                             manual_class_modification_rate:            @manual_class_modification_rate,
+                             manual_class_estimated_individual_premium: @manual_class_estimated_individual_premium)
     end #transaction
   end
 

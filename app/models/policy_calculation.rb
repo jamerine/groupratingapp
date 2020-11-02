@@ -307,8 +307,9 @@ class PolicyCalculation < ActiveRecord::Base
       if self.policy_creation_date >= @group_rating.current_payroll_period_lower_date
         new_policy_individual_premium = 0
         self.manual_class_calculations.each do |manual|
-          manual_class_current_payroll = manual.payroll_calculations.where("reporting_period_start_date >= :current_payroll_period_lower_date and reporting_period_start_date < :current_payroll_period_upper_date", current_payroll_period_lower_date: (@group_rating.current_payroll_period_lower_date + 1.years), current_payroll_period_upper_date: (@group_rating.current_payroll_period_upper_date + 1.years)).sum(:manual_class_payroll).round(2)
-
+          manual_class_current_payroll              = manual.payroll_calculations.where("reporting_period_start_date >= :current_payroll_period_lower_date and reporting_period_start_date < :current_payroll_period_upper_date",
+                                                                                        current_payroll_period_lower_date: (@group_rating.current_payroll_period_lower_date + 1.years),
+                                                                                        current_payroll_period_upper_date: (@group_rating.current_payroll_period_upper_date + 1.years)).sum(:manual_class_payroll).round(2)
           manual_class_standard_premium             = ((manual.manual_class_base_rate * manual_class_current_payroll * self.policy_individual_experience_modified_rate) / 100).round(2)
           manual_class_modification_rate            = (manual.manual_class_base_rate * self.policy_individual_experience_modified_rate).round(2)
           manual_class_individual_total_rate        = ((manual_class_modification_rate * @administrative_rate)).round(4) / 100
