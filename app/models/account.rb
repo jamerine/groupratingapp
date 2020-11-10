@@ -179,11 +179,21 @@ class Account < ActiveRecord::Base
         # manual_classes = policy_calculation.manual_class_calculations
         policy_calculation.manual_class_calculations.each do |manual_class|
           unless manual_class.manual_class_base_rate.nil?
+            start_date = group_rating_calc.current_payroll_period_lower_date
+            end_date   = group_rating_calc.current_payroll_period_upper_date
+
+            if policy_calculation.policy_creation_date >= group_rating_calc.current_payroll_period_lower_date
+              start_date += 1.year
+              end_date   += 1.year
+            end
+
             manual_class_group_total_rate = (((1 + @group_rating_tier) * manual_class.manual_class_base_rate).round(2) * (1 + administrative_rate)).round(4) / 100
+            payroll                       = manual_class.payroll_calculations.where("reporting_period_start_date >= :current_payroll_period_lower_date and reporting_period_start_date < :current_payroll_period_upper_date",
+                                                                                    current_payroll_period_lower_date: start_date,
+                                                                                    current_payroll_period_upper_date: end_date).sum(:manual_class_payroll)
+            group_premium                 = (payroll * manual_class_group_total_rate).round(2)
 
-            manual_class_estimated_group_premium = (manual_class.payroll_calculations.where("reporting_period_start_date >= :current_payroll_period_lower_date and reporting_period_start_date <= :current_payroll_period_upper_date", current_payroll_period_lower_date: group_rating_calc.current_payroll_period_lower_date, current_payroll_period_upper_date: group_rating_calc.current_payroll_period_upper_date).sum(:manual_class_payroll) * manual_class_group_total_rate).round(2)
-
-            manual_class.update_attributes(manual_class_group_total_rate: manual_class_group_total_rate, manual_class_estimated_group_premium: manual_class_estimated_group_premium)
+            manual_class.update_attributes(manual_class_group_total_rate: manual_class_group_total_rate, manual_class_estimated_group_premium: group_premium)
           end
         end
 
@@ -217,7 +227,6 @@ class Account < ActiveRecord::Base
   end
 
   def group_rating(user_override = nil)
-
     # AUTOMATIC GROUP RATING METHOD
     unless (self.user_override? && !user_override)
       self.group_rating_reject
@@ -242,14 +251,24 @@ class Account < ActiveRecord::Base
 
           @group_rating_tier         = group_rating_rows.min.market_rate
           @group_rating_group_number = group_rating_rows.find_by(market_rate: @group_rating_tier).ac26_group_level
-          # manual_classes = policy_calculation.manual_class_calculations
+
           policy_calculation.manual_class_calculations.each do |manual_class|
             unless manual_class.manual_class_base_rate.nil?
+              start_date = group_rating_calc.current_payroll_period_lower_date
+              end_date   = group_rating_calc.current_payroll_period_upper_date
+
+              if policy_calculation.policy_creation_date >= group_rating_calc.current_payroll_period_lower_date
+                start_date += 1.year
+                end_date   += 1.year
+              end
+
               manual_class_group_total_rate = (((1 + @group_rating_tier) * manual_class.manual_class_base_rate).round(2) * (1 + administrative_rate)).round(4) / 100
+              payroll                       = manual_class.payroll_calculations.where("reporting_period_start_date >= :current_payroll_period_lower_date and reporting_period_start_date < :current_payroll_period_upper_date",
+                                                                                      current_payroll_period_lower_date: start_date,
+                                                                                      current_payroll_period_upper_date: end_date).sum(:manual_class_payroll)
+              group_premium                 = (payroll * manual_class_group_total_rate).round(2)
 
-              manual_class_estimated_group_premium = (manual_class.payroll_calculations.where("reporting_period_start_date >= :current_payroll_period_lower_date and reporting_period_start_date <= :current_payroll_period_upper_date", current_payroll_period_lower_date: group_rating_calc.current_payroll_period_lower_date, current_payroll_period_upper_date: group_rating_calc.current_payroll_period_upper_date).sum(:manual_class_payroll) * manual_class_group_total_rate).round(2)
-
-              manual_class.update_attributes(manual_class_group_total_rate: manual_class_group_total_rate, manual_class_estimated_group_premium: manual_class_estimated_group_premium)
+              manual_class.update_attributes(manual_class_group_total_rate: manual_class_group_total_rate, manual_class_estimated_group_premium: group_premium)
             end
           end
 
