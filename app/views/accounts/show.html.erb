@@ -40,9 +40,9 @@
           </h3>
           <h4><%= @account&.business_contact_name %></h4>
           <h3>
-            <small>Business Phone Number:</small>
+            <small>Phone Number<%= @account&.fax_number.present? ? ' | Fax Number' : '' %></small>
           </h3>
-          <h4><%= @account&.business_phone_number %></h4>
+          <h4><%= @account&.business_phone_number %><%= @account&.fax_number.present? ? " | #{ @account&.fax_number }" : '' %></h4>
           <h3>
             <small>Business Email:</small>
           </h3>

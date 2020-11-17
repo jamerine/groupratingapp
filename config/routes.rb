@@ -164,13 +164,8 @@
 #                                                       PUT        /group_rating_exceptions/:id(.:format)                                            group_rating_exceptions#update
 #                                                       DELETE     /group_rating_exceptions/:id(.:format)                                            group_rating_exceptions#destroy
 #                                               imports DELETE     /imports(.:format)                                                                imports#destroy
-#                                  import_miras_imports POST       /imports/import_miras(.:format)                                                   imports#import_miras
-#                                 import_clicds_imports POST       /imports/import_clicds(.:format)                                                  imports#import_clicds
-#                                 import_democs_imports POST       /imports/import_democs(.:format)                                                  imports#import_democs
-#                                 import_pdemos_imports POST       /imports/import_pdemos(.:format)                                                  imports#import_pdemos
-#                              import_all_miras_imports POST       /imports/import_all_miras(.:format)                                               imports#import_all_miras
-#                             import_all_clicds_imports POST       /imports/import_all_clicds(.:format)                                              imports#import_all_clicds
-#                             import_all_democs_imports POST       /imports/import_all_democs(.:format)                                              imports#import_all_democs
+#                                   import_file_imports POST       /imports/import_file(.:format)                                                    imports#import_file
+#                                  import_files_imports POST       /imports/import_files(.:format)                                                   imports#import_files
 #                                                       GET        /imports(.:format)                                                                imports#index
 #                                                       POST       /imports(.:format)                                                                imports#create
 #                                            new_import GET        /imports/new(.:format)                                                            imports#new
@@ -311,6 +306,7 @@
 #                                                       PUT        /quotes/:id(.:format)                                                             quotes#update
 #                                                       DELETE     /quotes/:id(.:format)                                                             quotes#destroy
 #               representative_all_account_group_rating GET        /representatives/:representative_id/all_account_group_rating(.:format)            representatives#all_account_group_rating
+#                          representative_start_process GET        /representatives/:representative_id/start_process(.:format)                       representatives#start_process
 #                       representative_users_management GET        /representatives/:representative_id/users_management(.:format)                    representatives#users_management
 #                       representative_fee_calculations POST       /representatives/:representative_id/fee_calculations(.:format)                    representatives#fee_calculations
 #                  representative_export_manual_classes GET        /representatives/:representative_id/export_manual_classes(.:format)               representatives#export_manual_classes
@@ -437,6 +433,8 @@
 #                                                       PUT        /manual-classes/:id(.:format)                                                     bwc_annual_manual_class_changes#update
 #                                                       DELETE     /manual-classes/:id(.:format)                                                     bwc_annual_manual_class_changes#destroy
 #                                                  root GET        /                                                                                 welcome#index
+#                                 internal_server_error            /500(.:format)                                                                    errors#internal_server_error
+#                                        page_not_found            /404(.:format)                                                                    errors#page_not_found
 
 require 'sidekiq/web'
 

@@ -7,9 +7,10 @@
 #  account_type                  :integer
 #  business_contact_name         :string
 #  business_email_address        :string
-#  business_phone_number         :bigint(8)
+#  business_phone_number         :string
 #  city                          :string
 #  cycle_date                    :date
+#  fax_number                    :string
 #  federal_identification_number :string
 #  fee_change                    :float
 #  fee_override                  :float

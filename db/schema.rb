@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200910192722) do
+ActiveRecord::Schema.define(version: 20201117135741) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -53,7 +53,7 @@ ActiveRecord::Schema.define(version: 20200910192722) do
     t.string   "city"
     t.string   "state"
     t.string   "zip_code"
-    t.integer  "business_phone_number",         limit: 8
+    t.string   "business_phone_number"
     t.string   "business_email_address"
     t.string   "website_url"
     t.integer  "group_rating_qualification"
@@ -65,7 +65,7 @@ ActiveRecord::Schema.define(version: 20200910192722) do
     t.float    "group_fees"
     t.float    "group_dues"
     t.float    "total_costs"
-    t.integer  "status",                                  default: 0
+    t.integer  "status",                        default: 0
     t.string   "federal_identification_number"
     t.date     "cycle_date"
     t.date     "request_date"
@@ -78,14 +78,15 @@ ActiveRecord::Schema.define(version: 20200910192722) do
     t.string   "group_retro_group_number"
     t.float    "group_retro_premium"
     t.float    "group_retro_savings"
-    t.datetime "created_at",                                          null: false
-    t.datetime "updated_at",                                          null: false
+    t.datetime "created_at",                                null: false
+    t.datetime "updated_at",                                null: false
     t.float    "fee_override"
     t.float    "fee_change"
     t.integer  "account_type"
     t.string   "business_contact_name"
     t.date     "tpa_start_date"
     t.date     "tpa_end_date"
+    t.string   "fax_number"
   end
 
   add_index "accounts", ["representative_id"], name: "index_accounts_on_representative_id", using: :btree

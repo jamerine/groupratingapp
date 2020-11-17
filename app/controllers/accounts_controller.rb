@@ -1,5 +1,5 @@
 class AccountsController < ApplicationController
-  before_action :get_details, only: :show
+  before_action :get_details, only: [:show, :edit, :update]
 
   def index
     @statuses        = Account.statuses
@@ -57,13 +57,10 @@ class AccountsController < ApplicationController
   end
 
   def edit
-    @account = Account.find(params[:id])
     authorize @account
     @representatives    = Representative.all
-    @representative     = Representative.find(@account.representative_id)
-    @policy_calculation = PolicyCalculation.find_by(account_id: @account.id)
-    @statuses           = Account.statuses
-    @account_types      = Account.account_types
+    @policy_calculation = PolicyCalculation.find_by(account_id: @account.id, representative_number: @account.representative_number, policy_number: @account.policy_number_entered)
+
     # @mailing_address = {:address_type => "mailing", :address_line_1 => @policy_calculation.mailing_address_line_1, :address_line_2 => @policy_calculation.mailing_address_line_2, :city => @policy_calculation.mailing_city, :state => @policy_calculation.mailing_state, :zip_code => @policy_calculation.mailing_zip_code}
     # @location_address = {:address_type => "location", :address_line_1 => @policy_calculation.location_address_line_1, :address_line_2 => @policy_calculation.location_address_line_2, :city => @policy_calculation.location_city, :state => @policy_calculation.location_state, :zip_code => @policy_calculation.location_zip_code}
     # @locations = []
@@ -72,13 +69,11 @@ class AccountsController < ApplicationController
   end
 
   def update
-    @account = Account.find(params[:id])
     authorize @account
-    @statuses = Account.statuses
-    @account.assign_attributes(account_params)
-    if @account.save
+
+    if @account.update_attributes(account_params)
       # @policy_calculation = PolicyCalculation.find_by_rep_and_policy(policy_number: @account.policy_number_entered).update_or_create(policy_number: @account.policy_number_entered, representative_id: @account.representative.id, representative_number: Representative.find(@account.representative.id).representative_number, account_id: @account.id)
-      flash[:notice]      = "Account was updated successfully"
+      flash[:notice] = "Account was updated successfully"
       redirect_to @account
     else
       flash.now[:alert] = "Error saving account. Please try again."
@@ -331,6 +326,7 @@ class AccountsController < ApplicationController
 
     @account_changes         = @account.versions.map { |v| [v.created_at, v.changeset] }
     @statuses                = Account.statuses
+    @account_types           = Account.account_types
     @representative          = Representative.find(@account.representative_id)
     @group_rating            = GroupRating.find_by(representative_id: @representative.id)
     @new_payroll_calculation = PayrollCalculation.new
@@ -344,7 +340,7 @@ class AccountsController < ApplicationController
     params.require(:account).permit(:representative_id, :name, :policy_number_entered, :street_address, :street_address_2, :city, :state, :zip_code,
                                     :business_contact_name, :business_phone_number, :business_email_address, :website_url, :group_rating_qualification, :tpa_start_date, :tpa_end_date,
                                     :group_rating_tier, :group_fees, :user_override, :industry_group, :group_dues, :total_costs, :status, :federal_identification_number,
-                                    :cycle_date, :request_date, :quarterly_request, :weekly_request, :ac3_approval, :fee_override, :account_type, :business_contact_name,
+                                    :cycle_date, :request_date, :quarterly_request, :weekly_request, :ac3_approval, :fee_override, :account_type, :fax_number,
                                     affiliate_ids: [])
   end
 end

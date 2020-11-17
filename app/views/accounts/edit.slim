@@ -18,16 +18,17 @@
               .col-sm-6 = f.input :street_address
               .col-sm-6 = f.input :street_address_2
             .row
-              .col-sm-4 = f.input :city
-              .col-sm-4 = f.input :state
-              .col-sm-4 = f.input :zip_code
+              .col-sm-3 = f.input :city
+              .col-sm-3 = f.input :state
+              .col-sm-3 = f.input :zip_code
+              .col-sm-3 = f.input :website_url, as: :url
             hr
             h4.text-center Contact Information
             .row
               .col-sm-3 = f.input :business_contact_name, label: 'Contact Name'
-              .col-sm-3 = f.input :business_phone_number, as: :tel, label: 'Phone Number'
+              .col-sm-3 = f.input :business_phone_number, as: :string, label: 'Phone Number'
+              .col-sm-3 = f.input :fax_number, as: :string, label: 'Fax Number'
               .col-sm-3 = f.input :business_email_address, as: :email, label: 'Email'
-              .col-sm-3 = f.input :website_url, as: :url
             hr
             - if @account.representative.matrix?
               .row
