@@ -68,7 +68,7 @@ class RiskReport < PdfReport
       end
     end
 
-    @current_coverage_status = if @policy_calculation.policy_coverage_status_histories.order(coverage_effective_date: :desc).first.coverage_status == "LAPSE"
+    @current_coverage_status = if @policy_calculation.policy_coverage_status_histories.order(coverage_effective_date: :desc).first&.coverage_status == "LAPSE"
                                  "Y"
                                else
                                  "N"
