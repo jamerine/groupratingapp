@@ -23,7 +23,7 @@
                   td.text-right colspan="2" = @claim_calculation&.claim_number
                 tr
                   td.text-bold Date of Injury:
-                  td.text-right colspan="2" = @claim_calculation&.mira_detail_record&.claim_injury_date.try(:strftime, "%b %d, %Y")
+                  td.text-right colspan="2" = @claim_calculation&.mira_detail_record&.claim_injury_date.try(:strftime, "%b %d, %Y") || @claim_calculation&.claim_injury_date.try(:strftime, "%b %d, %Y")
       .col-md-4
         .panel.panel-primary
           .panel-heading Medical
