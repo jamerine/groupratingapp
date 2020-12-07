@@ -1,0 +1,85 @@
+.container.notes-container
+  .row
+    .col-md-12
+      .panel.panel-primary
+        .panel-heading Notes
+        .panel-body
+          table.table.table-striped.note-datatable#notes-table
+            colgroup
+              col
+              col
+              col
+              col
+              col
+              col
+              col style="width: 5%;"
+            thead
+              tr
+                th.text-center Title
+                th.text-center Category
+                th.text-center Note
+                th.text-center User
+                th.text-center Pinned
+                th.text-center Last Updated
+                th.text-right = link_to 'Add Note', new_claim_calculation_claim_note_path(@claim_calculation), class: 'btn btn-success btn-sm'
+            tbody
+              - @claim_calculation.claim_notes.order(is_pinned: :desc, date: :desc, updated_at: :desc).each do |note|
+                tr
+                  td = note.title
+                  td.text-center = note.claim_note_category&.title
+                  td.row-clicker data-body=note.body = button_tag 'Toggle Note', type: :button, class: 'btn btn-info btn-sm'
+                  td = note.user_email
+                  td.text-center data-sort=(note.is_pinned? ? 1 : 0)
+                    = simple_form_for [@claim_calculation, note] do |f|
+                      = f.input :is_pinned, as: :hidden, input_html: { value: !note.is_pinned? }
+                      = button_tag class: "btn btn-transparent text-danger #{'pinned' if note.is_pinned?}", type: :submit, name: :save_pinned do
+                        i.fa.fa-lg.fa-thumb-tack
+                  td.text-center data-sort=(note.date || note.updated_at) = l(note.date || note.updated_at)
+                  td.text-right
+                    = link_to edit_claim_calculation_claim_note_path(@claim_calculation, note), class: 'btn btn-primary btn-sm' do
+                      i.fa.fa-edit
+
+                    - if current_user.admin?
+                      = link_to claim_calculation_claim_note_path(@claim_calculation, note), method: :delete, class: 'btn btn-danger btn-sm', style: 'margin-left: 8px;', data: { confirm: 'Are you sure you want to delete this note?' } do
+                        i.fa.fa-trash
+scss:
+  .pinned {
+    transform: rotate(-45deg);
+  }
+
+  @-moz-document url-prefix() {
+    fieldset {
+      display: table-cell;
+    }
+  }
+
+  td[colspan="7"] {
+    padding: 0 !important;
+  }
+
+javascript:
+  $(function () {
+    var $table = $('.note-datatable').DataTable({
+      order:      [],
+      columnDefs: [{ targets: -1, orderable: false }]
+    });
+
+    $('#notes-table tbody').on('click', '.row-clicker', function () {
+      var tr  = $(this).closest('tr');
+      var row = $table.row(tr);
+
+      if (row.child.isShown()) {
+        // This row is already open - close it
+        row.child.hide();
+        tr.removeClass('shown');
+      } else {
+        // Open this row
+        var $div = $('<div style="border: 2px solid gray; text-align: left; padding:10px 15px;" />');
+        $div.html($(this).data('body'));
+
+        row.child($div).show();
+        tr.addClass('shown');
+      }
+    });
+  });
+
