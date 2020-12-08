@@ -61,7 +61,7 @@ javascript:
   $(function () {
     var $table = $('.note-datatable').DataTable({
       order:      [],
-      columnDefs: [{ targets: -1, orderable: false }]
+      columnDefs: [{ targets: -1, orderable: false }, { targets: 2, orderable: false }]
     });
 
     $('#notes-table tbody').on('click', '.row-clicker', function () {

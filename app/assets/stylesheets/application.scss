@@ -24,9 +24,9 @@ $grid-float-breakpoint:  1285px;
 @import "select2";
 @import "select2-bootstrap";
 
-.table td, th {
-  text-align: center;
-}
+//.table td, th {
+//  text-align: center;
+//}
 
 #programHistoryTable .table tr .header {
   background-color: blue;
@@ -320,7 +320,19 @@ $radius:                 4px;
 }
 
 .text-bold {
-  font-weight: 700;
+  font-weight: 700 !important;
+}
+
+.text-left {
+  text-align: left !important;
+}
+
+.text-center {
+  text-align: center !important;
+}
+
+.text-right {
+  text-align: right !important;
 }
 
 footer {
