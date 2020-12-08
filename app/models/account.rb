@@ -56,7 +56,7 @@
 #
 
 class Account < ActiveRecord::Base
-  has_paper_trail :ignore => [:user_override, :created_at, :updated_at, :weekly_request, :representative_id], :on => [:update]
+  has_paper_trail :ignore => [:created_at, :weekly_request], :on => [:update]
 
   belongs_to :representative
   has_many :account_programs, dependent: :destroy
