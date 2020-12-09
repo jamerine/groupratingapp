@@ -27,7 +27,7 @@
                 tr
                   td = note.title
                   td.text-center = note.claim_note_category&.title
-                  td.row-clicker data-body=note.body = button_tag 'Toggle Note', type: :button, class: 'btn btn-info btn-sm'
+                  td.row-clicker data-body=note.body = button_tag 'View Note', type: :button, class: 'btn btn-info btn-sm'
                   td = note.user_email
                   td.text-center data-sort=(note.is_pinned? ? 1 : 0)
                     = simple_form_for [@claim_calculation, note] do |f|
