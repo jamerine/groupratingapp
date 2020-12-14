@@ -115,7 +115,6 @@ class Account < ActiveRecord::Base
   #   obj
   # end
 
-
   def self.search(search)
     where("policy_number_entered = ?", "#{search}")
   end
@@ -219,7 +218,6 @@ class Account < ActiveRecord::Base
       @group_rating_tier         = nil
     end
 
-
     # update_attributes(group_rating_tier: group_rating_tier, group_premium: group_premium, group_savings: group_savings, industry_group: industry_group)
 
     self.fee_calculation(@group_rating_qualification, @group_rating_tier, @group_savings)
@@ -229,7 +227,7 @@ class Account < ActiveRecord::Base
 
   def group_rating(user_override = nil)
     # AUTOMATIC GROUP RATING METHOD
-    unless (self.user_override? && !user_override)
+    unless self.user_override? && !user_override
       self.group_rating_reject
 
       return unless self.policy_calculation.present?
@@ -476,44 +474,43 @@ class Account < ActiveRecord::Base
       qualification = "accept"
     end
 
-
     return @group_rating_qualification = qualification
 
   end
 
   def group_retro(user_override = nil)
-    self.group_retro_reject
+    unless self.user_override? && !user_override
+      self.group_retro_reject
 
-    return unless self.policy_calculation.present?
+      return unless self.policy_calculation.present?
 
-    @industry_group = policy_calculation.policy_industry_group
+      @industry_group = policy_calculation.policy_industry_group
 
-    if @group_retro_qualification == "accept"
-      group_retro_calc = GroupRating.find_by(representative_id: policy_calculation.representative_id)
+      if @group_retro_qualification == "accept"
+        group_retro_calc = GroupRating.find_by(representative_id: policy_calculation.representative_id)
 
+        @group_retro_tier         = BwcCodesGroupRetroTier.find_by(industry_group: @industry_group).discount_tier
+        @group_retro_group_number = @industry_group
 
-      @group_retro_tier         = BwcCodesGroupRetroTier.find_by(industry_group: @industry_group).discount_tier
-      @group_retro_group_number = @industry_group
+        if @group_retro_tier.nil?
+          @group_retro_qualification = "reject"
+          @group_retro_premium       = nil
+          @group_retro_savings       = nil
+        else
+          @group_retro_premium = (policy_calculation.policy_adjusted_standard_premium * (1 + @group_retro_tier)).round(0)
 
+          @group_retro_savings = (policy_calculation.policy_adjusted_standard_premium - @group_retro_premium).round(0)
+        end
 
-      if @group_retro_tier.nil?
-        @group_retro_qualification = "reject"
-        @group_retro_premium       = nil
-        @group_retro_savings       = nil
+        if user_override
+          self.update_attributes(user_override: user_override, group_retro_qualification: @group_retro_qualification, industry_group: @industry_group, group_retro_tier: @group_retro_tier, group_retro_premium: @group_retro_premium, group_retro_savings: @group_retro_savings, group_retro_group_number: @group_retro_group_number)
+        else
+          self.update_attributes(group_retro_qualification: @group_retro_qualification, industry_group: @industry_group, group_retro_tier: @group_retro_tier, group_retro_premium: @group_retro_premium, group_retro_savings: @group_retro_savings, group_retro_group_number: @group_retro_group_number)
+        end
       else
-        @group_retro_premium = (policy_calculation.policy_adjusted_standard_premium * (1 + @group_retro_tier)).round(0)
+        self.update_attributes(group_retro_qualification: "reject", group_retro_premium: nil, group_retro_savings: nil, group_retro_tier: nil, group_retro_group_number: nil)
 
-        @group_retro_savings = (policy_calculation.policy_adjusted_standard_premium - @group_retro_premium).round(0)
       end
-
-      if user_override
-        self.update_attributes(user_override: user_override, group_retro_qualification: @group_retro_qualification, industry_group: @industry_group, group_retro_tier: @group_retro_tier, group_retro_premium: @group_retro_premium, group_retro_savings: @group_retro_savings, group_retro_group_number: @group_retro_group_number)
-      else
-        self.update_attributes(group_retro_qualification: @group_retro_qualification, industry_group: @industry_group, group_retro_tier: @group_retro_tier, group_retro_premium: @group_retro_premium, group_retro_savings: @group_retro_savings, group_retro_group_number: @group_retro_group_number)
-      end
-    else
-      self.update_attributes(group_retro_qualification: "reject", group_retro_premium: nil, group_retro_savings: nil, group_retro_tier: nil, group_retro_group_number: nil)
-
     end
   end
 
@@ -681,7 +678,6 @@ class Account < ActiveRecord::Base
     #   end
     # end
 
-
     if @group_retro_rejection_array.collect(&:reject_reason).include? 'reject_pending_predecessor'
       qualification = "pending_predecessor"
     elsif @group_retro_rejection_array.count > 0
@@ -741,7 +737,6 @@ class Account < ActiveRecord::Base
     #   GroupRatingRejection.create(program_type: 'group_retro', account_id: self.id, reject_reason: 'reject_pending_predecessor', representative_id: @group_rating.representative_id)
     # end
     self.group_rating_rejections.where(program_type: 'group_retro').destroy_all
-
 
     if @group_retro_rejection_array.count > 0
       qualification = "reject"
