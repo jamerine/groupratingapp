@@ -611,6 +611,10 @@ Rails.application.routes.draw do
     get :all_quote_process
     post :zip_file
     get :edit_global_dates
+
+    member do
+      post :delete_everything
+    end
   end
 
   resources :representatives_users

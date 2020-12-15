@@ -203,6 +203,15 @@ class RepresentativesController < ApplicationController
     end
   end
 
+  def delete_everything
+    @representative = Representative.find_by(id: params[:id])
+    return unless @representative.present?
+
+    @representative.delete_everything
+    
+    redirect_to @representative, notice: 'Deleted Everything From Representative!'
+  end
+
   def all_quote_process
     @representative = Representative.find(params[:representative_id])
     authorize @representative
@@ -272,7 +281,6 @@ class RepresentativesController < ApplicationController
         zip.print file_obj
       end
     end
-
 
     # Rewind the IO stream so we can read it
     zip_stream.rewind

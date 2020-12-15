@@ -69,6 +69,12 @@ class Representative < ActiveRecord::Base
   scope :default_representative, -> { find(1) }
   scope :options_for_select, -> { order('LOWER(representatives.abbreviated_name)').map { |e| [e.abbreviated_name, e.id] } }
 
+  def delete_everything
+    self.group_ratings.destroy_all
+    self.imports.destroy_all
+    self.accounts.destroy_all
+  end
+
   def full_location_address
     "#{self.location_address_1} #{self.location_city} #{self.location_state.upcase} #{self.location_zip_code}"
   end

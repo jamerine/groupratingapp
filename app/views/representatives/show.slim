@@ -132,6 +132,10 @@
             h5 Run Group Rating Process Starting At Step One
             = link_to "Start Process At Step One", representative_start_process_path(representative_id: @representative.id), class: 'btn btn-default'
       br
+      br
+      .row
+        .col-md-12.text-right = link_to "Delete Everything For Representative", delete_everything_representative_path(@representative), class: 'btn btn-danger btn-sm', method: :post, data: { confirm: 'Are you sure you want to remove everything for this representative? All accounts, policies, claims. etc?' }
+      br
       hr
 
   - if current_user.admin_or_manager?
