@@ -79,18 +79,18 @@ Rails.application.configure do
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
 
-  config.action_mailer.default_url_options = { host: 'https://groupratingapp-staging.switchboxinc.com' }
-  config.action_mailer.asset_host          = 'https://groupratingapp-staging.switchboxinc.com'
-  config.action_controller.asset_host      = 'https://groupratingapp-staging.switchboxinc.com'
+  config.action_mailer.default_url_options = { host: 'https://groupratingapp.staging.switchboxdev.com' }
+  config.action_mailer.asset_host          = 'https://groupratingapp.staging.switchboxdev.com'
+  config.action_controller.asset_host      = 'https://groupratingapp.staging.switchboxdev.com'
 
-  Rails.application.default_url_options[:host] = 'groupratingapp-staging.switchboxinc.com'
+  Rails.application.default_url_options[:host] = 'groupratingapp.staging.switchboxdev.com'
 
   config.action_mailer.smtp_settings = {
     port:                 587,
     address:              'smtp.mailgun.org',
     user_name:            ENV['MAILGUN_USERNAME'],
     password:             ENV['MAILGUN_PASSWORD'],
-    domain:               'groupratingapp-staging.switchboxinc.com',
+    domain:               'groupratingapp.staging.switchboxdev.com',
     authentication:       'login',
     enable_starttls_auto: true
   }
