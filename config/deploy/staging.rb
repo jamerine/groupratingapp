@@ -3,7 +3,9 @@ set :sidekiq_processes, 4
 set :stage, :staging
 set :rails_env, :staging
 set :branch, ENV['branch'] || 'staging'
-set :deploy_to, "/home/#{fetch(:deploy_user)}/apps/#{fetch(:full_app_name)}"
+
+set :full_app_name, "#{fetch(:application)}_#{fetch(:stage)}"
+set :deploy_to, "/var/www/#{fetch(:full_app_name)}"
 
 append :linked_files, "config/database.yml", "config/environments/staging.rb"
 
