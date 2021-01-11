@@ -229,12 +229,10 @@ class ClaimCalculation < ActiveRecord::Base
   end
 
   def medical_last_paid_date
-    return unless @democ_detail_record.present?
     @democ_detail_record&.last_paid_medical_date || mira_detail_record.last_medical_date_of_service
   end
 
   def indemnity_last_paid_date
-    return unless @democ_detail_record.present?
     @democ_detail_record&.last_paid_indemnity_date || mira_detail_record.last_indemnity_period_end_date
   end
 
