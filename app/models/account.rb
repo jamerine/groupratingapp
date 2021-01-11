@@ -96,7 +96,8 @@ class Account < ActiveRecord::Base
   end
 
   def self.find_by_rep_and_policy(rep_id, policy_number)
-    find_by(policy_number_entered: policy_number, representative_id: rep_id)
+    where(representative_id: rep_id, policy_number_entered: policy_number)&.map { |account| account if account.policy_calculation.present? }&.compact&.first
+    # find_by(policy_number_entered: policy_number, representative_id: rep_id)
   end
 
   def build_or_assign_policy_calculation(attributes)
