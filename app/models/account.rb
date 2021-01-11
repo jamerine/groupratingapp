@@ -7,6 +7,7 @@
 #  account_type                  :integer
 #  business_contact_name         :string
 #  business_email_address        :string
+#  business_phone_extension      :string
 #  business_phone_number         :string
 #  city                          :string
 #  cycle_date                    :date
