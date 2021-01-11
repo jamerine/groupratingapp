@@ -12,12 +12,12 @@ class FilterAccountsProcess
       actual_account = Account.find_by_rep_and_policy(@representative.id, account.policy_number_entered)
 
       if actual_account.present?
-        account.notes.each { |note| actual_account.notes << note } if account.notes.any?
-        account.accounts_affiliates.each { |affiliate| actual_account.accounts_affiliates << affiliate } if account.accounts_affiliates.any?
-        account.accounts_contacts.each { |contact| actual_account.accounts_contacts << contact } if account.accounts_contacts.any?
-        account.group_rating_exceptions.each { |exception| actual_account.group_rating_exceptions << exception } if account.group_rating_exceptions.any?
-        account.group_rating_rejections.each { |rejection| actual_account.group_rating_rejections << rejection } if account.group_rating_rejections.any?
-        account.quotes.each { |quote| actual_account.quotes << quote } if account.quotes.any?
+        account.notes.each { |item| item.update_attribute(:account_id, actual_account.id) } if account.notes.any?
+        account.accounts_affiliates.each { |item| item.update_attribute(:account_id, actual_account.id) } if account.accounts_affiliates.any?
+        account.accounts_contacts.each { |item| item.update_attribute(:account_id, actual_account.id) } if account.accounts_contacts.any?
+        account.group_rating_exceptions.each { |item| item.update_attribute(:account_id, actual_account.id) } if account.group_rating_exceptions.any?
+        account.group_rating_rejections.each { |item| item.update_attribute(:account_id, actual_account.id) } if account.group_rating_rejections.any?
+        account.quotes.each { |item| item.update_attribute(:account_id, actual_account.id) } if account.quotes.any?
       end
 
       account.destroy
