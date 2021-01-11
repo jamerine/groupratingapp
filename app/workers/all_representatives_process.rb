@@ -4,6 +4,8 @@ class AllRepresentativesProcess
   sidekiq_options queue: :all_representatives_process
 
   def perform
+    # Account.includes(:policy_calculation).map { |account| account if account.policy_calculation.nil? }.compact.count
+
     Representative.all.find_each do |representative|
       # Go ahead and redo calculations since sometimes they aren't accurate
       RepresentativeAllAccountRating.perform_async(representative.id)

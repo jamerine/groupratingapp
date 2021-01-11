@@ -68,7 +68,6 @@ class Account < ActiveRecord::Base
   has_many :group_rating_rejections, dependent: :destroy
   has_one :policy_calculation, dependent: :destroy
   has_many :quotes, dependent: :destroy
-  has_many :group_rating_rejections, dependent: :destroy
   has_many :notes, dependent: :destroy
 
   validates :policy_number_entered, :presence => true, length: { maximum: 8 }
