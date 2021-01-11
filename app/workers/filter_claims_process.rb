@@ -72,6 +72,6 @@ class FilterClaimsProcess
     claims_to_remove.each(&:destroy)
     policies_to_recalculate.uniq.each { |policy| policy.account&.calculate }
 
-    GroupRatingMarkComplete.perform_async(group_rating_id, all_process)
+    FilterAccountsProcess.perform_async(group_rating_id, all_process)
   end
 end
