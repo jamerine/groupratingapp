@@ -172,7 +172,7 @@
                     td = display_date(@mira.mmi_date)
                   tr
                     td Last Medical Date of Service
-                    td = display_date(@mira.mmi_date)
+                    td = display_date(@mira.last_medical_date_of_service)
                   tr
                     td Total Medical Paid
                     td = @mira.total_medical_paid
@@ -237,7 +237,7 @@
                 tbody
                   tr
                     td Last Indemnity Period End Date
-                    td = display_date(@mira.mmi_date)
+                    td = display_date(@mira.last_indemnity_period_end_date)
                   tr
                     td Indemnity Change of Occupation Payments
                     td = @mira.indemnity_change_of_occupation_payments
