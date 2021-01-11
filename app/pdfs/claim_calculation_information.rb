@@ -263,7 +263,7 @@ class ClaimCalculationInformation < PdfReport
     @data << ['Chiropractor', @mira.chiropractor, 'Medical Drug and Pharmacy Payments', @mira.medical_drug_and_pharmacy_payments]
     @data << ['Physical Therapy', @mira.physical_therapy, 'Medical Emergency Room Payments', @mira.medical_emergency_room_payments]
     @data << ['MMI Date', @mira.mmi_date&.strftime("%b %d, %Y"), 'Medical Funeral Payments', @mira.medical_funeral_payments]
-    @data << ['Last Medical Date of Service', @mira.mmi_date&.strftime("%b %d, %Y"), 'Medical Hospital Payments', @mira.medical_hospital_payments]
+    @data << ['Last Medical Date of Service', @mira.last_medical_date_of_service&.strftime("%b %d, %Y"), 'Medical Hospital Payments', @mira.medical_hospital_payments]
     @data << ['Total Medical Paid', @mira.total_medical_paid, 'Medical Device Payments', @mira.medical_medical_device_payments]
     @data << ['Total Medical Reserve Amount', @mira.total_medical_reserve_amount, 'Medical Misc. Payments', @mira.medical_misc_payments]
     @data << ['Medical Ambulance Payments', @mira.medical_ambulance_payments, 'Medical Nursing Services Payments', @mira.medical_nursing_services_payments]
@@ -276,7 +276,7 @@ class ClaimCalculationInformation < PdfReport
   def indemnity_table
     @data = []
 
-    @data << ['Last Indemnity Period End Date', @mira.mmi_date&.strftime("%b %d, %Y"), 'Indemnity Permanent Partial Payments', @mira.indemnity_permanent_partial_payments]
+    @data << ['Last Indemnity Period End Date', @mira.last_indemnity_period_end_date&.strftime("%b %d, %Y"), 'Indemnity Permanent Partial Payments', @mira.indemnity_permanent_partial_payments]
     @data << ['Indemnity Change of Occupation Payments', @mira.indemnity_change_of_occupation_payments, 'Indemnity Percent Permanent Partial Payments', @mira.indemnity_percent_permanent_partial_payments]
     @data << ['Indemnity Change of Occupation Reserve Prediction', @mira.indemnity_change_of_occupation_reserve_prediction, 'Indemnity Percent Permanent Partial Reserve Prediction', @mira.indemnity_percent_permanent_partial_reserve_prediction]
     @data << ['Indemnity Change of Occupation Reserve Amount', @mira.indemnity_change_of_occupation_reserve_amount, 'Indemnity Percent Permanent Partial Reserve Amount', @mira.indemnity_percent_permanent_partial_reserve_amount]
