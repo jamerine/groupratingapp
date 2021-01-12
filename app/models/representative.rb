@@ -88,11 +88,11 @@ class Representative < ActiveRecord::Base
   end
 
   def logo_filename
-    logo_to_use.file.filename
+    logo_to_use&.file&.filename
   end
 
   def logo_url
-    logo_to_use.url || ActionView::Helpers::AssetUrlHelper.asset_url('logo.png')
+    logo_to_use&.url || ActionView::Helpers::AssetUrlHelper.asset_url('logo.png')
   end
 
   def logo_to_use
