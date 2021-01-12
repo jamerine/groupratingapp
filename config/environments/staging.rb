@@ -79,11 +79,11 @@ Rails.application.configure do
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
 
-  config.action_mailer.default_url_options = { host: 'http://groupratingapp.staging.switchboxdev.com' }
-  config.action_mailer.asset_host          = 'http://groupratingapp.staging.switchboxdev.com'
-  config.action_controller.asset_host      = 'http://groupratingapp.staging.switchboxdev.com'
+  config.action_mailer.default_url_options = { host: 'http://staging-groupratingapp.switchboxinc.com' }
+  config.action_mailer.asset_host          = 'http://staging-groupratingapp.switchboxinc.com'
+  config.action_controller.asset_host      = 'http://staging-groupratingapp.switchboxinc.com'
 
-  Rails.application.default_url_options[:host] = 'groupratingapp.staging.switchboxdev.com'
+  Rails.application.default_url_options[:host] = 'staging-groupratingapp.switchboxinc.com'
 
   config.action_mailer.smtp_settings = {
     port:                 587,
