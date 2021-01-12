@@ -66,7 +66,7 @@ class Representative < ActiveRecord::Base
   mount_uploader :president, PresidentUploader
   mount_uploader :footer, FooterUploader
 
-  scope :default_representative, -> { find(1) }
+  scope :default_representative, -> { find_by(id: 1) }
   scope :options_for_select, -> { order('LOWER(representatives.abbreviated_name)').pluck(:abbreviated_name, :id) }
 
   def delete_everything
@@ -96,6 +96,6 @@ class Representative < ActiveRecord::Base
   end
 
   def logo_to_use
-    logo? ? logo : self.class.default_representative.logo
+    logo? ? logo : self.class.default_representative&.logo
   end
 end

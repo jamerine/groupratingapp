@@ -45,11 +45,11 @@ class User < ActiveRecord::Base
   end
 
   def representative_logo_filename
-    representative_to_use.logo_filename
+    representative_to_use&.logo_filename
   end
 
   def representative_logo_url
-    representative_to_use.logo_url
+    representative_to_use&.logo_url
   end
 
   def admin_or_manager?
