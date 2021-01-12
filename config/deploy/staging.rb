@@ -2,6 +2,7 @@ server "64.225.21.47", user: "deploy", roles: %w{app db web}
 set :sidekiq_processes, 2
 set :stage, :staging
 set :rails_env, :staging
+set :sidekiq_env, :staging
 set :branch, ENV['branch'] || 'staging'
 
 set :full_app_name, "#{fetch(:application)}_#{fetch(:stage)}"

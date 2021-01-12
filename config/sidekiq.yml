@@ -1,8 +1,11 @@
 :verbose: true
 development:
   :concurrency: 20
+staging:
+  :concurrency: 10
 production:
   :concurrency: 10
+
 
 :queues:
   - default

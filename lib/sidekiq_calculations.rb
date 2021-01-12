@@ -3,7 +3,7 @@ class SidekiqCalculations
   DEFAULT_SERVER_CONCURRENCY = 25
 
   def raise_error_for_env!
-    return if !Rails.env.production?
+    return unless Rails.env.production? || Rails.env.staging?
 
     web_dynos
     worker_dynos
@@ -19,12 +19,12 @@ Sidekiq Server Configuration failed.
   end
 
   def client_redis_size
-    Rails.env.production? ? 6 : DEFAULT_CLIENT_REDIS_SIZE
+    (Rails.env.production? || Rails.env.staging?) ? 6 : DEFAULT_CLIENT_REDIS_SIZE
       # puma_workers * (puma_threads/2) * web_dynos
   end
 
   def server_concurrency_size
-    Rails.env.production? ? Integer(ENV['WEB_CONCURRENCY']) : DEFAULT_SERVER_CONCURRENCY
+    (Rails.env.production? || Rails.env.staging?) ? Integer(ENV['WEB_CONCURRENCY']) : DEFAULT_SERVER_CONCURRENCY
     # (max_redis_connection - client_redis_size - sidekiq_reserved) / worker_dynos / paranoid_divisor
   end
 
