@@ -7,6 +7,7 @@
 #  account_type                  :integer
 #  business_contact_name         :string
 #  business_email_address        :string
+#  business_phone_extension      :string
 #  business_phone_number         :string
 #  city                          :string
 #  cycle_date                    :date
@@ -68,7 +69,6 @@ class Account < ActiveRecord::Base
   has_many :group_rating_rejections, dependent: :destroy
   has_one :policy_calculation, dependent: :destroy
   has_many :quotes, dependent: :destroy
-  has_many :group_rating_rejections, dependent: :destroy
   has_many :notes, dependent: :destroy
 
   validates :policy_number_entered, :presence => true, length: { maximum: 8 }
@@ -97,7 +97,8 @@ class Account < ActiveRecord::Base
   end
 
   def self.find_by_rep_and_policy(rep_id, policy_number)
-    find_by(policy_number_entered: policy_number, representative_id: rep_id)
+    where(representative_id: rep_id, policy_number_entered: policy_number)&.map { |account| account if account.policy_calculation.present? }&.compact&.first
+    # find_by(policy_number_entered: policy_number, representative_id: rep_id)
   end
 
   def build_or_assign_policy_calculation(attributes)

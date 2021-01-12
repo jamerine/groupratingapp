@@ -323,6 +323,7 @@
 #                      representative_all_quote_process GET        /representatives/:representative_id/all_quote_process(.:format)                   representatives#all_quote_process
 #                               representative_zip_file POST       /representatives/:representative_id/zip_file(.:format)                            representatives#zip_file
 #                      representative_edit_global_dates GET        /representatives/:representative_id/edit_global_dates(.:format)                   representatives#edit_global_dates
+#                      delete_everything_representative POST       /representatives/:id/delete_everything(.:format)                                  representatives#delete_everything
 #                                       representatives GET        /representatives(.:format)                                                        representatives#index
 #                                                       POST       /representatives(.:format)                                                        representatives#create
 #                                    new_representative GET        /representatives/new(.:format)                                                    representatives#new

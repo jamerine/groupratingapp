@@ -52,7 +52,7 @@ class Ac26 < PdfReport
     end
     bounding_box([275, current_cursor], :width => 180, :height => 25) do
       text "Telephone Number", style: :bold, size: 8
-      text "#{@account.business_phone_number}", :indent_paragraphs => 10, size: 10
+      text "#{@account.business_phone_number}#{@account.business_phone_extension.present? ? " Ext: #{@account&.business_phone_extension}" : ''}", :indent_paragraphs => 10, size: 10
      stroke_bounds
     end
     bounding_box([455, current_cursor], :width => 85, :height => 25) do

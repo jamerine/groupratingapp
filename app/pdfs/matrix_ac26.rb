@@ -63,7 +63,7 @@ class MatrixAc26 < MatrixPdfReport
     bounding_box([275, current_cursor], :width => 180, :height => 25) do
       move_down 2.5
       text "Telephone Number", style: :bold, size: 8, :indent_paragraphs => 5
-      inline_text "#{@account.business_phone_number}", :indent_paragraphs => 5
+      inline_text "#{@account.business_phone_number}#{@account&.business_phone_extension.present? ? " Ext: #{@account&.business_phone_extension}" : ''}", :indent_paragraphs => 5
       stroke_bounds
     end
 

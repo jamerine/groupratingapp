@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20201117135741) do
+ActiveRecord::Schema.define(version: 20210111214302) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -87,6 +87,7 @@ ActiveRecord::Schema.define(version: 20201117135741) do
     t.date     "tpa_start_date"
     t.date     "tpa_end_date"
     t.string   "fax_number"
+    t.string   "business_phone_extension"
   end
 
   add_index "accounts", ["representative_id"], name: "index_accounts_on_representative_id", using: :btree

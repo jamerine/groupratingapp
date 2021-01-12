@@ -12,6 +12,7 @@ production:
   - import_clicd_files_process
   - filter_claims_process
   - filter_policies_process
+  - filter_accounts_process
   - import_democ_process
   - import_ratefile_process
   - import_pdemo_process
