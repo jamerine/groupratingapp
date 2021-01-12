@@ -90,7 +90,7 @@ Rails.application.configure do
     address:              'smtp.mailgun.org',
     user_name:            ENV['MAILGUN_USERNAME'],
     password:             ENV['MAILGUN_PASSWORD'],
-    domain:               'groupratingapp.staging.switchboxdev.com',
+    domain:               'groupratingapp.switchboxdinc.com',
     authentication:       'login',
     enable_starttls_auto: true
   }
