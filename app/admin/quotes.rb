@@ -22,9 +22,9 @@ ActiveAdmin.register Quote do
     actions
   end
 
-  # filter :representative, as: :select, collection: Representative.options_for_select
+  filter :representative, as: :select, collection: Representative.options_for_select
   filter :account_policy_number_entered_eq, label: 'Policy Number'
-  # filter :program_type, as: :select, collection: proc { Quote.program_types.keys }
+  filter :program_type, as: :select, collection: proc { Quote.program_types.keys }
   filter :quote_tier, as: :numeric
   filter :fees, as: :numeric
   filter :quote_date, as: :date_range

@@ -67,8 +67,7 @@ class Representative < ActiveRecord::Base
   mount_uploader :footer, FooterUploader
 
   scope :default_representative, -> { find(1) }
-  # scope :options_for_select, -> { order('LOWER(representatives.abbreviated_name)').map { |e| [e.abbreviated_name, e.id] } }
-  scope :options_for_select, -> { all }
+  scope :options_for_select, -> { order('LOWER(representatives.abbreviated_name)').pluck(:abbreviated_name, :id) }
 
   def delete_everything
     self.group_ratings.destroy_all
