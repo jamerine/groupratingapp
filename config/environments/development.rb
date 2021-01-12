@@ -1,3 +1,5 @@
+ENV['REDISCLOUD_URL'] = 'redis://localhost:6379/0'
+
 Rails.application.configure do
   # require 'sidekiq/testing/inline'
 
