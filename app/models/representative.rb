@@ -96,6 +96,6 @@ class Representative < ActiveRecord::Base
   end
 
   def logo_to_use
-    logo? ? logo : self.class.default_representative&.logo
+    logo? ? logo : Representative.first&.logo
   end
 end
