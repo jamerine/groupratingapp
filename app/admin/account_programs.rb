@@ -20,8 +20,8 @@ ActiveAdmin.register AccountProgram do
 
     actions
   end
-  filter :representative, as: :select, collection: Representative.options_for_select
-  filter :program_type, as: :select, collection: proc { AccountProgram.program_types.keys }
+  # filter :representative, as: :select, collection: Representative.options_for_select
+  # filter :program_type, as: :select, collection: proc { AccountProgram.program_types.keys }
   filter :account_policy_number_entered_eq, label: 'Policy Number'
   filter :quoted_tier
   filter :group_code
