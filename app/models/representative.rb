@@ -66,8 +66,8 @@ class Representative < ActiveRecord::Base
   mount_uploader :president, PresidentUploader
   mount_uploader :footer, FooterUploader
 
-  scope :default_representative, -> { find(1) }
-  scope :options_for_select, -> { order('LOWER(representatives.abbreviated_name)').map { |e| [e.abbreviated_name, e.id] } }
+  scope :default_representative, -> { find_by(id: 1) }
+  scope :options_for_select, -> { order('LOWER(representatives.abbreviated_name)').pluck(:abbreviated_name, :id) }
 
   def delete_everything
     self.group_ratings.destroy_all
@@ -88,14 +88,14 @@ class Representative < ActiveRecord::Base
   end
 
   def logo_filename
-    logo_to_use.file.filename
+    logo_to_use&.file&.filename
   end
 
   def logo_url
-    logo_to_use.url || ActionView::Helpers::AssetUrlHelper.asset_url('logo.png')
+    logo_to_use&.url || ActionView::Helpers::AssetUrlHelper.asset_url('logo.png')
   end
 
   def logo_to_use
-    logo? ? logo : self.class.default_representative.logo
+    logo? ? logo : Representative.first&.logo
   end
 end
