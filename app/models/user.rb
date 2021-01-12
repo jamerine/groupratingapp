@@ -59,6 +59,6 @@ class User < ActiveRecord::Base
   private
 
   def representative_to_use
-    self.representatives.sort_by(&:id).first || Representative.default_representative
+    self.representatives.sort_by(&:id).first || Representative.first
   end
 end
