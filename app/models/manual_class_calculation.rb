@@ -47,8 +47,6 @@ class ManualClassCalculation < ActiveRecord::Base
   scope :by_representative, -> (rep_number) { where(representative_number: rep_number) }
   scope :bwc, -> { where(data_source: 'bwc') }
 
-  # Public Employer Manual Numbers: [9430,9431,9432,9433,9434,9435,9436,9437,9438,9439,9440,9441,9442,9443,9444]
-
   def self.update_or_create(attributes)
     obj = first || new
     obj.assign_attributes(attributes)
