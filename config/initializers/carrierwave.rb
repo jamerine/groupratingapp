@@ -1,4 +1,4 @@
-if Rails.env.production?
+if Rails.env.production? || Rails.env.staging?
   CarrierWave.configure do |config|
   config.storage    = :aws
   config.aws_bucket = ENV['S3_BUCKET_NAME']
