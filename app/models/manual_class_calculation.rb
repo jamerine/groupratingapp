@@ -86,11 +86,17 @@ class ManualClassCalculation < ActiveRecord::Base
     @policy_creation_date = @policy_creation.nil? ? self.policy_calculation.policy_coverage_status_histories.order(:coverage_effective_date).first.coverage_effective_date : @policy_creation.coverage_effective_date
     start_date            = @group_rating.experience_period_lower_date
     end_date              = @group_rating.experience_period_upper_date
+    payroll_start_date    = @group_rating.current_payroll_period_lower_date
+    payroll_end_date      = @group_rating.current_payroll_period_upper_date
 
     if self.policy_calculation.public_employer?
-      start_date = start_date.beginning_of_year
-      end_date   = start_date.end_of_year
+      start_date         = start_date.beginning_of_year
+      end_date           = start_date.end_of_year
+      payroll_start_date = payroll_start_date.beginning_of_year
+      payroll_end_date   = payroll_end_date.end_of_year
     end
+
+    # TODO: Start here with payroll dates
 
     four_year_payroll_lower_date = @policy_creation_date < start_date ? @policy_creation_date : start_date
 
@@ -106,22 +112,22 @@ class ManualClassCalculation < ActiveRecord::Base
     @manual_class_four_year_sum      = @manual_class_self_four_year_sum + @manual_class_comb_four_year_sum
     @manual_class_four_year_sum      = @manual_class_four_year_sum < 0 ? 0 : @manual_class_four_year_sum
     current_payroll_records          = self.payroll_calculations.where("payroll_calculations.reporting_period_start_date >= :current_payroll_period_lower_date and payroll_calculations.reporting_period_start_date < :current_payroll_period_upper_date",
-                                                                       current_payroll_period_lower_date: start_date,
-                                                                       current_payroll_period_upper_date: end_date)
+                                                                       current_payroll_period_lower_date: payroll_start_date,
+                                                                       current_payroll_period_upper_date: payroll_end_date)
     current_payroll_records          = current_payroll_records.where("((payroll_calculations.reporting_type = 'E' AND payroll_calculations.payroll_origin NOT IN (:origins)) OR payroll_calculations.reporting_type != 'E')",
                                                                      origins: PayrollCalculation::TRANSFER_PAYROLL_ORIGINS) if plus_one_year && @policy_creation_date >= 1.year.ago # Don't use E payroll for really new policies - Doug - 11/2/2020
     @manual_class_current_payroll    = current_payroll_records.sum(:manual_class_payroll).round(2)
 
     # Added Prorated payroll for entire year ( ie. extrapolated out for entire year projection [Multiplied out by the inverse of how long the period was for a year.] )
-    if self.policy_calculation.policy_creation_date.present? && self.policy_calculation.policy_creation_date >= start_date && plus_one_year.nil?
+    if self.policy_calculation.policy_creation_date.present? && self.policy_calculation.policy_creation_date >= payroll_start_date && plus_one_year.nil?
       current_payroll = self.payroll_calculations.where("payroll_calculations.reporting_period_start_date >= :current_payroll_period_lower_date and payroll_calculations.reporting_period_start_date < :current_payroll_period_upper_date",
-                                                        current_payroll_period_lower_date: start_date,
-                                                        current_payroll_period_upper_date: end_date).order(reporting_period_start_date: :asc).first
+                                                        current_payroll_period_lower_date: payroll_start_date,
+                                                        current_payroll_period_upper_date: payroll_end_date).order(reporting_period_start_date: :asc).first
 
       if current_payroll.nil?
         @manual_class_current_payroll = 0
-      elsif current_payroll.reporting_period_start_date > start_date
-        diff_ratio = 1 / ((end_date - self.policy_calculation.policy_creation_date) / (end_date - start_date))
+      elsif current_payroll.reporting_period_start_date > payroll_start_date
+        diff_ratio = 1 / ((payroll_end_date - self.policy_calculation.policy_creation_date) / (payroll_end_date - payroll_start_date))
 
         @manual_class_current_payroll = @manual_class_current_payroll * diff_ratio
       end
@@ -168,7 +174,7 @@ class ManualClassCalculation < ActiveRecord::Base
       end_date   = start_date.end_of_year
     end
 
-    self_four_year_payroll_lower_date = policy_creation_date < group_rating.experience_period_lower_date ? policy_creation_date : start_date
+    self_four_year_payroll_lower_date = policy_creation_date < start_date ? policy_creation_date : start_date
     manual_class_self_four_year_sum   = self.payroll_calculations.with_estimated_payroll(false).where("payroll_calculations.reporting_period_start_date BETWEEN :experience_period_lower_date and :experience_period_upper_date and (payroll_calculations.payroll_origin NOT IN (:origins))",
                                                                                                       experience_period_lower_date: self_four_year_payroll_lower_date,
                                                                                                       experience_period_upper_date: end_date,
