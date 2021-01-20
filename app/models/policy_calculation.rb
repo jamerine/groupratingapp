@@ -254,9 +254,7 @@ class PolicyCalculation < ActiveRecord::Base
 
     @collection.each do |item|
       industry_group_item_sum = industry_group_sum(item)
-      next unless industry_group_item_sum < @highest_industry_group[:standard_premium]
-
-      @highest_industry_group = { industry_group: item, standard_premium: industry_group_item_sum }
+      @highest_industry_group = { industry_group: item, standard_premium: industry_group_item_sum } if industry_group_item_sum > @highest_industry_group[:standard_premium]
     end
 
     # Added this logic to default to industry_group 7 when a policy is calculated to industry_group 9 and then changed to 8 if there is more premium in 8 than 7
@@ -280,7 +278,7 @@ class PolicyCalculation < ActiveRecord::Base
                            policy_adjusted_individual_premium: @policy_adjusted_individual_premium)
 
     self.manual_class_calculations.each do |manual|
-      next if self.policy_total_individual_premium.present?
+      next unless self.policy_total_individual_premium.present?
       manual.calculate_premium(self.policy_individual_adjusted_experience_modified_rate + 1, @administrative_rate) if manual.manual_class_estimated_individual_premium.nil? # recalculate premium just in case
       manual.update_attributes(manual_class_industry_group_premium_percentage: (manual.manual_class_estimated_individual_premium / @policy_total_individual_premium).round(4))
     end
@@ -314,8 +312,8 @@ class PolicyCalculation < ActiveRecord::Base
   end
 
   def adjust_premium_size_factors(total_standard_premium)
-    return total_standard_premium if public_employer?
     return 0 if total_standard_premium < 0
+    return total_standard_premium if public_employer?
 
     if total_standard_premium > 500000
       405750 + ((total_standard_premium - 500000) * 0.75).round(0)
@@ -368,7 +366,7 @@ class PolicyCalculation < ActiveRecord::Base
     start_date        = group_rating_calc.current_payroll_period_lower_date + 1.year
     end_date          = group_rating_calc.current_payroll_period_upper_date + 1.year
 
-    if self.policy_calculation.public_employer?
+    if public_employer?
       start_date = start_date.beginning_of_year
       end_date   = start_date.end_of_year
     end
