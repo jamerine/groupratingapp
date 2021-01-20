@@ -660,7 +660,7 @@ class RiskReport < PdfReport
   def workers_comp_program_options_data
     # Experience Rated
     @experience_eligibility       = 'Yes'
-    @experience_projected_premium = @policy_calculation.policy_adjusted_standard_premium || 0 # Changing from this due to Doug request 1/20/21: @policy_calculation.policy_adjusted_individual_premium || 0
+    @experience_projected_premium = @policy_calculation.policy_adjusted_individual_premium || 0
     @experience_costs             = 0
     @experience_maximum_risk      = 0
     @experience_total_cost        = @experience_projected_premium - @experience_costs
@@ -765,20 +765,20 @@ class RiskReport < PdfReport
   def workers_comp_program_additional_options_data
 
     ###### Drug-Free Safety
-    @drug_free_experience   = @policy_calculation.policy_total_standard_premium * 0.07
+    @drug_free_experience   = @policy_calculation.policy_adjusted_standard_premium * 0.07 # Changing from this due to Doug request 1/20/21: @policy_calculation.policy_total_standard_premium * 0.07
     @drug_free_group_rating = (@group_rating_eligibility == 'Yes' ? ((@account.group_premium || 0) * 0.07) : nil)
 
     ###### Safety Council
-    @safety_council_experience = (@policy_calculation.policy_total_standard_premium * 0.04)
+    @safety_council_experience = (@policy_calculation.policy_adjusted_standard_premium * 0.04) # Changing from this due to Doug request 1/20/21: (@policy_calculation.policy_total_standard_premium * 0.04)
     @safety_council_em_cap     = (@em_cap_eligibility == 'Yes' ? (@em_cap_projected_premium * 0.04) : nil)
     # @safety_council_ocp = (@policy_calculation.policy_total_standard_premium * 0.04)
     @safety_council_group_rating = (@group_rating_eligibility == 'Yes' ? ((@account.group_premium || 0) * 0.02) : nil)
-    @safety_council_group_retro  = (@group_retro_eligibility == 'Yes' ? (@policy_calculation.policy_total_standard_premium * 0.02) : '')
+    @safety_council_group_retro  = (@group_retro_eligibility == 'Yes' ? (@policy_calculation.policy_adjusted_standard_premium * 0.02) : '') # Changing from this due to Doug request 1/20/21: (@group_retro_eligibility == 'Yes' ? (@policy_calculation.policy_total_standard_premium * 0.02) : '')
     # @safety_council_individual_retro = (@account.group_retro_premium * 0.04)
     # @safety_council_mm_select = (@policy_calculation.policy_total_standard_premium * 0.04)
 
     ###### Industry Specific
-    @industry_specific_experience = (@policy_calculation.policy_total_standard_premium * 0.03)
+    @industry_specific_experience = (@policy_calculation.policy_adjusted_standard_premium * 0.03) # Changing from this due to Doug request 1/20/21: (@policy_calculation.policy_total_standard_premium * 0.03)
     @industry_specific_em_cap     = (@em_cap_eligibility == 'Yes' ? (@em_cap_projected_premium * 0.03) : nil)
     # @industry_specific_ocp = (@policy_calculation.policy_total_standard_premium * 0.03)
     @industry_specific_group_rating = (@group_rating_eligibility == 'Yes' ? ((@account.group_premium || 0) * 0.03) : nil)
@@ -786,7 +786,7 @@ class RiskReport < PdfReport
     # @industry_specific_mm_select
 
     ###### Transitional Work
-    @transitional_work_experience = (@policy_calculation.policy_total_standard_premium * 0.1)
+    @transitional_work_experience = (@policy_calculation.policy_adjusted_standard_premium * 0.1) # Changing from this due to Doug request 1/20/21: (@policy_calculation.policy_total_standard_premium * 0.1)
     @transitional_work_em_cap     = (@em_cap_eligibility == 'Yes' ? (@em_cap_projected_premium * 0.01) : nil)
     # @transitional_work_ocp = (@policy_calculation.policy_total_standard_premium * 0.03)
     @transitional_work_group_rating = (@group_rating_eligibility == 'Yes' ? ((@account.group_premium || 0) * 0.10) : nil)
