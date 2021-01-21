@@ -197,7 +197,7 @@ class PolicyCalculation < ActiveRecord::Base
 
     if public_employer?
       start_date = start_date.beginning_of_year
-      end_date   = start_date.end_of_year
+      end_date   = end_date.beginning_of_year
     end
 
     @claims = self.claim_calculations.where("claim_injury_date >= :experience_period_lower_date and claim_injury_date <= :experience_period_upper_date",
@@ -368,7 +368,7 @@ class PolicyCalculation < ActiveRecord::Base
 
     if public_employer?
       start_date = start_date.beginning_of_year
-      end_date   = end_date.end_of_year
+      end_date   = end_date.beginning_of_year
     end
 
     return unless self.policy_creation_date < start_date
