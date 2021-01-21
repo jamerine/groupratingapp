@@ -72,7 +72,7 @@
             <div class="form-group col-md-6">
               <dl>
                 <dt>Current Administrative Start Rate</dt>
-                <dd><%= l @administrative_rate.try(:start_date) %></dd>
+                <dd><%= @administrative_rate&.start_date.present? ? l(@administrative_rate&.start_date) : '' %></dd>
               </dl>
 
               <%= f.label :administrative_rate_start_date, 'New Administrative Rate Start Date', class: 'form-control-label' %>

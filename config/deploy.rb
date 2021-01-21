@@ -26,7 +26,7 @@ set :repo_url, "git@bitbucket.org:switchbox/arm-group-rating.git"
 set :branch, ENV['branch'] || 'master'
 
 # Default value for linked_dirs is []
-append :linked_dirs, "log", "tmp/pids", "tmp/cache", "tmp/sockets", "public/system", "storage"
+append :linked_dirs, "log", "tmp/pids", "tmp/cache", "tmp/sockets", "public/system", "storage", "public/uploads"
 
 # Default value for default_env is {}
 set :default_env, { path: "/home/deploy/.gem/ruby/2.3.0/bin:$PATH" }

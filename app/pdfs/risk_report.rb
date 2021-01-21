@@ -8,7 +8,6 @@ class RiskReport < PdfReport
     @group_rating           = group_rating
     @report_params          = report_params
 
-
     @view = view
 
     @account = Account.includes(policy_calculation: [:policy_coverage_status_histories, :policy_program_histories, { manual_class_calculations: :payroll_calculations }]).find(@account.id)
@@ -100,7 +99,6 @@ class RiskReport < PdfReport
     @experience_med_only    = @experience_year_claims.where("left(claim_type, 1) = '1'").count
     @experience_lost_time   = @experience_year_claims.where("left(claim_type, 1) = '2'").count
 
-
     @experience_comp_total                 = 0
     @experience_medical_total              = 0
     @experience_mira_medical_reserve_total = 0
@@ -138,7 +136,6 @@ class RiskReport < PdfReport
     @fifth_out_of_experience_year        = @first_experience_year - 1
     @fifth_out_of_experience_year_period = @first_experience_year_period.first.advance(years: -1)..@first_experience_year_period.last.advance(years: -1)
     @fifth_out_of_experience_year_claims = @account.policy_calculation.claim_calculations.where("claim_injury_date BETWEEN ? AND ? ", @fifth_out_of_experience_year_period.first, @fifth_out_of_experience_year_period.last).order(:claim_injury_date)
-
 
     # Out Of Experience Totals
 
@@ -186,7 +183,6 @@ class RiskReport < PdfReport
     @ten_year_si_average   = (@ten_year_si_total / 10)
     @ten_year_si_ratio_avg = 'N/A'
 
-
     # GREEN YEAR EXPERIENCE
     @first_green_year        = @group_rating.experience_period_upper_date.strftime("%Y").to_i
     @first_green_year_period = (@group_rating.experience_period_upper_date.advance(days: 1))..(@group_rating.experience_period_upper_date.advance(years: 1))
@@ -232,7 +228,6 @@ class RiskReport < PdfReport
     @payroll_periods         = PayrollCalculation.select('reporting_period_start_date').group('payroll_calculations.reporting_period_start_date').where(:policy_number => @policy_calculation.policy_number).order(reporting_period_start_date: :desc).pluck(:reporting_period_start_date)
     @ilr                     = round(((@policy_calculation.policy_total_modified_losses_group_reduced * @policy_calculation.policy_total_current_payroll) / (@policy_calculation.policy_total_four_year_payroll * (@policy_calculation.policy_adjusted_standard_premium || @policy_calculation.policy_total_standard_premium))), 2)
     @f_s                     = round((((3660 * @experience_med_only) + (12500 * @experience_lost_time)) / @policy_calculation.policy_total_four_year_payroll) * (@policy_calculation.policy_total_current_payroll / (@policy_calculation.policy_adjusted_standard_premium || @policy_calculation.policy_total_standard_premium)), 2)
-
 
     @erc =
       if @account.policy_calculation.currently_assigned_erc_representative_number == 0
@@ -503,12 +498,12 @@ class RiskReport < PdfReport
     table expected_loss_table_data, :column_widths => { 0 => 30, 1 => 20, 2 => 60, 3 => 30, 4 => 55, 5 => 30, 6 => 60, 7 => 35, 8 => 50, 9 => 35, 10 => 50, 11 => 35, 12 => 50 } do
       self.position          = :center
       row(0).font_style      = :bold
-      row(-2..-1).font_style = :bold
+      row(-3..-1).font_style = :bold
       row(0).overflow        = :shring_to_fit
       row(0).align           = :center
       row(0).borders         = [:bottom]
       row(1..-1).borders     = []
-      row(-2).borders        = [:top]
+      row(-4).borders        = [:top]
       # row(1).columns(0..14).borders = []
       row(0..-1).align = :center
       self.cell_style  = { :size => 8 }
@@ -529,6 +524,8 @@ class RiskReport < PdfReport
       @data = [["Man Num", "IG", "Experience Payroll", "Exp. Loss Rate", "Total Exp Losses", "Base Rate", "Estimated Payroll", "Ind. Rate", "Est Ind Premium", "#{@account.group_rating_tier} Group Rate", "Group Premium"]]
       @data += @account.policy_calculation.manual_class_calculations.order(manual_number: :asc).map { |e| [e.manual_number, e.manual_class_industry_group, round(e.manual_class_four_year_period_payroll, 0), rate(e.manual_class_expected_loss_rate / 100, 2), round(e.manual_class_expected_losses, 0), rate(e.manual_class_base_rate / 100, 2), round(e.manual_class_current_estimated_payroll, 0), rate(e.manual_class_individual_total_rate, 4), round(e.manual_class_estimated_individual_premium, 0), rate(e.manual_class_group_total_rate, 4), round(e.manual_class_estimated_group_premium, 0)] }
       @data += [[{ :content => " #{ } Totals", :colspan => 4 }, "#{round(@policy_calculation.policy_total_expected_losses, 0)}", "", "#{round(@policy_calculation.policy_total_current_payroll, 0)}", "", "#{round(@policy_calculation.policy_total_individual_premium, 0)}", "", "#{round(@account.group_premium, 0)}"]]
+      @data += [[{ :content => " #{ } Adjusted Before Assessments", :colspan => 4 }, { :content => "", :colspan => 4 }, "#{round(@policy_calculation.policy_adjusted_standard_premium, 0)}", { :content => "", :colspan => 2 }]]
+      @data += [[{ :content => " #{ } Assessments", :colspan => 4 }, { :content => "", :colspan => 4 }, "#{round(@policy_calculation.total_assessments, 0)}", { :content => "", :colspan => 2 }]]
       @data += [[{ :content => " #{ } Adjusted Premium", :colspan => 4 }, { :content => "", :colspan => 4 }, "#{round(@policy_calculation.policy_adjusted_individual_premium, 0)}", { :content => "", :colspan => 2 }]]
     end
   end
@@ -686,7 +683,6 @@ class RiskReport < PdfReport
       @em_cap_savings           = nil
     end
 
-
     # OCP
 
     # Group Rating
@@ -708,9 +704,9 @@ class RiskReport < PdfReport
     # Group Retro
     @group_retro_eligibility = (@account.group_retro_qualification == 'accept' ? 'Yes' : 'No')
     if @group_retro_eligibility == 'Yes'
-      @group_retro_projected_premium = @policy_calculation.policy_total_individual_premium
+      @group_retro_projected_premium = @policy_calculation.policy_adjusted_standard_premium # Changing from this due to Doug request 1/20/21: @policy_calculation.policy_total_individual_premium
       @group_retro_costs             = -@account.group_retro_savings
-      @group_retro_maximum_risk      = (@policy_calculation.policy_total_standard_premium * 0.15)
+      @group_retro_maximum_risk      = (@policy_calculation.policy_adjusted_standard_premium * 0.15) # Changing from this due to Doug request 1/20/21: (@policy_calculation.policy_total_standard_premium * 0.15)
       @group_retro_total_cost        = @group_retro_projected_premium + @group_retro_costs
       @group_retro_savings           = (@policy_calculation.policy_adjusted_individual_premium || @policy_calculation.calculate_premium_with_assessments) - @group_retro_total_cost
     else
@@ -720,7 +716,6 @@ class RiskReport < PdfReport
       @group_retro_total_cost        = nil
       @group_retro_savings           = nil
     end
-
 
     @data = [[" ", "Exp. Rated", "EM Cap", "OCP", " #{ @account.group_rating_tier } Gr.", "Gr. Retro", "Ind. Retro", "#{@account.representative.abbreviated_name}"]]
     @data += [["Eligibility", "#{@experience_eligibility}", "#{@em_cap_eligibility}", " ", "#{@group_rating_eligibility}", "#{@group_retro_eligibility}", " ", " "]]
@@ -770,20 +765,20 @@ class RiskReport < PdfReport
   def workers_comp_program_additional_options_data
 
     ###### Drug-Free Safety
-    @drug_free_experience   = @policy_calculation.policy_total_standard_premium * 0.07
+    @drug_free_experience   = @policy_calculation.policy_adjusted_standard_premium * 0.07 # Changing from this due to Doug request 1/20/21: @policy_calculation.policy_total_standard_premium * 0.07
     @drug_free_group_rating = (@group_rating_eligibility == 'Yes' ? ((@account.group_premium || 0) * 0.07) : nil)
 
     ###### Safety Council
-    @safety_council_experience = (@policy_calculation.policy_total_standard_premium * 0.04)
+    @safety_council_experience = (@policy_calculation.policy_adjusted_standard_premium * 0.04) # Changing from this due to Doug request 1/20/21: (@policy_calculation.policy_total_standard_premium * 0.04)
     @safety_council_em_cap     = (@em_cap_eligibility == 'Yes' ? (@em_cap_projected_premium * 0.04) : nil)
     # @safety_council_ocp = (@policy_calculation.policy_total_standard_premium * 0.04)
     @safety_council_group_rating = (@group_rating_eligibility == 'Yes' ? ((@account.group_premium || 0) * 0.02) : nil)
-    @safety_council_group_retro  = (@group_retro_eligibility == 'Yes' ? (@policy_calculation.policy_total_standard_premium * 0.02) : '')
+    @safety_council_group_retro  = (@group_retro_eligibility == 'Yes' ? (@policy_calculation.policy_adjusted_standard_premium * 0.02) : '') # Changing from this due to Doug request 1/20/21: (@group_retro_eligibility == 'Yes' ? (@policy_calculation.policy_total_standard_premium * 0.02) : '')
     # @safety_council_individual_retro = (@account.group_retro_premium * 0.04)
     # @safety_council_mm_select = (@policy_calculation.policy_total_standard_premium * 0.04)
 
     ###### Industry Specific
-    @industry_specific_experience = (@policy_calculation.policy_total_standard_premium * 0.03)
+    @industry_specific_experience = (@policy_calculation.policy_adjusted_standard_premium * 0.03) # Changing from this due to Doug request 1/20/21: (@policy_calculation.policy_total_standard_premium * 0.03)
     @industry_specific_em_cap     = (@em_cap_eligibility == 'Yes' ? (@em_cap_projected_premium * 0.03) : nil)
     # @industry_specific_ocp = (@policy_calculation.policy_total_standard_premium * 0.03)
     @industry_specific_group_rating = (@group_rating_eligibility == 'Yes' ? ((@account.group_premium || 0) * 0.03) : nil)
@@ -791,7 +786,7 @@ class RiskReport < PdfReport
     # @industry_specific_mm_select
 
     ###### Transitional Work
-    @transitional_work_experience = (@policy_calculation.policy_total_standard_premium * 0.1)
+    @transitional_work_experience = (@policy_calculation.policy_adjusted_standard_premium * 0.1) # Changing from this due to Doug request 1/20/21: (@policy_calculation.policy_total_standard_premium * 0.1)
     @transitional_work_em_cap     = (@em_cap_eligibility == 'Yes' ? (@em_cap_projected_premium * 0.01) : nil)
     # @transitional_work_ocp = (@policy_calculation.policy_total_standard_premium * 0.03)
     @transitional_work_group_rating = (@group_rating_eligibility == 'Yes' ? ((@account.group_premium || 0) * 0.10) : nil)
@@ -833,7 +828,6 @@ class RiskReport < PdfReport
     # @lowest_costs_individual_retro =
     # @lowest_costs_mm_select =
 
-
     # Max Save vs Exp
     @max_save_experience   = @experience_projected_premium - @lowest_costs_experience
     @max_save_em_cap       = (@em_cap_eligibility == 'Yes' ? (@em_cap_projected_premium - @lowest_costs_em_cap) : nil)
@@ -841,7 +835,6 @@ class RiskReport < PdfReport
     @max_save_group_retro  = (@group_retro_eligibility == 'Yes' ? (@group_retro_projected_premium - @lowest_costs_group_retro) : nil)
     # @lowest_costs_individual_retro =
     # @lowest_costs_mm_select =
-
 
     @data = [["Drug Free Safety", "#{ round(@drug_free_experience, 0) }", "", "", "#{round(@drug_free_group_rating, 0)}", "", "", ""]]
     @data += [["Safety Council", "#{round(@safety_council_experience, 0)}", "#{ round(@safety_council_em_cap, 0)}", "", "#{ round(@safety_council_group_rating, 0)}", "#{ round(@safety_council_group_retro, 0)}", " ", ""]]
@@ -852,7 +845,6 @@ class RiskReport < PdfReport
     @data += [["Max Add'l Savings", "#{round(@max_savings_experience, 0)}", "#{round(@max_savings_em_cap, 0)}", "", "#{round(@max_savings_group_rating, 0)}", "#{ round(@max_savings_group_retro, 0)}", "", ""]]
     @data += [["Low Poss. Costs", "#{ round(@lowest_costs_experience, 0)}", "#{ round(@lowest_costs_em_cap, 0)}", "", "#{ round(@lowest_costs_group_rating, 0)}", "#{round(@lowest_costs_group_retro, 0)}", "", ""]]
     @data += [["Max Save vs Exp", "#{ round(@max_save_experience, 0)}", "#{round(@max_save_em_cap, 0)}", "", "#{round(@max_save_group_rating, 0)}", "#{round(@max_save_group_retro, 0)}", "", ""]]
-
 
   end
 
@@ -889,7 +881,6 @@ class RiskReport < PdfReport
       move_down 30
       text "Injury Year: #{ @fifth_out_of_experience_year}", style: :bold
       year_claim_table(claim_data(@fifth_out_of_experience_year_claims))
-
 
       #############################################################
       # Out of Experience Totals
@@ -1082,7 +1073,6 @@ class RiskReport < PdfReport
     med_paid_total = 0
     mira_res_total = 0
 
-
     claims_array.each do |e|
       if e.claim_handicap_percent.present? && e.claim_subrogation_percent.present? && e.claim_group_multiplier.present?
         comp_total     += (((e.claim_mira_reducible_indemnity_paid + e.claim_mira_non_reducible_indemnity_paid) * (1 - e.claim_subrogation_percent) - (e.claim_mira_non_reducible_indemnity_paid)) * (1 - e.claim_handicap_percent) + (e.claim_mira_non_reducible_indemnity_paid)) * e.claim_group_multiplier
@@ -1090,7 +1080,6 @@ class RiskReport < PdfReport
         mira_res_total += (1 - e.claim_handicap_percent) * (e.claim_mira_medical_reserve_amount + (e.claim_mira_indemnity_reserve_amount)) * e.claim_group_multiplier * (1 - e.claim_subrogation_percent)
       end
     end
-
 
     @data = [["Claim #", "Claimant", "DOI", "Man Num", "Comp Award", "Med. Paid", "MIRA Res.", "GTML", "ITML", "SI Total", "HC", "Code"]]
 
@@ -1314,6 +1303,5 @@ class RiskReport < PdfReport
     num = (num || 0) * 100
     @view.number_to_percentage(num, precision: 0)
   end
-
 
 end

@@ -5,11 +5,6 @@ class GroupRatingCalculate
   sidekiq_options queue: :group_rating_calculate, retry: 5
 
   def perform(account_id)
-    Account.includes(:policy_calculation).find_by(id: account_id)&.calculate
-
-    # account&.policy_calculation&.calculate_experience
-    # account&.policy_calculation&.calculate_premium
-    # account&.group_rating
-    # account&.group_retro
+    Account.includes(policy_calculation: [:claim_calculations, :manual_class_calculations, :payroll_calculations, :representative]).find_by(id: account_id)&.calculate
   end
 end
