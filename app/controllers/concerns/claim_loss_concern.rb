@@ -271,9 +271,7 @@ module ClaimLossConcern
       @worksheet.merge_cells(@current_row, 0, @current_row, 3)
       @worksheet.add_cell(@current_row, 0, total_text).change_horizontal_alignment(:center)
 
-      [*0..year_totals.size - 1].each do |total_data_index|
-        @worksheet.add_cell(@current_row, total_data_index + 4, year_totals[total_data_index]).change_border(:top, :medium)
-      end
+      [*0..year_totals.size - 1].each { |total_data_index| @worksheet.add_cell(@current_row, total_data_index + 4, year_totals[total_data_index]).change_border(:top, :medium) }
 
       @current_row += 2
 
@@ -292,7 +290,7 @@ module ClaimLossConcern
       @current_row += 1
     end
 
-     def injury_years_data(injury_years, injury_data)
+    def injury_years_data(injury_years, injury_data)
       table_data = []
 
       injury_data.each do |data|
@@ -329,9 +327,7 @@ module ClaimLossConcern
         @worksheet.merge_cells(@current_row, 0, @current_row, 3)
         @worksheet.add_cell(@current_row, 0, "Totals").change_horizontal_alignment(:center)
 
-        [*0..year_data[:totals].size].each do |total_data_index|
-          @worksheet.add_cell(@current_row, total_data_index + 4, year_data[:totals][total_data_index])
-        end
+        [*0..year_data[:totals].size].each { |total_data_index| @worksheet.add_cell(@current_row, total_data_index + 4, year_data[:totals][total_data_index]) }
 
         @current_row += 3
       end
