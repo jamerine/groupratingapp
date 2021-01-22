@@ -85,6 +85,8 @@ module ClaimLossConcern
       @experience_si_avg                           = (@experience_si_total / 4)
       @experience_si_ratio_avg                     = (@experience_si_total / @policy_calculation.policy_total_four_year_payroll) * @policy_calculation.policy_total_current_payroll
 
+      @experience_year_totals = [round(@experience_comp_total, 0), round(@experience_medical_total, 0), round(@experience_mira_medical_reserve_total, 0), round(@experience_group_modified_losses_total, 0), round(@experience_individual_modified_losses_total, 0), round(@experience_si_total, 0), '', '']
+
       # Out Of Experience Years Parameters
       @first_out_of_experience_year        = @first_experience_year - 5
       first_out_of_experience_year_period  = first_experience_year_period.first.advance(years: -5)..first_experience_year_period.last.advance(years: -5)
@@ -188,80 +190,22 @@ module ClaimLossConcern
     end
 
     def out_of_experience_worksheet
-      worksheet            = @claim_loss_workbook.worksheets[0]
-      worksheet.sheet_name = 'Out of Experience'
+      @worksheet            = @claim_loss_workbook.worksheets[0]
+      @worksheet.sheet_name = 'Out of Experience'
+      @current_row          = 0
 
-      injury_years           = [@first_out_of_experience_year, @second_out_of_experience_year, @third_out_of_experience_year, @fourth_out_of_experience_year, @fifth_out_of_experience_year]
-      out_of_experience_data = [@first_out_of_experience_year_claims, @second_out_of_experience_year_claims, @third_out_of_experience_year_claims, @fourth_out_of_experience_year_claims, @fifth_out_of_experience_year_claims]
-      table_data             = []
+      injury_years_data([@first_out_of_experience_year, @second_out_of_experience_year, @third_out_of_experience_year, @fourth_out_of_experience_year, @fifth_out_of_experience_year],
+                        [@first_out_of_experience_year_claims, @second_out_of_experience_year_claims, @third_out_of_experience_year_claims, @fourth_out_of_experience_year_claims, @fifth_out_of_experience_year_claims])
+      experience_totals("Out Of Experience Year Totals", @out_experience_year_totals, @out_of_experience_med_only, @out_of_experience_lost_time)
+    end
 
-      out_of_experience_data.each do |data|
-        claims_data, total_data = claim_data(data)
-        table_data << { data: claims_data, totals: total_data }
-      end
+    def experience_worksheet
+      @worksheet   = @claim_loss_workbook.add_worksheet("Experience")
+      @current_row = 0
 
-      current_row = 0
-
-      injury_years.each_with_index do |year, index|
-        worksheet.merge_cells(current_row, 0, current_row, 1)
-        worksheet.add_cell(current_row, 0, "Injury Year: #{year}")
-        worksheet.change_row_bold(current_row, true)
-
-        year_data   = table_data[index]
-        current_row += 2
-
-        CLAIM_LOSS_HEADERS.each_with_index do |header, column|
-          worksheet.add_cell(current_row, column, header)
-          worksheet[current_row][column].change_border(:bottom, :medium)
-          worksheet.change_row_bold(current_row, true)
-        end
-
-        current_row += 1
-
-        year_data[:data].each_with_index do |claim_data, row_index|
-          [*0..CLAIM_LOSS_HEADERS.size].each_with_index do |column, column_index|
-            worksheet.add_cell(current_row, column, claim_data[column])
-            worksheet[current_row][column_index - 1].change_border(:bottom, :medium) if row_index == year_data[:data].size - 1
-          end
-
-          current_row += 1
-        end
-
-        worksheet.change_row_bold(current_row, true)
-        worksheet.merge_cells(current_row, 0, current_row, 3)
-        worksheet.add_cell(current_row, 0, "Totals").change_horizontal_alignment(:center)
-
-        [*0..year_data[:totals].size].each do |total_data_index|
-          worksheet.add_cell(current_row, total_data_index + 4, year_data[:totals][total_data_index])
-        end
-
-        current_row += 3
-      end
-
-      worksheet.add_cell(current_row, 0, '').change_border(:bottom, :medium)
-      worksheet.add_cell(current_row, 1, '').change_border(:bottom, :medium)
-      worksheet.add_cell(current_row, 2, '').change_border(:bottom, :medium)
-      worksheet.add_cell(current_row, 3, '').change_border(:bottom, :medium)
-
-      current_row += 1
-
-      worksheet.change_row_bold(current_row, true)
-      worksheet.merge_cells(current_row, 0, current_row, 3)
-      worksheet.add_cell(current_row, 0, "Out Of Experience Year Totals").change_horizontal_alignment(:center)
-
-      [*0..@out_of_experience_year_totals.size - 1].each do |total_data_index|
-        worksheet.add_cell(current_row, total_data_index + 4, @out_of_experience_year_totals[total_data_index]).change_border(:top, :medium)
-      end
-
-      current_row += 2
-
-      worksheet.change_row_bold(current_row, true)
-      worksheet.add_cell(current_row, 0, "Med Only Claim Count: #{@out_of_experience_med_only}")
-
-      current_row += 1
-
-      worksheet.change_row_bold(current_row, true)
-      worksheet.add_cell(current_row, 0, "Lost Time Claim Count: #{@out_of_experience_lost_time}")
+      injury_years_data([@first_experience_year, @second_experience_year, @third_experience_year, @fourth_experience_year],
+                        [@first_experience_year_claims, @second_experience_year_claims, @third_experience_year_claims, @fourth_experience_year_claims])
+      experience_totals("Experience Year Totals", @experience_year_totals, @experience_med_only, @experience_lost_time)
     end
 
     def check_column_widths(worksheet)
@@ -284,6 +228,80 @@ module ClaimLossConcern
 
         worksheet.change_column_width(column, column_width)
       end
+    end
+
+    def experience_totals(total_text, year_totals, med_only, lost_time)
+      @worksheet.change_row_bold(@current_row, true)
+      @worksheet.merge_cells(@current_row, 0, @current_row, 3)
+      @worksheet.add_cell(@current_row, 0, total_text).change_horizontal_alignment(:center)
+
+      [*0..year_totals.size - 1].each do |total_data_index|
+        @worksheet.add_cell(@current_row, total_data_index + 4, year_totals[total_data_index]).change_border(:top, :medium)
+      end
+
+      @current_row += 2
+
+      @worksheet.change_row_bold(@current_row, true)
+      @worksheet.add_cell(@current_row, 0, "Med Only Claim Count: #{med_only}")
+
+      @current_row += 1
+
+      @worksheet.change_row_bold(@current_row, true)
+      @worksheet.add_cell(@current_row, 0, "Lost Time Claim Count: #{lost_time}")
+
+      @current_row + 1
+    end
+
+    def injury_years_data(injury_years, injury_data)
+      table_data = []
+
+      injury_data.each do |data|
+        claims_data, total_data = claim_data(data)
+        table_data << { data: claims_data, totals: total_data }
+      end
+
+      injury_years.each_with_index do |year, index|
+        @worksheet.merge_cells(@current_row, 0, @current_row, 1)
+        @worksheet.add_cell(@current_row, 0, "Injury Year: #{year}")
+        @worksheet.change_row_bold(@current_row, true)
+
+        year_data    = table_data[index]
+        @current_row += 2
+
+        CLAIM_LOSS_HEADERS.each_with_index do |header, column|
+          @worksheet.add_cell(@current_row, column, header)
+          @worksheet[@current_row][column].change_border(:bottom, :medium)
+          @worksheet.change_row_bold(@current_row, true)
+        end
+
+        @current_row += 1
+
+        year_data[:data].each_with_index do |claim_data, row_index|
+          [*0..CLAIM_LOSS_HEADERS.size].each_with_index do |column, column_index|
+            @worksheet.add_cell(@current_row, column, claim_data[column])
+            @worksheet[@current_row][column_index - 1].change_border(:bottom, :medium) if row_index == year_data[:data].size - 1
+          end
+
+          @current_row += 1
+        end
+
+        @worksheet.change_row_bold(@current_row, true)
+        @worksheet.merge_cells(@current_row, 0, @current_row, 3)
+        @worksheet.add_cell(@current_row, 0, "Totals").change_horizontal_alignment(:center)
+
+        [*0..year_data[:totals].size].each do |total_data_index|
+          @worksheet.add_cell(@current_row, total_data_index + 4, year_data[:totals][total_data_index])
+        end
+
+        @current_row += 3
+      end
+
+      @worksheet.add_cell(@current_row, 0, '').change_border(:bottom, :medium)
+      @worksheet.add_cell(@current_row, 1, '').change_border(:bottom, :medium)
+      @worksheet.add_cell(@current_row, 2, '').change_border(:bottom, :medium)
+      @worksheet.add_cell(@current_row, 3, '').change_border(:bottom, :medium)
+
+      @current_row + 1
     end
 
     def claim_data(claims_array)
