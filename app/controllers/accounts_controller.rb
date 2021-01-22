@@ -1,5 +1,7 @@
 class AccountsController < ApplicationController
+  include ClaimLossConcern
   before_action :get_details, only: [:show, :edit, :update]
+  claim_loss
 
   def index
     @statuses        = Account.statuses
@@ -192,7 +194,6 @@ class AccountsController < ApplicationController
     @account        = Account.find(params[:account_id])
     @group_rating   = GroupRating.find(params[:group_rating_id])
     @representative = @account.representative
-
   end
 
   def retention
@@ -286,7 +287,6 @@ class AccountsController < ApplicationController
       end
     end
 
-
   end
 
   def roc_report
@@ -315,7 +315,6 @@ class AccountsController < ApplicationController
         # pdf.render_file "app/reports/risk_report_#{@account.id}.pdf"
       end
     end
-
   end
 
   private

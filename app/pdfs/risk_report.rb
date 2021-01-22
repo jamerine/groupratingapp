@@ -1038,7 +1038,7 @@ class RiskReport < PdfReport
     first_cursor = cursor
     bounding_box([0, first_cursor], :width => 275, :height => 25) do
       text "Med Only Claim Count: #{@ten_year_med_only}     RCO1: #{ @ten_year_rc_01 }", style: :bold, :indent_paragraphs => 30
-      text "Lost Time Claim Count: #{@ten_year_lost_time}     RCO1: #{@ten_year_rc_02}", style: :bold, :indent_paragraphs => 30
+      text "Lost Time Claim Count: #{@ten_year_lost_time}     RCO2: #{@ten_year_rc_02}", style: :bold, :indent_paragraphs => 30
     end
     bounding_box([380, first_cursor], :width => 125, :height => 25) do
       text "SI Average: #{round(@ten_year_si_average, 0)}", style: :bold
