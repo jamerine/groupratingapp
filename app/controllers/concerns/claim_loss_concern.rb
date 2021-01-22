@@ -128,6 +128,8 @@ module ClaimLossConcern
       @out_of_experience_individual_reduced_total         = @out_of_experience_year_claims.sum(:claim_individual_reduced_amount)
       @out_of_experience_si_total                         = @out_of_experience_year_claims.sum(:claim_unlimited_limited_loss) - @out_of_experience_year_claims.sum(:claim_total_subrogation_collected)
 
+      @out_of_experience_year_totals = [round(@out_of_experience_comp_total, 0), round(@out_of_experience_medical_total, 0), round(@out_of_experience_mira_medical_reserve_total, 0), round(@out_of_experience_group_modified_losses_total, 0), round(@out_of_experience_individual_modified_losses_total, 0), round(@out_of_experience_si_total, 0), '', '']
+
       # TEN YEAR EXPERIENCE TOTALS
 
       @ten_year_claims = @account.policy_calculation.claim_calculations.where("claim_injury_date BETWEEN ? AND ? ", first_out_of_experience_year_period.first, @group_rating.experience_period_upper_date).order(:claim_injury_date)
@@ -235,6 +237,31 @@ module ClaimLossConcern
 
         current_row += 3
       end
+
+      worksheet.add_cell(current_row, 0, '').change_border(:bottom, :medium)
+      worksheet.add_cell(current_row, 1, '').change_border(:bottom, :medium)
+      worksheet.add_cell(current_row, 2, '').change_border(:bottom, :medium)
+      worksheet.add_cell(current_row, 3, '').change_border(:bottom, :medium)
+
+      current_row += 1
+
+      worksheet.change_row_bold(current_row, true)
+      worksheet.merge_cells(current_row, 0, current_row, 3)
+      worksheet.add_cell(current_row, 0, "Out Of Experience Year Totals").change_horizontal_alignment(:center)
+
+      [*0..@out_of_experience_year_totals.size - 1].each do |total_data_index|
+        worksheet.add_cell(current_row, total_data_index + 4, @out_of_experience_year_totals[total_data_index]).change_border(:top, :medium)
+      end
+
+      current_row += 2
+
+      worksheet.change_row_bold(current_row, true)
+      worksheet.add_cell(current_row, 0, "Med Only Claim Count: #{@out_of_experience_med_only}")
+
+      current_row += 1
+
+      worksheet.change_row_bold(current_row, true)
+      worksheet.add_cell(current_row, 0, "Lost Time Claim Count: #{@out_of_experience_lost_time}")
     end
 
     def check_column_widths(worksheet)
