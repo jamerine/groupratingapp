@@ -17,6 +17,8 @@ class GroupRatingAllCreate
         @account.update_attributes(policy_number_entered: @policy_demographic.policy_number, representative_id: representative_id, name: @policy_demographic.business_name, street_address: @policy_demographic.mailing_address_line_1, street_address_2: @policy_demographic.mailing_address_line_2, city: @policy_demographic.mailing_city, state: @policy_demographic.mailing_state, zip_code: @policy_demographic.mailing_zip_code)
       elsif @account.status == "invalid_policy_number"
         @account.update_attributes(policy_number_entered: @policy_demographic.policy_number, representative_id: representative_id, name: @policy_demographic.business_name, street_address: @policy_demographic.mailing_address_line_1, street_address_2: @policy_demographic.mailing_address_line_2, city: @policy_demographic.mailing_city, state: @policy_demographic.mailing_state, zip_code: @policy_demographic.mailing_zip_code, status: 2)
+      else # Generically update account info from BWC
+        @account.update_attributes(name: @policy_demographic.business_name, street_address: @policy_demographic.mailing_address_line_1, street_address_2: @policy_demographic.mailing_address_line_2, city: @policy_demographic.mailing_city, state: @policy_demographic.mailing_state, zip_code: @policy_demographic.mailing_zip_code)
       end
 
       @policy_calculation = PolicyCalculation.where(policy_number:         @account.policy_number_entered,
