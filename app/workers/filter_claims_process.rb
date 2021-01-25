@@ -1,7 +1,7 @@
 class FilterClaimsProcess
   include Sidekiq::Worker
 
-  sidekiq_options queue: :filter_claims_process, retry: 3
+  sidekiq_options queue: :filter_claims_process, retry: 5
 
   def perform(group_rating_id, all_process = nil)
     @group_rating   = GroupRating.find_by(id: group_rating_id)
