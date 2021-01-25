@@ -16,7 +16,7 @@
           <b><%= note.title&.titleize %></b>
         </div>
         <div class="col col-sm-2">
-          <b><%= note.user.email %></b>
+          <b><%= note.user&.email %></b>
         </div>
         <div class="col col-sm-2">
           <b><%= l (note.date || note.created_at), format: :note_time %></b>
