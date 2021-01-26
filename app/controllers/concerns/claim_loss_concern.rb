@@ -39,7 +39,15 @@ module ClaimLossConcern
       @group_rating       = GroupRating.find_by(id: params[:group_rating_id])
       @representative     = @account.representative
       @policy_calculation = @account.policy_calculation
-      redirect_to page_not_found_path unless @policy_calculation.present?
+      redirect_to page_not_found_path and return unless @policy_calculation.present?
+
+      @start_date = @group_rating.experience_period_lower_date
+      @end_date   = @group_rating.experience_period_upper_date
+
+      if @policy_calculation.public_employer?
+        @start_date = @start_date.beginning_of_year
+        @end_date   = @end_date.beginning_of_year
+      end
     end
 
     def prepare_claim_loss_data
@@ -52,8 +60,8 @@ module ClaimLossConcern
 
     def init_experience_data
       # Experience Years Parameters
-      @first_experience_year        = @group_rating.experience_period_lower_date.strftime("%Y").to_i
-      @first_experience_year_period = @group_rating.experience_period_lower_date..(@group_rating.experience_period_lower_date.advance(years: 1).advance(days: -1))
+      @first_experience_year        = @start_date.strftime("%Y").to_i
+      @first_experience_year_period = @start_date..(@start_date.advance(years: 1).advance(days: -1))
       @first_experience_year_claims = @account.policy_calculation.claim_calculations.where("claim_injury_date BETWEEN ? AND ? ", @first_experience_year_period.first, @first_experience_year_period.last).order(:claim_injury_date)
 
       @second_experience_year        = @first_experience_year + 1
@@ -70,7 +78,7 @@ module ClaimLossConcern
 
       # Experience Totals
 
-      @experience_year_claims = @account.policy_calculation.claim_calculations.where("claim_injury_date BETWEEN ? AND ? ", @group_rating.experience_period_lower_date, @group_rating.experience_period_upper_date).order(:claim_injury_date)
+      @experience_year_claims = @account.policy_calculation.claim_calculations.where("claim_injury_date BETWEEN ? AND ? ", @start_date, @end_date).order(:claim_injury_date)
       @experience_med_only    = @experience_year_claims.where("left(claim_type, 1) = '1'").count
       @experience_lost_time   = @experience_year_claims.where("left(claim_type, 1) = '2'").count
 
@@ -143,7 +151,7 @@ module ClaimLossConcern
 
     def init_ten_year_experience_data
       # TEN YEAR EXPERIENCE TOTALS
-      @ten_year_claims = @account.policy_calculation.claim_calculations.where("claim_injury_date BETWEEN ? AND ? ", @first_out_of_experience_year_period.first, @group_rating.experience_period_upper_date).order(:claim_injury_date)
+      @ten_year_claims = @account.policy_calculation.claim_calculations.where("claim_injury_date BETWEEN ? AND ? ", @first_out_of_experience_year_period.first, @end_date).order(:claim_injury_date)
 
       @ten_year_med_only  = @ten_year_claims.where("left(claim_type, 1) = '1'").count
       @ten_year_lost_time = @ten_year_claims.where("left(claim_type, 1) = '2'").count
@@ -169,8 +177,8 @@ module ClaimLossConcern
 
     def init_green_year_experience_data
       # GREEN YEAR EXPERIENCE
-      @first_green_year        = @group_rating.experience_period_upper_date.strftime("%Y").to_i
-      @first_green_year_period = (@group_rating.experience_period_upper_date.advance(days: 1))..(@group_rating.experience_period_upper_date.advance(years: 1))
+      @first_green_year        = @end_date.strftime("%Y").to_i
+      @first_green_year_period = (@end_date.advance(days: 1))..(@end_date.advance(years: 1))
       @first_green_year_claims = @account.policy_calculation.claim_calculations.where("claim_injury_date BETWEEN ? AND ? ", @first_green_year_period.first, @first_green_year_period.last).order(:claim_injury_date)
 
       @second_green_year        = @first_green_year + 1
