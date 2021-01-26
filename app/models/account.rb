@@ -130,6 +130,11 @@ class Account < ActiveRecord::Base
     joins(:affiliates).where("LOWER(affiliates.first_name) LIKE ? OR LOWER(affiliates.last_name) LIKE ?", "%#{search_name}%", "%#{search_name}%")
   end
 
+  def self.search_employer_type(type)
+    type = type == 'None' ? '' : type
+    joins(:policy_calculation).where(policy_calculations: { employer_type: type })
+  end
+
   def tpa_from_date
     self.tpa_start_date || Date.new(self.representative.program_year, 12, 1)
   end

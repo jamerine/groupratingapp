@@ -39,6 +39,7 @@
 #                                        account_assign POST       /accounts/:account_id/assign(.:format)                                            accounts#assign
 #                                account_assign_address POST       /accounts/:account_id/assign_address(.:format)                                    accounts#assign_address
 #                                   account_risk_report GET        /accounts/:account_id/risk_report(.:format)                                       accounts#risk_report
+#                             account_claim_loss_export POST       /accounts/:account_id/claim_loss_export(.:format)                                 accounts#claim_loss_export
 #                               account_new_risk_report GET        /accounts/:account_id/new_risk_report(.:format)                                   accounts#new_risk_report
 #                                     account_retention GET        /accounts/:account_id/retention(.:format)                                         accounts#retention
 #                                    account_roc_report GET        /accounts/:account_id/roc_report(.:format)                                        accounts#roc_report

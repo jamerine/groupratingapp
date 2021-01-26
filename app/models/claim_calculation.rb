@@ -40,6 +40,7 @@
 #  indemnity_settlement_date                 :date
 #  maximum_medical_improvement_date          :date
 #  medical_settlement_date                   :date
+#  non_at_fault                              :string
 #  policy_individual_maximum_claim_value     :float            default(0.0)
 #  policy_number                             :integer
 #  policy_type                               :string
@@ -223,11 +224,6 @@ class ClaimCalculation < ActiveRecord::Base
 
   def indemnity_last_paid_date
     @democ_detail_record&.last_paid_indemnity_date || mira_detail_record&.last_indemnity_period_end_date
-  end
-
-  def non_at_fault
-    return unless @democ_detail_record.present?
-    @democ_detail_record&.non_at_fault
   end
 
   def total_loss_of_claim

@@ -1,7 +1,7 @@
 module ClaimLossConcern
   extend ActiveSupport::Concern
   DEFAULT_COLUMN_WIDTH = 13.freeze
-  CLAIM_LOSS_HEADERS   = ['Claim Number', 'Claimant', 'DOI', 'Manual Number', 'Medical Paid', 'Comp Paid', 'MIRA Reserve', 'Total Cost', 'HC', 'Code'].freeze
+  CLAIM_LOSS_HEADERS   = ['Claim Number', 'Claimant', 'DOI', 'Manual Number', 'Medical Paid', 'Comp Paid', 'MIRA Reserve', 'Total Cost', 'Subrogation', 'Non At Fault', 'HC', 'Code'].freeze
 
   module ClassMethods
     def claim_loss
@@ -96,10 +96,11 @@ module ClaimLossConcern
       @experience_individual_modified_losses_total = @experience_year_claims.sum(:claim_modified_losses_individual_reduced)
       @experience_individual_reduced_total         = @experience_year_claims.sum(:claim_individual_reduced_amount)
       @experience_si_total                         = @experience_year_claims.sum(:claim_unlimited_limited_loss) - @experience_year_claims.sum(:claim_total_subrogation_collected)
+      @experience_subrogation_total                = @experience_year_claims.sum(:claim_total_subrogation_collected)
       @experience_si_avg                           = (@experience_si_total / 4)
       @experience_si_ratio_avg                     = (@experience_si_total / @policy_calculation.policy_total_four_year_payroll) * @policy_calculation.policy_total_current_payroll
 
-      @experience_year_totals = [round(@experience_medical_total, 0), round(@experience_comp_total, 0), round(@experience_mira_medical_reserve_total, 0), round(@experience_si_total, 0), '', '']
+      @experience_year_totals = [round(@experience_medical_total, 0), round(@experience_comp_total, 0), round(@experience_mira_medical_reserve_total, 0), round(@experience_si_total, 0), round(@experience_subrogation_total, 0), '', '', '']
     end
 
     def init_out_of_experience_data
@@ -144,9 +145,10 @@ module ClaimLossConcern
       @out_of_experience_group_modified_losses_total      = @out_of_experience_year_claims.sum(:claim_modified_losses_group_reduced)
       @out_of_experience_individual_modified_losses_total = @out_of_experience_year_claims.sum(:claim_modified_losses_individual_reduced)
       @out_of_experience_individual_reduced_total         = @out_of_experience_year_claims.sum(:claim_individual_reduced_amount)
+      @out_of_experience_subrogation_total                = @out_of_experience_year_claims.sum(:claim_total_subrogation_collected)
       @out_of_experience_si_total                         = @out_of_experience_year_claims.sum(:claim_unlimited_limited_loss) - @out_of_experience_year_claims.sum(:claim_total_subrogation_collected)
 
-      @out_of_experience_year_totals = [round(@out_of_experience_medical_total, 0), round(@out_of_experience_comp_total, 0), round(@out_of_experience_mira_medical_reserve_total, 0), round(@out_of_experience_si_total, 0), '', '']
+      @out_of_experience_year_totals = [round(@out_of_experience_medical_total, 0), round(@out_of_experience_comp_total, 0), round(@out_of_experience_mira_medical_reserve_total, 0), round(@out_of_experience_si_total, 0), round(@out_of_experience_subrogation_total, 0), '', '', '']
     end
 
     def init_ten_year_experience_data
@@ -165,6 +167,7 @@ module ClaimLossConcern
       @ten_year_group_modified_losses_total      = @ten_year_claims.sum(:claim_modified_losses_group_reduced)
       @ten_year_individual_modified_losses_total = @ten_year_claims.sum(:claim_modified_losses_individual_reduced)
       @ten_year_individual_reduced_total         = @ten_year_claims.sum(:claim_individual_reduced_amount)
+      @ten_year_subrogation_total                = @ten_year_claims.sum(:claim_total_subrogation_collected)
       @ten_year_si_total                         = @experience_si_total + @out_of_experience_si_total
       @ten_year_si_avg                           = (@ten_year_si_total / 10)
       @ten_year_si_ratio_avg                     = 'N/A'
@@ -172,7 +175,7 @@ module ClaimLossConcern
       @ten_year_si_average   = (@ten_year_si_total / 10)
       @ten_year_si_ratio_avg = 'N/A'
 
-      @ten_year_totals = [round(@ten_year_medical_total, 0), round(@ten_year_comp_total, 0), round(@ten_year_mira_medical_reserve_total, 0), round(@ten_year_si_total, 0), '', '']
+      @ten_year_totals = [round(@ten_year_medical_total, 0), round(@ten_year_comp_total, 0), round(@ten_year_mira_medical_reserve_total, 0), round(@ten_year_si_total, 0), round(@ten_year_subrogation_total, 0), '', '', '']
     end
 
     def init_green_year_experience_data
@@ -207,8 +210,9 @@ module ClaimLossConcern
       @green_year_group_modified_losses_total      = @green_year_claims.sum(:claim_modified_losses_group_reduced)
       @green_year_individual_modified_losses_total = @green_year_claims.sum(:claim_modified_losses_individual_reduced)
       @green_year_individual_reduced_total         = @green_year_claims.sum(:claim_individual_reduced_amount)
+      @green_year_subrogation_total                = @green_year_claims.sum(:claim_total_subrogation_collected)
 
-      @green_year_experience_totals = [round(@green_year_medical_total, 0), round(@green_year_comp_total, 0), round(@green_year_mira_medical_reserve_total, 0), round(@green_year_individual_reduced_total, 0), '', '']
+      @green_year_experience_totals = [round(@green_year_medical_total, 0), round(@green_year_comp_total, 0), round(@green_year_mira_medical_reserve_total, 0), round(@green_year_individual_reduced_total, 0), round(@green_year_subrogation_total, 0), '', '', '']
     end
 
     ## Worksheet Helpers
@@ -217,7 +221,6 @@ module ClaimLossConcern
       @worksheet.sheet_name = 'Out of Experience'
       @current_row          = 0
       insert_current_date
-
 
       injury_years_data([@first_out_of_experience_year, @second_out_of_experience_year, @third_out_of_experience_year, @fourth_out_of_experience_year, @fifth_out_of_experience_year],
                         [@first_out_of_experience_year_claims, @second_out_of_experience_year_claims, @third_out_of_experience_year_claims, @fourth_out_of_experience_year_claims, @fifth_out_of_experience_year_claims])
@@ -257,8 +260,8 @@ module ClaimLossConcern
     end
 
     def insert_current_date
-      @worksheet.add_cell(@current_row, 8, "Data Current As Of:")
-      @worksheet.add_cell(@current_row, 9, Date.current.strftime('%m/%d/%Y'))
+      @worksheet.add_cell(@current_row, 10, "Data Current As Of:")
+      @worksheet.add_cell(@current_row, 11, Date.current.strftime('%m/%d/%Y'))
     end
 
     def check_column_widths(worksheet)
@@ -382,10 +385,10 @@ module ClaimLossConcern
           mira_res     = "#{round((1 - e.claim_handicap_percent) * (e.claim_mira_medical_reserve_amount + (e.claim_mira_indemnity_reserve_amount)) * e.claim_group_multiplier * (1 - e.claim_subrogation_percent), 0)}"
         end
 
-        [e.claim_number, e.claimant_name.titleize, e.claim_injury_date.in_time_zone("America/New_York").strftime("%m/%d/%y"), e.claim_manual_number, medical_paid, comp_awarded, mira_res, round((e.claim_unlimited_limited_loss || 0) - (e.claim_total_subrogation_collected || 0), 0), percent(e.claim_handicap_percent), claim_code_calc(e)]
+        [e.claim_number, e.claimant_name.titleize, e.claim_injury_date.in_time_zone("America/New_York").strftime("%m/%d/%y"), e.claim_manual_number, medical_paid, comp_awarded, mira_res, round((e.claim_unlimited_limited_loss || 0) - (e.claim_total_subrogation_collected || 0), 0), round((e.claim_total_subrogation_collected || 0), 0), e.non_at_fault, percent(e.claim_handicap_percent), claim_code_calc(e)]
       end
 
-      [data, [round(med_paid_total, 0), round(comp_total, 0), round(mira_res_total, 0), round(claims_array.sum(:claim_unlimited_limited_loss) - claims_array.sum(:claim_total_subrogation_collected), 0), "", ""]]
+      [data, [round(med_paid_total, 0), round(comp_total, 0), round(mira_res_total, 0), round(claims_array.sum(:claim_unlimited_limited_loss) - claims_array.sum(:claim_total_subrogation_collected), 0), round(claims_array.sum(:claim_total_subrogation_collected), 0), '', '', '']]
     end
 
     def price(num)

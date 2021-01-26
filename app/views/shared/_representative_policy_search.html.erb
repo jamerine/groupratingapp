@@ -1,21 +1,26 @@
 <div class="form-inline">
-  <div class="form-group">
+  <div class="form-group" style="margin-bottom: 10px;">
     <%= select_tag(:representative_number, options_from_collection_for_select(@representatives.order(:abbreviated_name), :representative_number, :abbreviated_name, params[:representative_number]), include_blank: "All Representatives", class: 'dropdown-toggle form-control') %>
   </div>
-  <div class="form-group">
-    <%= select_tag(:status, options_from_collection_for_select(@statuses, :last, lambda { |s| s.first.titleize }), include_blank: 'Account Status', class: 'form-control') %>
+  <div class="form-group" style="margin-bottom: 10px;">
+    <%= select_tag(:status, options_from_collection_for_select(@statuses, :last, lambda { |s| s.first.titleize }), include_blank: 'Select Account Status', class: 'form-control') %>
   </div>
-  <div class="form-group">
-    <%= select_tag(:policy_status, options_from_collection_for_select(@policy_statuses, lambda { |s| s.upcase }, lambda { |s| s.upcase }), include_blank: 'Policy Status', class: 'form-control') %>
+  <div class="form-group" style="margin-bottom: 10px;">
+    <%= select_tag(:policy_status, options_from_collection_for_select(@policy_statuses, lambda { |s| s.upcase }, lambda { |s| s.upcase }), include_blank: 'Select Policy Status', class: 'form-control') %>
   </div>
-  <div class="form-group">
+  <div class="form-group" style="margin-bottom: 10px;">
+    <%= select_tag(:employer_type, options_from_collection_for_select(@employer_types, lambda { |s| s.upcase }, lambda { |s| s.upcase }), include_blank: 'Select Employer Type', class: 'form-control') %>
+  </div>
+  <div class="form-group" style="margin-bottom: 10px;">
     <%= text_field_tag :search, params[:search], placeholder: "Search Policy Number", class: 'form-control policy-number-search' %>
   </div>
-  <div class="form-group">
+  <div class="form-group" style="margin-bottom: 10px;">
     <%= text_field_tag :search_name, params[:search_name], placeholder: "Search Account Name", class: 'form-control' %>
   </div>
-  <div class="form-group">
+  <div class="form-group" style="margin-bottom: 10px;">
     <%= text_field_tag :search_affiliate, params[:search_affiliate], placeholder: "Search Affiliate Name", class: 'form-control' %>
   </div>
-  <%= submit_tag "Search", name: nil, class: 'btn btn-primary' %>
+  <div class="form-group" style="margin-bottom: 10px;">
+    <%= submit_tag "Search", name: nil, class: 'btn btn-primary' %>
+  </div>
 </div>

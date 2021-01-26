@@ -17,7 +17,8 @@ class GroupRatingAllCreate
         @account.update_attributes(policy_number_entered: @policy_demographic.policy_number, representative_id: representative_id, name: @policy_demographic.business_name, street_address: @policy_demographic.mailing_address_line_1, street_address_2: @policy_demographic.mailing_address_line_2, city: @policy_demographic.mailing_city, state: @policy_demographic.mailing_state, zip_code: @policy_demographic.mailing_zip_code)
       elsif @account.status == "invalid_policy_number"
         @account.update_attributes(policy_number_entered: @policy_demographic.policy_number, representative_id: representative_id, name: @policy_demographic.business_name, street_address: @policy_demographic.mailing_address_line_1, street_address_2: @policy_demographic.mailing_address_line_2, city: @policy_demographic.mailing_city, state: @policy_demographic.mailing_state, zip_code: @policy_demographic.mailing_zip_code, status: 2)
-      else # Generically update account info from BWC
+      else
+        # Generically update account info from BWC
         @account.update_attributes(name: @policy_demographic.business_name, street_address: @policy_demographic.mailing_address_line_1, street_address_2: @policy_demographic.mailing_address_line_2, city: @policy_demographic.mailing_city, state: @policy_demographic.mailing_state, zip_code: @policy_demographic.mailing_zip_code)
       end
 
@@ -115,6 +116,7 @@ class GroupRatingAllCreate
           maximum_medical_improvement_date:          claim.maximum_medical_improvement_date,
           claim_mira_ncci_injury_type:               claim.claim_mira_ncci_injury_type,
           enhanced_care_program_indicator:           claim.enhanced_care_program_indicator,
+          non_at_fault:                              claim.democ_detail_record&.non_at_fault,
           data_source:                               claim.data_source)
       end
 
@@ -187,7 +189,6 @@ class GroupRatingAllCreate
                                         manual_class_base_rate:      man_class_exp.manual_class_base_rate,
                                         manual_class_industry_group: man_class_exp.manual_class_industry_group,
                                         data_source:                 man_class_exp.data_source)
-
 
           ProcessPayrollAllTransactionsBreakdownByManualClass.where("reporting_period_start_date >= :reporting_period_start_date and representative_number = :representative_number and manual_number = :manual_number and policy_number = :policy_number",
                                                                     reporting_period_start_date: experience_period_lower_date,

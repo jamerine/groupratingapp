@@ -40,6 +40,7 @@
 #  indemnity_settlement_date                 :date
 #  maximum_medical_improvement_date          :date
 #  medical_settlement_date                   :date
+#  non_at_fault                              :string
 #  policy_individual_maximum_claim_value     :float            default(0.0)
 #  policy_number                             :integer
 #  policy_type                               :string
