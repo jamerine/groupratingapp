@@ -208,6 +208,8 @@ module ClaimLossConcern
       @worksheet            = @claim_loss_workbook.worksheets[0]
       @worksheet.sheet_name = 'Out of Experience'
       @current_row          = 0
+      insert_current_date
+
 
       injury_years_data([@first_out_of_experience_year, @second_out_of_experience_year, @third_out_of_experience_year, @fourth_out_of_experience_year, @fifth_out_of_experience_year],
                         [@first_out_of_experience_year_claims, @second_out_of_experience_year_claims, @third_out_of_experience_year_claims, @fourth_out_of_experience_year_claims, @fifth_out_of_experience_year_claims])
@@ -217,6 +219,7 @@ module ClaimLossConcern
     def experience_worksheet
       @worksheet   = @claim_loss_workbook.add_worksheet("Experience")
       @current_row = 0
+      insert_current_date
 
       injury_years_data([@first_experience_year, @second_experience_year, @third_experience_year, @fourth_experience_year],
                         [@first_experience_year_claims, @second_experience_year_claims, @third_experience_year_claims, @fourth_experience_year_claims])
@@ -237,11 +240,17 @@ module ClaimLossConcern
     def green_year_experience_worksheet
       @worksheet   = @claim_loss_workbook.add_worksheet("Green Year Experience")
       @current_row = 0
+      insert_current_date
 
       injury_years_data([@first_green_year, @second_green_year],
                         [@first_green_year_claims, @second_green_year_claims])
 
       experience_totals("Green Year Experience Totals", @green_year_experience_totals, @green_year_med_only, @green_year_loss_time)
+    end
+
+    def insert_current_date
+      @worksheet.add_cell(@current_row, 8, "Data Current As Of:")
+      @worksheet.add_cell(@current_row, 9, Date.current.strftime('%m/%d/%Y'))
     end
 
     def check_column_widths(worksheet)
@@ -258,6 +267,7 @@ module ClaimLossConcern
 
           worksheet.change_row_font_size(row, 12)
           worksheet.change_row_height(row, 16)
+          worksheet.change_row_horizontal_alignment(row, :left)
           cell_width   = (cell.value&.to_s&.size || 0) * 1.5
           column_width = cell_width if cell_width > column_width
         end
