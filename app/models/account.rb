@@ -89,6 +89,8 @@ class Account < ActiveRecord::Base
 
   delegate :representative_number, to: :representative, prefix: false, allow_nil: false
 
+  attr_accessor :group_rating_id, :start_date, :end_date
+
   def self.update_or_create(attributes)
     obj = first || new
     obj.assign_attributes(attributes)

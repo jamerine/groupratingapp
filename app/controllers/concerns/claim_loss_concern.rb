@@ -6,8 +6,9 @@ module ClaimLossConcern
   module ClassMethods
     def claim_loss
       include InstanceMethods
-      before_action :set_claim_loss_account, only: :claim_loss_export
-      before_action :prepare_claim_loss_data, only: :claim_loss_export
+      before_action :set_claim_loss_account, only: [:claim_loss_export, :ranged_claim_loss_export, :ranged_claim_loss_export_form]
+      before_action :set_dates, only: [:claim_loss_export, :ranged_claim_loss_export, :ranged_claim_loss_export_form]
+      before_action :prepare_claim_loss_data, only: [:claim_loss_export, :ranged_claim_loss_export_form]
     end
   end
 
@@ -15,6 +16,57 @@ module ClaimLossConcern
     extend ActiveSupport::Concern
 
     def claim_loss_export
+      generate_claim_loss_export
+    end
+
+    def ranged_claim_loss_export
+    end
+
+    def ranged_claim_loss_export_form
+      @account.errors.add(:start_date, 'Start Date is required!') if claim_account_params[:start_date].blank?
+      @account.errors.add(:end_date, 'End Date is required!') if claim_account_params[:end_date].blank?
+      @account.errors.add(:start_date, 'Start Date cannot be after End Date!') if @start_date.present? && @end_date.present? && @start_date > @end_date
+
+      if @account.errors.any?
+        flash[:danger] = 'Something went wrong, please try again!'
+        render :ranged_claim_loss_export
+      else
+        generate_claim_loss_export
+      end
+    end
+
+    private
+
+    def claim_account_params
+      params.require(:account).permit(:group_rating_id, :start_date, :end_date)
+    end
+
+    def set_claim_loss_account
+      @account = Account.find_by(id: params[:account_id] || params[:id])
+      redirect_to page_not_found_path and return unless @account.present?
+
+      @group_rating       = GroupRating.find_by(id: params[:group_rating_id] || claim_account_params[:group_rating_id])
+      @representative     = @account.representative
+      @policy_calculation = @account.policy_calculation
+      redirect_to page_not_found_path unless @policy_calculation.present?
+    end
+
+    def set_dates
+      if params[:account].present? && claim_account_params[:start_date].present? && claim_account_params[:end_date].present?
+        @start_date = Date.parse(claim_account_params[:start_date])
+        @end_date   = Date.parse(claim_account_params[:end_date])
+      else
+        @start_date = @group_rating.experience_period_lower_date
+        @end_date   = @group_rating.experience_period_upper_date
+
+        if @policy_calculation.public_employer?
+          @start_date = @start_date.beginning_of_year
+          @end_date   = @end_date.beginning_of_year - 1.day
+        end
+      end
+    end
+
+    def generate_claim_loss_export
       require 'rubyXL'
       require 'rubyXL/convenience_methods'
 
@@ -28,26 +80,6 @@ module ClaimLossConcern
       @claim_loss_workbook.worksheets.each(&method(:check_column_widths))
 
       send_data @claim_loss_workbook.stream.string, filename: "#{@account.name.parameterize.underscore}_claim_loss.xlsx", disposition: :attachment
-    end
-
-    private
-
-    def set_claim_loss_account
-      @account = Account.find_by(id: params[:account_id])
-      redirect_to page_not_found_path and return unless @account.present?
-
-      @group_rating       = GroupRating.find_by(id: params[:group_rating_id])
-      @representative     = @account.representative
-      @policy_calculation = @account.policy_calculation
-      redirect_to page_not_found_path and return unless @policy_calculation.present?
-
-      @start_date = @group_rating.experience_period_lower_date
-      @end_date   = @group_rating.experience_period_upper_date
-
-      if @policy_calculation.public_employer?
-        @start_date = @start_date.beginning_of_year
-        @end_date   = @end_date.beginning_of_year
-      end
     end
 
     def prepare_claim_loss_data

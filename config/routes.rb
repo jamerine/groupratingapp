@@ -456,6 +456,8 @@ Rails.application.routes.draw do
     post :assign_address
     get :risk_report
     post :claim_loss_export
+    get :ranged_claim_loss_export
+    post :ranged_claim_loss_export_form
     get :new_risk_report
     get :retention
     get :roc_report
