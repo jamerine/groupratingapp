@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20210111214302) do
+ActiveRecord::Schema.define(version: 20210126154741) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -351,6 +351,7 @@ ActiveRecord::Schema.define(version: 20210111214302) do
     t.date     "maximum_medical_improvement_date"
     t.string   "claim_mira_ncci_injury_type"
     t.string   "enhanced_care_program_indicator",           default: "N"
+    t.string   "non_at_fault"
   end
 
   add_index "claim_calculations", ["policy_calculation_id"], name: "index_claim_calculations_on_policy_calculation_id", using: :btree

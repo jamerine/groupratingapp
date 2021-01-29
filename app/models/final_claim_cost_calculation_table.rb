@@ -55,4 +55,13 @@
 #
 
 class FinalClaimCostCalculationTable < ActiveRecord::Base
+  def democ_detail_records
+    DemocDetailRecord.filter_by(representative_number).where('democ_detail_records.claim_number LIKE ?', "%#{self.claim_number.strip}%").where(policy_number: self.policy_number)
+  end
+
+  def democ_detail_record
+    return @democ_detail_record if @democ_detail_record.present?
+
+    @democ_detail_record = democ_detail_records.last
+  end
 end

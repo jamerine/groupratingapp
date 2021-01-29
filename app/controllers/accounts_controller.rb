@@ -1,9 +1,12 @@
 class AccountsController < ApplicationController
+  include ClaimLossConcern
   before_action :get_details, only: [:show, :edit, :update]
+  claim_loss
 
   def index
     @statuses        = Account.statuses
     @policy_statuses = PolicyCalculation.current_coverage_statuses
+    @employer_types  = PolicyCalculation.employer_types
     @accounts        = Account.where(representative_id: @representatives).includes(:representative, :policy_calculation)
 
     if params[:search].present? && params[:representative_number].present?
@@ -18,9 +21,14 @@ class AccountsController < ApplicationController
       @accounts = @accounts.search_name(params[:search_name]).paginate(page: params[:page], per_page: 50)
     elsif params[:search_affiliate].present?
       @accounts = @accounts.search_affiliate(params[:search_affiliate]).paginate(page: params[:page], per_page: 50)
+    elsif params[:employer_type].present? && params[:representative_number].present?
+      @representative = @representatives.find_by(representative_number: params[:representative_number])
+      @accounts       = @representative.accounts.search_employer_type(params[:employer_type]).paginate(page: params[:page], per_page: 50)
+    elsif params[:employer_type].present?
+      @accounts = @accounts.search_employer_type(params[:employer_type]).paginate(page: params[:page], per_page: 50)
     elsif params[:representative_number].present?
       @representative = @representatives.find_by(representative_number: params[:representative_number])
-      @accounts       = @accounts.where(representative_id: @representative.id).paginate(page: params[:page], per_page: 50)
+      @accounts       = @representative.accounts.paginate(page: params[:page], per_page: 50)
     else
       @accounts = @accounts.all.paginate(page: params[:page], per_page: 50)
     end
@@ -192,7 +200,6 @@ class AccountsController < ApplicationController
     @account        = Account.find(params[:account_id])
     @group_rating   = GroupRating.find(params[:group_rating_id])
     @representative = @account.representative
-
   end
 
   def retention
@@ -286,7 +293,6 @@ class AccountsController < ApplicationController
       end
     end
 
-
   end
 
   def roc_report
@@ -315,7 +321,6 @@ class AccountsController < ApplicationController
         # pdf.render_file "app/reports/risk_report_#{@account.id}.pdf"
       end
     end
-
   end
 
   private

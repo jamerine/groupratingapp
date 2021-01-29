@@ -1,0 +1,29 @@
+.container
+  = render partial: "shared/account_navbar", object: @account
+
+  .row
+    .col-sm-12
+      = link_to 'Back', @account, class: 'btn btn-primary', style: 'margin-bottom: 10px;'
+
+      br
+
+      .jumbotron
+        h2.text-center Generate Claim Loss Export for #{@account.name}
+
+        = simple_form_for @account, url: account_ranged_claim_loss_export_form_path, method: :post do |f|
+          = f.input :group_rating_id, as: :hidden, input_html: { value: @group_rating.id }
+
+          .row
+            .col.col-md-6 = f.input :start_date, as: :string, label: 'Start Date', input_html: { class: 'claim-loss-datepicker', value: @start_date&.strftime('%Y-%m-%d') }
+            .col.col-md-6 = f.input :end_date, as: :string, label: 'End Date', input_html: { class: 'claim-loss-datepicker', value: @end_date&.strftime('%Y-%m-%d') }
+
+          .row
+            .col-sm-12.text-right = f.submit 'Generate', class: 'btn btn-primary'
+
+javascript:
+  $(function () {
+    $('.claim-loss-datepicker').datetimepicker({
+      format:     'YYYY-MM-DD',
+      useCurrent: false
+    });
+  });

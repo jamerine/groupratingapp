@@ -161,8 +161,9 @@
         <span class="caret"></span>
       </button>
       <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-        <!-- <li><%= link_to 'Risk Report', account_risk_report_path(account_id: @account.id, group_rating_id: @group_rating.id, format: :pdf) %></li> -->
         <li><%= link_to 'Generate Risk Report', account_new_risk_report_path(account_id: @account.id, group_rating_id: @group_rating.id) %></li>
+        <li><%= link_to 'Export Claim Loss', account_claim_loss_export_path(account_id: @account.id, group_rating_id: @group_rating.id), method: :post %></li>
+        <li><%= link_to 'Export Claim Loss With Date Range', account_ranged_claim_loss_export_path(account_id: @account.id, group_rating_id: @group_rating.id) %></li>
       </ul>
       <% unless @account.predecessor? || @account.invalid_policy_number? %>
         <% if policy(@account).edit? %>
