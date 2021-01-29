@@ -252,6 +252,7 @@ module ClaimLossConcern
       @worksheet            = @claim_loss_workbook.worksheets[0]
       @worksheet.sheet_name = 'Out of Experience'
       @current_row          = 0
+      insert_header
       insert_current_date
 
       injury_years_data([@first_out_of_experience_year, @second_out_of_experience_year, @third_out_of_experience_year, @fourth_out_of_experience_year, @fifth_out_of_experience_year],
@@ -262,20 +263,21 @@ module ClaimLossConcern
     def experience_worksheet
       @worksheet   = @claim_loss_workbook.add_worksheet("Experience")
       @current_row = 0
+      insert_header
       insert_current_date
 
       injury_years_data([@first_experience_year, @second_experience_year, @third_experience_year, @fourth_experience_year],
                         [@first_experience_year_claims, @second_experience_year_claims, @third_experience_year_claims, @fourth_experience_year_claims])
       experience_totals("Experience Year Totals", @experience_year_totals, @experience_med_only, @experience_lost_time, true, round(@experience_si_avg, 0), true, round(@experience_si_ratio_avg, 0))
 
-      @current_row += 2
+      @current_row += 3
 
-      @worksheet.add_cell(@current_row, 0, '').change_border(:bottom, :medium)
-      @worksheet.add_cell(@current_row, 1, '').change_border(:bottom, :medium)
-      @worksheet.add_cell(@current_row, 2, '').change_border(:bottom, :medium)
-      @worksheet.add_cell(@current_row, 3, '').change_border(:bottom, :medium)
-
-      @current_row += 1
+      # @worksheet.add_cell(@current_row, 0, '').change_border(:bottom, :medium)
+      # @worksheet.add_cell(@current_row, 1, '').change_border(:bottom, :medium)
+      # @worksheet.add_cell(@current_row, 2, '').change_border(:bottom, :medium)
+      # @worksheet.add_cell(@current_row, 3, '').change_border(:bottom, :medium)
+      #
+      # @current_row += 1
 
       # experience_totals("10 Year Experience Totals", @ten_year_totals, @ten_year_med_only, @ten_year_lost_time, true, round(@ten_year_si_average, 0), true, round(@ten_year_si_ratio_avg, 0), true, @ten_year_rc_01, @ten_year_rc_02)
     end
@@ -283,12 +285,36 @@ module ClaimLossConcern
     def green_year_experience_worksheet
       @worksheet   = @claim_loss_workbook.add_worksheet("Green Year Experience")
       @current_row = 0
+      insert_header
       insert_current_date
 
       injury_years_data([@first_green_year, @second_green_year],
                         [@first_green_year_claims, @second_green_year_claims])
 
       experience_totals("Green Year Experience Totals", @green_year_experience_totals, @green_year_med_only, @green_year_loss_time)
+    end
+
+    def insert_header
+      @worksheet.merge_cells(@current_row, 0, @current_row, 3)
+      @worksheet.change_row_bold(@current_row, true)
+      @worksheet.add_cell(@current_row, 0, @representative.company_name.titleize)
+      @current_row += 1
+
+      @worksheet.merge_cells(@current_row, 0, @current_row, 3)
+      @worksheet.change_row_bold(@current_row, true)
+      @worksheet.add_cell(@current_row, 0, @account.name.titleize)
+      @current_row += 1
+
+      @worksheet.merge_cells(@current_row, 0, @current_row, 3)
+      @worksheet.change_row_bold(@current_row, true)
+      @worksheet.add_cell(@current_row, 0, "Policy Number: #{@policy_calculation.policy_number}")
+      @current_row += 1
+
+      @worksheet.merge_cells(@current_row, 0, @current_row, 3)
+      @worksheet.change_row_bold(@current_row, true)
+      @worksheet.add_cell(@current_row, 0, "Date Range: #{@start_date.strftime('%m/%d/%Y')} - #{@end_date.strftime('%m/%d/%Y')}")
+
+      @current_row += 3
     end
 
     def insert_current_date
