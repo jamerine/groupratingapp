@@ -277,7 +277,7 @@ module ClaimLossConcern
 
       @current_row += 1
 
-      experience_totals("10 Year Experience Totals", @ten_year_totals, @ten_year_med_only, @ten_year_lost_time, true, round(@ten_year_si_average, 0), true, round(@ten_year_si_ratio_avg, 0), true, @ten_year_rc_01, @ten_year_rc_02)
+      # experience_totals("10 Year Experience Totals", @ten_year_totals, @ten_year_med_only, @ten_year_lost_time, true, round(@ten_year_si_average, 0), true, round(@ten_year_si_ratio_avg, 0), true, @ten_year_rc_01, @ten_year_rc_02)
     end
 
     def green_year_experience_worksheet
