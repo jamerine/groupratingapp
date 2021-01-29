@@ -325,7 +325,7 @@ class RepresentativesController < ApplicationController
   private
 
   def representative_params
-    params.require(:representative).permit(:logo, :experience_period_lower_date, :experience_period_upper_date, :current_payroll_period_lower_date, :current_payroll_period_upper_date,
+    params.require(:representative).permit(:logo, :experience_period_lower_date, :experience_period_upper_date, :current_payroll_period_lower_date, :current_payroll_period_upper_date, :company_name,
                                            :current_payroll_year, :program_year_lower_date, :program_year_upper_date, :program_year, :quote_year_lower_date, :quote_year_upper_date, :quote_year,
                                            :location_address_1, :location_address_2, :location_city, :location_state, :location_zip_code, :mailing_address_1, :mailing_address_2, :mailing_city,
                                            :mailing_state, :mailing_zip_code, :phone_number, :toll_free_number, :fax_number, :email_address, :president_first_name, :president_last_name,
