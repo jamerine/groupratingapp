@@ -268,7 +268,7 @@ module ClaimLossConcern
 
       injury_years_data([@first_experience_year, @second_experience_year, @third_experience_year, @fourth_experience_year],
                         [@first_experience_year_claims, @second_experience_year_claims, @third_experience_year_claims, @fourth_experience_year_claims])
-      experience_totals("Experience Year Totals", @experience_year_totals, @experience_med_only, @experience_lost_time, true, round(@experience_si_avg, 0), true, round(@experience_si_ratio_avg, 0))
+      experience_totals("Experience Year Totals", @experience_year_totals, @experience_med_only, @experience_lost_time)
 
       @current_row += 3
 
@@ -345,7 +345,7 @@ module ClaimLossConcern
       end
     end
 
-    def experience_totals(total_text, year_totals, med_only, lost_time, show_si_average = false, si_average_data = nil, show_si_ratio = false, si_ratio_data = nil, show_rc = false, rc01_data = nil, rc02_data = nil)
+    def experience_totals(total_text, year_totals, med_only, lost_time)
       @worksheet.change_row_bold(@current_row, true)
       @worksheet.merge_cells(@current_row, 0, @current_row, 3)
       @worksheet.add_cell(@current_row, 0, total_text).change_horizontal_alignment(:center)
@@ -356,15 +356,11 @@ module ClaimLossConcern
 
       @worksheet.change_row_bold(@current_row, true)
       @worksheet.add_cell(@current_row, 0, "Med Only Claim Count: #{med_only}")
-      @worksheet.add_cell(@current_row, 3, "RCO1: #{rc01_data}") if show_rc
-      @worksheet.add_cell(@current_row, 8, "SI Average: #{si_average_data}") if show_si_average
 
       @current_row += 1
 
       @worksheet.change_row_bold(@current_row, true)
       @worksheet.add_cell(@current_row, 0, "Lost Time Claim Count: #{lost_time}")
-      @worksheet.add_cell(@current_row, 3, "RCO2: #{rc02_data}") if show_rc
-      @worksheet.add_cell(@current_row, 8, "SI Ratio Average: #{si_ratio_data}") if show_si_ratio
 
       @current_row += 1
     end
