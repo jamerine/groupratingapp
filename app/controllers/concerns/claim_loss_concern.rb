@@ -53,11 +53,13 @@ module ClaimLossConcern
 
     def set_dates
       if params[:account].present? && claim_account_params[:start_date].present? && claim_account_params[:end_date].present?
-        @start_date = Date.parse(claim_account_params[:start_date])
-        @end_date   = Date.parse(claim_account_params[:end_date])
+        @start_date      = Date.parse(claim_account_params[:start_date])
+        @end_date        = Date.parse(claim_account_params[:end_date])
+        @experience_only = true
       else
-        @start_date = @group_rating.experience_period_lower_date
-        @end_date   = @group_rating.experience_period_upper_date
+        @start_date      = @group_rating.experience_period_lower_date
+        @end_date        = @group_rating.experience_period_upper_date
+        @experience_only = false
 
         if @policy_calculation.public_employer?
           @start_date = @start_date.beginning_of_year
@@ -72,9 +74,22 @@ module ClaimLossConcern
 
       # Create workbook
       @claim_loss_workbook = RubyXL::Workbook.new
-      out_of_experience_worksheet
-      experience_worksheet
-      green_year_experience_worksheet
+
+      if @experience_only
+        @worksheet            = @claim_loss_workbook.worksheets[0]
+        @worksheet.sheet_name = 'Experience'
+        experience_worksheet
+      else
+        @worksheet            = @claim_loss_workbook.worksheets[0]
+        @worksheet.sheet_name = 'Out of Experience'
+        out_of_experience_worksheet
+
+        @worksheet = @claim_loss_workbook.add_worksheet("Experience")
+        experience_worksheet
+
+        @worksheet = @claim_loss_workbook.add_worksheet("Green Year Experience")
+        green_year_experience_worksheet
+      end
 
       # Set font size of whole file
       @claim_loss_workbook.worksheets.each(&method(:check_column_widths))
@@ -84,14 +99,40 @@ module ClaimLossConcern
 
     def prepare_claim_loss_data
       # Logic should be the same as risk report for claim loss
-      init_experience_data
+      @experience_only ? init_ranged_experience_data : init_experience_data
       init_out_of_experience_data
       init_ten_year_experience_data
       init_green_year_experience_data
     end
 
-    def init_experience_data
+    def init_ranged_experience_data
       # Experience Years Parameters
+      @first_experience_year        = @start_date.strftime("%Y").to_i
+      @first_experience_year_period = @start_date..(@start_date.advance(years: 1).advance(days: -1))
+      @first_experience_year_claims = @account.policy_calculation.claim_calculations.where("claim_injury_date BETWEEN ? AND ? ", @first_experience_year_period.first, @first_experience_year_period.last).order(:claim_injury_date)
+
+      if @first_experience_year_period.last.advance(days: 1) <= @end_date
+        @second_experience_year        = @first_experience_year + 1
+        @second_experience_year_period = @first_experience_year_period.last.advance(days: 1)..[@first_experience_year_period.last.advance(years: 1), @end_date].min
+        @second_experience_year_claims = @account.policy_calculation.claim_calculations.where("claim_injury_date BETWEEN ? AND ? ", @second_experience_year_period.first, @second_experience_year_period.last).order(:claim_injury_date)
+      end
+
+      if @second_experience_year_period.present? && @second_experience_year_period.last.advance(days: 1) <= @end_date
+        @third_experience_year        = @second_experience_year + 1
+        @third_experience_year_period = @second_experience_year_period.first.advance(years: 1)..[@second_experience_year_period.last.advance(years: 1), @end_date].min
+        @third_experience_year_claims = @account.policy_calculation.claim_calculations.where("claim_injury_date BETWEEN ? AND ? ", @third_experience_year_period.first, @third_experience_year_period.last).order(:claim_injury_date)
+      end
+
+      if @third_experience_year_period.present? && @third_experience_year_period.last.advance(days: 1) <= @end_date
+        @fourth_experience_year        = @third_experience_year + 1
+        @fourth_experience_year_period = @third_experience_year_period.first.advance(years: 1)..[@third_experience_year_period.last.advance(years: 1), @end_date].min
+        @fourth_experience_year_claims = @account.policy_calculation.claim_calculations.where("claim_injury_date BETWEEN ? AND ? ", @fourth_experience_year_period.first, @fourth_experience_year_period.last).order(:claim_injury_date)
+      end
+
+      experience_total_data
+    end
+
+    def init_experience_data
       @first_experience_year        = @start_date.strftime("%Y").to_i
       @first_experience_year_period = @start_date..(@start_date.advance(years: 1).advance(days: -1))
       @first_experience_year_claims = @account.policy_calculation.claim_calculations.where("claim_injury_date BETWEEN ? AND ? ", @first_experience_year_period.first, @first_experience_year_period.last).order(:claim_injury_date)
@@ -108,31 +149,7 @@ module ClaimLossConcern
       @fourth_experience_year_period = @third_experience_year_period.first.advance(years: 1)..@third_experience_year_period.last.advance(years: 1)
       @fourth_experience_year_claims = @account.policy_calculation.claim_calculations.where("claim_injury_date BETWEEN ? AND ? ", @fourth_experience_year_period.first, @fourth_experience_year_period.last).order(:claim_injury_date)
 
-      # Experience Totals
-
-      @experience_year_claims = @account.policy_calculation.claim_calculations.where("claim_injury_date BETWEEN ? AND ? ", @start_date, @end_date).order(:claim_injury_date)
-      @experience_med_only    = @experience_year_claims.where("left(claim_type, 1) = '1'").count
-      @experience_lost_time   = @experience_year_claims.where("left(claim_type, 1) = '2'").count
-
-      @experience_comp_total                 = 0
-      @experience_medical_total              = 0
-      @experience_mira_medical_reserve_total = 0
-
-      @experience_year_claims.each do |e|
-        @experience_comp_total                 += (((e.claim_mira_reducible_indemnity_paid + e.claim_mira_non_reducible_indemnity_paid) * (1 - (e.claim_subrogation_percent || 0.00)) - (e.claim_mira_non_reducible_indemnity_paid)) * (1 - e.claim_handicap_percent) + (e.claim_mira_non_reducible_indemnity_paid)) * (e.claim_group_multiplier || 1)
-        @experience_medical_total              += (((e.claim_medical_paid + e.claim_mira_non_reducible_indemnity_paid_2) * (1 - (e.claim_subrogation_percent || 0.00)) - e.claim_mira_non_reducible_indemnity_paid_2) * (1 - e.claim_handicap_percent) + e.claim_mira_non_reducible_indemnity_paid_2) * (e.claim_group_multiplier || 1)
-        @experience_mira_medical_reserve_total += (1 - e.claim_handicap_percent) * (e.claim_mira_medical_reserve_amount + (e.claim_mira_indemnity_reserve_amount)) * (e.claim_group_multiplier || 1) * (1 - (e.claim_subrogation_percent || 0.00))
-      end
-
-      @experience_group_modified_losses_total      = @experience_year_claims.sum(:claim_modified_losses_group_reduced)
-      @experience_individual_modified_losses_total = @experience_year_claims.sum(:claim_modified_losses_individual_reduced)
-      @experience_individual_reduced_total         = @experience_year_claims.sum(:claim_individual_reduced_amount)
-      @experience_si_total                         = @experience_year_claims.sum(:claim_unlimited_limited_loss) - @experience_year_claims.sum(:claim_total_subrogation_collected)
-      @experience_subrogation_total                = @experience_year_claims.sum(:claim_total_subrogation_collected)
-      @experience_si_avg                           = (@experience_si_total / 4)
-      @experience_si_ratio_avg                     = (@experience_si_total / @policy_calculation.policy_total_four_year_payroll) * @policy_calculation.policy_total_current_payroll
-
-      @experience_year_totals = [round(@experience_medical_total, 0), round(@experience_comp_total, 0), round(@experience_mira_medical_reserve_total, 0), round(@experience_si_total, 0), round(@experience_subrogation_total, 0), '', '', '']
+      experience_total_data
     end
 
     def init_out_of_experience_data
@@ -247,13 +264,35 @@ module ClaimLossConcern
       @green_year_experience_totals = [round(@green_year_medical_total, 0), round(@green_year_comp_total, 0), round(@green_year_mira_medical_reserve_total, 0), round(@green_year_individual_reduced_total, 0), round(@green_year_subrogation_total, 0), '', '', '']
     end
 
+    def experience_total_data
+      @experience_year_claims = @account.policy_calculation.claim_calculations.where("claim_injury_date BETWEEN ? AND ? ", @start_date, @end_date).order(:claim_injury_date)
+      @experience_med_only    = @experience_year_claims.where("left(claim_type, 1) = '1'").count
+      @experience_lost_time   = @experience_year_claims.where("left(claim_type, 1) = '2'").count
+
+      @experience_comp_total                 = 0
+      @experience_medical_total              = 0
+      @experience_mira_medical_reserve_total = 0
+
+      @experience_year_claims.each do |e|
+        @experience_comp_total                 += (((e.claim_mira_reducible_indemnity_paid + e.claim_mira_non_reducible_indemnity_paid) * (1 - (e.claim_subrogation_percent || 0.00)) - (e.claim_mira_non_reducible_indemnity_paid)) * (1 - e.claim_handicap_percent) + (e.claim_mira_non_reducible_indemnity_paid)) * (e.claim_group_multiplier || 1)
+        @experience_medical_total              += (((e.claim_medical_paid + e.claim_mira_non_reducible_indemnity_paid_2) * (1 - (e.claim_subrogation_percent || 0.00)) - e.claim_mira_non_reducible_indemnity_paid_2) * (1 - e.claim_handicap_percent) + e.claim_mira_non_reducible_indemnity_paid_2) * (e.claim_group_multiplier || 1)
+        @experience_mira_medical_reserve_total += (1 - e.claim_handicap_percent) * (e.claim_mira_medical_reserve_amount + (e.claim_mira_indemnity_reserve_amount)) * (e.claim_group_multiplier || 1) * (1 - (e.claim_subrogation_percent || 0.00))
+      end
+
+      @experience_group_modified_losses_total      = @experience_year_claims.sum(:claim_modified_losses_group_reduced)
+      @experience_individual_modified_losses_total = @experience_year_claims.sum(:claim_modified_losses_individual_reduced)
+      @experience_individual_reduced_total         = @experience_year_claims.sum(:claim_individual_reduced_amount)
+      @experience_si_total                         = @experience_year_claims.sum(:claim_unlimited_limited_loss) - @experience_year_claims.sum(:claim_total_subrogation_collected)
+      @experience_subrogation_total                = @experience_year_claims.sum(:claim_total_subrogation_collected)
+      @experience_si_avg                           = (@experience_si_total / 4)
+      @experience_si_ratio_avg                     = (@experience_si_total / @policy_calculation.policy_total_four_year_payroll) * @policy_calculation.policy_total_current_payroll
+
+      @experience_year_totals = [round(@experience_medical_total, 0), round(@experience_comp_total, 0), round(@experience_mira_medical_reserve_total, 0), round(@experience_si_total, 0), round(@experience_subrogation_total, 0), '', '', '']
+    end
+
     ## Worksheet Helpers
     def out_of_experience_worksheet
-      @worksheet            = @claim_loss_workbook.worksheets[0]
-      @worksheet.sheet_name = 'Out of Experience'
-      @current_row          = 0
-      insert_header
-      insert_current_date
+      new_worksheet_info
 
       injury_years_data([@first_out_of_experience_year, @second_out_of_experience_year, @third_out_of_experience_year, @fourth_out_of_experience_year, @fifth_out_of_experience_year],
                         [@first_out_of_experience_year_claims, @second_out_of_experience_year_claims, @third_out_of_experience_year_claims, @fourth_out_of_experience_year_claims, @fifth_out_of_experience_year_claims])
@@ -261,37 +300,28 @@ module ClaimLossConcern
     end
 
     def experience_worksheet
-      @worksheet   = @claim_loss_workbook.add_worksheet("Experience")
-      @current_row = 0
-      insert_header
-      insert_current_date
+      new_worksheet_info
 
-      injury_years_data([@first_experience_year, @second_experience_year, @third_experience_year, @fourth_experience_year],
-                        [@first_experience_year_claims, @second_experience_year_claims, @third_experience_year_claims, @fourth_experience_year_claims])
+      injury_years_data([@first_experience_year, @second_experience_year, @third_experience_year, @fourth_experience_year].compact,
+                        [@first_experience_year_claims, @second_experience_year_claims, @third_experience_year_claims, @fourth_experience_year_claims].compact)
       experience_totals("Experience Year Totals", @experience_year_totals, @experience_med_only, @experience_lost_time)
 
       @current_row += 3
-
-      # @worksheet.add_cell(@current_row, 0, '').change_border(:bottom, :medium)
-      # @worksheet.add_cell(@current_row, 1, '').change_border(:bottom, :medium)
-      # @worksheet.add_cell(@current_row, 2, '').change_border(:bottom, :medium)
-      # @worksheet.add_cell(@current_row, 3, '').change_border(:bottom, :medium)
-      #
-      # @current_row += 1
-
-      # experience_totals("10 Year Experience Totals", @ten_year_totals, @ten_year_med_only, @ten_year_lost_time, true, round(@ten_year_si_average, 0), true, round(@ten_year_si_ratio_avg, 0), true, @ten_year_rc_01, @ten_year_rc_02)
     end
 
     def green_year_experience_worksheet
-      @worksheet   = @claim_loss_workbook.add_worksheet("Green Year Experience")
-      @current_row = 0
-      insert_header
-      insert_current_date
+      new_worksheet_info
 
       injury_years_data([@first_green_year, @second_green_year],
                         [@first_green_year_claims, @second_green_year_claims])
 
       experience_totals("Green Year Experience Totals", @green_year_experience_totals, @green_year_med_only, @green_year_loss_time)
+    end
+
+    def new_worksheet_info
+      @current_row = 0
+      insert_header
+      insert_current_date
     end
 
     def insert_header
