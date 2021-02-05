@@ -32,6 +32,7 @@ class Note < ActiveRecord::Base
   belongs_to :user
   belongs_to :account
   belongs_to :note_category, foreign_key: :category_id
+  has_one :representative, through: :account
 
   enum category: [:billing, :claims, :general, :group_rating, :group_retro, :policy_admin, :sales]
 
@@ -42,12 +43,15 @@ class Note < ActiveRecord::Base
   mount_uploader :attachment, NoteUploader
   validate :attachment_size_validation
 
+  delegate :policy_number_entered, to: :account, prefix: false, allow_nil: false
+
   scope :user_filter, -> (user) { where(user: user) }
   scope :category_filter, -> (category) { where(category: category) }
   scope :pinned, -> { order(is_pinned: :asc) }
   scope :retention_notes, -> { pinned.where(is_retention: true) }
   scope :group_notes, -> { pinned.where(is_group: true) }
   scope :policy_notes, -> { pinned.where(is_retention: false, is_group: false) }
+  scope :by_representative, -> (rep_id) { includes(:representative).where(representatives: { id: rep_id }) }
 
   def order_date
     self.date || self.created_at
