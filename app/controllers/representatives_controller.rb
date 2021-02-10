@@ -93,6 +93,7 @@ class RepresentativesController < ApplicationController
     begin
       CSV.foreach(params[:file].path, headers: true, encoding: 'ISO8859-1:utf-8') do |row|
         notes_hash = row.to_hash.transform_keys(&:parameterize).transform_keys(&:to_sym)
+
         AccountNotesImport.perform_async(notes_hash, @representative.id, current_user.id)
       end
       redirect_to @representative, notice: "Account Notes Imported."
@@ -107,7 +108,7 @@ class RepresentativesController < ApplicationController
     begin
       CSV.foreach(params[:file].path, headers: true, encoding: 'ISO8859-1:utf-8') do |row|
         notes_hash = row.to_hash.transform_keys(&:parameterize).transform_keys(&:to_sym)
-        ClaimNotesImport.perform_async(notes_hash, @representative.id, current_user.id)
+        ClaimNotesImport.perform_async(notes_hash, @representative.representative_number, current_user.id)
       end
       redirect_to @representative, notice: "Claim Notes Imported."
     rescue
@@ -208,7 +209,7 @@ class RepresentativesController < ApplicationController
     return unless @representative.present?
 
     @representative.delete_everything
-    
+
     redirect_to @representative, notice: 'Deleted Everything From Representative!'
   end
 
@@ -331,5 +332,4 @@ class RepresentativesController < ApplicationController
                                            :mailing_state, :mailing_zip_code, :phone_number, :toll_free_number, :fax_number, :email_address, :president_first_name, :president_last_name,
                                            :signature, :president, :footer, :experience_date, :bwc_quote_completion_date, :internal_quote_completion_date)
   end
-
 end

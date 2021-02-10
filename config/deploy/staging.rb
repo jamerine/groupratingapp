@@ -1,5 +1,5 @@
 server "64.225.21.47", user: "deploy", roles: %w{app db web}
-set :sidekiq_processes, 4
+set :sidekiq_processes, 1
 set :stage, :staging
 set :rails_env, :staging
 set :sidekiq_env, :staging

@@ -1,6 +1,6 @@
 class SidekiqCalculations
   DEFAULT_CLIENT_REDIS_SIZE  = 2
-  DEFAULT_SERVER_CONCURRENCY = 25
+  DEFAULT_SERVER_CONCURRENCY = 50
 
   def raise_error_for_env!
     return unless Rails.env.production? || Rails.env.staging?

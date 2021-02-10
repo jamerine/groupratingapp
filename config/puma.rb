@@ -16,7 +16,7 @@
  # end
 
 ## USE THE BELOW FOR RUNNING WITHOUT SIDEKIQ WORKERS
-threads_count = ENV.fetch("RAILS_MAX_THREADS") { 5 }
+threads_count = ENV.fetch("RAILS_MAX_THREADS") { 10 }
 threads threads_count, threads_count
 port ENV.fetch("PORT") { 3000 }
 environment ENV.fetch("RAILS_ENV") { "development" }

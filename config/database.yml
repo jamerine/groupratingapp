@@ -57,6 +57,7 @@ development:
   <<: *default
   database: groupratingapp_development
   username: groupratingapp
+  pool: 50
   password: <%= ENV['GROUPRATINGAPP_DATABASE_PASSWORD'] %>
 
 test:
