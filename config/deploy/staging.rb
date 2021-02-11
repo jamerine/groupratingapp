@@ -1,5 +1,5 @@
 # server "64.225.21.47", user: "deploy", roles: %w{app db web}
-server "159.89.240.32", user: "deploy", roles: %w{app db web}
+server "161.35.188.233", user: "deploy", roles: %w{app db web}
 set :sidekiq_processes, 1
 set :stage, :staging
 set :rails_env, :staging
