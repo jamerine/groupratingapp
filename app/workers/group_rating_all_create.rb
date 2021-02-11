@@ -72,8 +72,10 @@ class GroupRatingAllCreate
                               data_source:                                   @policy_demographic.data_source
                             )
 
-      FinalClaimCostCalculationTable.where(representative_number: @policy_calculation.representative_number, policy_number: @policy_calculation.policy_number).each do |claim|
-        ClaimCalculation.by_rep_and_policy(@policy_calculation.representative_number, @policy_calculation.policy_number).where('claim_number LIKE ?', "%#{claim.claim_number.strip}%").order(created_at: :asc).update_or_create(
+      policy_claims = ClaimCalculation.by_rep_and_policy(@policy_calculation.representative_number, @policy_calculation.policy_number)
+
+      FinalClaimCostCalculationTable.where(representative_number: @policy_calculation.representative_number, policy_number: @policy_calculation.policy_number).find_each(batch_size: 50) do |claim|
+        policy_claims.where('claim_number LIKE ?', "%#{claim.claim_number.strip}%").order(created_at: :asc).update_or_create(
           representative_number:                     @policy_calculation.representative_number,
           policy_number:                             claim.policy_number,
           policy_calculation_id:                     @policy_calculation.id,

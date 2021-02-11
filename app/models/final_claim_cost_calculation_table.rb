@@ -56,7 +56,7 @@
 
 class FinalClaimCostCalculationTable < ActiveRecord::Base
   def democ_detail_records
-    DemocDetailRecord.filter_by(representative_number).where('democ_detail_records.claim_number LIKE ?', "%#{self.claim_number.strip}%").where(policy_number: self.policy_number)
+    DemocDetailRecord.filter_by(representative_number).where(policy_number: self.policy_number).where('democ_detail_records.claim_number LIKE ?', "%#{self.claim_number.strip}%")
   end
 
   def democ_detail_record
