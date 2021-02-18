@@ -295,19 +295,11 @@ class RiskReport < PdfReport
         @account.group_rating_rejections.where("program_type = 'group_rating'").pluck(:reject_reason).map { |i| "'" + i.to_s + "'" }.join(",").to_s.gsub(/\s|"|'/, '')
       end
 
-    @group_rating_date =
-      if @account.quotes.where("program_type = 0").first.nil?
-        'N/A'
-      else
-        @account.quotes.where("program_type = 0").first.quote_date
-      end
+    group_rating_quote = @account.quotes.where(program_type: 0).first
+    group_retro_quote  = @account.quotes.where(program_type: 1).first
 
-    @group_retro_date =
-      if @account.quotes.where("program_type = 1").first.nil?
-        'N/A'
-      else
-        @account.quotes.where("program_type = 1").first.quote_date
-      end
+    @group_rating_date = group_rating_quote.nil? || @account.group_rating_rejected? ? 'N/A' : group_rating_quote.quote_date
+    @group_retro_date  = group_retro_quote.nil? || @account.group_retro_rejected? ? 'N/A' : group_retro_quote.quote_date
 
     if @report_params["at_a_glance"] == "1" || @report_params["experience_statistics"] == "1" || @report_params["expected_loss_and_premium"] == "1"
       header

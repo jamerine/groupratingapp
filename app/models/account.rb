@@ -98,6 +98,14 @@ class Account < ActiveRecord::Base
     obj
   end
 
+  def group_rating_rejected?
+    self.group_rating_qualification == 'reject'
+  end
+
+  def group_retro_rejected?
+    self.group_retro_qualification == 'reject'
+  end
+
   def self.find_by_rep_and_policy(rep_id, policy_number)
     where(representative_id: rep_id, policy_number_entered: policy_number)&.map { |account| account if account.policy_calculation.present? }&.compact&.first
     # find_by(policy_number_entered: policy_number, representative_id: rep_id)
