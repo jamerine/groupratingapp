@@ -110,6 +110,7 @@ class PolicyCalculation < ActiveRecord::Base
   scope :current_coverage_statuses, -> { all.pluck(:current_coverage_status).compact.uniq }
   scope :employer_types, -> { all.pluck(:employer_type).compact.map { |type| type.present? ? type : 'None' }.uniq.sort }
   scope :bwc, -> { where(data_source: 'bwc') }
+  scope :public_employers, -> { where(employer_type: 'PEC') }
 
   before_destroy :delete_claims
 
@@ -197,8 +198,8 @@ class PolicyCalculation < ActiveRecord::Base
     end_date   = @group_rating.experience_period_upper_date
 
     if public_employer?
-      start_date = start_date.beginning_of_year
-      end_date   = end_date.beginning_of_year
+      start_date = (start_date + 1.year).beginning_of_year
+      end_date   = end_date.end_of_year
     end
 
     @claims = self.claim_calculations.where("claim_injury_date >= :experience_period_lower_date and claim_injury_date <= :experience_period_upper_date",

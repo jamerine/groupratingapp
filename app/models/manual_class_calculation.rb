@@ -90,8 +90,8 @@ class ManualClassCalculation < ActiveRecord::Base
     payroll_end_date      = @group_rating.current_payroll_period_upper_date
 
     if self.policy_calculation.public_employer?
-      start_date         = start_date.beginning_of_year
-      end_date           = end_date.beginning_of_year
+      start_date         = (start_date + 1.year).beginning_of_year
+      end_date           = end_date.end_of_year
       payroll_start_date = payroll_start_date.beginning_of_year
       payroll_end_date   = payroll_end_date.beginning_of_year
     end
@@ -168,8 +168,8 @@ class ManualClassCalculation < ActiveRecord::Base
     end_date             = group_rating.experience_period_upper_date
 
     if self.policy_calculation.public_employer?
-      start_date = start_date.beginning_of_year
-      end_date   = end_date.beginning_of_year
+      start_date = (start_date + 1.year).beginning_of_year
+      end_date   = end_date.end_of_year
     end
 
     self_four_year_payroll_lower_date = policy_creation_date < start_date ? policy_creation_date : start_date
