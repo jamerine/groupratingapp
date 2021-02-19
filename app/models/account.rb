@@ -806,8 +806,8 @@ class Account < ActiveRecord::Base
       end_date   = group_rating_calc.current_payroll_period_upper_date
 
       if self.policy_calculation.public_employer?
-        start_date = start_date.beginning_of_year
-        end_date   = end_date.beginning_of_year
+        start_date = (start_date + 1.year).beginning_of_year
+        end_date   = start_date.end_of_year
       end
 
       if policy_calculation.policy_creation_date >= group_rating_calc.current_payroll_period_lower_date
