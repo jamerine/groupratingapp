@@ -194,7 +194,7 @@ class ManualClassCalculation < ActiveRecord::Base
       @limited_loss_rate = 0
       @limited_losses    = 0
     else
-      @limited_loss_rate = (@limited_loss_rate_row.limited_loss_ratio)
+      @limited_loss_rate = @limited_loss_rate_row&.limited_loss_ratio || 0
       @limited_losses    = (self.manual_class_expected_losses * @limited_loss_rate).round(0)
     end
 
@@ -205,7 +205,7 @@ class ManualClassCalculation < ActiveRecord::Base
     limited_loss_rate_row = BwcCodesLimitedLossRatio.find_by(industry_group: self.manual_class_industry_group, credibility_group: credibility_group)
     return 0 unless limited_loss_rate_row.present?
 
-    limited_loss_rate = (limited_loss_rate_row.limited_loss_ratio)
+    limited_loss_rate = limited_loss_rate_row.limited_loss_ratio || 0
     (expected_losses_without_estimates * limited_loss_rate).round(0)
   end
 
