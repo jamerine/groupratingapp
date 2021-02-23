@@ -96,7 +96,7 @@ class ManualClassCalculation < ActiveRecord::Base
       payroll_end_date   = payroll_start_date.end_of_year
     end
 
-    four_year_payroll_lower_date = @policy_creation_date < start_date ? @policy_creation_date : start_date
+    four_year_payroll_lower_date = @policy_creation_date > start_date ? @policy_creation_date : start_date
 
     # CHANGE as of 06/20/2017 changed the four year sum calculations
     @manual_class_self_four_year_sum = self.payroll_calculations.where("payroll_calculations.reporting_period_start_date BETWEEN :experience_period_lower_date AND :experience_period_upper_date AND (payroll_calculations.payroll_origin NOT IN (:origins))",
@@ -172,7 +172,7 @@ class ManualClassCalculation < ActiveRecord::Base
       end_date   = end_date.end_of_year
     end
 
-    self_four_year_payroll_lower_date = policy_creation_date < start_date ? policy_creation_date : start_date
+    self_four_year_payroll_lower_date = policy_creation_date > start_date ? policy_creation_date : start_date
     manual_class_self_four_year_sum   = self.payroll_calculations.with_estimated_payroll(false).where("payroll_calculations.reporting_period_start_date BETWEEN :experience_period_lower_date and :experience_period_upper_date and (payroll_calculations.payroll_origin NOT IN (:origins))",
                                                                                                       experience_period_lower_date: self_four_year_payroll_lower_date,
                                                                                                       experience_period_upper_date: end_date,
