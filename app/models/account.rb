@@ -75,6 +75,8 @@ class Account < ActiveRecord::Base
 
   validates :policy_number_entered, :presence => true, length: { maximum: 8 }
 
+  accepts_nested_attributes_for :accounts_mco, reject_if: :all_blank
+
   enum status: [:active, :cancelled, :client, :dead, :inactive, :invalid_policy_number, :new_account, :predecessor, :prospect, :suspended]
   enum account_type: [:grp_group, :gtro_group_retro, :individual_retro, :non_group, :ocp_one_claim_program, :pg_pregroup, :self_insured_tail]
 
@@ -90,6 +92,7 @@ class Account < ActiveRecord::Base
   scope :fee_change_percent, -> (fee_change_percent) { where("fee_change >= ?", (fee_change_percent)) }
 
   delegate :representative_number, to: :representative, prefix: false, allow_nil: false
+  delegate :name, to: :mco, prefix: true, allow_nil: true
 
   attr_accessor :group_rating_id, :start_date, :end_date
 

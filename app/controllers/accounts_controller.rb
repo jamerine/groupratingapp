@@ -1,13 +1,13 @@
 class AccountsController < ApplicationController
   include ClaimLossConcern
-  before_action :get_details, only: [:show, :edit, :update]
+  before_action :set_account, except: [:index, :new, :create, :import_account_process]
+  before_action :set_common_details, only: [:index, :new, :edit, :update, :create, :show, :retention]
+  before_action :get_details, only: [:show, :retention]
   claim_loss
 
   def index
-    @statuses        = Account.statuses
-    @policy_statuses = PolicyCalculation.current_coverage_statuses
-    @employer_types  = PolicyCalculation.employer_types
-    @accounts        = Account.where(representative_id: @representatives).includes(:representative, :policy_calculation)
+
+    @accounts = Account.where(representative_id: @representatives).includes(:representative, :policy_calculation)
 
     if params[:search].present? && params[:representative_number].present?
       @representative = @representatives.find_by(representative_number: params[:representative_number])
@@ -44,18 +44,24 @@ class AccountsController < ApplicationController
   end
 
   def new
-    @account = Account.new
+    @account      = Account.new
+    @accounts_mco = AccountsMco.new
     authorize @account
-    @representatives = Representative.all
-    @statuses        = Account.statuses
   end
 
   def create
     @account = Account.new(account_params)
     authorize @account
+
     @representative = Representative.find(@account.representative_id)
+
     if @account.save
-      @policy_calculation = PolicyCalculation.where(policy_number: @account.policy_number_entered).update_or_create(policy_number: @account.policy_number_entered, representative_id: @representative.id, representative_number: @representative.representative_number, account_id: @account.id)
+      @policy_calculation = @representative.policy_calculations
+                            .where(policy_number: @account.policy_number_entered)
+                            .update_or_create(policy_number:         @account.policy_number_entered,
+                                              representative_id:     @representative.id,
+                                              representative_number: @representative.representative_number,
+                                              account_id:            @account.id)
       flash[:notice]      = "Account was created successfully"
       redirect_to @account
     else
@@ -66,21 +72,14 @@ class AccountsController < ApplicationController
 
   def edit
     authorize @account
-    @representatives    = Representative.all
+    @accounts_mco       = @account.accounts_mco || AccountsMco.new
     @policy_calculation = PolicyCalculation.find_by(account_id: @account.id, representative_number: @account.representative_number, policy_number: @account.policy_number_entered)
-
-    # @mailing_address = {:address_type => "mailing", :address_line_1 => @policy_calculation.mailing_address_line_1, :address_line_2 => @policy_calculation.mailing_address_line_2, :city => @policy_calculation.mailing_city, :state => @policy_calculation.mailing_state, :zip_code => @policy_calculation.mailing_zip_code}
-    # @location_address = {:address_type => "location", :address_line_1 => @policy_calculation.location_address_line_1, :address_line_2 => @policy_calculation.location_address_line_2, :city => @policy_calculation.location_city, :state => @policy_calculation.location_state, :zip_code => @policy_calculation.location_zip_code}
-    # @locations = []
-    # @locations.push(@mailing_address)
-    # @locations.push(@location_address)
   end
 
   def update
     authorize @account
 
     if @account.update_attributes(account_params)
-      # @policy_calculation = PolicyCalculation.find_by_rep_and_policy(policy_number: @account.policy_number_entered).update_or_create(policy_number: @account.policy_number_entered, representative_id: @account.representative.id, representative_number: Representative.find(@account.representative.id).representative_number, account_id: @account.id)
       flash[:notice] = "Account was updated successfully"
       redirect_to @account
     else
@@ -94,7 +93,6 @@ class AccountsController < ApplicationController
   end
 
   def edit_group_rating
-    @account                                = Account.find(params[:account_id])
     @policy_calculation                     = @account.policy_calculation
     @group_rating_qualifications            = Account.group_rating_qualifications
     @group_rating_qualifications[:auto_run] = "3"
@@ -102,8 +100,8 @@ class AccountsController < ApplicationController
   end
 
   def edit_group_retro
-    @account = Account.find(params[:account_id])
     authorize @account
+
     @policy_calculation                    = @account.policy_calculation
     @group_retro_qualifications            = Account.group_rating_qualifications
     @group_retro_qualifications[:auto_run] = "3"
@@ -112,8 +110,8 @@ class AccountsController < ApplicationController
   end
 
   def group_rating_calc
-    args     = params[:account]
-    @account = Account.find(params[:account_id])
+    args = params[:account]
+
     if args[:group_rating_qualification] == "auto_run"
       @account.policy_calculation.calculate_experience
       @account.policy_calculation.calculate_premium
@@ -131,8 +129,8 @@ class AccountsController < ApplicationController
   end
 
   def group_retro_calc
-    args     = params[:account]
-    @account = Account.find(params[:account_id])
+    args = params[:account]
+
     if args[:group_retro_qualification] == "auto_run"
       @account.policy_calculation.calculate_experience
       @account.policy_calculation.calculate_premium
@@ -149,42 +147,22 @@ class AccountsController < ApplicationController
   end
 
   def group_rating_calculation
-    @account = Account.find(params[:account_id])
-    @account&.calculate
+    @account.calculate
 
     flash[:notice] = "Account Group Rating Calculation Completed."
     redirect_to @account
   end
 
   def assign
-    @account = Account.find(params[:account_id])
     account_params[:affiliate_ids].each { |affiliate_id| AccountsAffiliate.find_or_create_by(affiliate_id: affiliate_id, account_id: @account.id) }
     flash[:success] = 'Affiliates Saved!'
     redirect_to @account
   end
 
   def assign_address
-    @account = Account.find(params[:account_id])
     puts params[:address_type]
     redirect_to @account
   end
-
-  # def group_rating
-  #   @account = Account.find(params[:account_id])
-  #   @account.group_ratings
-  #     flash[:notice] = "Account's group rating calculation was successful."
-  #     redirect_to @account
-  # end
-
-  # def import_account_process
-  #
-  #   CSV.foreach(params[:file].path, headers: true) do |row|
-  #     hash = row.to_hash # exclude the price field
-  #     AccountImport.perform_async(hash)
-  #   end
-  #
-  #   redirect_to root_url, notice: "Accounts imported."
-  # end
 
   def import_account_process
     begin
@@ -197,17 +175,14 @@ class AccountsController < ApplicationController
   end
 
   def new_risk_report
-    @account        = Account.find(params[:account_id])
     @group_rating   = GroupRating.find(params[:group_rating_id])
     @representative = @account.representative
   end
 
   def retention
-    get_details
   end
 
   def risk_report
-    @account       = Account.find(params[:account][:account_id])
     @group_rating  = GroupRating.find(params[:account][:group_rating_id])
     @report_params = params[:account]
 
@@ -216,58 +191,15 @@ class AccountsController < ApplicationController
       format.pdf do
 
         pdf = RiskReport.new(@account, @account.policy_calculation, @group_rating, @report_params, view_context)
-        # pdf = RiskReport.new(@account, @account.policy_calculation, @group_rating, @glance, @experience_stats, @expected_loss_and_premium, @estimated_current_premium, @program_options, @out_of_experience_claims, @in_experience_claims, @green_year_claims, @group_discount_levels, @coverage_status, @experience_modifier_info, @payroll_history, view_context)
 
-        # uploader = QuoteUploader.new
-        # tmpfile = Tempfile.new("#{ @account.policy_number_entered }_quote_#{ @quote.id }.pdf")
-        # quote = File.basename(tmpfile)
-        # quote_path = "https://console.aws.amazon.com/s3/buckets/grouprating/uploads/#{quote}"
-        # tmpfile.binmode
-        # tmpfile.write (pdf.render)
-        # uploader.store! tmpfile
-        #
-        # @quote.update_attributes(quote_generated: quote_path)
-        # tmpfile.close
-        # tmpfile.unlink
         send_data pdf.render, filename: "#{ @account.policy_number_entered }_risk_report.pdf",
                   type:                 "application/pdf",
                   disposition:          "inline"
-        # pdf.render_file "app/reports/risk_report_#{@account.id}.pdf"
       end
     end
-    # redirect_to @account, notice: "Quote Generated"
-  end
-
-  def payroll_test_report
-    @account      = Account.find(params[:account][:account_id])
-    @group_rating = GroupRating.find(params[:account][:group_rating_id])
-    respond_to do |format|
-      format.html
-      format.pdf do
-        pdf = PayrollTestReport.new(@account, @account.policy_calculation, @group_rating, view_context)
-
-        # uploader = QuoteUploader.new
-        # tmpfile = Tempfile.new("#{ @account.policy_number_entered }_quote_#{ @quote.id }.pdf")
-        # quote = File.basename(tmpfile)
-        # quote_path = "https://console.aws.amazon.com/s3/buckets/grouprating/uploads/#{quote}"
-        # tmpfile.binmode
-        # tmpfile.write (pdf.render)
-        # uploader.store! tmpfile
-        #
-        # @quote.update_attributes(quote_generated: quote_path)
-        # tmpfile.close
-        # tmpfile.unlink
-        send_data pdf.render, filename: "#{ @account.policy_number_entered }_payroll_test.pdf",
-                  type:                 "application/pdf",
-                  disposition:          "inline"
-        # pdf.render_file "app/reports/risk_report_#{@account.id}.pdf"
-      end
-    end
-    # redirect_to @account, notice: "Quote Generated"
   end
 
   def group_retro_quote
-    @account      = Account.find(params[:account_id])
     @group_rating = GroupRating.find(params[:group_rating_id])
     @quote        = @account.quotes.where(program_type: 1).last
     respond_to do |format|
@@ -275,63 +207,45 @@ class AccountsController < ApplicationController
       format.pdf do
         pdf = ArmGroupRetroAssessment.new(@quote, @account, @account.policy_calculation, view_context)
 
-        # uploader = QuoteUploader.new
-        # tmpfile = Tempfile.new("#{ @account.policy_number_entered }_quote_#{ @quote.id }.pdf")
-        # quote = File.basename(tmpfile)
-        # quote_path = "https://console.aws.amazon.com/s3/buckets/grouprating/uploads/#{quote}"
-        # tmpfile.binmode
-        # tmpfile.write (pdf.render)
-        # uploader.store! tmpfile
-        #
-        # @quote.update_attributes(quote_generated: quote_path)
-        # tmpfile.close
-        # tmpfile.unlink
         send_data pdf.render, filename: "#{ @account.policy_number_entered }_risk_report.pdf",
                   type:                 "application/pdf",
                   disposition:          "inline"
-        # pdf.render_file "app/reports/risk_report_#{@account.id}.pdf"
       end
     end
 
   end
 
   def roc_report
-    @account      = Account.find(params[:account_id])
     @group_rating = GroupRating.find(params[:group_rating_id])
     respond_to do |format|
       format.html
       format.pdf do
         pdf = RocReport.new(@account, @account.policy_calculation, @group_rating, view_context)
 
-        # uploader = QuoteUploader.new
-        # tmpfile = Tempfile.new("#{ @account.policy_number_entered }_quote_#{ @quote.id }.pdf")
-        # quote = File.basename(tmpfile)
-        # quote_path = "https://console.aws.amazon.com/s3/buckets/grouprating/uploads/#{quote}"
-        # tmpfile.binmode
-        # tmpfile.write (pdf.render)
-        # uploader.store! tmpfile
-        #
-        # @quote.update_attributes(quote_generated: quote_path)
-        # tmpfile.close
-        # tmpfile.unlink
         send_data pdf.render, filename: "#{ @account.policy_number_entered }_roc_report.pdf",
                   type:                 "application/pdf",
                   disposition:          "inline"
-
-        # pdf.render_file "app/reports/risk_report_#{@account.id}.pdf"
       end
     end
   end
 
   private
 
-  def get_details
+  def set_account
     @account = Account.includes(:group_rating_rejections, :group_rating_exceptions, :policy_calculation, :affiliates, :contacts, :quotes, :account_programs).find_by(id: params[:id] || params[:account_id])
     redirect_to page_not_found_path and return unless @account.present?
+  end
 
+  def set_common_details
+    @statuses        = Account.statuses
+    @policy_statuses = PolicyCalculation.current_coverage_statuses
+    @employer_types  = PolicyCalculation.employer_types
+    @representatives = Representative.all
+    @account_types   = Account.account_types
+  end
+
+  def get_details
     @account_changes         = @account.versions.map { |v| [v.created_at, v.changeset] }
-    @statuses                = Account.statuses
-    @account_types           = Account.account_types
     @representative          = Representative.find(@account.representative_id)
     @group_rating            = GroupRating.find_by(representative_id: @representative.id)
     @new_payroll_calculation = PayrollCalculation.new
@@ -346,6 +260,6 @@ class AccountsController < ApplicationController
                                     :business_contact_name, :business_phone_number, :business_phone_extension, :business_email_address, :website_url, :group_rating_qualification, :tpa_start_date, :tpa_end_date,
                                     :group_rating_tier, :group_fees, :user_override, :industry_group, :group_dues, :total_costs, :status, :federal_identification_number,
                                     :cycle_date, :request_date, :quarterly_request, :weekly_request, :ac3_approval, :fee_override, :account_type, :fax_number,
-                                    affiliate_ids: [])
+                                    affiliate_ids: [], accounts_mco_attributes: [:mco_id, :account_id, :relationship_start_date])
   end
 end

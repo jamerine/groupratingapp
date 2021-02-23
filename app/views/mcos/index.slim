@@ -2,7 +2,7 @@
   .row
     .col-sm-12
       .jumbotron
-        h1.text-center MCOs
+        h1.text-center Managed Care Organizations
   .row
     .col-md-12
       table.table.table-striped.mco-datatable
@@ -10,7 +10,7 @@
           tr
             th style=("text-align: left;")  Name
             th style=("text-align: left;")  Last Updated
-            th style=("text-align: right;") width="15%" = link_to 'Add MCO', new_mco_path, class: 'btn btn-success btn-sm'
+            th style=("text-align: right;") width="15%" = link_to 'Add Organization', new_mco_path, class: 'btn btn-success btn-sm'
         tbody
           - @mcos.each do |mco|
             tr

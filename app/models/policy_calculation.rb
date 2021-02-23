@@ -100,9 +100,11 @@ class PolicyCalculation < ActiveRecord::Base
   has_many :payroll_calculations, through: :manual_class_calculations
   belongs_to :representative
   belongs_to :account
+  has_one :mco, through: :account
 
   delegate :name, to: :account, prefix: true, allow_nil: false
   delegate :status, to: :account, prefix: true, allow_nil: false
+  delegate :name, to: :mco, prefix: true, allow_nil: true
 
   scope :by_representative, -> (rep_number) { where(representative_number: rep_number) }
   scope :updated_in_quarterly_report, -> { where('policy_calculations.updated_at >= ?', Date.parse('2020-07-30')) }

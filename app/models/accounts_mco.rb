@@ -22,5 +22,5 @@ class AccountsMco < ActiveRecord::Base
   belongs_to :account
   belongs_to :mco
 
-  validates_presence_of :relationship_start_date
+  validates_presence_of :relationship_start_date, :mco_id, :account_id
 end
