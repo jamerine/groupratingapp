@@ -40,6 +40,8 @@
 #                                account_assign_address POST       /accounts/:account_id/assign_address(.:format)                                    accounts#assign_address
 #                                   account_risk_report GET        /accounts/:account_id/risk_report(.:format)                                       accounts#risk_report
 #                             account_claim_loss_export POST       /accounts/:account_id/claim_loss_export(.:format)                                 accounts#claim_loss_export
+#                      account_ranged_claim_loss_export GET        /accounts/:account_id/ranged_claim_loss_export(.:format)                          accounts#ranged_claim_loss_export
+#                 account_ranged_claim_loss_export_form POST       /accounts/:account_id/ranged_claim_loss_export_form(.:format)                     accounts#ranged_claim_loss_export_form
 #                               account_new_risk_report GET        /accounts/:account_id/new_risk_report(.:format)                                   accounts#new_risk_report
 #                                     account_retention GET        /accounts/:account_id/retention(.:format)                                         accounts#retention
 #                                    account_roc_report GET        /accounts/:account_id/roc_report(.:format)                                        accounts#roc_report
@@ -90,6 +92,14 @@
 #                                                       PATCH      /affiliates/:id(.:format)                                                         affiliates#update
 #                                                       PUT        /affiliates/:id(.:format)                                                         affiliates#update
 #                                                       DELETE     /affiliates/:id(.:format)                                                         affiliates#destroy
+#                                                  mcos GET        /mcos(.:format)                                                                   mcos#index
+#                                                       POST       /mcos(.:format)                                                                   mcos#create
+#                                               new_mco GET        /mcos/new(.:format)                                                               mcos#new
+#                                              edit_mco GET        /mcos/:id/edit(.:format)                                                          mcos#edit
+#                                                   mco GET        /mcos/:id(.:format)                                                               mcos#show
+#                                                       PATCH      /mcos/:id(.:format)                                                               mcos#update
+#                                                       PUT        /mcos/:id(.:format)                                                               mcos#update
+#                                                       DELETE     /mcos/:id(.:format)                                                               mcos#destroy
 #                              claim_calculation_export GET        /claim_calculations/:claim_calculation_id/export(.:format)                        claim_calculations#export
 #                             search_claim_calculations GET        /claim_calculations/search(.:format)                                              claim_calculations#search
 #                      update_address_claim_calculation POST       /claim_calculations/:id/update_address(.:format)                                  claim_calculations#update_address
@@ -484,6 +494,8 @@ Rails.application.routes.draw do
   resources :affiliates do
     collection { post :import_affiliate_process }
   end
+
+  resources :mcos
 
   resources :claim_calculations do
     get :export

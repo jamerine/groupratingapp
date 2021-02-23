@@ -1,0 +1,68 @@
+// TODO: Move to simple form and form partial
+= simple_form_for @account do |f|
+  .container
+    .jumbotron.text-center
+      h1 New Account
+
+      .row
+        .form-group.col-md-4 = f.input :representative_id, collection: @representatives, label_method: :abbreviated_name, value_method: :id, label: false, prompt: 'Select One'
+
+      .row
+        .form-group.col-md-12
+          = f.input :ac3_approval, as: :boolean
+
+      .row
+        .form-group.col-md-4 = f.input :name
+        .form-group.col-md-4 = f.input :policy_number_entered, as: :integer
+        .form-group.col-md-4
+          = f.label :status
+          = f.select :status, options_for_select(@statuses.collect { |s| [s[0].humanize, s[0]] }, selected: @account.status), {}, class: "form-control"
+
+      .row
+        .form-group.col-md-6
+          = f.label :street_address
+          = f.text_field :street_address, class: "form-control"
+        .form-group.col-md-6
+          = f.label :street_address_2
+          = f.text_field :street_address_2, class: "form-control"
+
+      .row
+        .form-group.col-md-4
+          = f.label :city
+          = f.text_field :city, class: "form-control"
+        .form-group.col-md-4
+          = f.label :state
+          = f.text_field :state, class: "form-control"
+        .form-group.col-md-4
+          = f.label :zip_code
+          = f.text_field :zip_code, class: "form-control"
+
+      .row
+        .form-group.col-md-4
+          = f.label :business_phone_number
+          = f.phone_field :business_phone_number, class: "form-control"
+        .form-group.col-md-4
+          = f.label :business_phone_extension
+          = f.phone_field :business_phone_extension, class: "form-control"
+        .form-group.col-md-4
+          = f.label :fax_number
+          = f.phone_field :fax_number, class: "form-control"
+
+      .row
+        .form-group.col-md-4
+          = f.label :business_email_address
+          = f.email_field :business_email_address, class: "form-control"
+        .form-group.col-md-4
+          = f.label :website_url
+          = f.url_field :website_url, class: "form-control"
+
+      .row
+        .form-group.col-md-6
+          = f.label :weekly_request
+          = f.check_box :weekly_request
+        .form-group.col-md-6
+          = f.label :quarterly_request
+          = f.check_box :quarterly_request
+
+      .row
+        .form-group.col-md-4.col-md-offset-4 = f.submit 'Create Account', class: 'btn btn-info'

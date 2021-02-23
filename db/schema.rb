@@ -11,10 +11,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20210126154741) do
+ActiveRecord::Schema.define(version: 202004020223665) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+  enable_extension "pg_stat_statements"
 
   create_table "account_programs", force: :cascade do |t|
     t.integer  "account_id"
@@ -121,6 +122,17 @@ ActiveRecord::Schema.define(version: 20210126154741) do
 
   add_index "accounts_contacts_contact_types", ["accounts_contact_id"], name: "index_accounts_contacts_contact_types_on_accounts_contact_id", using: :btree
   add_index "accounts_contacts_contact_types", ["contact_type_id"], name: "index_accounts_contacts_contact_types_on_contact_type_id", using: :btree
+
+  create_table "accounts_mcos", force: :cascade do |t|
+    t.integer  "account_id"
+    t.integer  "mco_id"
+    t.datetime "relationship_start_date"
+    t.datetime "created_at",              null: false
+    t.datetime "updated_at",              null: false
+    t.datetime "deleted_at"
+  end
+
+  add_index "accounts_mcos", ["deleted_at"], name: "index_accounts_mcos_on_deleted_at", using: :btree
 
   create_table "active_admin_comments", force: :cascade do |t|
     t.string   "namespace"
@@ -843,6 +855,16 @@ ActiveRecord::Schema.define(version: 20210126154741) do
 
   add_index "manual_class_calculations", ["policy_calculation_id"], name: "index_manual_class_calculations_on_policy_calculation_id", using: :btree
   add_index "manual_class_calculations", ["policy_number", "manual_number"], name: "index_man_class_calc_pol_num_and_man_num", using: :btree
+
+  create_table "mcos", force: :cascade do |t|
+    t.integer  "bwc_mco_id"
+    t.string   "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.datetime "deleted_at"
+  end
+
+  add_index "mcos", ["deleted_at"], name: "index_mcos_on_deleted_at", using: :btree
 
   create_table "mira_detail_records", force: :cascade do |t|
     t.integer  "representative_number"

@@ -70,6 +70,8 @@ class Account < ActiveRecord::Base
   has_one :policy_calculation, dependent: :destroy
   has_many :quotes, dependent: :destroy
   has_many :notes, dependent: :destroy
+  has_one :accounts_mco, dependent: :destroy
+  has_one :mco, through: :accounts_mco
 
   validates :policy_number_entered, :presence => true, length: { maximum: 8 }
 
