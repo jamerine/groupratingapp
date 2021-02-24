@@ -1,6 +1,6 @@
 class AccountsController < ApplicationController
   include ClaimLossConcern
-  before_action :set_account, except: [:index, :new, :create, :import_account_process]
+  before_action :set_account, except: [:index, :new, :create, :import_account_process, :autocomplete_policy_number_entered]
   before_action :set_common_details, only: [:index, :new, :edit, :update, :create, :show, :retention]
   before_action :get_details, only: [:show, :retention]
   claim_loss
@@ -68,6 +68,35 @@ class AccountsController < ApplicationController
       flash[:alert] = "There was an error creating account. Please try again."
       render :new
     end
+  end
+
+  def autocomplete_policy_number_entered
+    representative_id = params[:representative_id].to_i
+    policy_number     = params[:policy_number].to_i
+    existing_account  = Account.find_by_rep_and_policy(representative_id, policy_number)
+
+    render json: { success: false, message: 'An account already exists for that policy number!' } and return if existing_account.present?
+
+    employer_demographic = EmployerDemographic.by_representative(representative_id).where(policy_number: policy_number).order(updated_at: :desc).first
+
+    render json: { success: false, message: 'Something went wrong, please try again!' } and return unless employer_demographic.present?
+
+    render json: {
+      success:                true,
+      name:                   employer_demographic.primary_name,
+      email:                  employer_demographic.primary_contact_email,
+      street_address:         employer_demographic.business_street_address_1,
+      street_address_2:       employer_demographic.business_street_address_2,
+      city:                   employer_demographic.business_city,
+      state:                  employer_demographic.business_state_code,
+      zip_code:               employer_demographic.business_zip_code,
+      contact_name:           employer_demographic.business_contact_name,
+      phone_number:           employer_demographic.business_phone,
+      phone_number_extension: employer_demographic.business_extension,
+      fax_number:             employer_demographic.business_fax,
+      mco_id:                 employer_demographic.mco.id,
+      mco_start_date:         employer_demographic.mco_relationship_beginning_date.to_date.to_s
+    }
   end
 
   def edit
@@ -242,6 +271,7 @@ class AccountsController < ApplicationController
     @employer_types  = PolicyCalculation.employer_types
     @representatives = Representative.all
     @account_types   = Account.account_types
+    @policy_numbers  = @representatives.collect { |r| [r.id, r.employer_demographics.pluck(:policy_number)] }
   end
 
   def get_details

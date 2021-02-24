@@ -484,7 +484,10 @@ Rails.application.routes.draw do
 
     resources :affiliates
 
-    collection { post :import_account_process }
+    collection do
+      post :import_account_process
+      get :autocomplete_policy_number_entered
+    end
   end
 
   resources :account_programs do

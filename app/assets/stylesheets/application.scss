@@ -363,3 +363,27 @@ footer {
   left:      50%;
   transform: translate(-50%, -50%);
 }
+
+.twitter-typeahead {
+  width: 100%;
+}
+
+.tt-menu {
+  width:                 250px;
+  margin:                0;
+  padding:               10px;
+  font-size:             14px;
+  background-color:      #FFFFFF;
+  border:                1px solid #CCCCCC;
+  -webkit-border-radius: 8px;
+  -moz-border-radius:    8px;
+  border-radius:         8px;
+  -webkit-box-shadow:    0 5px 10px rgba(0, 0, 0, .2);
+  -moz-box-shadow:       0 5px 10px rgba(0, 0, 0, .2);
+  box-shadow:            0 5px 10px rgba(0, 0, 0, .2);
+
+  .tt-suggestion.tt-selectable {
+    margin-bottom: 5px;
+    cursor: pointer;
+  }
+}

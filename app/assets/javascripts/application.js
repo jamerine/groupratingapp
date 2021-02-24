@@ -20,6 +20,7 @@
 //= require bootstrap-datetimepicker
 //= require cocoon
 //= require select2
+//= require typeahead.bundle.min
 //= require jquery.inputmask.min
 
 function validateFiles(inputFile) {

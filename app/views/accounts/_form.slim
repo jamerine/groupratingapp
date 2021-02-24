@@ -14,7 +14,7 @@
               .col-sm-6 = ff.input :relationship_start_date, as: :string, input_html: { class: 'mco-datepicker' }
       .row
         .col-sm-3 = f.input :name
-        .col-sm-3 = f.input :policy_number_entered, label: 'Policy Number'
+        .col-sm-3 = f.input :policy_number_entered, as: :string, label: 'Policy Number', input_html: { class: 'typeahead' }
         .col-sm-3 = f.input :status, collection: @statuses.collect { |s| [s[0].titleize, s[0]] }, prompt: 'Select One'
         .col-sm-3 = f.input :account_type, collection: @account_types.collect { |s| [s[0].titleize, s[0]] }, prompt: 'Select One'
       .row
@@ -64,4 +64,44 @@ javascript:
       format:     'YYYY-MM-DD',
       useCurrent: true
     });
+
+    $('.typeahead').typeahead({
+        minLength: 2,
+        highlight: true,
+        hint:      true
+      },
+      {
+        name:   'policy_numbers',
+        source: substringMatcher(JSON.parse("#{ @policy_numbers.as_json }"))
+      });
+
+    $('#account_policy_number_entered').on('typeahead:select typeahead:autocomplete', function (event, selection) {
+      $.get('/accounts/autocomplete_policy_number_entered', { representative_id: $('#account_representative_id').val(), policy_number: selection }, function (response) {
+        console.log(response); // TODO: Take this info and populate
+      });
+    });
   });
+
+  function substringMatcher(policy_numbers_by_rep) {
+    return function findMatches(query, callback) {
+      var matches, substringRegex;
+
+      // an array that will be populated with substring matches
+      matches = [];
+
+      // regex used to determine if a string contains the substring `q`
+      substrRegex = new RegExp(query, 'i');
+
+      // iterate through the pool of strings and for any string that
+      // contains the substring `q`, add it to the `matches` array
+      $.each(policy_numbers_by_rep, function (index, rep_and_policy_number) {
+        if (parseInt($('#account_representative_id').val()) === rep_and_policy_number[0]) {
+          $.each(rep_and_policy_number[1], function (policyIndex, policyNumber) {
+            if (substrRegex.test(policyNumber)) matches.push(policyNumber);
+          });
+        }
+      });
+
+      callback(matches);
+    };
+  }
