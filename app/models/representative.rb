@@ -59,6 +59,7 @@ class Representative < ActiveRecord::Base
   has_many :group_rating_exceptions, dependent: :destroy
   has_many :representatives_users
   has_many :users, through: :representatives_users
+  has_many :employer_demographics
 
   mount_uploader :logo, LogoUploader
   mount_uploader :zip_file, RepresentativeUploader
