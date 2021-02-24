@@ -96,9 +96,8 @@ class RepresentativesController < ApplicationController
         EmployerDemographicsImport.new.perform(data_hash, @representative.id)
       end
 
-      redirect_to @representative, notice: "Employer Demographics Data Has Been Imported."
-    rescue => e
-      puts e.message
+      redirect_to @representative, notice: "Employer Demographics Have Been Imported!"
+    rescue
       redirect_to @representative, alert: "There was an error importing file.  Please ensure file columns and file type are correct"
     end
   end
