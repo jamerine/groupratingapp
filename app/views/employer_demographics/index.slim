@@ -1,0 +1,25 @@
+.container-fluid style=("margin-bottom: 100px;")
+  .row
+    .col-sm-12
+      .jumbotron
+        h1.text-center Imported Employer Demographics Data
+  .row
+    .col-md-12
+      table.table.table-striped.demo-datatable style="margin-bottom: 15px;"
+        thead
+          tr
+            - @field_names.each do |field_name|
+              th style="min-width: 125px;" = field_name.titleize
+        tbody
+          - @demographics.each do |demographic|
+            tr
+              - @field_names.each do |field_name|
+                td = field_name.include?('date') ? l(demographic.send(field_name), format: :date_only) : demographic.send(field_name)
+
+javascript:
+  $(function () {
+    $('.demo-datatable').DataTable({
+      order:   [[0, 'asc']],
+      scrollX: true
+    });
+  });

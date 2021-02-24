@@ -79,8 +79,7 @@
 
 class EmployerDemographic < ActiveRecord::Base
   belongs_to :representative
-  has_one :account, ->(demo) { find_by_rep_and_policy(demo.representative_id, demo.policy_number) }
-  has_one :mco, ->(demo) { find_by(bwc_id_number: demo.mco_id_number) }
+  has_one :mco, foreign_key: :bwc_mco_id, primary_key: :mco_id_number
 
   validates_presence_of :employer_state, :representative_id, :policy_number
   validates_numericality_of :policy_number
@@ -90,6 +89,10 @@ class EmployerDemographic < ActiveRecord::Base
 
   after_save :check_mco, :check_account_mco
 
+  def account
+    Account.find_by_rep_and_policy(self.representative_id, self.policy_number)
+  end
+
   private
 
   def check_mco
@@ -97,6 +100,8 @@ class EmployerDemographic < ActiveRecord::Base
   end
 
   def check_account_mco
-    AccountsMco.find_or_create_by(account_id: self.account.id, mco_id: self.mco.id).update_attribute(:relationship_beginning_date, self.mco_relationship_beginning_date)
+    return unless account.present? && self.mco.present?
+
+    AccountsMco.find_or_create_by(account_id: account.id, mco_id: self.mco.id).update_attribute(:relationship_start_date, self.mco_relationship_beginning_date)
   end
 end

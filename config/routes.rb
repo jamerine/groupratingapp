@@ -631,6 +631,8 @@ Rails.application.routes.draw do
     post :zip_file
     get :edit_global_dates
 
+    resources :employer_demographics, only: :index
+
     member do
       post :delete_everything
     end

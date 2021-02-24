@@ -103,6 +103,10 @@ class Account < ActiveRecord::Base
     obj
   end
 
+  def employer_demographics
+    EmployerDemographic.where(policy_number: self.policy_number_entered, representative_id: self.representative_id)
+  end
+
   def group_rating_rejected?
     self.group_rating_qualification == 'reject'
   end
