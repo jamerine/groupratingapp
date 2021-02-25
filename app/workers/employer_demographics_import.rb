@@ -1,14 +1,14 @@
 class EmployerDemographicsImport
   include Sidekiq::Worker
 
-  sidekiq_options queue: :import_file, retry: 5
+  sidekiq_options queue: :employer_demographics_import, retry: 5
 
   def perform(data_hash, representative_id)
     data_hash = data_hash.with_indifferent_access
 
     if representative_id.present? && data_hash.present?
       @demo_data = EmployerDemographic.find_or_initialize_by(representative_id: representative_id,
-                                                             employer_state:    data_hash[:state_code],
+                                                             employer_state:    data_hash[:state_code] || 'OH',
                                                              policy_number:     data_hash[:policy_number])
 
       @demo_data.assign_attributes(data_hash.except(:"15k_program_indicator",

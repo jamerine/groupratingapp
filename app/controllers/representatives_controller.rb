@@ -88,15 +88,20 @@ class RepresentativesController < ApplicationController
   # end
 
   def import_employer_demographics_process
+    require 'progress_bar/core_ext/enumerable_with_progress'
+    require 'open-uri'
+
     @representative = Representative.find(params[:representative_id])
 
     begin
-      CSV.foreach(params[:file].path, headers: true, encoding: 'utf-16', col_sep: "\t") do |row|
-        data_hash = row.to_hash.transform_keys(&:parameterize).transform_keys(&:underscore).transform_keys(&:to_sym)
-        EmployerDemographicsImport.perform_async(data_hash, @representative.id)
+      file        = open(params[:file].path, encoding: 'utf-16')
+      headers     = file&.first&.split("\t").map(&:parameterize).map(&:underscore).map(&:to_sym)
+
+      until file&.eof?
+        EmployerDemographicsImportProcess.perform_async(headers, file.readline, @representative.id)
       end
 
-      redirect_to @representative, notice: "Employer Demographics Have Been Imported!"
+      redirect_to @representative, notice: "The Employer Demographics Import Has Been Queued!"
     rescue
       redirect_to @representative, alert: "There was an error importing file.  Please ensure file columns and file type are correct"
     end
