@@ -93,7 +93,7 @@ class RepresentativesController < ApplicationController
     begin
       CSV.foreach(params[:file].path, headers: true, encoding: 'utf-16', col_sep: "\t") do |row|
         data_hash = row.to_hash.transform_keys(&:parameterize).transform_keys(&:underscore).transform_keys(&:to_sym)
-        EmployerDemographicsImport.new.perform(data_hash, @representative.id)
+        EmployerDemographicsImport.perform_async(data_hash, @representative.id)
       end
 
       redirect_to @representative, notice: "Employer Demographics Have Been Imported!"
