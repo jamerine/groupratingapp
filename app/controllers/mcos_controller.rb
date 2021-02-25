@@ -32,7 +32,7 @@ class McosController < ApplicationController
 
   def destroy
     if @mco.destroy
-      redirect_to mcos_path(@mco), notice: 'MCO Deleted Successfully!'
+      redirect_to mcos_path, notice: 'MCO Deleted Successfully!'
     end
   end
 
