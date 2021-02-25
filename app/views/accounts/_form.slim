@@ -65,21 +65,39 @@ javascript:
       useCurrent: true
     });
 
-    $('.typeahead').typeahead({
-        minLength: 2,
-        highlight: true,
-        hint:      true
-      },
-      {
-        name:   'policy_numbers',
-        source: substringMatcher(JSON.parse("#{ @policy_numbers.as_json }"))
-      });
+    if ("#{ @account.new_record? }" === 'true') { // Only do this for new records
+      $('.typeahead').typeahead({
+          minLength: 2,
+          highlight: true,
+          hint:      true
+        },
+        {
+          name:   'policy_numbers',
+          source: substringMatcher(JSON.parse("#{ @policy_numbers.as_json }"))
+        });
 
-    $('#account_policy_number_entered').on('typeahead:select typeahead:autocomplete', function (event, selection) {
-      $.get('/accounts/autocomplete_policy_number_entered', { representative_id: $('#account_representative_id').val(), policy_number: selection }, function (response) {
-        console.log(response); // TODO: Take this info and populate
+      $('#account_policy_number_entered').on('typeahead:select typeahead:autocomplete', function (event, selection) {
+        $.get('/accounts/autocomplete_policy_number_entered', { representative_id: $('#account_representative_id').val(), policy_number: selection }, function (response) {
+          if (response.success) {
+            $('#account_city').val(response.city);
+            $('#account_business_contact_name').val(response.contact_name);
+            $('#account_business_email_address').val(response.email);
+            $('#account_fax_number').val(response.fax_number);
+            $('select[name="account[accounts_mco_attributes][mco_id]"]').val(response.mco_id).change();
+            $('#account_accounts_mco_attributes_relationship_start_date').val(response.mco_start_date);
+            $('#account_name').val(response.name);
+            $('#account_business_phone_number').val(response.phone_number);
+            $('#account_business_phone_extension').val(response.phone_number_extension);
+            $('#account_state').val(response.state).change();
+            $('#account_street_address').val(response.street_address);
+            $('#account_street_address_2').val(response.street_address_2);
+            $('#account_zip_code').val(response.zip_code);
+          } else {
+            alert(response.message);
+          }
+        });
       });
-    });
+    }
   });
 
   function substringMatcher(policy_numbers_by_rep) {
