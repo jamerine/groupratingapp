@@ -98,6 +98,14 @@ class Account < ActiveRecord::Base
     obj
   end
 
+  def group_rating_rejected?
+    self.group_rating_qualification == 'reject'
+  end
+
+  def group_retro_rejected?
+    self.group_retro_qualification == 'reject'
+  end
+
   def self.find_by_rep_and_policy(rep_id, policy_number)
     where(representative_id: rep_id, policy_number_entered: policy_number)&.map { |account| account if account.policy_calculation.present? }&.compact&.first
     # find_by(policy_number_entered: policy_number, representative_id: rep_id)
@@ -798,8 +806,8 @@ class Account < ActiveRecord::Base
       end_date   = group_rating_calc.current_payroll_period_upper_date
 
       if self.policy_calculation.public_employer?
-        start_date = start_date.beginning_of_year
-        end_date   = end_date.beginning_of_year
+        start_date = (start_date + 1.year).beginning_of_year
+        end_date   = start_date.end_of_year
       end
 
       if policy_calculation.policy_creation_date >= group_rating_calc.current_payroll_period_lower_date

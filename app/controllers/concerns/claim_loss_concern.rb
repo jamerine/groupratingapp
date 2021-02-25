@@ -62,8 +62,8 @@ module ClaimLossConcern
         @experience_only = false
 
         if @policy_calculation.public_employer?
-          @start_date = @start_date.beginning_of_year
-          @end_date   = @end_date.beginning_of_year - 1.day
+          @start_date = (@start_date + 1.year).beginning_of_year
+          @end_date   = @end_date.end_of_year
         end
       end
     end

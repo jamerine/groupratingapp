@@ -166,12 +166,12 @@ class RatesController < ApplicationController
       if row_index > 0
         credibility_number = columns[0]
 
-        (1..22).to_a.each do |index|
+        [*1..22].each do |index|
           data << {
-            credibility_number: credibility_number,
+            credibility_number: credibility_number.to_i,
             industry_group:     index,
             loss_ratio:         columns[index],
-            old_loss_ratio:     BwcCodesLimitedLossRatio.find_by(credibility_group: credibility_number, industry_group: index).try(:limited_loss_ratio)
+            old_loss_ratio:     BwcCodesLimitedLossRatio.find_by(credibility_group: credibility_number, industry_group: index)&.limited_loss_ratio
           }
         end
       end

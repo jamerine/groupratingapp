@@ -90,13 +90,13 @@ class ManualClassCalculation < ActiveRecord::Base
     payroll_end_date      = @group_rating.current_payroll_period_upper_date
 
     if self.policy_calculation.public_employer?
-      start_date         = start_date.beginning_of_year
-      end_date           = end_date.beginning_of_year
-      payroll_start_date = payroll_start_date.beginning_of_year
-      payroll_end_date   = payroll_end_date.beginning_of_year
+      start_date         = (start_date + 1.year).beginning_of_year
+      end_date           = end_date.end_of_year
+      payroll_start_date = (payroll_start_date + 1.year).beginning_of_year
+      payroll_end_date   = payroll_start_date.end_of_year
     end
 
-    four_year_payroll_lower_date = @policy_creation_date < start_date ? @policy_creation_date : start_date
+    four_year_payroll_lower_date = @policy_creation_date > start_date ? @policy_creation_date : start_date
 
     # CHANGE as of 06/20/2017 changed the four year sum calculations
     @manual_class_self_four_year_sum = self.payroll_calculations.where("payroll_calculations.reporting_period_start_date BETWEEN :experience_period_lower_date AND :experience_period_upper_date AND (payroll_calculations.payroll_origin NOT IN (:origins))",
@@ -168,11 +168,11 @@ class ManualClassCalculation < ActiveRecord::Base
     end_date             = group_rating.experience_period_upper_date
 
     if self.policy_calculation.public_employer?
-      start_date = start_date.beginning_of_year
-      end_date   = end_date.beginning_of_year
+      start_date = (start_date + 1.year).beginning_of_year
+      end_date   = end_date.end_of_year
     end
 
-    self_four_year_payroll_lower_date = policy_creation_date < start_date ? policy_creation_date : start_date
+    self_four_year_payroll_lower_date = policy_creation_date > start_date ? policy_creation_date : start_date
     manual_class_self_four_year_sum   = self.payroll_calculations.with_estimated_payroll(false).where("payroll_calculations.reporting_period_start_date BETWEEN :experience_period_lower_date and :experience_period_upper_date and (payroll_calculations.payroll_origin NOT IN (:origins))",
                                                                                                       experience_period_lower_date: self_four_year_payroll_lower_date,
                                                                                                       experience_period_upper_date: end_date,
@@ -194,7 +194,7 @@ class ManualClassCalculation < ActiveRecord::Base
       @limited_loss_rate = 0
       @limited_losses    = 0
     else
-      @limited_loss_rate = (@limited_loss_rate_row.limited_loss_ratio)
+      @limited_loss_rate = @limited_loss_rate_row&.limited_loss_ratio || 0
       @limited_losses    = (self.manual_class_expected_losses * @limited_loss_rate).round(0)
     end
 
@@ -205,7 +205,7 @@ class ManualClassCalculation < ActiveRecord::Base
     limited_loss_rate_row = BwcCodesLimitedLossRatio.find_by(industry_group: self.manual_class_industry_group, credibility_group: credibility_group)
     return 0 unless limited_loss_rate_row.present?
 
-    limited_loss_rate = (limited_loss_rate_row.limited_loss_ratio)
+    limited_loss_rate = limited_loss_rate_row.limited_loss_ratio || 0
     (expected_losses_without_estimates * limited_loss_rate).round(0)
   end
 

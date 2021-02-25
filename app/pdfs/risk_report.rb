@@ -295,19 +295,11 @@ class RiskReport < PdfReport
         @account.group_rating_rejections.where("program_type = 'group_rating'").pluck(:reject_reason).map { |i| "'" + i.to_s + "'" }.join(",").to_s.gsub(/\s|"|'/, '')
       end
 
-    @group_rating_date =
-      if @account.quotes.where("program_type = 0").first.nil?
-        'N/A'
-      else
-        @account.quotes.where("program_type = 0").first.quote_date
-      end
+    group_rating_quote = @account.quotes.where(program_type: 0).first
+    group_retro_quote  = @account.quotes.where(program_type: 1).first
 
-    @group_retro_date =
-      if @account.quotes.where("program_type = 1").first.nil?
-        'N/A'
-      else
-        @account.quotes.where("program_type = 1").first.quote_date
-      end
+    @group_rating_date = group_rating_quote.nil? || @account.group_rating_rejected? ? 'N/A' : group_rating_quote.quote_date
+    @group_retro_date  = group_retro_quote.nil? || @account.group_retro_rejected? ? 'N/A' : group_retro_quote.quote_date
 
     if @report_params["at_a_glance"] == "1" || @report_params["experience_statistics"] == "1" || @report_params["expected_loss_and_premium"] == "1"
       header
@@ -708,7 +700,7 @@ class RiskReport < PdfReport
       @group_retro_costs             = -@account.group_retro_savings
       @group_retro_maximum_risk      = (@policy_calculation.policy_adjusted_standard_premium * 0.15) # Changing from this due to Doug request 1/20/21: (@policy_calculation.policy_total_standard_premium * 0.15)
       @group_retro_total_cost        = @group_retro_projected_premium + @group_retro_costs
-      @group_retro_savings           = (@policy_calculation.policy_adjusted_individual_premium || @policy_calculation.calculate_premium_with_assessments) - @group_retro_total_cost
+      @group_retro_savings           = (@policy_calculation.policy_adjusted_standard_premium || @policy_calculation.calculate_premium_with_assessments) - @group_retro_total_cost
     else
       @group_retro_projected_premium = nil
       @group_retro_costs             = nil
@@ -1013,10 +1005,10 @@ class RiskReport < PdfReport
       text "Med Only Claim Count: #{@experience_med_only}", style: :bold, :indent_paragraphs => 30
       text "Lost Time Claim Count: #{@experience_lost_time}", style: :bold, :indent_paragraphs => 30
     end
-    bounding_box([380, first_cursor], :width => 125, :height => 25) do
-      text "SI Average: #{round(@experience_si_avg, 0)}", style: :bold
-      text "SI Ratio Avg: #{round(@experience_si_ratio_avg, 0)}", style: :bold
-    end
+    # bounding_box([380, first_cursor], :width => 125, :height => 25) do
+    #   text "SI Average: #{round(@experience_si_avg, 0)}", style: :bold
+    #   text "SI Ratio Avg: #{round(@experience_si_ratio_avg, 0)}", style: :bold
+    # end
   end
 
   def totals_experience_year_data
@@ -1040,10 +1032,10 @@ class RiskReport < PdfReport
       text "Med Only Claim Count: #{@ten_year_med_only}     RCO1: #{ @ten_year_rc_01 }", style: :bold, :indent_paragraphs => 30
       text "Lost Time Claim Count: #{@ten_year_lost_time}     RCO2: #{@ten_year_rc_02}", style: :bold, :indent_paragraphs => 30
     end
-    bounding_box([380, first_cursor], :width => 125, :height => 25) do
-      text "SI Average: #{round(@ten_year_si_average, 0)}", style: :bold
-      text "SI Ratio Avg: #{@ten_year_si_ratio_avg}", style: :bold
-    end
+    # bounding_box([380, first_cursor], :width => 125, :height => 25) do
+    #   text "SI Average: #{round(@ten_year_si_average, 0)}", style: :bold
+    #   text "SI Ratio Avg: #{@ten_year_si_ratio_avg}", style: :bold
+    # end
 
   end
 
@@ -1081,7 +1073,7 @@ class RiskReport < PdfReport
       end
     end
 
-    @data = [["Claim #", "Claimant", "DOI", "Man Num", "Comp Award", "Med. Paid", "MIRA Res.", "GTML", "ITML", "SI Total", "HC", "Code"]]
+    @data = [["Claim #", "Claimant", "DOI", "Man Num", "Comp Award", "Med. Paid", "MIRA Res.", "GTML", "ITML", "Claim Total", "HC", "Code"]]
 
     @data += claims_array.map do |e|
       comp_awarded = "0"
