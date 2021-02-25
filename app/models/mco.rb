@@ -21,5 +21,6 @@ class Mco < ActiveRecord::Base
   has_many :accounts_mcos, dependent: :destroy
   has_many :accounts, through: :accounts_mcos
 
+  validates_uniqueness_of :bwc_mco_id
   validates_presence_of :bwc_mco_id, :name
 end
