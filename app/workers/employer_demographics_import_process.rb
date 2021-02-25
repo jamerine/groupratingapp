@@ -1,11 +1,18 @@
 class EmployerDemographicsImportProcess
   include Sidekiq::Worker
 
-  sidekiq_options queue: :employer_demographics_import_process, retry: 2
+  sidekiq_options queue: :employer_demographics_import_process, retry: 1
 
-  def perform(headers, file_line, representative_id)
-    split_line = file_line.split("\t")
+  def perform(file_path, representative_id)
+    require 'open-uri'
 
-    EmployerDemographicsImport.perform_async(Hash[headers.map.with_index { |header, index| [header, split_line[index]] }], representative_id)
+    file    = open(file_path, encoding: 'utf-16')
+    headers = file&.first&.split("\t").map(&:parameterize).map(&:underscore).map(&:to_sym)
+
+    until file&.eof?
+      split_line = file.readline.split("\t")
+
+      EmployerDemographicsImport.perform_async(Hash[headers.map.with_index { |header, index| [header, split_line[index]] }], representative_id)
+    end
   end
 end

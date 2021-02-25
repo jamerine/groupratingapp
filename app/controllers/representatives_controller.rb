@@ -88,21 +88,10 @@ class RepresentativesController < ApplicationController
   # end
 
   def import_employer_demographics_process
-    require 'progress_bar/core_ext/enumerable_with_progress'
-    require 'open-uri'
-
     @representative = Representative.find(params[:representative_id])
 
     begin
-      file    = open(params[:file].path, encoding: 'utf-16')
-      lines   = []
-      headers = file&.first&.split("\t").map(&:parameterize).map(&:underscore).map(&:to_sym)
-
-      until file&.eof?
-        lines << file.readline
-      end
-
-      lines.each_with_progress { |line| EmployerDemographicsImportProcess.perform_async(headers, line, @representative.id) }
+      EmployerDemographicsImportProcess.perform_async(params[:file].path, @representative.id)
 
       redirect_to @representative, notice: "The Employer Demographics Import Has Been Queued!"
     rescue
