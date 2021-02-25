@@ -216,6 +216,7 @@ ActiveRecord::Schema.define(version: 202004020223665) do
     t.date     "completed_date"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "employer_type",  default: 0
   end
 
   create_table "bwc_codes_credibility_max_losses", force: :cascade do |t|

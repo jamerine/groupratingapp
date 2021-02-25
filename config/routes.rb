@@ -65,6 +65,7 @@
 #                                                       PUT        /accounts/:account_id/affiliates/:id(.:format)                                     affiliates#update
 #                                                       DELETE     /accounts/:account_id/affiliates/:id(.:format)                                     affiliates#destroy
 #                       import_account_process_accounts POST       /accounts/import_account_process(.:format)                                         accounts#import_account_process
+#           autocomplete_policy_number_entered_accounts GET        /accounts/autocomplete_policy_number_entered(.:format)                             accounts#autocomplete_policy_number_entered
 #                                              accounts GET        /accounts(.:format)                                                                accounts#index
 #                                                       POST       /accounts(.:format)                                                                accounts#create
 #                                           new_account GET        /accounts/new(.:format)                                                            accounts#new
@@ -335,6 +336,7 @@
 #                      representative_all_quote_process GET        /representatives/:representative_id/all_quote_process(.:format)                    representatives#all_quote_process
 #                               representative_zip_file POST       /representatives/:representative_id/zip_file(.:format)                             representatives#zip_file
 #                      representative_edit_global_dates GET        /representatives/:representative_id/edit_global_dates(.:format)                    representatives#edit_global_dates
+#                  representative_employer_demographics GET        /representatives/:representative_id/employer_demographics(.:format)                employer_demographics#index
 #                      delete_everything_representative POST       /representatives/:id/delete_everything(.:format)                                   representatives#delete_everything
 #                                       representatives GET        /representatives(.:format)                                                         representatives#index
 #                                                       POST       /representatives(.:format)                                                         representatives#create

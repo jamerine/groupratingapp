@@ -15,9 +15,10 @@ class RatesController < ApplicationController
       @limited_rates = BwcCodesLimitedLossRatio.all
     end
 
-    @administrative_rate = BwcCodesConstantValue.current_rate
-    @retro_tiers         = BwcCodesGroupRetroTier.all
-    @historical_years    = [BwcCodesBaseRatesHistoricalDatum::AVAILABLE_YEARS, BwcCodesLimitedLossRatesHistoricalDatum::AVAILABLE_YEARS].flatten.uniq
+    @administrative_rate        = BwcCodesConstantValue.current_rate.is_a?(ActiveRecord::Relation) ? nil : BwcCodesConstantValue.current_rate
+    @public_administrative_rate = BwcCodesConstantValue.current_public_rate.is_a?(ActiveRecord::Relation) ? nil : BwcCodesConstantValue.current_public_rate
+    @retro_tiers                = BwcCodesGroupRetroTier.all
+    @historical_years           = [BwcCodesBaseRatesHistoricalDatum::AVAILABLE_YEARS, BwcCodesLimitedLossRatesHistoricalDatum::AVAILABLE_YEARS].flatten.uniq
   end
 
   def create
