@@ -93,6 +93,10 @@ class EmployerDemographic < ActiveRecord::Base
     Account.find_by_rep_and_policy(self.representative_id, self.policy_number)
   end
 
+  def account_id
+    account&.id
+  end
+
   private
 
   def check_mco
@@ -100,8 +104,8 @@ class EmployerDemographic < ActiveRecord::Base
   end
 
   def check_account_mco
-    return unless account.present? && self.mco.present?
+    return unless account_id.present? && self.mco.present?
 
-    AccountsMco.find_or_create_by(account_id: account.id, mco_id: self.mco.id).update_attribute(:relationship_start_date, self.mco_relationship_beginning_date)
+    AccountsMco.find_or_create_by(account_id: account_id, mco_id: self.mco.id).update_attribute(:relationship_start_date, self.mco_relationship_beginning_date)
   end
 end
