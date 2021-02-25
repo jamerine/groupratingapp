@@ -94,8 +94,8 @@ class AccountsController < ApplicationController
       phone_number:           employer_demographic.business_phone,
       phone_number_extension: employer_demographic.business_extension,
       fax_number:             employer_demographic.business_fax,
-      mco_id:                 employer_demographic.mco.id,
-      mco_start_date:         employer_demographic.mco_relationship_beginning_date.to_date.to_s
+      mco_id:                 employer_demographic.mco&.id,
+      mco_start_date:         employer_demographic.mco_relationship_beginning_date&.to_date&.to_s
     }
   end
 
