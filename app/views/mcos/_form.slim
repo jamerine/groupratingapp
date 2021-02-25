@@ -1,0 +1,9 @@
+= simple_form_for [@mco] do |f|
+  .row
+    .col-sm-6 = f.input :name
+    .col-sm-6 = f.input :bwc_mco_id, label: 'BWC MCO Id', as: :string
+
+  .form-group.text-right
+    = link_to 'Cancel', mcos_path, class: 'btn btn-danger'
+    '
+    = f.submit 'Save', class: 'btn btn-success'

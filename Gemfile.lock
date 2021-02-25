@@ -128,6 +128,8 @@ GEM
     carrierwave-aws (1.4.0)
       aws-sdk-s3 (~> 1.0)
       carrierwave (>= 0.7, < 2.1)
+    city-state (0.1.0)
+      rubyzip (>= 1.1)
     cocoon (1.2.14)
     coderay (1.1.2)
     coffee-rails (4.1.1)
@@ -511,6 +513,7 @@ DEPENDENCIES
   capybara
   carrierwave
   carrierwave-aws
+  city-state
   cocoon
   coffee-rails (~> 4.1.0)
   combine_pdf

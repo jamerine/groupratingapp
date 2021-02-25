@@ -1,0 +1,32 @@
+.container style=("margin-bottom: 100px;")
+  .row
+    .col-sm-12
+      .jumbotron
+        h1.text-center Managed Care Organizations
+  .row
+    .col-md-12
+      table.table.table-striped.mco-datatable
+        thead
+          tr
+            th style=("text-align: left;")  Name
+            th style=("text-align: left;")  Last Updated
+            th style=("text-align: right;") width="15%" = link_to 'Add Organization', new_mco_path, class: 'btn btn-success btn-sm'
+        tbody
+          - @mcos.each do |mco|
+            tr
+              td style=("text-align: left;") = mco.name
+              td style=("text-align: left;") = l mco.updated_at
+              td style=("text-align: right;") width="15%"
+                = link_to edit_mco_path(mco), class: 'btn btn-primary btn-sm' do
+                  i.fa.fa-edit
+                '
+                = link_to mco_path(mco), method: :delete, class: 'btn btn-danger btn-sm', style: 'margin-right: 8px;', data: { confirm: 'Are you sure you want to delete this MCO?' } do
+                  i.fa.fa-trash
+
+javascript:
+  $(function () {
+    $('.mco-datatable').DataTable({
+      order:      [[0, 'asc']],
+      columnDefs: [{ targets: -1, orderable: false }]
+    });
+  });

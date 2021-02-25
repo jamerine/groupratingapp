@@ -87,6 +87,21 @@ class RepresentativesController < ApplicationController
   #   end
   # end
 
+  def import_employer_demographics_process
+    @representative = Representative.find(params[:representative_id])
+
+    begin
+      CSV.foreach(params[:file].path, headers: true, encoding: 'utf-16', col_sep: "\t") do |row|
+        data_hash = row.to_hash.transform_keys(&:parameterize).transform_keys(&:underscore).transform_keys(&:to_sym)
+        EmployerDemographicsImport.new.perform(data_hash, @representative.id)
+      end
+
+      redirect_to @representative, notice: "Employer Demographics Have Been Imported!"
+    rescue
+      redirect_to @representative, alert: "There was an error importing file.  Please ensure file columns and file type are correct"
+    end
+  end
+
   def import_account_notes_process
     @representative = Representative.find(params[:representative_id])
 

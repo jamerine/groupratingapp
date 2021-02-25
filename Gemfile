@@ -48,6 +48,7 @@ gem 'font-awesome-rails'
 gem 'activeadmin'
 gem 'exception_notification'
 gem 'slack-notifier'
+gem 'city-state'
 
 group :development, :test do
   gem 'byebug'

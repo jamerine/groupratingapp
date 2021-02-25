@@ -11,10 +11,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20210126154741) do
+ActiveRecord::Schema.define(version: 202004020223665) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+  enable_extension "pg_stat_statements"
 
   create_table "account_programs", force: :cascade do |t|
     t.integer  "account_id"
@@ -121,6 +122,17 @@ ActiveRecord::Schema.define(version: 20210126154741) do
 
   add_index "accounts_contacts_contact_types", ["accounts_contact_id"], name: "index_accounts_contacts_contact_types_on_accounts_contact_id", using: :btree
   add_index "accounts_contacts_contact_types", ["contact_type_id"], name: "index_accounts_contacts_contact_types_on_contact_type_id", using: :btree
+
+  create_table "accounts_mcos", force: :cascade do |t|
+    t.integer  "account_id"
+    t.integer  "mco_id"
+    t.datetime "relationship_start_date"
+    t.datetime "created_at",              null: false
+    t.datetime "updated_at",              null: false
+    t.datetime "deleted_at"
+  end
+
+  add_index "accounts_mcos", ["deleted_at"], name: "index_accounts_mcos_on_deleted_at", using: :btree
 
   create_table "active_admin_comments", force: :cascade do |t|
     t.string   "namespace"
@@ -498,6 +510,79 @@ ActiveRecord::Schema.define(version: 20210126154741) do
     t.string "single_rec"
   end
 
+  create_table "employer_demographics", force: :cascade do |t|
+    t.string   "employer_state",                            default: "OH"
+    t.integer  "representative_id",                                        null: false
+    t.integer  "policy_number"
+    t.string   "primary_name"
+    t.string   "primary_dba_name"
+    t.string   "street_address_line_1"
+    t.string   "street_address_line_2"
+    t.string   "city_name"
+    t.string   "state_code"
+    t.string   "zip_code"
+    t.string   "county_name"
+    t.string   "business_phone"
+    t.string   "business_extension"
+    t.string   "business_fax"
+    t.string   "fax_extension"
+    t.string   "business_contact_name"
+    t.string   "primary_contact_email"
+    t.string   "business_street_address_1"
+    t.string   "business_city"
+    t.string   "business_state_code"
+    t.string   "business_zip_code"
+    t.datetime "policy_original_effective_date"
+    t.string   "policy_type"
+    t.string   "policy_status"
+    t.string   "policy_status_reason"
+    t.datetime "status_reason_effective_date"
+    t.integer  "risk_group_number"
+    t.float    "interstate_experience_modifier"
+    t.float    "group_retro_max_premium_ratio"
+    t.float    "group_experience_rated_program"
+    t.float    "intrastate_retrospective_rating_program"
+    t.string   "employer_rep_group_risk_claim"
+    t.string   "employer_rep_emplr_risk_claim"
+    t.string   "employer_rep_risk_management"
+    t.integer  "current_industry_number"
+    t.string   "current_industry_description"
+    t.integer  "mco_id_number"
+    t.string   "mco_name"
+    t.datetime "mco_relationship_beginning_date"
+    t.string   "premium_range"
+    t.string   "penalty_rated_flag"
+    t.string   "group_rating_flag"
+    t.string   "group_retro_flag"
+    t.string   "individual_retro_flag"
+    t.string   "one_claim_program_flag"
+    t.string   "em_cap_flag"
+    t.float    "deductible_amount"
+    t.integer  "employer_year"
+    t.string   "grow_ohio_participation_flag"
+    t.integer  "governing_class_code"
+    t.string   "drug_free_safety_program_flag"
+    t.string   "go_green_flag"
+    t.string   "industry_specific_safety_program_flag"
+    t.string   "interstate_experience_modifier_flag"
+    t.string   "intrastate_retrospective_rating_flag"
+    t.string   "lapse_free_discount_flag"
+    t.string   "safety_council_participation_factor"
+    t.string   "safety_council_performance_factor"
+    t.string   "deductible_rating_plan_factor"
+    t.string   "transitional_work_performance_rate_factor"
+    t.datetime "deleted_at"
+    t.datetime "created_at",                                               null: false
+    t.datetime "updated_at",                                               null: false
+    t.integer  "business_sequence_number",                  default: 0
+    t.string   "business_street_address_2"
+    t.datetime "policy_period_beginning_date"
+    t.datetime "policy_period_ending_date"
+    t.string   "fifteen_program_indicator"
+  end
+
+  add_index "employer_demographics", ["deleted_at"], name: "index_employer_demographics_on_deleted_at", using: :btree
+
   create_table "exception_table_policy_combined_request_payroll_infos", force: :cascade do |t|
     t.string   "representative_number"
     t.string   "predecessor_policy_type"
@@ -843,6 +928,16 @@ ActiveRecord::Schema.define(version: 20210126154741) do
 
   add_index "manual_class_calculations", ["policy_calculation_id"], name: "index_manual_class_calculations_on_policy_calculation_id", using: :btree
   add_index "manual_class_calculations", ["policy_number", "manual_number"], name: "index_man_class_calc_pol_num_and_man_num", using: :btree
+
+  create_table "mcos", force: :cascade do |t|
+    t.integer  "bwc_mco_id"
+    t.string   "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.datetime "deleted_at"
+  end
+
+  add_index "mcos", ["deleted_at"], name: "index_mcos_on_deleted_at", using: :btree
 
   create_table "mira_detail_records", force: :cascade do |t|
     t.integer  "representative_number"

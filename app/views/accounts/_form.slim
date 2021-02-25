@@ -1,0 +1,125 @@
+= simple_form_for @account do |f|
+  .panel.panel-primary style="margin-top: 15px;"
+    .panel-heading
+      h1.panel-title #{@account.new_record? ? 'New' : 'Edit'} Account
+    .panel-body
+      .row
+        .col-sm-4 = f.association :representative, collection: @representatives, value_method: :id, label_method: :abbreviated_name
+        - if @account.new_record?
+          .col-md-2 = f.input :ac3_approval, as: :boolean
+        .col-md-6
+          = f.simple_fields_for :accounts_mco, @accounts_mco do |ff|
+            .row
+              .col-sm-6 = ff.input :mco_id, collection: Mco.all, label_method: :name, value_method: :id, label: 'Managed Care Organization', prompt: 'Select One'
+              .col-sm-6 = ff.input :relationship_start_date, as: :string, input_html: { class: 'mco-datepicker' }
+      .row
+        .col-sm-3 = f.input :name
+        .col-sm-3 = f.input :policy_number_entered, as: :string, label: 'Policy Number', input_html: { class: 'typeahead' }
+        .col-sm-3 = f.input :status, collection: @statuses.collect { |s| [s[0].titleize, s[0]] }, prompt: 'Select One'
+        .col-sm-3 = f.input :account_type, collection: @account_types.collect { |s| [s[0].titleize, s[0]] }, prompt: 'Select One'
+      .row
+        .col-sm-6 = f.input :street_address
+        .col-sm-6 = f.input :street_address_2
+      .row
+        .col-sm-3 = f.input :city
+        .col-md-3 = f.input :state, collection: CS.states(:us), prompt: 'Select One', label_method: :last, value_method: :first
+        .col-sm-3 = f.input :zip_code
+        .col-sm-3 = f.input :website_url, as: :url
+      hr
+      h4.text-center Contact Information
+      .row
+        .col-sm-3 = f.input :business_contact_name, label: 'Contact Name'
+        .col-sm-2 = f.input :business_phone_number, as: :string, label: 'Phone Number'
+        .col-sm-2 = f.input :business_phone_extension, as: :string, label: 'Phone Number Ext.'
+        .col-sm-2 = f.input :fax_number, as: :string, label: 'Fax Number'
+        .col-sm-3 = f.input :business_email_address, as: :email, label: 'Email'
+      hr
+      - if !@account.new_record? && @account.representative&.matrix?
+        .row
+          .col-sm-4 = f.input :tpa_start_date, as: :string, label: 'TPA Start Date', input_html: { class: 'tpa-datepicker' }
+          .col-sm-4 = f.input :tpa_end_date, as: :string, label: 'TPA End Date', input_html: { class: 'tpa-datepicker' }
+      .row
+        - unless @account.new_record?
+          .form-group.col-md-3
+            label Cycle Date
+            h4 = @account.cycle_date || 'Never'
+          .form-group.col-md-3
+            label Last Requested
+            h4 = @account.request_date || 'Never'
+        .form-group.col-md-6.text-left
+          = f.input :weekly_request, as: :boolean
+          = f.input :quarterly_request, as: :boolean
+    .panel-footer.text-right
+      = link_to 'Back', :back, class: 'btn btn-danger', style: 'margin-right: 5px;'
+      = f.submit 'Save Account', class: 'btn btn-primary'
+
+javascript:
+  $(function () {
+    $('.tpa-datepicker').datetimepicker({
+      format:     'YYYY-MM-DD',
+      useCurrent: false
+    });
+
+    $('.mco-datepicker').datetimepicker({
+      format:     'YYYY-MM-DD',
+      useCurrent: true
+    });
+
+    if ("#{ @account.new_record? }" === 'true') { // Only do this for new records
+      $('.typeahead').typeahead({
+          minLength: 2,
+          highlight: true,
+          hint:      true
+        },
+        {
+          name:   'policy_numbers',
+          source: substringMatcher(JSON.parse("#{ @policy_numbers.as_json }"))
+        });
+
+      $('#account_policy_number_entered').on('typeahead:select typeahead:autocomplete', function (event, selection) {
+        $.get('/accounts/autocomplete_policy_number_entered', { representative_id: $('#account_representative_id').val(), policy_number: selection }, function (response) {
+          if (response.success) {
+            $('#account_city').val(response.city);
+            $('#account_business_contact_name').val(response.contact_name);
+            $('#account_business_email_address').val(response.email);
+            $('#account_fax_number').val(response.fax_number);
+            $('select[name="account[accounts_mco_attributes][mco_id]"]').val(response.mco_id).change();
+            $('#account_accounts_mco_attributes_relationship_start_date').val(response.mco_start_date);
+            $('#account_name').val(response.name);
+            $('#account_business_phone_number').val(response.phone_number);
+            $('#account_business_phone_extension').val(response.phone_number_extension);
+            $('#account_state').val(response.state).change();
+            $('#account_street_address').val(response.street_address);
+            $('#account_street_address_2').val(response.street_address_2);
+            $('#account_zip_code').val(response.zip_code);
+          } else {
+            alert(response.message);
+          }
+        });
+      });
+    }
+  });
+
+  function substringMatcher(policy_numbers_by_rep) {
+    return function findMatches(query, callback) {
+      var matches, substringRegex;
+
+      // an array that will be populated with substring matches
+      matches = [];
+
+      // regex used to determine if a string contains the substring `q`
+      substrRegex = new RegExp(query, 'i');
+
+      // iterate through the pool of strings and for any string that
+      // contains the substring `q`, add it to the `matches` array
+      $.each(policy_numbers_by_rep, function (index, rep_and_policy_number) {
+        if (parseInt($('#account_representative_id').val()) === rep_and_policy_number[0]) {
+          $.each(rep_and_policy_number[1], function (policyIndex, policyNumber) {
+            if (substrRegex.test(policyNumber)) matches.push(policyNumber);
+          });
+        }
+      });
+
+      callback(matches);
+    };
+  }

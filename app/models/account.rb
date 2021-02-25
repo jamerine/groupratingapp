@@ -70,8 +70,12 @@ class Account < ActiveRecord::Base
   has_one :policy_calculation, dependent: :destroy
   has_many :quotes, dependent: :destroy
   has_many :notes, dependent: :destroy
+  has_one :accounts_mco, dependent: :destroy
+  has_one :mco, through: :accounts_mco
 
   validates :policy_number_entered, :presence => true, length: { maximum: 8 }
+
+  accepts_nested_attributes_for :accounts_mco, reject_if: :all_blank
 
   enum status: [:active, :cancelled, :client, :dead, :inactive, :invalid_policy_number, :new_account, :predecessor, :prospect, :suspended]
   enum account_type: [:grp_group, :gtro_group_retro, :individual_retro, :non_group, :ocp_one_claim_program, :pg_pregroup, :self_insured_tail]
@@ -88,6 +92,7 @@ class Account < ActiveRecord::Base
   scope :fee_change_percent, -> (fee_change_percent) { where("fee_change >= ?", (fee_change_percent)) }
 
   delegate :representative_number, to: :representative, prefix: false, allow_nil: false
+  delegate :name, to: :mco, prefix: true, allow_nil: true
 
   attr_accessor :group_rating_id, :start_date, :end_date
 
@@ -96,6 +101,10 @@ class Account < ActiveRecord::Base
     obj.assign_attributes(attributes)
     obj.save
     obj
+  end
+
+  def employer_demographics
+    EmployerDemographic.where(policy_number: self.policy_number_entered, representative_id: self.representative_id)
   end
 
   def group_rating_rejected?
@@ -107,7 +116,7 @@ class Account < ActiveRecord::Base
   end
 
   def self.find_by_rep_and_policy(rep_id, policy_number)
-    where(representative_id: rep_id, policy_number_entered: policy_number)&.map { |account| account if account.policy_calculation.present? }&.compact&.first
+    where(representative_id: rep_id, policy_number_entered: policy_number)&.select { |account| account.policy_calculation.present? }&.first
     # find_by(policy_number_entered: policy_number, representative_id: rep_id)
   end
 
