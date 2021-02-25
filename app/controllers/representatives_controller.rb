@@ -94,12 +94,15 @@ class RepresentativesController < ApplicationController
     @representative = Representative.find(params[:representative_id])
 
     begin
-      file        = open(params[:file].path, encoding: 'utf-16')
-      headers     = file&.first&.split("\t").map(&:parameterize).map(&:underscore).map(&:to_sym)
+      file    = open(params[:file].path, encoding: 'utf-16')
+      lines   = []
+      headers = file&.first&.split("\t").map(&:parameterize).map(&:underscore).map(&:to_sym)
 
       until file&.eof?
-        EmployerDemographicsImportProcess.perform_async(headers, file.readline, @representative.id)
+        lines << file.readline
       end
+
+      lines.each_with_progress { |line| EmployerDemographicsImportProcess.perform_async(headers, line, @representative.id) }
 
       redirect_to @representative, notice: "The Employer Demographics Import Has Been Queued!"
     rescue
