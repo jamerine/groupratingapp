@@ -74,7 +74,7 @@ class Account < ActiveRecord::Base
   has_one :mco, through: :accounts_mco
 
   validates :policy_number_entered, :presence => true, length: { maximum: 8 }
-  validates :valid_group_retro_tier
+  validate :valid_group_retro_tier
 
   accepts_nested_attributes_for :accounts_mco, reject_if: :all_blank
 
@@ -811,12 +811,11 @@ class Account < ActiveRecord::Base
   private
 
   def valid_group_retro_tier
-    # TODO: Test this
     return unless self.group_retro_tier.present?
     tier = BwcCodesGroupRetroTier.find_by(discount_tier: self.group_retro_tier)
     return unless tier.present?
 
-    self.errors.add(:group_retro_tier, 'is not valid for this account\'s industry group.') unless tier.industry_group == self.industry_group && tier.public_employer_only == public_employer?
+    self.errors.add(:group_retro_tier, 'is not valid for this account\'s industry group/public employer status.') unless tier.industry_group == self.industry_group && tier.public_employer_only == public_employer?
   end
 
   def handle_manual_class_group_premium_calculations(group_rating_tier)

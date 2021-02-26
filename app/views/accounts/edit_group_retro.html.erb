@@ -1,6 +1,6 @@
 <div class="container">
   <%= render partial: "shared/account_navbar", locals: { object: @account } %>
-  <%= link_to 'Back', :back, class: 'btn btn-primary' %>
+  <%= link_to 'Back', account_path(@account), class: 'btn btn-primary' %>
   <br>
   <div class="jumbotron text-center">
     <h1>Override Group Retro</h1>

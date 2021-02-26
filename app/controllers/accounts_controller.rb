@@ -160,6 +160,14 @@ class AccountsController < ApplicationController
   def group_retro_calc
     args = params[:account]
 
+    test_account = Account.new(@account.attributes)
+    test_account.assign_attributes(group_retro_tier: args[:group_retro_tier], industry_group: args[:industry_group], fee_override: args[:fee_override])
+
+    unless test_account.valid?
+      flash[:error] = test_account.errors.full_messages.join('. ')
+      redirect_to account_edit_group_retro_path(@account) and return
+    end
+
     if args[:group_retro_qualification] == "auto_run"
       @account.policy_calculation.calculate_experience
       @account.policy_calculation.calculate_premium
@@ -261,8 +269,8 @@ class AccountsController < ApplicationController
   private
 
   def set_account
-    @account = Account.includes(:group_rating_rejections, :group_rating_exceptions, :policy_calculation, :affiliates, :contacts, :quotes, :account_programs).find_by(id: params[:id] || params[:account_id])
-    redirect_to page_not_found_path and return unless @account.present?
+    @account = Account.includes(:group_rating_exceptions, :policy_calculation, :affiliates).find_by(id: params[:id] || params[:account_id])
+    redirect_to page_not_found_path unless @account.present?
   end
 
   def set_common_details
@@ -275,7 +283,7 @@ class AccountsController < ApplicationController
   end
 
   def get_details
-    @account_changes         = @account.versions.map { |v| [v.created_at, v.changeset] }
+    @account_changes         = @account.versions.includes(:item).map { |v| [v.created_at, v.changeset] }
     @representative          = Representative.find(@account.representative_id)
     @group_rating            = GroupRating.find_by(representative_id: @representative.id)
     @new_payroll_calculation = PayrollCalculation.new
