@@ -23,6 +23,15 @@ Rails.application.configure do
   config.action_controller.include_all_helpers = true
   config.log_level                             = :debug
 
+  config.after_initialize do
+    Bullet.enable              = true
+    Bullet.alert               = false
+    Bullet.bullet_logger       = true
+    Bullet.console             = true
+    Bullet.rails_logger        = true
+    Bullet.add_footer          = true
+  end
+
   ActionMailer::Base.raise_delivery_errors     = true
   Rails.application.default_url_options[:host] = 'arm.local:3000'
 end

@@ -28,6 +28,10 @@
             <small>Client Type:</small>
           </h3>
           <h4><%= @account.account_type&.titleize %></h4>
+          <h3>
+            <small>Employer Type:</small>
+          </h3>
+          <h4><%= @account&.policy_calculation&.employer_type&.upcase %></h4>
         </div>
       </div>
       <div class="row">

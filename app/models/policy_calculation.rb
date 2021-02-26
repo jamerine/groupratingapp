@@ -242,8 +242,12 @@ class PolicyCalculation < ActiveRecord::Base
     )
   end
 
+  def administrative_rate
+    (public_employer? ? BwcCodesConstantValue.current_public_rate : BwcCodesConstantValue.current_rate).rate
+  end
+
   def calculate_premium
-    @administrative_rate = (1 + BwcCodesConstantValue.find_by(name: 'administrative_rate', completed_date: nil).rate)
+    @administrative_rate = (1 + administrative_rate)
 
     # TODO: Potentially ADD DWRF Rate Here
 
@@ -302,8 +306,6 @@ class PolicyCalculation < ActiveRecord::Base
   end
 
   def calculate_premium_for_risk(new_mod_rate)
-    administrative_rate = BwcCodesConstantValue.find_by(name: 'administrative_rate', completed_date: nil).rate
-
     total_individual_premium = self.manual_class_calculations.map do |manual|
       manual.calculate_potential_premium(new_mod_rate, administrative_rate)
     end.sum

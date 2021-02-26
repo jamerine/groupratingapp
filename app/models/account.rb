@@ -74,6 +74,7 @@ class Account < ActiveRecord::Base
   has_one :mco, through: :accounts_mco
 
   validates :policy_number_entered, :presence => true, length: { maximum: 8 }
+  validate :valid_group_retro_tier
 
   accepts_nested_attributes_for :accounts_mco, reject_if: :all_blank
 
@@ -93,6 +94,7 @@ class Account < ActiveRecord::Base
 
   delegate :representative_number, to: :representative, prefix: false, allow_nil: false
   delegate :name, to: :mco, prefix: true, allow_nil: true
+  delegate :public_employer?, to: :policy_calculation, prefix: false, allow_nil: true
 
   attr_accessor :group_rating_id, :start_date, :end_date
 
@@ -469,7 +471,7 @@ class Account < ActiveRecord::Base
       @industry_group = policy_calculation.policy_industry_group
 
       if @group_retro_qualification == "accept"
-        @group_retro_tier         = BwcCodesGroupRetroTier.find_by(industry_group: @industry_group).discount_tier
+        @group_retro_tier         = BwcCodesGroupRetroTier.find_by(industry_group: @industry_group, public_employer_only: public_employer?).discount_tier
         @group_retro_group_number = @industry_group
 
         if @group_retro_tier.nil?
@@ -517,7 +519,7 @@ class Account < ActiveRecord::Base
       end
 
       if args["group_retro_tier"].empty?
-        @group_retro_tier = BwcCodesGroupRetroTier.find_by(industry_group: @industry_group)&.discount_tier
+        @group_retro_tier = BwcCodesGroupRetroTier.find_by(industry_group: @industry_group, public_employer_only: public_employer?)&.discount_tier
       else
         @group_retro_tier = args["group_retro_tier"]
       end
@@ -787,9 +789,13 @@ class Account < ActiveRecord::Base
   #
   # end
 
+  def administrative_rate
+    (public_employer? ? BwcCodesConstantValue.current_public_rate : BwcCodesConstantValue.current_rate).rate
+  end
+
   def estimated_premium(market_rate)
     premiums = []
-    self.policy_calculation.manual_class_calculations.each { |mc| premiums << mc.calculate_estimated_premium(market_rate) }
+    self.policy_calculation.manual_class_calculations.each { |mc| premiums << mc.calculate_estimated_premium(market_rate, administrative_rate) }
     premiums.sum.round(2)
   end
 
@@ -804,9 +810,16 @@ class Account < ActiveRecord::Base
 
   private
 
+  def valid_group_retro_tier
+    return unless self.group_retro_tier.present?
+    tier = BwcCodesGroupRetroTier.find_by(discount_tier: self.group_retro_tier)
+    return unless tier.present?
+
+    self.errors.add(:group_retro_tier, 'is not valid for this account\'s industry group/public employer status.') unless tier.industry_group == self.industry_group && tier.public_employer_only == public_employer?
+  end
+
   def handle_manual_class_group_premium_calculations(group_rating_tier)
-    group_rating_calc   = GroupRating.find_by(representative_id: self.representative_id)
-    administrative_rate = BwcCodesConstantValue.find_by("name = 'administrative_rate' and completed_date is null").rate
+    group_rating_calc = GroupRating.find_by(representative_id: self.representative_id)
 
     self.policy_calculation.manual_class_calculations.each do |manual_class|
       next unless manual_class.manual_class_base_rate.present?
@@ -814,7 +827,7 @@ class Account < ActiveRecord::Base
       start_date = group_rating_calc.current_payroll_period_lower_date
       end_date   = group_rating_calc.current_payroll_period_upper_date
 
-      if self.policy_calculation.public_employer?
+      if public_employer?
         start_date = (start_date + 1.year).beginning_of_year
         end_date   = start_date.end_of_year
       end

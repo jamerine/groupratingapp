@@ -62,21 +62,44 @@
           <div class="row">
             <div class="form-group col-md-6">
               <dl>
-                <dt>Current Administrative Rate</dt>
-                <dd><%= @administrative_rate.try(:rate) %></dd>
+                <dt>Current Private Employer Administrative Rate</dt>
+                <dd><%= @administrative_rate&.rate %></dd>
               </dl>
 
-              <%= f.label :administrative_rate, 'New Administrative Rate', class: 'form-control-label' %>
+              <%= f.label :administrative_rate, 'New Private Employer Administrative Rate', class: 'form-control-label' %>
               <%= f.number_field :administrative_rate, class: 'form-control', step: 0.0001 %>
             </div>
             <div class="form-group col-md-6">
               <dl>
-                <dt>Current Administrative Start Rate</dt>
+                <dt>Current Private Employer Administrative Start Rate</dt>
                 <dd><%= @administrative_rate&.start_date.present? ? l(@administrative_rate&.start_date) : '' %></dd>
               </dl>
 
-              <%= f.label :administrative_rate_start_date, 'New Administrative Rate Start Date', class: 'form-control-label' %>
+              <%= f.label :administrative_rate_start_date, 'New Private Employer Administrative Rate Start Date', class: 'form-control-label' %>
               <%= f.text_field :administrative_rate_start_date, class: 'form-control' %>
+            </div>
+          </div>
+
+          <hr>
+
+          <div class="row">
+            <div class="form-group col-md-6">
+              <dl>
+                <dt>Current Public Employer Administrative Rate</dt>
+                <dd><%= @public_administrative_rate&.rate %></dd>
+              </dl>
+
+              <%= f.label :public_administrative_rate, 'New Public Employer Administrative Rate', class: 'form-control-label' %>
+              <%= f.number_field :public_administrative_rate, class: 'form-control', step: 0.0001 %>
+            </div>
+            <div class="form-group col-md-6">
+              <dl>
+                <dt>Current Public Employer Administrative Start Rate</dt>
+                <dd><%= @public_administrative_rate&.start_date.present? ? l(@public_administrative_rate&.start_date) : '' %></dd>
+              </dl>
+
+              <%= f.label :public_administrative_rate_start_date, 'New Public Employer Administrative Rate Start Date', class: 'form-control-label' %>
+              <%= f.text_field :public_administrative_rate_start_date, class: 'form-control' %>
             </div>
           </div>
 
@@ -100,7 +123,8 @@
                 <thead>
                   <tr>
                     <th>Industry Group</th>
-                    <th>Retro Discount Tier</th>
+                    <th>Retro Tier</th>
+                    <th>PE Only</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -108,6 +132,7 @@
                     <tr>
                       <td><%= retro_tier.industry_group %></td>
                       <td><%= retro_tier.discount_tier %></td>
+                      <td><%= retro_tier.public_employer_only? ? 'True' : 'False' %></td>
                     </tr>
                   <% end %>
                 </tbody>
@@ -181,6 +206,11 @@
     });
 
     $('#rates_administrative_rate_start_date').datetimepicker({
+      format:     'MM/DD/YYYY',
+      useCurrent: false
+    });
+
+    $('#rates_public_administrative_rate_start_date').datetimepicker({
       format:     'MM/DD/YYYY',
       useCurrent: false
     });
