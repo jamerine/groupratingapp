@@ -32,7 +32,7 @@ class RatesController < ApplicationController
   private
 
   def rates_params
-    params.require(:rates).permit(:base_rates_file, :limited_loss_rates_file, :administrative_rate, :administrative_rate_start_date, retro_tiers: [:industry_group, :discount_tier], max_values: [:id, :maximum_value])
+    params.require(:rates).permit(:base_rates_file, :limited_loss_rates_file, :administrative_rate, :administrative_rate_start_date, :public_administrative_rate, :public_administrative_rate_start_date, retro_tiers: [:industry_group, :discount_tier], max_values: [:id, :maximum_value])
   end
 
   def handle_retro_tiers
@@ -55,9 +55,30 @@ class RatesController < ApplicationController
         redirect_to action: :index and return
       end
 
-      BwcCodesConstantValue.all.each { |rate| rate.update_attribute(:completed_date, Date.today) if rate.completed_date.nil? }
+      BwcCodesConstantValue.private_employer.each { |rate| rate.update_attribute(:completed_date, Date.today) if rate.completed_date.nil? }
 
-      if BwcCodesConstantValue.find_or_create_by(name: :administrative_rate, rate: rates_params[:administrative_rate].try(:to_f), start_date: DateTime.strptime(rates_params[:administrative_rate_start_date], '%m/%d/%Y'), completed_date: nil)
+      if BwcCodesConstantValue.find_or_create_by(name:           :administrative_rate,
+                                                 rate:           rates_params[:administrative_rate].try(:to_f),
+                                                 start_date:     DateTime.strptime(rates_params[:administrative_rate_start_date], '%m/%d/%Y'),
+                                                 completed_date: nil,
+                                                 employer_type:  BwcCodesConstantValue::employer_types[:private_employer])
+        flash[:notice] = 'Successfully Updated Rates!'
+      end
+    end
+
+    if rates_params[:public_administrative_rate].present?
+      unless rates_params[:public_administrative_rate_start_date].present?
+        flash[:error] = 'Public Administrative Rate Start Date is required if a public employer rate is set!'
+        redirect_to action: :index and return
+      end
+
+      BwcCodesConstantValue.public_employer.each { |rate| rate.update_attribute(:completed_date, Date.today) if rate.completed_date.nil? }
+
+      if BwcCodesConstantValue.find_or_create_by(name:           :administrative_rate,
+                                                 rate:           rates_params[:public_administrative_rate].try(:to_f),
+                                                 start_date:     DateTime.strptime(rates_params[:public_administrative_rate_start_date], '%m/%d/%Y'),
+                                                 completed_date: nil,
+                                                 employer_type:  BwcCodesConstantValue::employer_types[:public_employer])
         flash[:notice] = 'Successfully Updated Rates!'
       end
     end

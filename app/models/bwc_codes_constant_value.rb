@@ -16,8 +16,8 @@ class BwcCodesConstantValue < ActiveRecord::Base
   require 'activerecord-import'
   require 'open-uri'
 
-  scope :current_rate, -> { find_by(name: :administrative_rate, completed_date: nil, employer_type: BwcCodesConstantValue::employer_types[:private_employer]) }
-  scope :current_public_rate, -> { find_by(name: :administrative_rate, completed_date: nil, employer_type: BwcCodesConstantValue::employer_types[:public_employer]) }
+  scope :current_rate, -> { private_employer.find_by(name: :administrative_rate, completed_date: nil) }
+  scope :current_public_rate, -> { public_employer.find_by(name: :administrative_rate, completed_date: nil) }
 
   enum employer_type: [:private_employer, :public_employer]
 
