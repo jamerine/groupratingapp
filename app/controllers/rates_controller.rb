@@ -32,13 +32,15 @@ class RatesController < ApplicationController
   private
 
   def rates_params
-    params.require(:rates).permit(:base_rates_file, :limited_loss_rates_file, :administrative_rate, :administrative_rate_start_date, :public_administrative_rate, :public_administrative_rate_start_date, retro_tiers: [:industry_group, :discount_tier], max_values: [:id, :maximum_value])
+    params.require(:rates).permit(:base_rates_file, :limited_loss_rates_file, :administrative_rate, :administrative_rate_start_date, :public_administrative_rate,
+                                  :public_administrative_rate_start_date, retro_tiers: [:industry_group, :discount_tier], max_values: [:id, :maximum_value])
   end
 
   def handle_retro_tiers
     if rates_params[:retro_tiers].present? && rates_params[:retro_tiers].any?
       rates_params[:retro_tiers].each do |tier|
-        return unless tier[:discount_tier].present?
+        next unless tier[:discount_tier].present?
+
         if BwcCodesGroupRetroTier.find_by_industry_group(tier[:industry_group].to_i).update_attributes(discount_tier: tier[:discount_tier].to_f)
           flash[:notice] = 'Successfully Updated the Discount Rates!'
         else

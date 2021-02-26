@@ -240,8 +240,9 @@ ActiveRecord::Schema.define(version: 202004020223665) do
   create_table "bwc_codes_group_retro_tiers", force: :cascade do |t|
     t.integer  "industry_group"
     t.float    "discount_tier"
-    t.datetime "created_at",     null: false
-    t.datetime "updated_at",     null: false
+    t.datetime "created_at",                           null: false
+    t.datetime "updated_at",                           null: false
+    t.boolean  "public_employer_only", default: false
   end
 
   create_table "bwc_codes_industry_group_savings_ratio_criteria", force: :cascade do |t|

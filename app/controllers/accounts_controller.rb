@@ -134,7 +134,7 @@ class AccountsController < ApplicationController
     @policy_calculation                    = @account.policy_calculation
     @group_retro_qualifications            = Account.group_rating_qualifications
     @group_retro_qualifications[:auto_run] = "3"
-    @group_retro_tier                      = BwcCodesGroupRetroTier.find_by(industry_group: @account.industry_group).try(:discount_tier)
+    @group_retro_tier                      = BwcCodesGroupRetroTier.find_for_account(@account)&.discount_tier
     @group_retro_tiers                     = ["#{@group_retro_tier}"]
   end
 

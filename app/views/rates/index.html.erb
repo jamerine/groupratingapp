@@ -123,7 +123,8 @@
                 <thead>
                   <tr>
                     <th>Industry Group</th>
-                    <th>Retro Discount Tier</th>
+                    <th>Retro Tier</th>
+                    <th>PE Only</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -131,6 +132,7 @@
                     <tr>
                       <td><%= retro_tier.industry_group %></td>
                       <td><%= retro_tier.discount_tier %></td>
+                      <td><%= retro_tier.public_employer_only? ? 'True' : 'False' %></td>
                     </tr>
                   <% end %>
                 </tbody>
