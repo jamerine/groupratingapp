@@ -8,11 +8,11 @@
     <% end %>
   </div>
 
-  <%= form_tag(accounts_path, :method => "get", id: "search-form", remote: true ) do %>
-      <%= render partial: 'shared/representative_policy_search', locals: {representatives: @representatives} %>
+  <%= form_tag(accounts_path, :method => "get", id: "search-form", remote: true) do %>
+    <%= render partial: 'shared/representative_policy_search', locals: { representatives: @representatives } %>
   <% end %>
 
-    <br>
-    <%= render partial: 'accounts/list', locals: {accounts: @accounts} %>
+  <br>
+  <%= render partial: 'accounts/list', locals: { accounts: @accounts } %>
 
 </div>

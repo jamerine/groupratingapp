@@ -3,13 +3,22 @@
     .col-sm-12
       .jumbotron
         h1.text-center Imported Employer Demographics Data
+  / .loading.text-center style="margin-top: 25px;"
+        /   h2 Loading Results...
+        /   br
+        /   br
+        /   i.fa.fa-spinner.fa-pulse.fa-3x.fa-fw
   .row
     .col-md-12 style="overflow-x: scroll;"
-      / .loading.text-center style="margin-top: 25px;"
-      /   h2 Loading Results...
-      /   br
-      /   br
-      /   i.fa.fa-spinner.fa-pulse.fa-3x.fa-fw
+      .row style="margin-bottom: 15px;"
+        .col-sm-4
+          = form_tag representative_employer_demographics_path(@representative), method: :get, id: 'search-form' do
+            .input-group
+              = text_field_tag :search, params[:search], placeholder: "Search Name Or Policy Number", class: 'form-control search'
+              span.input-group-btn = submit_tag "Search", name: nil, class: 'btn btn-primary'
+
+        .col-sm-2.col-sm-offset-6.text-right = link_to 'Purge Data', purge_representative_employer_demographics_path(@representative), class: 'btn btn-danger', method: :post, data: { confirm: 'Are you sure you want to purge all the employer demographics data for this representative?' }
+
       table.table.table-striped.demo-datatable.table-responsive.text-nowrap style="margin-bottom: 15px;"
         thead
           tr
@@ -20,17 +29,17 @@
             tr
               - @field_names.each do |field_name|
                 td = field_name.include?('date') && demographic.send(field_name).present? ? l(demographic.send(field_name), format: :date_only) : demographic.send(field_name)
+  .row
+    .col-md-12.text-center = will_paginate @demographics
 
-.row
-  .col-md-12.text-center = will_paginate @demographics
-//javascript:
-//  $(function () {
-//    $('.demo-datatable').on('init.dt', function () {
-//      $('.demo-datatable').removeClass('d-none');
-//      $('.loading').addClass('d-none');
-//    }).DataTable({
-//      order:   [[0, 'asc']],
-//      pageLength: 25,
-//      scrollX: true,
-//    });
-//  });
+      //javascript:
+      //  $(function () {
+      //    $('.demo-datatable').on('init.dt', function () {
+      //      $('.demo-datatable').removeClass('d-none');
+      //      $('.loading').addClass('d-none');
+      //    }).DataTable({
+      //      order:   [[0, 'asc']],
+      //      pageLength: 25,
+      //      scrollX: true,
+      //    });
+      //  });

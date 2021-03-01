@@ -86,6 +86,7 @@ class EmployerDemographic < ActiveRecord::Base
 
   scope :by_representative, -> (rep_id) { where(representative_id: rep_id) }
   scope :by_state, -> (state) { where(employer_state: state) }
+  scope :purge, -> (ids) { delete_all("employer_demographics.id IN (#{ids.join(',')})") }
 
   after_save :check_mco, :check_account_mco
 
