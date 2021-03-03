@@ -3,10 +3,11 @@
 # Table name: bwc_codes_constant_values
 #
 #  id             :integer          not null, primary key
+#  completed_date :date
+#  employer_type  :integer          default(0)
 #  name           :string
 #  rate           :float
 #  start_date     :date
-#  completed_date :date
 #  created_at     :datetime
 #  updated_at     :datetime
 #
