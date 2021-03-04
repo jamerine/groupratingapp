@@ -391,7 +391,10 @@ ActiveRecord::Schema.define(version: 202004020223665) do
     t.datetime "date"
     t.integer  "user_id"
     t.boolean  "is_pinned",              default: false
+    t.datetime "deleted_at"
   end
+
+  add_index "claim_notes", ["deleted_at"], name: "index_claim_notes_on_deleted_at", using: :btree
 
   create_table "clicd_detail_records", force: :cascade do |t|
     t.integer  "representative_number"
@@ -1193,9 +1196,11 @@ ActiveRecord::Schema.define(version: 202004020223665) do
     t.boolean  "is_group",     default: false
     t.boolean  "is_retention", default: false
     t.boolean  "is_pinned",    default: false
+    t.datetime "deleted_at"
   end
 
   add_index "notes", ["account_id"], name: "index_notes_on_account_id", using: :btree
+  add_index "notes", ["deleted_at"], name: "index_notes_on_deleted_at", using: :btree
   add_index "notes", ["user_id"], name: "index_notes_on_user_id", using: :btree
 
   create_table "payroll_calculations", force: :cascade do |t|

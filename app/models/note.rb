@@ -6,6 +6,7 @@
 #  attachment   :string
 #  category     :integer
 #  date         :datetime
+#  deleted_at   :datetime
 #  description  :text
 #  is_group     :boolean          default(FALSE)
 #  is_pinned    :boolean          default(FALSE)
@@ -20,6 +21,7 @@
 # Indexes
 #
 #  index_notes_on_account_id  (account_id)
+#  index_notes_on_deleted_at  (deleted_at)
 #  index_notes_on_user_id     (user_id)
 #
 # Foreign Keys
@@ -29,6 +31,8 @@
 #
 
 class Note < ActiveRecord::Base
+  acts_as_paranoid
+
   belongs_to :user
   belongs_to :account
   belongs_to :note_category, foreign_key: :category_id
