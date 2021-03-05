@@ -62,6 +62,7 @@
             <li><%= link_to 'Representatives', representatives_path %></li>
             <li><%= link_to 'Processing', group_ratings_path %></li>
             <li><%= link_to 'Accounts', accounts_path %></li>
+            <li><%= link_to 'Employer Demographics', employer_demographics_path %></li>
             <% if current_user.admin? %>
               <li><%= link_to 'Users', users_path, class: 'navbar-link' %></li>
               <li><%= link_to 'Rejections', program_rejections_path, class: 'navbar-link' %></li>

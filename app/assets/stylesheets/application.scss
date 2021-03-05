@@ -12,7 +12,7 @@
  *
  */
 
-$grid-float-breakpoint:  1285px;
+$grid-float-breakpoint:  1375px;
 
 @import "trix";
 @import "normalize";
@@ -56,7 +56,7 @@ $grid-float-breakpoint:  1285px;
   }
 }
 
-@media (min-width: 769px) and (max-width: 1425px) {
+@media (min-width: 769px) and (max-width: 1575px) {
   ul.nav.navbar-nav {
     li {
       a {

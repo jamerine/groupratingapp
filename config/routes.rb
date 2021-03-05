@@ -40,8 +40,8 @@
 #                                account_assign_address POST       /accounts/:account_id/assign_address(.:format)                                     accounts#assign_address
 #                                   account_risk_report GET        /accounts/:account_id/risk_report(.:format)                                        accounts#risk_report
 #                             account_claim_loss_export POST       /accounts/:account_id/claim_loss_export(.:format)                                  accounts#claim_loss_export
-#                      account_ranged_claim_loss_export GET        /accounts/:account_id/ranged_claim_loss_export(.:format)                          accounts#ranged_claim_loss_export
-#                 account_ranged_claim_loss_export_form POST       /accounts/:account_id/ranged_claim_loss_export_form(.:format)                     accounts#ranged_claim_loss_export_form
+#                      account_ranged_claim_loss_export GET        /accounts/:account_id/ranged_claim_loss_export(.:format)                           accounts#ranged_claim_loss_export
+#                 account_ranged_claim_loss_export_form POST       /accounts/:account_id/ranged_claim_loss_export_form(.:format)                      accounts#ranged_claim_loss_export_form
 #                               account_new_risk_report GET        /accounts/:account_id/new_risk_report(.:format)                                    accounts#new_risk_report
 #                                     account_retention GET        /accounts/:account_id/retention(.:format)                                          accounts#retention
 #                                    account_roc_report GET        /accounts/:account_id/roc_report(.:format)                                         accounts#roc_report
@@ -336,6 +336,7 @@
 #                      representative_all_quote_process GET        /representatives/:representative_id/all_quote_process(.:format)                    representatives#all_quote_process
 #                               representative_zip_file POST       /representatives/:representative_id/zip_file(.:format)                             representatives#zip_file
 #                      representative_edit_global_dates GET        /representatives/:representative_id/edit_global_dates(.:format)                    representatives#edit_global_dates
+#            purge_representative_employer_demographics POST       /representatives/:representative_id/employer_demographics/purge(.:format)          employer_demographics#purge
 #                  representative_employer_demographics GET        /representatives/:representative_id/employer_demographics(.:format)                employer_demographics#index
 #                      delete_everything_representative POST       /representatives/:id/delete_everything(.:format)                                   representatives#delete_everything
 #                                       representatives GET        /representatives(.:format)                                                         representatives#index
@@ -631,17 +632,19 @@ Rails.application.routes.draw do
     post :import_claim_process
     post :import_account_notes_process
     post :import_claim_notes_process
-    post :import_employer_demographics_process
     get :all_quote_process
     post :zip_file
     get :edit_global_dates
 
-    resources :employer_demographics, only: :index do
-      collection { post :purge }
-    end
-
     member do
       post :delete_everything
+    end
+  end
+
+  resources :employer_demographics, only: :index, path: 'employer-demographics' do
+    collection do
+      post :purge
+      post :import
     end
   end
 

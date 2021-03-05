@@ -77,7 +77,7 @@ class AccountsController < ApplicationController
 
     render json: { success: false, message: 'An account already exists for that policy number!' } and return if existing_account.present?
 
-    employer_demographic = EmployerDemographic.by_representative(representative_id).where(policy_number: policy_number).order(updated_at: :desc).first
+    employer_demographic = EmployerDemographic.where(policy_number: policy_number).order(updated_at: :desc).first
 
     render json: { success: false, message: 'Something went wrong, please try again!' } and return unless employer_demographic.present?
 
@@ -279,7 +279,7 @@ class AccountsController < ApplicationController
     @employer_types  = PolicyCalculation.employer_types
     @representatives = Representative.all
     @account_types   = Account.account_types
-    @policy_numbers  = @representatives.collect { |r| [r.id, r.employer_demographics.pluck(:policy_number)] }
+    @policy_numbers  = EmployerDemographic.pluck(:policy_number)
   end
 
   def get_details

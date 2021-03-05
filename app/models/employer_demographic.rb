@@ -70,7 +70,6 @@
 #  zip_code                                  :string
 #  created_at                                :datetime         not null
 #  updated_at                                :datetime         not null
-#  representative_id                         :integer          not null
 #
 # Indexes
 #
@@ -78,25 +77,16 @@
 #
 
 class EmployerDemographic < ActiveRecord::Base
-  belongs_to :representative
   has_one :mco, foreign_key: :bwc_mco_id, primary_key: :mco_id_number
+  has_many :accounts, foreign_key: :policy_number_entered, primary_key: :policy_number
 
-  validates_presence_of :employer_state, :representative_id, :policy_number
+  validates_presence_of :employer_state, :policy_number
   validates_numericality_of :policy_number
 
-  scope :by_representative, -> (rep_id) { where(representative_id: rep_id) }
   scope :by_state, -> (state) { where(employer_state: state) }
   scope :purge, -> (ids) { delete_all("employer_demographics.id IN (#{ids.join(',')})") }
 
   after_save :check_mco, :check_account_mco
-
-  def account
-    Account.find_by_rep_and_policy(self.representative_id, self.policy_number)
-  end
-
-  def account_id
-    account&.id
-  end
 
   private
 
@@ -107,8 +97,8 @@ class EmployerDemographic < ActiveRecord::Base
   end
 
   def check_account_mco
-    return unless account_id.present? && self.mco.present?
+    return unless self.mco.present?
 
-    AccountsMco.find_or_create_by(account_id: account_id, mco_id: self.mco.id).update_attribute(:relationship_start_date, self.mco_relationship_beginning_date)
+    self.accounts.pluck(:id).each { |id| AccountsMco.find_or_create_by(account_id: id, mco_id: self.mco.id).update_attribute(:relationship_start_date, self.mco_relationship_beginning_date) }
   end
 end

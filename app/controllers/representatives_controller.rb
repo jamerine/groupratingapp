@@ -87,18 +87,6 @@ class RepresentativesController < ApplicationController
   #   end
   # end
 
-  def import_employer_demographics_process
-    @representative = Representative.find(params[:representative_id])
-
-    begin
-      EmployerDemographicsImportProcess.perform_async(params[:file].path, @representative.id)
-
-      redirect_to @representative, notice: "The Employer Demographics Import Has Been Queued!"
-    rescue
-      redirect_to @representative, alert: "There was an error importing file.  Please ensure file columns and file type are correct"
-    end
-  end
-
   def import_account_notes_process
     @representative = Representative.find(params[:representative_id])
 

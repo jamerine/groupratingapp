@@ -517,7 +517,6 @@ ActiveRecord::Schema.define(version: 202004020223665) do
 
   create_table "employer_demographics", force: :cascade do |t|
     t.string   "employer_state",                            default: "OH"
-    t.integer  "representative_id",                                        null: false
     t.integer  "policy_number"
     t.string   "primary_name"
     t.string   "primary_dba_name"

@@ -100,7 +100,7 @@ javascript:
     }
   });
 
-  function substringMatcher(policy_numbers_by_rep) {
+  function substringMatcher(policy_numbers) {
     return function findMatches(query, callback) {
       var matches, substringRegex;
 
@@ -112,12 +112,8 @@ javascript:
 
       // iterate through the pool of strings and for any string that
       // contains the substring `q`, add it to the `matches` array
-      $.each(policy_numbers_by_rep, function (index, rep_and_policy_number) {
-        if (parseInt($('#account_representative_id').val()) === rep_and_policy_number[0]) {
-          $.each(rep_and_policy_number[1], function (policyIndex, policyNumber) {
-            if (substrRegex.test(policyNumber)) matches.push(policyNumber);
-          });
-        }
+      $.each(policy_numbers, function (policyIndex, policyNumber) {
+        if (substrRegex.test(policyNumber)) matches.push(policyNumber);
       });
 
       callback(matches);

@@ -2,23 +2,32 @@
   .row
     .col-sm-12
       .jumbotron
-        h1.text-center Imported Employer Demographics Data
+        h1.text-center Employer Demographics Data
   / .loading.text-center style="margin-top: 25px;"
-        /   h2 Loading Results...
-        /   br
-        /   br
-        /   i.fa.fa-spinner.fa-pulse.fa-3x.fa-fw
-  .row
+  /   h2 Loading Results...
+  /   br
+  /   br
+  /   i.fa.fa-spinner.fa-pulse.fa-3x.fa-fw
+
+  - if current_user.admin?
+    .row style="margin-bottom: 15px;"
+      .col-sm-6
+        = form_tag import_employer_demographics_path, multipart: true do
+          .input-group
+            = file_field_tag :file, class: 'form-control'
+            span.input-group-btn = submit_tag "Import Employer Demographics Data", class: 'form-control btn btn-primary'
+      .col-sm-2.col-sm-offset-4.text-right = link_to 'Purge Data', purge_employer_demographics_path, class: 'btn btn-danger', method: :post, data: { confirm: 'Are you sure you want to purge all the employer demographics data for this representative?' }
+
+  hr
+
+  .row style="margin-bottom: 15px;"
+    .col-sm-4.col-sm-offset-8
+      = form_tag employer_demographics_path, method: :get, id: 'search-form' do
+        .input-group
+          = text_field_tag :search, params[:search], placeholder: "Search Name Or Policy Number", class: 'form-control search'
+          span.input-group-btn = submit_tag "Search", name: nil, class: 'btn btn-primary'
+  .row style="padding: 0 15px;"
     .col-md-12 style="overflow-x: scroll;"
-      .row style="margin-bottom: 15px;"
-        .col-sm-4
-          = form_tag representative_employer_demographics_path(@representative), method: :get, id: 'search-form' do
-            .input-group
-              = text_field_tag :search, params[:search], placeholder: "Search Name Or Policy Number", class: 'form-control search'
-              span.input-group-btn = submit_tag "Search", name: nil, class: 'btn btn-primary'
-
-        .col-sm-2.col-sm-offset-6.text-right = link_to 'Purge Data', purge_representative_employer_demographics_path(@representative), class: 'btn btn-danger', method: :post, data: { confirm: 'Are you sure you want to purge all the employer demographics data for this representative?' }
-
       table.table.table-striped.demo-datatable.table-responsive.text-nowrap style="margin-bottom: 15px;"
         thead
           tr
@@ -32,7 +41,7 @@
   .row
     .col-md-12.text-center = will_paginate @demographics
 
-      //javascript:
+    //javascript:
       //  $(function () {
       //    $('.demo-datatable').on('init.dt', function () {
       //      $('.demo-datatable').removeClass('d-none');

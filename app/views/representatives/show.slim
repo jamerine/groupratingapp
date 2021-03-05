@@ -273,11 +273,6 @@
             = file_field_tag :file, class: 'form-control'
             br
             = submit_tag "Import Claim Notes", class: 'form-control btn btn-primary'
-        .col-md-4
-          = form_tag representative_import_employer_demographics_process_path(@representative.id), multipart: true do
-            = file_field_tag :file, class: 'form-control'
-            br
-            = submit_tag "Import Employer Demographics Data", class: 'form-control btn btn-primary'
       br
       - if policy(@representative).import_contact_process?
         .row

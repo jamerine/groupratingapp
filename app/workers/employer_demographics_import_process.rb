@@ -3,7 +3,7 @@ class EmployerDemographicsImportProcess
 
   sidekiq_options queue: :employer_demographics_import_process, retry: 1
 
-  def perform(file_path, representative_id)
+  def perform(file_path)
     require 'open-uri'
 
     file    = open(file_path, encoding: 'utf-16')
@@ -12,7 +12,7 @@ class EmployerDemographicsImportProcess
     until file&.eof?
       split_line = file.readline.split("\t")
 
-      EmployerDemographicsImport.perform_async(Hash[headers.map.with_index { |header, index| [header, split_line[index]] }], representative_id)
+      EmployerDemographicsImport.perform_async(Hash[headers.map.with_index { |header, index| [header, split_line[index]] }])
     end
   end
 end
