@@ -94,6 +94,9 @@ GEM
     bootstrap3-datetimepicker-rails (4.17.47)
       momentjs-rails (>= 2.8.1)
     builder (3.2.3)
+    bullet (6.1.4)
+      activesupport (>= 3.0.0)
+      uniform_notifier (~> 1.11)
     byebug (11.0.1)
     capistrano (3.11.2)
       airbrussh (>= 1.0.0)
@@ -128,6 +131,8 @@ GEM
     carrierwave-aws (1.4.0)
       aws-sdk-s3 (~> 1.0)
       carrierwave (>= 0.7, < 2.1)
+    city-state (0.1.0)
+      rubyzip (>= 1.1)
     cocoon (1.2.14)
     coderay (1.1.2)
     coffee-rails (4.1.1)
@@ -475,6 +480,7 @@ GEM
       thread_safe (~> 0.1)
     uglifier (4.2.0)
       execjs (>= 0.3.0, < 3)
+    uniform_notifier (1.14.0)
     vcr (5.0.0)
     warden (1.2.7)
       rack (>= 1.0)
@@ -502,6 +508,7 @@ DEPENDENCIES
   bootstrap-sass
   bootstrap-will_paginate (= 0.0.10)
   bootstrap3-datetimepicker-rails (~> 4.17.47)
+  bullet
   byebug
   capistrano-bundler
   capistrano-passenger
@@ -511,6 +518,7 @@ DEPENDENCIES
   capybara
   carrierwave
   carrierwave-aws
+  city-state
   cocoon
   coffee-rails (~> 4.1.0)
   combine_pdf

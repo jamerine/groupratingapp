@@ -29,4 +29,5 @@ en:
     formats:
       default: '%m/%d/%Y %H:%M'
       mira: '%b %d, %Y'
+      date_only: '%m/%d/%Y'
       note_time: "%m/%d/%y %I:%M %P"

@@ -100,9 +100,11 @@ class PolicyCalculation < ActiveRecord::Base
   has_many :payroll_calculations, through: :manual_class_calculations
   belongs_to :representative
   belongs_to :account
+  has_one :mco, through: :account
 
   delegate :name, to: :account, prefix: true, allow_nil: false
   delegate :status, to: :account, prefix: true, allow_nil: false
+  delegate :name, to: :mco, prefix: true, allow_nil: true
 
   scope :by_representative, -> (rep_number) { where(representative_number: rep_number) }
   scope :updated_in_quarterly_report, -> { where('policy_calculations.updated_at >= ?', Date.parse('2020-07-30')) }
@@ -240,8 +242,12 @@ class PolicyCalculation < ActiveRecord::Base
     )
   end
 
+  def administrative_rate
+    (public_employer? ? BwcCodesConstantValue.current_public_rate : BwcCodesConstantValue.current_rate).rate
+  end
+
   def calculate_premium
-    @administrative_rate = (1 + BwcCodesConstantValue.find_by(name: 'administrative_rate', completed_date: nil).rate)
+    @administrative_rate = (1 + administrative_rate)
 
     # TODO: Potentially ADD DWRF Rate Here
 
@@ -300,8 +306,6 @@ class PolicyCalculation < ActiveRecord::Base
   end
 
   def calculate_premium_for_risk(new_mod_rate)
-    administrative_rate = BwcCodesConstantValue.find_by(name: 'administrative_rate', completed_date: nil).rate
-
     total_individual_premium = self.manual_class_calculations.map do |manual|
       manual.calculate_potential_premium(new_mod_rate, administrative_rate)
     end.sum

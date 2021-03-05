@@ -11,4 +11,7 @@
 #
 
 class BwcCodesGroupRetroTier < ActiveRecord::Base
+  def self.find_for_account(account)
+    find_by(industry_group: account.industry_group, public_employer_only: account.public_employer?)
+  end
 end
