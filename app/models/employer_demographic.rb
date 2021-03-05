@@ -93,7 +93,7 @@ class EmployerDemographic < ActiveRecord::Base
   def check_mco
     return unless self.mco_id_number.present? && self.mco_name.present?
 
-    Mco.find_or_create_by(bwc_mco_id: self.mco_id_number).update_attribute(:name, self.mco_name)
+    Mco.find_or_create_by(bwc_mco_id: self.mco_id_number).update_attributes(name: self.mco_name)
   end
 
   def check_account_mco
