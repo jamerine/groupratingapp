@@ -21,6 +21,8 @@ class BwcCodesIndustryGroupSavingsRatioCriterium < ActiveRecord::Base
   require 'activerecord-import'
   require 'open-uri'
 
+  scope :industry_groups, -> { pluck(:industry_group).uniq.sort }
+
   def self.import_table(url)
     time1 = Time.new
     puts "Start Time: " + time1.inspect

@@ -333,7 +333,7 @@ class Account < ActiveRecord::Base
       end
     end
 
-    if [3, 4, 5, 7, 8, 10].exclude? policy_calculation.policy_industry_group
+    if BwcCodesIndustryGroupSavingsRatioCriterium.industry_groups.exclude? policy_calculation.policy_industry_group
       if @found_rejection = self.group_rating_rejections.find_by(reject_reason: "reject_homogeneity_ig_#{policy_calculation.policy_industry_group}", program_type: 'group_rating')
         @group_rating_rejection_array << self.group_rating_rejections.new(reject_reason: "reject_homogeneity_ig_#{policy_calculation.policy_industry_group}", representative_id: @group_rating.representative_id, program_type: 'group_rating', hide: @found_rejection.hide)
       else
@@ -581,7 +581,10 @@ class Account < ActiveRecord::Base
       end
     end
 
-    if [3, 4, 5, 7, 8].exclude? policy_calculation.policy_industry_group
+    retro_industry_groups = BwcCodesGroupRetroTier.industry_groups(false)
+    retro_industry_groups += BwcCodesGroupRetroTier.industry_groups(true) if public_employer?
+
+    if retro_industry_groups.exclude?(policy_calculation.policy_industry_group)
       if @found_rejection = self.group_rating_rejections.find_by(reject_reason: "reject_homogeneity_ig_#{policy_calculation.policy_industry_group}", program_type: 'group_retro')
         @group_retro_rejection_array << self.group_rating_rejections.new(reject_reason: "reject_homogeneity_ig_#{policy_calculation.policy_industry_group}", representative_id: @group_rating.representative_id, program_type: 'group_retro', hide: @found_rejection.hide)
       else
@@ -723,7 +726,7 @@ class Account < ActiveRecord::Base
       qualification = "accept"
     end
 
-    return @group_retro_qualification = qualification
+    @group_retro_qualification = qualification
   end
 
   def fee_calculation(group_rating_qualification, group_rating_tier, group_savings)
@@ -812,10 +815,10 @@ class Account < ActiveRecord::Base
 
   def valid_group_retro_tier
     return unless self.group_retro_tier.present?
-    tier = BwcCodesGroupRetroTier.find_by(discount_tier: self.group_retro_tier)
-    return unless tier.present?
+    tiers = BwcCodesGroupRetroTier.by_public_employer(self.public_employer?).where(discount_tier: self.group_retro_tier)
+    return unless tiers.any?
 
-    self.errors.add(:group_retro_tier, 'is not valid for this account\'s industry group/public employer status.') unless tier.industry_group == self.industry_group && tier.public_employer_only == public_employer?
+    self.errors.add(:group_retro_tier, 'is not valid for this account\'s industry group/public employer status.') unless self.industry_group.in?(tiers.pluck(:industry_group))
   end
 
   def handle_manual_class_group_premium_calculations(group_rating_tier)
